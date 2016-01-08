@@ -1,0 +1,119 @@
+* {
+	color: #000000;
+	font-family: Verdana;
+	font-size: 14px;
+}
+
+body {
+	background: #FFFFFF;
+}
+
+p {
+	text-align: justify;
+}
+
+h2 {
+	font-size: 14px;
+	text-align: justify;
+	color: white;
+	background-color: #222326;
+	width: 100%;
+	padding: 5px 5px 5px 5px;
+	opacity: 0.8;
+}
+
+.glyphicon {
+	color: #FFFFFF;
+}
+
+.hidden {
+	display: none;
+}
+
+.visible {
+	display: block;
+}
+
+.vote {
+	border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: #8AC007;
+
+	font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+	padding-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+
+	position: absolute;
+	left: 250px;
+	top: 10px;
+	z-index: 20;
+}
+
+div.album {
+	width: 300px;
+	height: 300px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	position: relative;
+}
+
+img.album {
+	width: 300px;
+	height: 300px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img.artist {
+	width: 300px;
+	height: 180px;
+	display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header {
+	background: #222326;
+	color: #FFFFFF;
+	opacity: 0.8;
+	width: 100%;
+	padding: 5px 5px 5px 5px;
+	line-height: 150%;
+}
+
+a.header {
+	color: #FFFFFF;
+}
+
+.header ul li {
+  display: inline;
+}
+
+#searchInput {
+	width: 100%;
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	z-index: 10;
+}
+
+#content {
+	background-color: #FFFFFF;
+	padding: 5px 5px 5px 5px;
+  top: 100px;
+  left: 0px;
+  right: 0px;
+}
+
+#spotify {
+	position: static;
+	width: 100%;
+	bottom: 0;
+}

@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhonotekeExternalIds {
 
-	protected static final int THREAD_SLEEP = 2000;
+	protected static final int THREAD_SLEEP = 1000;
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class.getName());
 
 	protected static final String SQL_FIND_DOCUMENTS = "SELECT * FROM musicdb.document WHERE bandId IS NULL OR albumId IS NULL OR bandIdSptf IS NULL OR albumIdSptf IS NULL ORDER BY creation_date DESC";
@@ -172,7 +174,7 @@ public class PhonotekeExternalIds {
 			}
 			Document doc = Jsoup.parse(result);
 
-			String mbid = null;
+			List<String> ids = new ArrayList<String>();
 			switch (type) {
 			case REVIEW:
 				Elements releaseElements = doc.select("release");
@@ -182,8 +184,7 @@ public class PhonotekeExternalIds {
 					int score = new Integer(releaseElement.attr("ext:score"));
 					if(score == 100)
 					{
-						mbid = releaseElement.attr("id");
-						break;
+						ids.add(releaseElement.attr("id"));
 					}
 				}
 				break;
@@ -195,8 +196,7 @@ public class PhonotekeExternalIds {
 					int score = new Integer(artistElement.attr("ext:score"));
 					if(score == 100)
 					{
-						mbid = artistElement.attr("id");
-						break;
+						ids.add(artistElement.attr("id"));
 					}
 				}
 				break;
@@ -204,7 +204,7 @@ public class PhonotekeExternalIds {
 				break;
 			}
 
-			return mbid;
+			return ids.size() == 1 ? ids.get(0) : null;
 		}
 		catch(Throwable t)
 		{
@@ -249,15 +249,18 @@ public class PhonotekeExternalIds {
 				result += line;
 			}
 
-			String sptfid = null;
+			List<String> ids = new ArrayList<String>();
 			JsonNode json = new ObjectMapper().readTree(result);
 			JsonNode items = json.get("albums").get("items");
-			if(items.size() > 0)
+			for(int i = 0; i < items.size(); i++)
 			{
-				sptfid = items.get(0).get("id").textValue();
+				if(release.replace(" ", "").toUpperCase().equals(items.get(i).get("name").textValue().replace(" ", "").toUpperCase()))
+				{
+					ids.add(items.get(i).get("id").textValue());
+				}
 			}
 
-			return sptfid;
+			return ids.size() == 1 ? ids.get(0) : null;
 		}
 		catch(Throwable t)
 		{

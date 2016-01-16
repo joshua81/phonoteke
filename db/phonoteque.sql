@@ -1,11 +1,9 @@
 /*
 DROP TABLE musicdb.document;
-DROP TABLE musicdb.link;
-DROP TABLE musicdb.error;
+DROP TABLE musicdb.event;
 
 delete from musicdb.document;
-delete from musicdb.link;
-delete from musicdb.error;
+delete from musicdb.event;
 */
 
 CREATE TABLE musicdb.document (
@@ -13,11 +11,7 @@ CREATE TABLE musicdb.document (
   `url` varchar(200) NOT NULL,
   `type` varchar(10) NOT NULL,
   `band` varchar(100) DEFAULT NULL,
-  `bandId` varchar(100) DEFAULT NULL,
-  `bandIdSptf` varchar(100) DEFAULT NULL,
   `album` varchar(200) DEFAULT NULL,
-  `albumId` varchar(100) DEFAULT NULL,
-  `albumIdSptf` varchar(100) DEFAULT NULL,
   `content` longtext NOT NULL,
   `creation_date` date DEFAULT NULL,
   `cover` varchar(200) NOT NULL,
@@ -27,6 +21,10 @@ CREATE TABLE musicdb.document (
   `label` varchar(100) DEFAULT NULL,
   `vote` float DEFAULT NULL,
   `milestone` bit(1) DEFAULT NULL,
+  `mbBandId` varchar(100) DEFAULT NULL,
+  `mbAlbumId` varchar(100) DEFAULT NULL,
+  `spotifyfAlbumId` varchar(100) DEFAULT NULL,
+  `amazonAlbumId` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `code_UNIQUE` (`url`),
   KEY `type_IDX` (`type`),
@@ -40,21 +38,9 @@ CREATE TABLE musicdb.document (
   KEY `milestone_IDX` (`milestone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE musicdb.link (
-  `source` varchar(200) NOT NULL,
-  `dest` varchar(200) NOT NULL,
-  KEY `source_IDX` (`source`),
-  KEY `dest_IDX` (`dest`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE musicdb.error (
-  `url` varchar(200) NOT NULL,
-  `error` varchar(400) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE musicdb.event (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `bandId` varchar(100) DEFAULT NULL,
+  `mbBandId` varchar(100) DEFAULT NULL,
   `name` varchar(200) NOT NULL,
   `date` date NOT NULL,
   `location` varchar(60) NOT NULL,

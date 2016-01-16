@@ -61,11 +61,7 @@ function loadArtistHandler(res) {
 	html += '<h2 class="header">';
   html += '<a class="header" href="javascript:loadDocument(\'' + artist.id + '\')"/>' + artist.band + ' - ' + artist.album + '</a><br/>';
   html += '<a class="header" href="javascript:loadLinks(\'' + artist.id + '\')"/>Recensioni</a>';
-	//html += '<a class="artist" id="' + artist.id + '"><span class="glyphicon glyphicon-home" aria-hidden="true"/></a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'doc\')"/>Recensioni</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'video\')"/>Video</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'event\')"/>Eventi</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'similar\')"/>Simili</a>';
+  html += '<a class="header" href="javascript:loadConcerts(\'' + artist.bandId + '\')"/>Concerti</a>';
 	html += '</h2>';
 
 	html += '<div id="detail"><p>' + artist.content + '</p></div>';

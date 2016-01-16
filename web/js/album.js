@@ -74,9 +74,7 @@ function loadAlbumHandler(res) {
 	html += '<h2 class="header">';
   html += '<a class="header" href="javascript:loadDocument(\'' + album.id + '\')"/>' + album.band + ' - ' + album.album + ' (' + album.year + ')</a><br/>';
   html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
-	//html += '<a href="javascript:loadLinks(\'' + album.band + '\', \'video\')"/>Video</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + album.band + '\', \'event\')"/>Eventi</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + album.band + '\', \'similar\')"/>Simili</a>';
+  html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
   html += '</h2>';
 
 	html += '<div id="detail"><p>' + album.content + '</p></div>';

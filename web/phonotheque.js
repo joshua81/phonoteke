@@ -53,7 +53,37 @@ function getInterviews(request, reply)
 
 function getConcerts(request, reply)
 {
-	reply('UNDER CONSTRUCTION!!');
+	var concerts = [];
+	var queryStr = 'SELECT * FROM musicdb.event WHERE date > sysdate()';
+	if (request.params.id)
+	{
+		queryStr += ' AND id = "' + request.params.id + '"';
+	}
+	queryStr += ' ORDER BY date ASC';
+	if(request.query.page && Number(request.query.page) >= 0)
+	{
+		queryStr += ' LIMIT ' + (Number(request.query.page) * 12) + ', 12';
+	}
+	else
+	{
+		queryStr += ' LIMIT 0, 12';
+	}
+
+	console.log('Executing query: ' + queryStr);
+	var query = connection.query(queryStr);
+	query.on('error', function(err)
+	{
+		console.log('Error executing query: ' + queryStr + ' [' + err + ']');
+	})
+	.on('result', function(row)
+	{
+		var concert = JSON.parse(JSON.stringify(row));
+		concerts.push(concert);
+	})
+	.on('end', function()
+	{
+		reply(concerts);
+	});
 }
 
 function getNews(request, reply)

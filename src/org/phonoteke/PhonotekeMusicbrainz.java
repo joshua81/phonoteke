@@ -18,26 +18,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+public class PhonotekeMusicbrainz {
 
-public class PhonotekeExternalIds {
-
-	protected static final int THREAD_SLEEP = 1000;
+	protected static final int THREAD_SLEEP = 2000;
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class.getName());
 
-	protected static final String SQL_FIND_DOCUMENTS = "SELECT * FROM musicdb.document WHERE bandId IS NULL OR albumId IS NULL OR bandIdSptf IS NULL OR albumIdSptf IS NULL ORDER BY creation_date DESC";
+	protected static final String SQL_FIND_DOCUMENTS = "SELECT * FROM musicdb.document WHERE bandId IS NULL OR albumId IS NULL ORDER BY creation_date DESC";
 	protected static final String SQL_SET_MUSICBRAINZ_BANDID = "UPDATE musicdb.document SET bandId = ? WHERE id = ? ORDER BY creation_date DESC";
 	protected static final String SQL_SET_MUSICBRAINZ_ALBUMID = "UPDATE musicdb.document SET albumId = ? WHERE id = ? ORDER BY creation_date DESC";
-	protected static final String SQL_SET_SPOTIFY_BANDID = "UPDATE musicdb.document SET bandIdSptf = ? WHERE id = ? ORDER BY creation_date DESC";
-	protected static final String SQL_SET_SPOTIFY_ALBUMID = "UPDATE musicdb.document SET albumIdSptf = ? WHERE id = ? ORDER BY creation_date DESC";
 
 	protected static Connection db = null;
 	protected static PreparedStatement queryFindDocuments = null;
 	protected static PreparedStatement querySetMusicbrainzBandId = null;
 	protected static PreparedStatement querySetMusicbrainzAlbumId = null;
-	protected static PreparedStatement querySetSpotifyBandId = null;
-	protected static PreparedStatement querySetSpotifyAlbumId = null;
 
 	static 
 	{
@@ -48,8 +41,6 @@ public class PhonotekeExternalIds {
 			queryFindDocuments = db.prepareStatement(SQL_FIND_DOCUMENTS);
 			querySetMusicbrainzBandId = db.prepareStatement(SQL_SET_MUSICBRAINZ_BANDID);
 			querySetMusicbrainzAlbumId = db.prepareStatement(SQL_SET_MUSICBRAINZ_ALBUMID);
-			querySetSpotifyBandId = db.prepareStatement(SQL_SET_SPOTIFY_BANDID);
-			querySetSpotifyAlbumId = db.prepareStatement(SQL_SET_SPOTIFY_ALBUMID);
 		} 
 		catch (Throwable t) 
 		{
@@ -72,70 +63,60 @@ public class PhonotekeExternalIds {
 				// MusicBrainz
 				switch (type) {
 				case REVIEW:
-					String mbAlbumId = docs.getString("albumId");
-					if(mbAlbumId == null)
-					{
-						String mbid = getMBId(type, artist, release);
-						if(mbid == null)
-						{
-							LOGGER.info(artist + "(" + release + ") MusicBrainz id: not found");
-						}
-						else
-						{
-							querySetMusicbrainzAlbumId.setString(1, mbid);
-							querySetMusicbrainzAlbumId.setString(2, id);
-							querySetMusicbrainzAlbumId.executeUpdate();
-							LOGGER.info(artist + "(" + release + ") MusicBrainz id: " + mbid);
-						}
-					}
-					break;
-				case MONOGRAPH:
 					String mbBandId = docs.getString("bandId");
 					if(mbBandId == null)
 					{
-						String mbid = getMBId(type, artist, release);
+						String mbid = getMusicBrainzBandId(artist);
 						if(mbid == null)
 						{
-							LOGGER.info(artist + " MusicBrainz id: not found");
+							LOGGER.info(artist + ": MBid not found");
 						}
 						else
 						{
 							querySetMusicbrainzBandId.setString(1, mbid);
 							querySetMusicbrainzBandId.setString(2, id);
 							querySetMusicbrainzBandId.executeUpdate();
-							LOGGER.info(artist + " MusicBrainz id: " + mbid);
+							LOGGER.info(artist + ": MBid " + mbid);
 						}
 					}
-					break;
-				}
 
-				// Spotify
-				switch (type) {
-				case REVIEW:
-					String sptfAlbumId = docs.getString("albumIdSptf");
-					if(sptfAlbumId == null)
+					String mbAlbumId = docs.getString("albumId");
+					if(mbAlbumId == null)
 					{
-						String sptfid = getSPTFId(type, artist, release);
-						if(sptfid == null)
+						String mbid = getMusicBrainzAlbumId(artist, release);
+						if(mbid == null)
 						{
-							LOGGER.info(artist + "(" + release + ") Spotify id: not found");
+							LOGGER.info(artist + " - " + release + ": MBid not found");
 						}
 						else
 						{
-							querySetSpotifyAlbumId.setString(1, sptfid);
-							querySetSpotifyAlbumId.setString(2, id);
-							querySetSpotifyAlbumId.executeUpdate();
-							LOGGER.info(artist + "(" + release + ") Spotify id: " + sptfid);
+							querySetMusicbrainzAlbumId.setString(1, mbid);
+							querySetMusicbrainzAlbumId.setString(2, id);
+							querySetMusicbrainzAlbumId.executeUpdate();
+							LOGGER.info(artist + " - " + release + ": MBid " + mbid);
 						}
 					}
 					break;
 				case MONOGRAPH:
-					String sptfBandId = docs.getString("bandIdSptf");
-					if(sptfBandId == null)
+					mbBandId = docs.getString("bandId");
+					if(mbBandId == null)
 					{
-						// TODO: to be implemented
+						String mbid = getMusicBrainzBandId(artist);
+						if(mbid == null)
+						{
+							LOGGER.info(artist + ": MBid not found");
+						}
+						else
+						{
+							querySetMusicbrainzBandId.setString(1, mbid);
+							querySetMusicbrainzBandId.setString(2, id);
+							querySetMusicbrainzBandId.executeUpdate();
+							LOGGER.info(artist + ": MBid " + mbid);
+						}
 					}
 					break;
+				default:
+
 				}
 
 				// To prevent MusicBrainz '503 Service Unavailable error'
@@ -149,21 +130,12 @@ public class PhonotekeExternalIds {
 	}
 
 
-	private static String getMBId(AbstractCrawler.TYPE type, String artist, String release)
+	private static String getMusicBrainzBandId(String artist)
 	{
 		BufferedReader rd = null;
 		try
 		{
-			String urlString = null;
-			switch (type) {
-			case REVIEW:
-				urlString = "http://musicbrainz.org/ws/2/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20" + "release:" + release.trim().replace(" ", "%20");
-				break;
-			case MONOGRAPH:
-				urlString = "http://musicbrainz.org/ws/2/artist/?query=artist:" + artist.trim().replace(" ", "%20");
-				break;
-			}
-
+			String urlString = "http://musicbrainz.org/ws/2/artist/?query=artist:" + artist.trim().replace(" ", "%20");
 			String result = "";
 			String line = null;
 			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
@@ -175,39 +147,22 @@ public class PhonotekeExternalIds {
 			Document doc = Jsoup.parse(result);
 
 			List<String> ids = new ArrayList<String>();
-			switch (type) {
-			case REVIEW:
-				Elements releaseElements = doc.select("release");
-				for(int i = 0; i < releaseElements.size(); i++)
+			Elements artistElements = doc.select("artist");
+			for(int i = 0; i < artistElements.size(); i++)
+			{
+				Element artistElement = artistElements.get(i);
+				int score = new Integer(artistElement.attr("ext:score"));
+				if(score == 100)
 				{
-					Element releaseElement = releaseElements.get(i);
-					int score = new Integer(releaseElement.attr("ext:score"));
-					if(score == 100)
-					{
-						ids.add(releaseElement.attr("id"));
-					}
+					ids.add(artistElement.attr("id"));
 				}
-				break;
-			case MONOGRAPH:
-				Elements artistElements = doc.select("artist");
-				for(int i = 0; i < artistElements.size(); i++)
-				{
-					Element artistElement = artistElements.get(i);
-					int score = new Integer(artistElement.attr("ext:score"));
-					if(score == 100)
-					{
-						ids.add(artistElement.attr("id"));
-					}
-				}
-				break;
-			default:
-				break;
 			}
 
 			return ids.size() == 1 ? ids.get(0) : null;
 		}
 		catch(Throwable t)
 		{
+			LOGGER.error("ERROR: " + t.getMessage());
 			return null;
 		}
 		finally
@@ -226,20 +181,12 @@ public class PhonotekeExternalIds {
 		}
 	}
 
-	private static String getSPTFId(AbstractCrawler.TYPE type, String artist, String release)
+	private static String getMusicBrainzAlbumId(String artist, String release)
 	{
 		BufferedReader rd = null;
 		try
 		{
-			String urlString = null;
-			switch (type) {
-			case REVIEW:
-				urlString = "https://api.spotify.com/v1/search?q=album:" + release.trim().replace(" ", "%20") + "%20artist:" + artist.trim().replace(" ", "%20") + "&type=album";
-				break;
-			case MONOGRAPH:
-				break;
-			}
-
+			String urlString = "http://musicbrainz.org/ws/2/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20" + "release:" + release.trim().replace(" ", "%20");
 			String result = "";
 			String line = null;
 			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
@@ -248,15 +195,17 @@ public class PhonotekeExternalIds {
 			{
 				result += line;
 			}
+			Document doc = Jsoup.parse(result);
 
 			List<String> ids = new ArrayList<String>();
-			JsonNode json = new ObjectMapper().readTree(result);
-			JsonNode items = json.get("albums").get("items");
-			for(int i = 0; i < items.size(); i++)
+			Elements releaseElements = doc.select("release");
+			for(int i = 0; i < releaseElements.size(); i++)
 			{
-				if(release.replace(" ", "").toUpperCase().equals(items.get(i).get("name").textValue().replace(" ", "").toUpperCase()))
+				Element releaseElement = releaseElements.get(i);
+				int score = new Integer(releaseElement.attr("ext:score"));
+				if(score == 100)
 				{
-					ids.add(items.get(i).get("id").textValue());
+					ids.add(releaseElement.attr("id"));
 				}
 			}
 
@@ -264,6 +213,7 @@ public class PhonotekeExternalIds {
 		}
 		catch(Throwable t)
 		{
+			LOGGER.error("ERROR: " + t.getMessage());
 			return null;
 		}
 		finally

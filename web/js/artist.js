@@ -61,11 +61,7 @@ function loadArtistHandler(res) {
 	html += '<h2 class="header">';
   html += '<a class="header" href="javascript:loadDocument(\'' + artist.id + '\')"/>' + artist.band + ' - ' + artist.album + '</a><br/>';
   html += '<a class="header" href="javascript:loadLinks(\'' + artist.id + '\')"/>Recensioni</a>';
-	//html += '<a class="artist" id="' + artist.id + '"><span class="glyphicon glyphicon-home" aria-hidden="true"/></a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'doc\')"/>Recensioni</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'video\')"/>Video</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'event\')"/>Eventi</a>&nbsp;|&nbsp;';
-	//html += '<a href="javascript:loadLinks(\'' + artist.band + '\', \'similar\')"/>Simili</a>';
+  html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
 	html += '</h2>';
 
 	html += '<div id="detail"><p>' + artist.content + '</p></div>';
@@ -74,4 +70,35 @@ function loadArtistHandler(res) {
 
   window.scrollTo(0, 0);
   history.pushState({status: "artist", content: html}, null, "/");
+}
+
+// CONCERT
+function loadConcerts(id) {
+  console.log("loadConcerts");
+
+	var req = new XMLHttpRequest();
+	req.onreadystatechange = function() {
+		if (req.readyState == 4 && req.status == 200) {
+			var res = JSON.parse(req.responseText);
+			loadConcertsHandler(res);
+		}
+	}
+	req.open("GET", "/concerts/" + id, true);
+	req.send();
+}
+
+function loadConcertsHandler(res) {
+	if(res.length == 0)
+	{
+		return;
+	}
+
+  var html = '<p><ul class="list-group">';
+  for(var i = 0; i < res.length; i++) {
+    var concert = res[i];
+    html += '<li class="list-group-item">' + concert.name + '</li>';
+  }
+  html += '</ul></p>';
+
+  document.getElementById("detail").innerHTML = html;
 }

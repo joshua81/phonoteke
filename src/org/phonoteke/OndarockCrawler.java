@@ -115,13 +115,13 @@ public class OndarockCrawler extends AbstractCrawler
 			String cover = null;
 			switch (getDocumentType(url)) {
 			case REVIEW:
-				coverElement = doc.select("div[id=cover]").first();
+				coverElement = doc.select("div[id=cover_rec]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				logger.debug("Cover: " + cover);
 				return getDocumentURL(cover);
 			case MONOGRAPH:
-				coverElement = doc.select("div[id=right]").first();
+				coverElement = doc.select("div[id=col_right_mono]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				logger.debug("Cover: " + cover);

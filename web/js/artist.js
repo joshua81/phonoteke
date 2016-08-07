@@ -27,7 +27,7 @@ function loadArtistsHandler(res) {
     var artist = res[i];
     html += '<div class="col-md-4 col-sm-6">';
   	html += '<a class="artist" href="javascript:loadArtist(\'' + artist.id + '\')"><img class="artist" src="' + artist.cover + '"/></a>';
-  	html += '<h2 class="artist">' + artist.band + ' - ' + artist.album + '</h2>';
+  	html += '<h2 class="artist">' + artist.band + '<br/>' + artist.album + '</h2>';
   	html += '</div>';
   }
   content.innerHTML = html;

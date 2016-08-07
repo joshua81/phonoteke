@@ -12,7 +12,7 @@ function loadAlbums(page) {
 	}
   var text = searchInput.value.trim();
   console.log("/albums?page=" + page + "&search=" + text);
-	req.open("GET", "/albums?page=" + page + "&search=" + text, true);
+	req.open("GET", "http://localhost:8180/albums?page=" + page + "&search=" + text, true);
 	req.send();
 }
 
@@ -27,7 +27,7 @@ function loadAlbumsHandler(res) {
     var album = res[i];
   	html += '<div class="col-md-4 col-sm-6">';
   	html += '<a class="album" href="javascript:loadAlbum(\'' + album.id + '\')"><img class="album" src="' + album.cover + '"/></a>';
-  	html += '<h2 class="album">' + album.band + ' - ' + album.album + '</h2>';
+  	html += '<h2 class="album">' + album.band + '<br/>' + album.album + '</h2>';
     html += '</div>';
   }
   content.innerHTML = html;

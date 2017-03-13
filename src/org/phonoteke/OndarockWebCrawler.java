@@ -30,10 +30,12 @@ public class OndarockWebCrawler extends WebCrawler
 	public static final String MONGO_DB = "phonoteke";
 	
 	private static Logger logger = LogManager.getLogger(PhonotekeCrawler.class.getName());
-	private static DBCollection articles;
 	
-	static 
+	private DBCollection articles;
+	
+	public OndarockWebCrawler()
 	{
+		super();
 		try 
 		{
 			DB db = new MongoClient(MONGO_HOST, MONGO_PORT).getDB(MONGO_DB);
@@ -41,7 +43,7 @@ public class OndarockWebCrawler extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			logger.error("Error connecting to MySQL db: " + t.getMessage());
+			logger.error("Error connecting to Mongo db: " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -80,7 +82,7 @@ public class OndarockWebCrawler extends WebCrawler
 				String url = page.getWebURL().getURL();
 				
 				// check if the page must be crawled
-				Article article = OndarockArticle.newInstance(url, doc);
+				OndarockArticle article = OndarockArticle.newInstance(url, doc);
 				if(!article.shouldVisit())
 				{
 					return;

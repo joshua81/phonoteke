@@ -23,7 +23,7 @@ import org.jsoup.select.Elements;
 public class PhonotekeMusicbrainz {
 
 	protected static final int THREAD_SLEEP = 3000;
-	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class.getName());
+	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeMusicbrainz.class.getName());
 
 	protected static final String SQL_FIND_ALBUMS = "SELECT * FROM musicdb.document WHERE (bandId IS NULL OR albumId IS NULL) AND type = 'REVIEW' ORDER BY creation_date DESC";
 	protected static final String SQL_FIND_BANDS = "SELECT * FROM musicdb.document WHERE (bandId IS NULL) AND type = 'MONOGRAPH' ORDER BY creation_date DESC";

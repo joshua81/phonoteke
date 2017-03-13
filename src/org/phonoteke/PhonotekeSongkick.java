@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhonotekeSongkick {
 	protected static final int THREAD_SLEEP = 3000;
-	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class.getName());
+	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeSongkick.class.getName());
 
 	protected static final String SQL_FIND_BANDS = "SELECT DISTINCT bandId FROM musicdb.document WHERE bandId is not null";
 	protected static final String SQL_FIND_EVENT = "SELECT * FROM musicdb.event WHERE bandId = ? AND date = ? AND location = ?";

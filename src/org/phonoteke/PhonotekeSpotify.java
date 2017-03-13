@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PhonotekeSpotify {
 
 	protected static final int THREAD_SLEEP = 3000;
-	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class.getName());
+	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeSpotify.class.getName());
 
 	protected static final String SQL_FIND_ALBUMS = "SELECT * FROM musicdb.document WHERE albumIdSptf IS NULL AND type = 'REVIEW' ORDER BY creation_date DESC";
 	protected static final String SQL_SET_SPOTIFY_ALBUMID = "UPDATE musicdb.document SET albumIdSptf = ? WHERE id = ?";

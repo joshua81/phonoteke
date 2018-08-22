@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,10 +39,10 @@ public class OndarockCrawler extends WebCrawler
 	private static final String MONGO_HOST = "localhost";
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
-	
+
 	private DBCollection articles;
 
-	
+
 	public OndarockCrawler()
 	{
 		try 
@@ -55,14 +56,14 @@ public class OndarockCrawler extends WebCrawler
 			throw new RuntimeException(t);
 		}
 	}
-	
-	
+
+
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String dest = url.getURL().toLowerCase();
 		return FILTERS.matcher(dest).matches() && dest.startsWith(ONDAROCK_URL);
 	}
-	
+
 	@Override
 	public void visit(Page page) {
 		if (page.getParseData() instanceof HtmlParseData) 
@@ -74,7 +75,7 @@ public class OndarockCrawler extends WebCrawler
 				String html = htmlParseData.getHtml();
 				Document doc = Jsoup.parse(html);
 				String url = page.getWebURL().getURL();
-				
+
 				// check if the page must be crawled
 				Article article = new Article(doc, url);
 				if(article.getType() == null)
@@ -115,12 +116,12 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 	}
-	
+
 	private enum TYPE {
 		MONOGRAPH,
 		REVIEW
 	}
-	
+
 	private class Article
 	{
 		private String url;
@@ -136,7 +137,7 @@ public class OndarockCrawler extends WebCrawler
 		private String label;
 		private Float vote;
 		private Boolean milestone;
-		
+
 		public Article(Document doc, String url)
 		{
 			this.url = initUrl(url);
@@ -153,7 +154,7 @@ public class OndarockCrawler extends WebCrawler
 			this.milestone = initMilestone(url);
 			this.creationDate = initCreationDate(doc);
 		}
-		
+
 		/**
 		 * Converts relative urls to absolute urls 
 		 * 
@@ -175,28 +176,14 @@ public class OndarockCrawler extends WebCrawler
 				return null;
 			} 
 		}
-		
+
 		private String initContent(Document doc) {
 			try
 			{
-				// remove all images
 				Element contentElement = doc.select("div[id=maintext]").first();
-				Elements imgElements = contentElement.select("img");
-				for(int i = 0; i < imgElements.size(); i++)
-				{
-					imgElements.get(i).remove();
-				}
-
-				// replace links with the associated code inside the review text
-				Elements linkElements = contentElement.select("a[href]");
-				for(int i = 0; i < linkElements.size(); i++)
-				{
-					linkElements.get(i).remove();
-//					String link = linkElements.get(i).attr("href");
-//					link = getDocumentURL(link);
-//					linkElements.get(i).attr("href", "javascript:loadDocument('" + getSHA256(link) + "')");
-//					logger.debug("Link: " + link);
-				}
+				removeComments(contentElement);
+				removeImages(contentElement);
+				removeLinks(contentElement);
 
 				InputStream is =  new ByteArrayInputStream(contentElement.html().getBytes(StandardCharsets.UTF_8));
 				return IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -204,6 +191,37 @@ public class OndarockCrawler extends WebCrawler
 			catch(Throwable t)
 			{
 				return null;
+			}
+		}
+
+		private void removeLinks(Element node) {
+			Elements linkElements = node.select("a[href]");
+			for(int i = 0; i < linkElements.size(); i++)
+			{
+				linkElements.get(i).unwrap();
+				//				String link = linkElements.get(i).attr("href");
+				//				link = getDocumentURL(link);
+				//				linkElements.get(i).attr("href", "javascript:loadDocument('" + getSHA256(link) + "')");
+				//				logger.debug("Link: " + link);
+			}
+		}
+
+		private void removeImages(Element node) {
+			Elements imgElements = node.select("img");
+			for(int i = 0; i < imgElements.size(); i++)
+			{
+				imgElements.get(i).remove();
+			}
+		}
+
+		private void removeComments(Node node) {
+			for (int i = 0; i < node.childNodeSize(); i++) {
+				Node child = node.childNode(i);
+				if (child.nodeName().equals("#comment"))
+					child.remove();
+				else {
+					removeComments(child);
+				}
 			}
 		}
 
@@ -451,9 +469,9 @@ public class OndarockCrawler extends WebCrawler
 			}
 			return null;
 		}
-		
+
 		//---------------------------------------
-		
+
 		public String getUrl() {
 			return url;
 		}
@@ -461,7 +479,7 @@ public class OndarockCrawler extends WebCrawler
 		public void setUrl(String url) {
 			this.url = url;
 		}
-		
+
 		public TYPE getType() {
 			return type;
 		}
@@ -477,7 +495,7 @@ public class OndarockCrawler extends WebCrawler
 		public void setContent(String content) {
 			this.content = content;
 		}
-		
+
 		public String getBand() {
 			return band;
 		}

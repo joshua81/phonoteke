@@ -9,6 +9,8 @@
 		</File>
 	</Appenders>
 	<Loggers>
+		<Logger name="org.apache" level="OFF" />
+		<Logger name="edu.uci" level="OFF" />
 		<Logger name="org.phonoteke" level="info" additivity="false">
 			<AppenderRef ref="File" />
 			<AppenderRef ref="Console" />

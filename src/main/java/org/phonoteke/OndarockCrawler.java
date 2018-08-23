@@ -10,9 +10,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,6 +23,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -34,8 +38,9 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class OndarockCrawler extends WebCrawler
 {
 	public static final String ONDAROCK_URL = "http://www.ondarock.it/";
-
+	private static final Logger LOGGER = LogManager.getLogger(OndarockCrawler.class);
 	private static final Pattern FILTERS = Pattern.compile(".*(\\.(htm|html))$");
+	
 	private static final String MONGO_HOST = "localhost";
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
@@ -52,7 +57,7 @@ public class OndarockCrawler extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			logger.error("Error connecting to Mongo db: " + t.getMessage());
+			LOGGER.error("Error connecting to Mongo db: " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -84,7 +89,7 @@ public class OndarockCrawler extends WebCrawler
 				}
 
 				// check if the article was already crawled
-				DBObject articleDB = articles.findOne(article.getUrl());
+				DBObject articleDB = articles.findOne(article.getId());
 				if(articleDB != null)
 				{
 					return;
@@ -92,13 +97,13 @@ public class OndarockCrawler extends WebCrawler
 
 				// insert into DOCUMENT
 				DBObject json = (DBObject)JSON.parse(new ObjectMapper().writeValueAsString(article));
-				json.put("_id", article.getUrl());
+				json.put("_id", article.getId());
 				articles.insert(json);
-				logger.info("Document " + article.getUrl() + " added");
+				LOGGER.info("Document " + article.getId() + " added");
 			} 
 			catch (Throwable t) 
 			{
-				logger.error("Error parsing page " + page.getWebURL().getURL());
+				LOGGER.error("Error parsing page " + page.getWebURL().getURL());
 			}
 			finally
 			{
@@ -124,6 +129,7 @@ public class OndarockCrawler extends WebCrawler
 
 	private class Article
 	{
+		private String id;
 		private String url;
 		private TYPE type;
 		private String content;
@@ -131,45 +137,60 @@ public class OndarockCrawler extends WebCrawler
 		private String album;
 		private Date creationDate;
 		private String cover;
-		private String author;
-		private String genre;
+		private Set<String> authors;
+		private Set<String> genres;
 		private Integer year;
 		private String label;
 		private Float vote;
 		private Boolean milestone;
+		private Set<String> links;
+		private String source = "ondarock";
 
 		public Article(Document doc, String url)
 		{
-			this.url = initUrl(url);
 			this.type = initType(url);
-			this.content = initContent(doc);
-			this.band = initBand(doc);
-			this.album = initAlbum(doc);
-			this.cover = initCover(doc);
-			this.author = initAuthor(doc);
-			this.genre = initGenre(doc);
-			this.year = initYear(doc);
-			this.label = initLabel(doc);
-			this.vote = initVote(doc);
-			this.milestone = initMilestone(url);
-			this.creationDate = initCreationDate(doc);
+			if(getType() != null)
+			{
+				this.id = initId(url);
+				this.url = initUrl(url);
+				this.creationDate = initCreationDate(doc);
+				this.content = initContentAndLinks(doc);
+				this.band = initBand(doc);
+				this.album = initAlbum(doc);
+				this.cover = initCover(doc);
+				this.authors = initAuthors(doc);
+				this.genres = initGenres(doc);
+				this.year = initYear(doc);
+				this.label = initLabel(doc);
+				this.vote = initVote(doc);
+				this.milestone = initMilestone(url);
+			}
 		}
 
-		/**
-		 * Converts relative urls to absolute urls 
-		 * 
-		 * @param url
-		 * @return
-		 */
+		private String initId(String url) {
+			url = initUrl(url);
+			if(url == null)
+			{
+				return null;
+			}
+			String[] chunks = url.split("/");
+			url = chunks[chunks.length-1].split("\\.")[0].replaceAll("_", "-").toLowerCase();
+			return "ondarock:" + url;
+		}
+		
 		private String initUrl(String url) {
 			try 
 			{
-				if(!url.startsWith(ONDAROCK_URL))
+				if(url.startsWith(".") || url.startsWith("/"))
 				{
 					url = new URL(new URL(ONDAROCK_URL), url).toString();
+					url = url.replaceAll("\\.\\./", "");
 				}
-				url = url.replaceAll("\\.\\./", "");
-				return url;
+				if(!url.startsWith(ONDAROCK_URL))
+				{
+					return null;
+				}
+				return url.trim();
 			} 
 			catch (Throwable t) 
 			{
@@ -177,15 +198,17 @@ public class OndarockCrawler extends WebCrawler
 			} 
 		}
 
-		private String initContent(Document doc) {
+		private String initContentAndLinks(Document doc) {
 			try
 			{
-				Element contentElement = doc.select("div[id=maintext]").first();
-				removeComments(contentElement);
-				removeImages(contentElement);
-				removeLinks(contentElement);
+				Element content = doc.select("div[id=maintext]").first();
+				removeComments(content);
+				removeImages(content);
+				removeScripts(content);
+				removeDivs(content);
+				removeLinks(content);
 
-				InputStream is =  new ByteArrayInputStream(contentElement.html().getBytes(StandardCharsets.UTF_8));
+				InputStream is =  new ByteArrayInputStream(content.html().getBytes(StandardCharsets.UTF_8));
 				return IOUtils.toString(is, StandardCharsets.UTF_8);
 			}
 			catch(Throwable t)
@@ -195,22 +218,43 @@ public class OndarockCrawler extends WebCrawler
 		}
 
 		private void removeLinks(Element node) {
-			Elements linkElements = node.select("a[href]");
-			for(int i = 0; i < linkElements.size(); i++)
+			links = Sets.newHashSet();
+
+			Elements elements = node.select("a[href]");
+			for(int i = 0; i < elements.size(); i++)
 			{
-				linkElements.get(i).unwrap();
-				//				String link = linkElements.get(i).attr("href");
-				//				link = getDocumentURL(link);
-				//				linkElements.get(i).attr("href", "javascript:loadDocument('" + getSHA256(link) + "')");
-				//				logger.debug("Link: " + link);
+				String link = initId(elements.get(i).attr("href"));
+				elements.get(i).unwrap();
+				if(link != null)
+				{
+					links.add(link);
+					//				linkElements.get(i).attr("href", "javascript:loadDocument('" + getSHA256(link) + "')");
+					LOGGER.info("Link: " + link);
+				}
 			}
 		}
 
 		private void removeImages(Element node) {
-			Elements imgElements = node.select("img");
-			for(int i = 0; i < imgElements.size(); i++)
+			Elements elements = node.select("img");
+			for(int i = 0; i < elements.size(); i++)
 			{
-				imgElements.get(i).remove();
+				elements.get(i).remove();
+			}
+		}
+		
+		private void removeScripts(Element node) {
+			Elements elements = node.select("script");
+			for(int i = 0; i < elements.size(); i++)
+			{
+				elements.get(i).remove();
+			}
+		}
+		
+		private void removeDivs(Element node) {
+			Elements elements = node.select("div");
+			for(int i = 0; i < elements.size(); i++)
+			{
+				elements.get(i).remove();
 			}
 		}
 
@@ -234,7 +278,7 @@ public class OndarockCrawler extends WebCrawler
 				intestazioneElement = doc.select("div[id=intestazionerec]").first();
 				bandElement = intestazioneElement.select("h1").first();
 				band = bandElement.text().trim();
-				logger.debug("Band: " + band);
+				LOGGER.info("Band: " + band);
 				return band;
 			case MONOGRAPH:
 				intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
@@ -244,7 +288,7 @@ public class OndarockCrawler extends WebCrawler
 				}
 				bandElement = intestazioneElement.select("h2").first();
 				band = bandElement.text().trim();
-				logger.debug("Band: " + band);
+				LOGGER.info("Band: " + band);
 				return band;
 			default:
 				return null;
@@ -260,7 +304,7 @@ public class OndarockCrawler extends WebCrawler
 				intestazioneElement = doc.select("div[id=intestazionerec]").first();
 				albumElement = intestazioneElement.select("h2").first();
 				album = albumElement.text().trim();
-				logger.debug("Album: " + album);
+				LOGGER.info("Album: " + album);
 				return album;
 			case MONOGRAPH:
 				intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
@@ -270,7 +314,7 @@ public class OndarockCrawler extends WebCrawler
 				}
 				albumElement = intestazioneElement.select("h3").first();
 				album = albumElement.text().trim();
-				logger.debug("Album: " + album);
+				LOGGER.info("Album: " + album);
 				return album;
 			default:
 				return null;
@@ -295,11 +339,11 @@ public class OndarockCrawler extends WebCrawler
 						java.util.Date date = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + year);
 						reviewDate = new Date(date.getTime());
 					}
-					logger.debug("Review date: " + reviewDate);
+					LOGGER.info("Review date: " + reviewDate);
 					return reviewDate;
 				case MONOGRAPH:
 					reviewDate = new Date(Calendar.getInstance().getTime().getTime());
-					logger.debug("Review date: " + reviewDate);
+					LOGGER.info("Review date: " + reviewDate);
 					return reviewDate;
 				default:
 					return null;
@@ -321,13 +365,13 @@ public class OndarockCrawler extends WebCrawler
 					coverElement = doc.select("div[id=cover_rec]").first();
 					coverElement = coverElement.select("img[src]").first();
 					cover = coverElement.attr("src");
-					logger.debug("Cover: " + cover);
+					LOGGER.info("Cover: " + cover);
 					return initUrl(cover);
 				case MONOGRAPH:
 					coverElement = doc.select("div[id=col_right_mono]").first();
 					coverElement = coverElement.select("img[src]").first();
 					cover = coverElement.attr("src");
-					logger.debug("Cover: " + cover);
+					LOGGER.info("Cover: " + cover);
 					return initUrl(cover);
 				default:
 					return null;
@@ -339,8 +383,8 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private String initAuthor(Document doc) {
-			String author = null;
+		private Set<String> initAuthors(Document doc) {
+			Set<String> authors = null;
 			Element authorElement = null;
 			switch (type) {
 			case REVIEW:
@@ -348,31 +392,31 @@ public class OndarockCrawler extends WebCrawler
 				if(authorElement != null)
 				{
 					authorElement = authorElement.select("a[href]").first();
-					author = authorElement.html();
+					authors = Sets.newHashSet(authorElement.html().trim().split(","));
 				}
-				logger.debug("Author: " + author);
-				return author;
+				LOGGER.info("Authors: " + authors);
+				return authors;
 			case MONOGRAPH:
 				authorElement = doc.select("span[class=recensore]").first();
 				if(authorElement != null)
 				{
 					authorElement = authorElement.select("a[href]").first();
-					author = authorElement.html();
+					authors = Sets.newHashSet(authorElement.html().trim().split(","));
 				}
-				logger.debug("Author: " + author);
-				return author;
+				LOGGER.info("Author: " + authors);
+				return authors;
 			default:
 				return null;
 			}
 		}
 
-		private String initGenre(Document doc) {
+		private Set<String> initGenres(Document doc) {
 			switch (type) {
 			case REVIEW:
 				Element datiElement = doc.select("div[id=dati]").first();
 				String dati = datiElement.text();
-				String genres = dati.split("\\|")[1].trim();
-				logger.debug("Genres: " + genres);
+				Set<String> genres =  Sets.newHashSet(dati.split("\\|")[1].trim().split(","));
+				LOGGER.info("Genres: " + genres);
 				return genres;
 			default:
 				return null;
@@ -386,7 +430,7 @@ public class OndarockCrawler extends WebCrawler
 				String dati = datiElement.text();
 				String yearStr = dati.split(" ")[0].trim();
 				Integer year = Integer.parseInt(yearStr);
-				logger.debug("Year: " + year);
+				LOGGER.info("Year: " + year);
 				return year;
 			default:
 				return 0;
@@ -401,7 +445,7 @@ public class OndarockCrawler extends WebCrawler
 				dati = datiElement.text();
 				dati = dati.split("\\(")[1].trim();
 				String label = dati.split("\\)")[0].trim();
-				logger.debug("Label: " + label);
+				LOGGER.info("Label: " + label);
 				return label;
 			default:
 				return null;
@@ -428,7 +472,7 @@ public class OndarockCrawler extends WebCrawler
 						voteStr = voteStr.substring(0, voteStr.length() - 4);
 						vote = format.parse(voteStr).floatValue();
 					}
-					logger.debug("Vote: " + vote);
+					LOGGER.info("Vote: " + vote);
 					return vote;
 				default:
 					return 0F;
@@ -444,7 +488,7 @@ public class OndarockCrawler extends WebCrawler
 			switch (type) {
 			case REVIEW:
 				Boolean milestone = url.contains("pietremiliari");
-				logger.debug("Milestone: " + milestone);
+				LOGGER.info("Milestone: " + milestone);
 				return milestone;
 			default:
 				return false;
@@ -472,6 +516,14 @@ public class OndarockCrawler extends WebCrawler
 
 		//---------------------------------------
 
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+		
 		public String getUrl() {
 			return url;
 		}
@@ -528,20 +580,20 @@ public class OndarockCrawler extends WebCrawler
 			this.cover = cover;
 		}
 
-		public String getAuthor() {
-			return author;
+		public Set<String> getAuthors() {
+			return authors;
 		}
 
-		public void setAuthor(String author) {
-			this.author = author;
+		public void setAuthor(Set<String> authors) {
+			this.authors = authors;
 		}
 
-		public String getGenre() {
-			return genre;
+		public Set<String> getGenres() {
+			return genres;
 		}
 
-		public void setGenre(String genre) {
-			this.genre = genre;
+		public void setGenre(Set<String> genres) {
+			this.genres = genres;
 		}
 
 		public Integer getYear() {
@@ -574,6 +626,22 @@ public class OndarockCrawler extends WebCrawler
 
 		public void setMilestone(Boolean milestone) {
 			this.milestone = milestone;
+		}
+		
+		public Set<String> getLinks() {
+			return links;
+		}
+
+		public void setLinks(Set<String> links) {
+			this.links = links;
+		}
+		
+		public String getSource() {
+			return source;
+		}
+
+		public void setSource(String source) {
+			this.source = source;
 		}
 	}
 }

@@ -169,10 +169,6 @@ public class OndarockCrawler extends WebCrawler
 
 		private String initId(String url) {
 			url = initUrl(url);
-			if(url == null)
-			{
-				return null;
-			}
 			String[] chunks = url.split("/");
 			url = chunks[chunks.length-1].split("\\.")[0].replaceAll("_", "-").toLowerCase();
 			return "ondarock:" + url;
@@ -185,10 +181,6 @@ public class OndarockCrawler extends WebCrawler
 				{
 					url = new URL(new URL(ONDAROCK_URL), url).toString();
 					url = url.replaceAll("\\.\\./", "");
-				}
-				if(!url.startsWith(ONDAROCK_URL))
-				{
-					return null;
 				}
 				return url.trim();
 			} 
@@ -223,12 +215,12 @@ public class OndarockCrawler extends WebCrawler
 			Elements elements = node.select("a[href]");
 			for(int i = 0; i < elements.size(); i++)
 			{
-				String link = initId(elements.get(i).attr("href"));
+//				String link = initId(elements.get(i).attr("href"));
+				String link = initUrl(elements.get(i).attr("href"));
 				elements.get(i).unwrap();
 				if(link != null)
 				{
 					links.add(link);
-					//				linkElements.get(i).attr("href", "javascript:loadDocument('" + getSHA256(link) + "')");
 					LOGGER.info("Link: " + link);
 				}
 			}

@@ -8,7 +8,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class PhonotekeCrawler 
 {
-	private static final String CRAWL_STORAGE_FOLDER = "target/data/phonoteke";
+	private static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	private static final int NUMBER_OF_CRAWLERS = 1;
 	
 	public static void main(String[] args) throws Exception 

@@ -148,33 +148,33 @@ public class OndarockCrawler extends WebCrawler
 
 		public Article(Document doc, String url)
 		{
-			this.type = initType(url);
+			this.type = initType(url, doc);
 			if(getType() != null)
 			{
-				this.id = initId(url);
-				this.url = initUrl(url);
-				this.creationDate = initCreationDate(doc);
-				this.content = initContentAndLinks(doc);
-				this.band = initBand(doc);
-				this.album = initAlbum(doc);
-				this.cover = initCover(doc);
-				this.authors = initAuthors(doc);
-				this.genres = initGenres(doc);
-				this.year = initYear(doc);
-				this.label = initLabel(doc);
-				this.vote = initVote(doc);
-				this.milestone = initMilestone(url);
+				this.id = initId(url, doc);
+				this.url = initUrl(url, doc);
+				this.creationDate = initCreationDate(url, doc);
+				this.content = initContentAndLinks(url, doc);
+				this.band = initBand(url, doc);
+				this.album = initAlbum(url, doc);
+				this.cover = initCover(url, doc);
+				this.authors = initAuthors(url, doc);
+				this.genres = initGenres(url, doc);
+				this.year = initYear(url, doc);
+				this.label = initLabel(url, doc);
+				this.vote = initVote(url, doc);
+				this.milestone = initMilestone(url, doc);
 			}
 		}
 
-		private String initId(String url) {
-			url = initUrl(url);
+		private String initId(String url, Document doc) {
+			url = initUrl(url, doc);
 			String[] chunks = url.split("/");
 			url = chunks[chunks.length-1].split("\\.")[0].replaceAll("_", "-").toLowerCase();
 			return "ondarock:" + url;
 		}
 
-		private String initUrl(String url) {
+		private String initUrl(String url, Document doc) {
 			try 
 			{
 				if(url.startsWith(".") || url.startsWith("/"))
@@ -186,12 +186,12 @@ public class OndarockCrawler extends WebCrawler
 			} 
 			catch (Throwable t) 
 			{
-				LOGGER.error(t.getMessage());
+				LOGGER.error(url + ": " + t.getMessage());
 				return null;
 			} 
 		}
 
-		private String initContentAndLinks(Document doc) {
+		private String initContentAndLinks(String url, Document doc) {
 			try
 			{
 				Element content = doc.select("div[id=maintext]").first();
@@ -199,26 +199,26 @@ public class OndarockCrawler extends WebCrawler
 				removeImages(content);
 				removeScripts(content);
 				removeDivs(content);
-				removeLinks(content);
+				removeLinks(content, doc);
 
 				InputStream is =  new ByteArrayInputStream(content.html().getBytes(StandardCharsets.UTF_8));
 				return IOUtils.toString(is, StandardCharsets.UTF_8);
 			}
 			catch(Throwable t)
 			{
-				LOGGER.error(t.getMessage());
+				LOGGER.error(url + ": " + t.getMessage());
 				return null;
 			}
 		}
 
-		private void removeLinks(Element node) {
+		private void removeLinks(Element node, Document doc) {
 			links = Sets.newHashSet();
 
 			Elements elements = node.select("a[href]");
 			for(int i = 0; i < elements.size(); i++)
 			{
 				//				String link = initId(elements.get(i).attr("href"));
-				String link = initUrl(elements.get(i).attr("href"));
+				String link = initUrl(elements.get(i).attr("href"), doc);
 				elements.get(i).unwrap();
 				if(link != null)
 				{
@@ -262,7 +262,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private String initBand(Document doc) {
+		private String initBand(String url, Document doc) {
 			Element intestazioneElement = null;
 			Element bandElement = null;
 			String band = null;
@@ -286,7 +286,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private String initAlbum(Document doc) {
+		private String initAlbum(String url, Document doc) {
 			Element intestazioneElement = null;
 			Element albumElement = null;
 			String album = null;
@@ -310,7 +310,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private Date initCreationDate(Document doc) {
+		private Date initCreationDate(String url, Document doc) {
 			try
 			{
 				Date reviewDate = null;
@@ -338,12 +338,12 @@ public class OndarockCrawler extends WebCrawler
 			}
 			catch(Throwable t)
 			{
-				LOGGER.error(t.getMessage());
+				LOGGER.error(url + ": " + t.getMessage());
 				return null;
 			}
 		}
 
-		private String initCover(Document doc) {
+		private String initCover(String url, Document doc) {
 			try
 			{
 				Element coverElement = null;
@@ -353,24 +353,24 @@ public class OndarockCrawler extends WebCrawler
 					coverElement = doc.select("div[id=cover_rec]").first();
 					coverElement = coverElement.select("img[src]").first();
 					cover = coverElement.attr("src");
-					return initUrl(cover);
+					return initUrl(cover, doc);
 				case MONOGRAPH:
 					coverElement = doc.select("div[id=col_right_mono]").first();
 					coverElement = coverElement.select("img[src]").first();
 					cover = coverElement.attr("src");
-					return initUrl(cover);
+					return initUrl(cover, doc);
 				default:
 					return null;
 				}
 			}
 			catch(Throwable t)
 			{
-				LOGGER.error(t.getMessage());
+				LOGGER.error(url + ": " + t.getMessage());
 				return null;
 			}
 		}
 
-		private Set<String> initAuthors(Document doc) {
+		private Set<String> initAuthors(String url, Document doc) {
 			Set<String> authors = null;
 			Element authorElement = null;
 			switch (type) {
@@ -395,7 +395,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private Set<String> initGenres(Document doc) {
+		private Set<String> initGenres(String url, Document doc) {
 			switch (type) {
 			case REVIEW:
 				Element datiElement = doc.select("div[id=dati]").first();
@@ -407,7 +407,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private Integer initYear(Document doc) {
+		private Integer initYear(String url, Document doc) {
 			switch (type) {
 			case REVIEW:
 				Element datiElement = doc.select("div[id=dati]").first();
@@ -420,7 +420,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private String initLabel(Document doc) {
+		private String initLabel(String url, Document doc) {
 			switch (type) {
 			case REVIEW:
 				Element datiElement = doc.select("div[id=dati]").first();
@@ -434,7 +434,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private Float initVote(Document doc) {
+		private Float initVote(String url, Document doc) {
 			try
 			{
 				switch (type) {
@@ -461,12 +461,12 @@ public class OndarockCrawler extends WebCrawler
 			}
 			catch(Throwable t)
 			{
-				LOGGER.error(t.getMessage());
+				LOGGER.error(url + ": " + t.getMessage());
 				return 0F;
 			}
 		}
 
-		private Boolean initMilestone(String url) {
+		private Boolean initMilestone(String url, Document doc) {
 			switch (type) {
 			case REVIEW:
 				Boolean milestone = url.contains("pietremiliari");
@@ -476,7 +476,7 @@ public class OndarockCrawler extends WebCrawler
 			}
 		}
 
-		private TYPE initType(String url) {
+		private TYPE initType(String url, Document doc) {
 			if(url.startsWith(ONDAROCK_URL + "pietremiliari") || 
 					url.startsWith(ONDAROCK_URL + "recensioni"))
 			{

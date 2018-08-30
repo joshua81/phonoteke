@@ -1,41 +1,42 @@
-var Hapi = require('hapi');
-var MongoClient = require('mongodb').MongoClient;
-var Types = require('hapi').Types;
-var server = new Hapi.Server();
-var httpRequest = require('request');
+'use strict';
 
-// Use connect method to connect to the server
-var articles = null;
+const Hapi = require('hapi');
+const Types = require('hapi').Types;
+const MongoClient = require('mongodb').MongoClient;
+const MongoServer = require('mongodb').Server;
+
+//HTTP server
+const Server = new Hapi.Server({host:'localhost', port:8180});
+const init = async () => {
+	await Server.register(require('inert'));
+	Server.route([
+		{method:'GET', path:'/', handler:(request, h) => {return h.file('./index.html');}},
+		{method:'GET', path:'/css/{file}', handler:(request, h) => {return h.file('./css/'+request.params.file);}},
+		{method:'GET', path:'/js/{file}', handler:(request, h) => {return h.file('./js/'+request.params.file);}},
+		{method:'GET', path:'/fonts/{file}', handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},
+		{method:'GET', path:'/images/{file}', handler:(request, h) => {return h.file('./images/'+request.params.file);}},
+		{method:'GET', path:'/api/doc', handler:getDocument},
+		{method:'GET', path:'/api/doc/{id}', handler:getDocument},
+		{method:'GET', path:'/api/doc/review', handler:getReview},
+		{method:'GET', path:'/api/doc/review/{id}', handler:getReview},
+		{method:'GET', path:'/api/doc/monograph', handler:getMonograph},
+		{method:'GET', path:'/api/doc/monograph/{id}', handler:getMonograph}]);
+	await Server.start();
+	console.log('Server running at: ${Server.info.uri}');
+};
+process.on('unhandledRejection', (err) => {
+    console.log(err);
+    process.exit(1);
+});
+init();
+
+// Mongo DB
 MongoClient.connect('mongodb://localhost:27017/phonoteke', function(err, db) {
 	console.log("MongoDB: Connected successfully to Phonoteke");
-	articles = db.collection('articles');
+	const articles = db.db('articles');
 });
 
-server.connection({
-	host:'localhost',
-	port:8180
-});
-
-server.route({path:'/', method:'GET', handler:{file:'index.html'}});
-server.route({path:'/api/doc', method:'GET', config:{handler:getDocument}});
-server.route({path:'/api/doc/{id}', method:'GET', config:{handler:getDocument}});
-server.route({path:'/api/doc/review', method:'GET', config:{handler:getReview}});
-server.route({path:'/api/doc/review/{id}', method:'GET', config:{handler:getReview}});
-server.route({path:'/api/doc/monograph', method:'GET', config:{handler:getMonograph}});
-server.route({path:'/api/doc/monograph/{id}', method:'GET', config:{handler:getMonograph}});
-
-server.route({path:'/{file}', method:'GET', handler:{directory:{path:'./'}}});
-server.route({path:'/css/{file}', method:'GET', handler:{directory:{path:'./css'}}});
-server.route({path:'/js/{file}', method:'GET', handler:{directory:{path:'./js'}}});
-server.route({path:'/fonts/{file}', method:'GET', handler:{directory:{path:'./fonts'}}});
-server.route({path:'/images/{file}', method:'GET', handler:{directory:{path:'./images'}}});
-
-server.start((err) => {
-    if (err) {throw err;}
-    console.log('Server: Listening on ' + server.info.uri);
-});
-
-function getDocument(request, reply)
+function getDocument(request, h)
 {
 	if(request.params.id)
 	{
@@ -53,7 +54,7 @@ function getDocument(request, reply)
 	}
 }
 
-function getReview(request, reply)
+function getReview(request, h)
 {
 	if(request.params.id)
 	{
@@ -71,7 +72,7 @@ function getReview(request, reply)
 	}
 }
 
-function getMonograph(request, reply)
+function getMonograph(request, h)
 {
 	if(request.params.id)
 	{

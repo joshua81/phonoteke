@@ -35,7 +35,6 @@ MongoClient.connect('mongodb://localhost:27017/phonoteke', function(err, db) {
 	console.log("MongoDB: Connected successfully to Phonoteke");
 	const articles = db.db('articles');
 });
-init();
 
 function getDocument(request, h)
 {

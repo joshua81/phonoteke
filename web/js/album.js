@@ -46,7 +46,7 @@ function loadAlbum(id) {
 			loadAlbumHandler(res);
 		}
 	}
-	req.open("GET", "/albums/" + id, true);
+	req.open("GET", "/api/doc/review/" + id, true);
 	req.send();
 }
 

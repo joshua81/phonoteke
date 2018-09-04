@@ -12,7 +12,7 @@ function loadArtists(page) {
 	}
   var text = searchInput.value.trim();
   console.log("/artists?page=" + page + "&search=" + text);
-	req.open("GET", "/artists?page=" + page + "&search=" + text, true);
+	req.open("GET", "/api/doc/monograph?page=" + page + "&search=" + text, true);
 	req.send();
 }
 
@@ -45,7 +45,7 @@ function loadArtist(id) {
 			loadArtistHandler(res);
 		}
 	}
-	req.open("GET", "/artists/" + id, true);
+	req.open("GET", "/api/doc/monograph/" + id, true);
 	req.send();
 }
 

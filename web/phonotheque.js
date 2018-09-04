@@ -17,7 +17,7 @@ const init = async () => {
 		{method:'GET', path:'/images/{file}', handler:(request, h) => {return h.file('./images/'+request.params.file);}},
 		{method:'GET', path:'/api/doc', handler:getDocument},
 		{method:'GET', path:'/api/doc/{id}', handler:getDocument},
-		{method:'GET', path:'/api/doc/review', handler:getReview},
+		{method:'GET', path:'/api/doc/review', handler: getReview},
 		{method:'GET', path:'/api/doc/review/{id}', handler:getReview},
 		{method:'GET', path:'/api/doc/monograph', handler:getMonograph},
 		{method:'GET', path:'/api/doc/monograph/{id}', handler:getMonograph}]);
@@ -31,61 +31,59 @@ process.on('unhandledRejection', (err) => {
 init();
 
 // Mongo DB
-MongoClient.connect('mongodb://localhost:27017/phonoteke', function(err, db) {
-	console.log("MongoDB: Connected successfully to Phonoteke");
-	const articles = db.db('articles');
+var articles = null;
+MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
+	console.log("Connected successfully to MongoDB");
+	articles = db.db('phonoteke').collection('articles');
 });
 
-function getDocument(request, h)
+async function getDocument(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Document: document with id ' + request.params.id);
-		articles.find({'id': request.params.id}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		console.log('Document: id ' + request.params.id);
+		const result = await articles.find({'id': request.params.id}).toArray();
+		return result;
 	}
 	else
 	{
+		console.log('Document: page ' + request.query.page);
 		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		articles.find().skip(page*10).limit(10).sort({"creationDate":-1}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		const result = await articles.find().skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		return result;
 	}
 }
 
-function getReview(request, h)
+async function getReview(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Review: document with id ' + request.params.id);
-		articles.find({'id': request.params.id}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		console.log('Review: id ' + request.params.id);
+		const result = await articles.find({'id': request.params.id}).toArray();
+		return result;
 	}
 	else
 	{
+		console.log('Review: page ' + request.query.page);
 		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		articles.find({'type': 'REVIEW'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		const result = await articles.find({'type': 'REVIEW'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		return result;
 	}
 }
 
-function getMonograph(request, h)
+async function getMonograph(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Monograph: document with id ' + request.params.id);
-		articles.find({'id': request.params.id}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		console.log('Monograph: id ' + request.params.id);
+		const result = await articles.find({'id': request.params.id}).toArray();
+		return result;
 	}
 	else
 	{
+		console.log('Monograph: page ' + request.query.page);
 		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		articles.find({'type': 'MONOGRAPH'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray(function(err, docs) {
-			reply(docs);
-		});
+		const result = await articles.find({'type': 'MONOGRAPH'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		return result;
 	}
 }

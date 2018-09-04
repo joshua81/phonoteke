@@ -12,7 +12,7 @@ function loadAlbums(page) {
 	}
   var text = searchInput.value.trim();
   console.log("/albums?page=" + page + "&search=" + text);
-	req.open("GET", "http://localhost:8180/albums?page=" + page + "&search=" + text, true);
+	req.open("GET", "http://localhost:8180/api/doc/review?page=" + page + "&search=" + text, true);
 	req.send();
 }
 

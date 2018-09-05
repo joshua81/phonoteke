@@ -11,8 +11,8 @@ function loadAlbums(page) {
 		}
 	}
   var text = searchInput.value.trim();
-  console.log("/albums?page=" + page + "&search=" + text);
-	req.open("GET", "http://localhost:8180/api/doc/review?page=" + page + "&search=" + text, true);
+  console.log("/albums?p=" + page + "&q=" + text);
+	req.open("GET", "http://localhost:8180/api/doc/review?p=" + page + "&q=" + text, true);
 	req.send();
 }
 
@@ -57,7 +57,7 @@ function loadAlbumHandler(res) {
 	}
 
 	var album = res[0];
-  var html = '<h1 class="header">' + album.band + ' - ' + album.album + ' (' + album.year + ')</h1>';
+  var html = '<h1 class="header">' + album.band + ' - ' + album.album + '</h1>';
   html += '<div class="album">';
   html += '<div class="vote">';
   if(album.milestone.data == 1)

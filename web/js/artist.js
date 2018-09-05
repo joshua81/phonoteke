@@ -11,8 +11,8 @@ function loadArtists(page) {
 		}
 	}
   var text = searchInput.value.trim();
-  console.log("/artists?page=" + page + "&search=" + text);
-	req.open("GET", "/api/doc/monograph?page=" + page + "&search=" + text, true);
+  console.log("/artists?p=" + page + "&q=" + text);
+	req.open("GET", "/api/doc/monograph?p=" + page + "&q=" + text, true);
 	req.send();
 }
 

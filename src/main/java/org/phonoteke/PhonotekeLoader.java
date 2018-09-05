@@ -87,11 +87,10 @@ public class PhonotekeLoader
 					if(type != TYPE.UNKNOWN)
 					{
 						String id = getId(url, doc);
+						Date creationDate = getCreationDate(url, doc);
 						Set<String> links = getLinks(url, doc);
-						String content = getContent(url, doc);
 						String band = getBand(url, doc);
 						String album = getAlbum(url, doc);
-						Date creationDate = getCreationDate(url, doc);
 						String cover = getCover(url, doc);
 						Set<String> authors = getAuthors(url, doc);
 						Set<String> genres = getGenres(url, doc);
@@ -99,6 +98,8 @@ public class PhonotekeLoader
 						String label = getLabel(url, doc);
 						Float vote = getVote(url, doc);
 						Boolean milestone = getMilestone(url, doc);
+						
+						String content = getContent(url, doc);
 						String source = "ondarock";
 
 						// insert DOCUMENT

@@ -45,11 +45,19 @@ async function getDocument(request, h)
 		const result = await articles.find({'id': request.params.id}).toArray();
 		return result;
 	}
+	else if(request.query.q)
+	{
+		console.log('Document: page ' + request.query.p + ', query ' + request.query.q);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		var query = request.query.q;
+		const result = await articles.find({'band': query}).skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
+		return result;
+	}
 	else
 	{
-		console.log('Document: page ' + request.query.page);
-		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		const result = await articles.find().skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		console.log('Document: page ' + request.query.p);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		const result = await articles.find().skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
 		return result;
 	}
 }
@@ -62,11 +70,19 @@ async function getReview(request, h)
 		const result = await articles.find({'id': request.params.id}).toArray();
 		return result;
 	}
+	else if(request.query.q)
+	{
+		console.log('Review: page ' + request.query.p + ', query ' + request.query.q);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		var query = request.query.q;
+		const result = await articles.find({'type': 'REVIEW', 'band': query}).skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
+		return result;
+	}
 	else
 	{
-		console.log('Review: page ' + request.query.page);
-		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		const result = await articles.find({'type': 'REVIEW'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		console.log('Review: page ' + request.query.p);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		const result = await articles.find({'type': 'REVIEW', 'creationDate': {'$ne': 'null'}}).skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
 		return result;
 	}
 }
@@ -79,11 +95,19 @@ async function getMonograph(request, h)
 		const result = await articles.find({'id': request.params.id}).toArray();
 		return result;
 	}
+	else if(request.query.q)
+	{
+		console.log('Review: page ' + request.query.p + ', query ' + request.query.q);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		var query = request.query.q;
+		const result = await articles.find({'type': 'MONOGRAPH', 'band': query}).skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
+		return result;
+	}
 	else
 	{
-		console.log('Monograph: page ' + request.query.page);
-		var page = Number(request.query.page) > 0 ? Number(request.query.page) : 0;
-		const result = await articles.find({'type': 'MONOGRAPH'}).skip(page*10).limit(10).sort({"creationDate":-1}).toArray();
+		console.log('Monograph: page ' + request.query.p);
+		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
+		const result = await articles.find({'type': 'MONOGRAPH'}).skip(page*12).limit(12).sort({"creationDate":-1}).toArray();
 		return result;
 	}
 }

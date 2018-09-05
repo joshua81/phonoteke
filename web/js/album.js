@@ -57,7 +57,8 @@ function loadAlbumHandler(res) {
 	}
 
 	var album = res[0];
-  var html = '<div class="album">';
+  var html = '<h1 class="header">' + album.band + ' - ' + album.album + ' (' + album.year + ')</h1>';
+  html += '<div class="album">';
   html += '<div class="vote">';
   if(album.milestone.data == 1)
   {
@@ -70,14 +71,10 @@ function loadAlbumHandler(res) {
   html += '</div>';
 	html += '<img class="album" src="' + album.cover + '"/>';
   html += '</div>';
-
-	html += '<h2 class="header">';
-  html += '<a class="header" href="javascript:loadDocument(\'' + album.id + '\')"/>' + album.band + ' - ' + album.album + ' (' + album.year + ')</a><br/>';
-  html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
-  html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
-  html += '</h2>';
-
-	html += '<div id="detail"><p>' + album.content + '</p></div>';
+  //html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
+  //html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
+  //html += '</h2>';
+	html += '<div id="detail">' + album.content + '</div>';
 
   var spotifyId = album.albumIdSptf;
   if(spotifyId != null)

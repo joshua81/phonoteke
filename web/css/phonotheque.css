@@ -12,18 +12,28 @@ p {
 	text-align: justify;
 }
 
+h1 {
+	font-size: 32px;
+	text-align: justify;
+	color: #000000;
+	opacity: 0.8;
+	background-color: #FFFFFF;
+	width: 100%;
+	padding: 5px 5px 5px 5px;
+}
+
 h2 {
 	font-size: 14px;
 	text-align: justify;
-	color: #FFFFFF;
+	color: #000000;
 	opacity: 0.8;
-	background-color: #222326;
+	background-color: #FFFFFF;
 	width: 100%;
 	padding: 5px 5px 5px 5px;
 }
 
 .glyphicon {
-	color: #FFFFFF;
+	color: #000000;
 }
 
 .hidden {
@@ -41,8 +51,8 @@ h2 {
 	background: #8AC007;
 
 	font-size: 16px;
-  color: #FFFFFF;
-  text-align: center;
+	color: #FFFFFF;
+	text-align: center;
 	padding-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
@@ -71,29 +81,55 @@ img.album {
 	margin-right: auto;
 }
 
+h2.album {
+	width: 100%;
+	height: 40px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	z-index: 20;
+}
+
 img.artist {
 	width: 300px;
 	height: 180px;
 	display: block;
-  margin-left: auto;
-  margin-right: auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+h2.artist {
+	width: 100%;
+	height: 40px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	z-index: 20;
 }
 
 .header {
-	background: #222326;
-	color: #FFFFFF;
-	opacity: 0.8;
+	background: #FFFFFF;
+	color: #000000;
+	opacity: 1;
 	width: 100%;
 	padding: 5px 5px 5px 5px;
 	line-height: 150%;
 }
 
 a.header {
-	color: #FFFFFF;
+	color: #000000;
 }
 
 .header ul li {
-  display: inline;
+	display: inline;
 }
 
 #searchInput {
@@ -107,9 +143,9 @@ a.header {
 #content {
 	background-color: #FFFFFF;
 	padding: 5px 5px 5px 5px;
-  top: 100px;
-  left: 0px;
-  right: 0px;
+	top: 100px;
+	left: 0px;
+	right: 0px;
 }
 
 #spotify {

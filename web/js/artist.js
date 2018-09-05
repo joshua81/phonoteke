@@ -56,15 +56,14 @@ function loadArtistHandler(res) {
 	}
 
 	var artist = res[0];
-	var html = '<img class="artist" src="' + artist.cover + '"/>';
+	var html = '<h1 class="header">' + artist.band + ' - ' + artist.album + '</h1>';
+	html += '<img class="artist" src="' + artist.cover + '"/>';
+  //html += '<a class="header" href="javascript:loadDocument(\'' + artist.id + '\')"/>' +  + '</a><br/>';
+  //html += '<a class="header" href="javascript:loadLinks(\'' + artist.id + '\')"/>Recensioni</a>';
+  //html += '<a class="header" href="javascript:loadConcerts(\'' + artist.bandId + '\')"/>Concerti</a>';
+	//html += '</h2>';
 
-	html += '<h2 class="header">';
-  html += '<a class="header" href="javascript:loadDocument(\'' + artist.id + '\')"/>' + artist.band + ' - ' + artist.album + '</a><br/>';
-  html += '<a class="header" href="javascript:loadLinks(\'' + artist.id + '\')"/>Recensioni</a>';
-  html += '<a class="header" href="javascript:loadConcerts(\'' + artist.bandId + '\')"/>Concerti</a>';
-	html += '</h2>';
-
-	html += '<div id="detail"><p>' + artist.content + '</p></div>';
+	html += '<div id="detail">' + artist.content + '</div>';
 
 	content.innerHTML = html;
 

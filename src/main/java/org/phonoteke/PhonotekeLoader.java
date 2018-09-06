@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -68,7 +68,7 @@ public class PhonotekeLoader
 
 	private void load()
 	{
-//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "http://www.ondarock.it/recensioni/2018-makai-thecomfortzone.htm").get());
+		//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "http://www.ondarock.it/recensioni/2018-makai-thecomfortzone.htm").get());
 		DBCursor i = pages.find();
 		while(i.hasNext())
 		{
@@ -88,6 +88,7 @@ public class PhonotekeLoader
 					if(type != TYPE.UNKNOWN)
 					{
 						String id = getId(url, doc);
+						String spotify = getSpotify(url, doc);
 						Date creationDate = getCreationDate(url, doc);
 						Set<String> links = getLinks(url, doc);
 						String band = getBand(url, doc);
@@ -99,7 +100,7 @@ public class PhonotekeLoader
 						String label = getLabel(url, doc);
 						Float vote = getVote(url, doc);
 						Boolean milestone = getMilestone(url, doc);
-						
+
 						String content = getContent(url, doc);
 						String source = "ondarock";
 
@@ -107,6 +108,7 @@ public class PhonotekeLoader
 						DBObject json = BasicDBObjectBuilder.start().
 								add("_id", _id).
 								add("id", id).
+								add("spotify", spotify).
 								add("url", url).
 								add("type", type.name()).
 								add("content", content).
@@ -226,7 +228,8 @@ public class PhonotekeLoader
 
 	private Set<String> getLinks(String url, Document doc) {
 		Set<String> links = Sets.newHashSet();
-		Elements elements = doc.select("a[href]");
+		Element content = doc.select("div[id=maintext]").first();
+		Elements elements = content.select("a[href]");
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String link = getUrl(elements.get(i).attr("href"), doc);
@@ -293,18 +296,18 @@ public class PhonotekeLoader
 				Element reviewDateElement = reviewElement.select("p[style]").last();
 				if(reviewDateElement != null)
 				{
-					java.util.Date date = new SimpleDateFormat("(dd/MM/yyyy)").parse(reviewDateElement.text());
+					Date date = new SimpleDateFormat("(dd/MM/yyyy)").parse(reviewDateElement.text());
 					reviewDate = new Date(date.getTime());
 				}
 				if(reviewDate == null && getYear(url, doc) != null)
 				{
-					java.util.Date date = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + getYear(url, doc));
+					Date date = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + getYear(url, doc));
 					reviewDate = new Date(date.getTime());
 				}
 				return reviewDate;
 			case MONOGRAPH:
-				reviewDate = new Date(Calendar.getInstance().getTime().getTime());
-				return reviewDate;
+//				reviewDate = new Date(Calendar.getInstance().getTime().getTime());
+				return null;
 			default:
 				return null;
 			}
@@ -405,6 +408,43 @@ public class PhonotekeLoader
 		default:
 			return null;
 		}
+	}
+
+	private String getSpotify(String url, Document doc) {
+		Elements elements = doc.select("iframe");
+		for(int i = 0; i < elements.size(); i++)
+		{
+			String src = elements.get(i).attr("src");
+			if(src != null && src.contains("spotify.com")) 
+			{
+				if(src.startsWith("https://open.spotify.com/embed/album/"))
+				{
+					int ix = "https://open.spotify.com/embed/album/".length();
+					return src.substring(ix, ix+22);
+				}
+				else if(src.startsWith("https://open.spotify.com/album/"))
+				{
+					int ix = "https://open.spotify.com/album/".length();
+					return src.substring(ix, ix+22);
+				}
+				else if(src.startsWith("https://embed.spotify.com/?uri=spotify:album:"))
+				{
+					int ix = "https://embed.spotify.com/?uri=spotify:album:".length();
+					return src.substring(ix, ix+22);
+				}
+				else if(src.startsWith("https://embed.spotify.com/?uri=spotify%3Aalbum%3A"))
+				{
+					int ix = "https://embed.spotify.com/?uri=spotify%3Aalbum%3A".length();
+					return src.substring(ix, ix+22);
+				}
+				else if(src.startsWith("https://embed.spotify.com/?uri=https://open.spotify.com/album/"))
+				{
+					int ix = "https://embed.spotify.com/?uri=https://open.spotify.com/album/".length();
+					return src.substring(ix, ix+22);
+				}
+			}
+		}
+		return null;
 	}
 
 	private Float getVote(String url, Document doc) {

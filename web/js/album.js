@@ -58,6 +58,7 @@ function loadAlbumHandler(res) {
 
 	var album = res[0];
   var html = '<h1 class="header">' + album.band + ' - ' + album.album + '</h1>';
+  html += '<h2 class="header">' + album.label + ' | ' + album.year + ' | ' + album.genres + ' <br/>' + album.authors + ' | ' + album.creationDate + '</h2>';
   html += '<div class="album">';
   html += '<div class="vote">';
   if(album.milestone.data == 1)
@@ -75,10 +76,10 @@ function loadAlbumHandler(res) {
   //html += '</h2>';
 	html += '<div id="detail">' + album.content + '</div>';
 
-  var spotifyId = album.albumIdSptf;
-  if(spotifyId != null)
+  if(album.spotify != null)
   {
-    html += '<div id="spotify"><iframe src="https://embed.spotify.com/?uri=https://open.spotify.com/album/' + spotifyId + '" width="100%" frameborder="0" allowtransparency="true"/></div>';
+    html += '<hr>';
+    html += '<div id="spotify"><iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400"frameborder="0" allowtransparency="true"/></div>';
   }
 
   content.innerHTML = html;

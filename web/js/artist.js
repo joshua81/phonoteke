@@ -58,6 +58,7 @@ function loadArtistHandler(res) {
 	var artist = res[0];
 	var html = '<h1 class="header">' + artist.band + ' - ' + artist.album + '</h1>';
 	html += '<img class="artist" src="' + artist.cover + '"/>';
+	html += '<hr>';
   //html += '<a class="header" href="javascript:loadDocument(\'' + artist.id + '\')"/>' +  + '</a><br/>';
   //html += '<a class="header" href="javascript:loadLinks(\'' + artist.id + '\')"/>Recensioni</a>';
   //html += '<a class="header" href="javascript:loadConcerts(\'' + artist.bandId + '\')"/>Concerti</a>';

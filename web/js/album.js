@@ -68,9 +68,8 @@ function loadAlbumHandler(res) {
   {
     html += album.vote;
   }
-  html += '</div>';
-	html += '<img class="album" src="' + album.cover + '"/>';
-  html += '</div>';
+  html += '</div><img class="album" src="' + album.cover + '"/></div>';
+  html += '<hr>';
   //html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
   //html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
   //html += '</h2>';

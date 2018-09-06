@@ -68,6 +68,7 @@ public class PhonotekeLoader
 
 	private void load()
 	{
+//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "http://www.ondarock.it/recensioni/2018-makai-thecomfortzone.htm").get());
 		DBCursor i = pages.find();
 		while(i.hasNext())
 		{
@@ -206,9 +207,9 @@ public class PhonotekeLoader
 
 	private void removeDivs(Element node) {
 		Elements elements = node.select("div");
-		for(int i = 0; i < elements.size(); i++)
+		for(int i = 1; i < elements.size(); i++)
 		{
-			elements.get(i).remove();
+			elements.get(i).unwrap();
 		}
 	}
 

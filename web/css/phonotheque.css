@@ -2,14 +2,9 @@
 	color: #000000;
 	font-family: serif;
 	font-size: 16px;
-}
-
-body {
 	background: #FFFFFF;
-}
-
-p {
 	text-align: justify;
+	margin: 0px;
 }
 
 h1 {
@@ -19,7 +14,8 @@ h1 {
 	opacity: 0.8;
 	background-color: #FFFFFF;
 	width: 100%;
-	padding: 5px 5px 5px 5px;
+	padding: 0px;
+	margin: 0px;
 }
 
 h2 {
@@ -29,7 +25,8 @@ h2 {
 	opacity: 0.8;
 	background-color: #FFFFFF;
 	width: 100%;
-	padding: 5px 5px 5px 5px;
+	padding: 5px;
+	margin: 0px;
 }
 
 hr {
@@ -52,7 +49,79 @@ hr {
 	display: block;
 }
 
-.vote {
+.album {
+	width: 300px;
+	height: 300px;
+	display: block;
+	margin: auto;
+
+	position: relative;
+}
+
+img.album {
+	width: 300px;
+	height: 300px;
+	display: block;
+	margin: auto;
+}
+
+h2.album {
+	width: 300px;
+	height: 40px;
+	margin: auto;
+
+	position: absolute;
+	bottom: 20px;
+	z-index: 10;
+}
+
+.artist {
+	width: 300px;
+	height: 180;
+	display: block;
+	margin: auto;
+
+	position: relative;
+}
+
+img.artist {
+	width: 300px;
+	height: 180px;
+	display: block;
+	margin: auto;
+}
+
+h2.artist {
+	width: 300px;
+	height: 40px;
+	margin: auto;
+
+	position: absolute;
+	bottom: 20px;
+	z-index: 10;
+}
+
+.header {
+	background: #FFFFFF;
+	color: #000000;
+	width: 100%;
+	padding: 5px;
+}
+
+.header ul li {
+	background: #FFFFFF;
+	color: #000000;
+	width: 100%;
+	padding: 5px;
+	display: inline;
+}
+
+#searchInput {
+	width: 100%;
+	padding: 5px;
+}
+
+#vote {
 	border-radius: 50%;
 	width: 40px;
 	height: 40px;
@@ -62,101 +131,21 @@ hr {
 	color: #FFFFFF;
 	text-align: center;
 	padding-top: 10px;
-	margin-left: auto;
-	margin-right: auto;
+	margin: auto;
 
 	position: absolute;
-	left: 250px;
-	top: 10px;
-	z-index: 10;
-}
-
-div.album {
-	width: 300px;
-	height: 300px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-
-	position: relative;
-}
-
-img.album {
-	width: 300px;
-	height: 300px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-h2.album {
-	width: 100%;
-	height: 40px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-
-	position: absolute;
-	left: 0px;
-	bottom: 0px;
-	z-index: 10;
-}
-
-img.artist {
-	width: 300px;
-	height: 180px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-h2.artist {
-	width: 100%;
-	height: 40px;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-
-	position: absolute;
-	left: 0px;
-	bottom: 0px;
-	z-index: 10;
-}
-
-.header {
-	background: #FFFFFF;
-	color: #000000;
-	opacity: 1;
-	width: 100%;
-	padding: 5px 5px 5px 5px;
-}
-
-a.header {
-	color: #000000;
-}
-
-.header ul li {
-	display: inline;
-}
-
-#searchInput {
-	width: 100%;
-	padding-top: 5px;
-	padding-left: 5px;
-	padding-right: 5px;
+	top: 5px;
+	right: 5px;
 	z-index: 10;
 }
 
 #content {
 	background-color: #FFFFFF;
-	padding: 5px 5px 5px 5px;
-	top: 0px;
-	left: 0px;
-	right: 0px;
+	padding: 5px;
+	margin: auto;
 }
 
-#spotify {
-	position: static;
-	width: 100%;
-	bottom: 0;
+#media {
+	width: 300px;
+	margin: auto;
 }

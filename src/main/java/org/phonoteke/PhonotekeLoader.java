@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
@@ -89,6 +88,7 @@ public class PhonotekeLoader
 					{
 						String id = getId(url, doc);
 						String spotify = getSpotify(url, doc);
+						Set<String> youtube = getYoutube(url, doc);
 						Date creationDate = getCreationDate(url, doc);
 						Set<String> links = getLinks(url, doc);
 						String band = getBand(url, doc);
@@ -109,6 +109,7 @@ public class PhonotekeLoader
 								add("_id", _id).
 								add("id", id).
 								add("spotify", spotify).
+								add("youtube", youtube).
 								add("url", url).
 								add("type", type.name()).
 								add("content", content).
@@ -141,7 +142,7 @@ public class PhonotekeLoader
 		String[] chunks = getUrl(url, doc).split("/");
 		for(int i = 3; i < chunks.length; i++)
 		{
-			id += "-" + chunks[i].split("\\.")[0].replaceAll("_", "-").toLowerCase();
+			id += ":" + chunks[i].split("\\.")[0].replaceAll("_", ":").toLowerCase();
 		}
 		return id;
 	}
@@ -306,7 +307,7 @@ public class PhonotekeLoader
 				}
 				return reviewDate;
 			case MONOGRAPH:
-//				reviewDate = new Date(Calendar.getInstance().getTime().getTime());
+				//				reviewDate = new Date(Calendar.getInstance().getTime().getTime());
 				return null;
 			default:
 				return null;
@@ -447,6 +448,30 @@ public class PhonotekeLoader
 		return null;
 	}
 
+	private Set<String> getYoutube(String url, Document doc) {
+		Set<String> youtube = Sets.newHashSet();
+
+		Elements elements = doc.select("iframe");
+		for(int i = 0; i < elements.size(); i++)
+		{
+			String src = elements.get(i).attr("src");
+			if(src != null && src.contains("youtube.com")) 
+			{
+				if(src.startsWith("https://www.youtube.com/embed/"))
+				{
+					int ix = "https://www.youtube.com/embed/".length();
+					youtube.add(src.substring(ix));
+				}
+				else if(src.startsWith("//www.youtube.com/embed/"))
+				{
+					int ix = "www.youtube.com/embed/".length();
+					youtube.add(src.substring(ix));
+				}
+			}
+		}
+		return youtube;
+	}
+
 	private Float getVote(String url, Document doc) {
 		try
 		{
@@ -465,7 +490,10 @@ public class PhonotekeLoader
 					String voteStr = voteElement.attr("src");
 					voteStr = voteStr.split("rate_")[1];
 					voteStr = voteStr.substring(0, voteStr.length() - 4);
-					vote = format.parse(voteStr).floatValue();
+					if(!"".equals(voteStr.trim()))
+					{
+						vote = format.parse(voteStr).floatValue();
+					}
 				}
 				return vote;
 			default:

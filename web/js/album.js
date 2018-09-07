@@ -26,8 +26,8 @@ function loadAlbumsHandler(res) {
   for(var i = 0; i < res.length; i++) {
     var album = res[i];
   	html += '<div class="col-md-4 col-sm-6">';
-  	html += '<a class="album" href="javascript:loadAlbum(\'' + album.id + '\')"><img class="album" src="' + album.cover + '"/></a>';
-  	html += '<h2 class="album">' + album.band + '<br/>' + album.album + '</h2>';
+  	html += '<a class="album" href="javascript:loadAlbum(\'' + album.id + '\')"><img class="album" src="' + album.cover + '"/>';
+  	html += '<h2 class="album">' + album.band + '<br/>' + album.album + '</h2></a>';
     html += '</div>';
   }
   content.innerHTML = html;
@@ -60,26 +60,37 @@ function loadAlbumHandler(res) {
   var html = '<h1 class="header">' + album.band + ' - ' + album.album + '</h1>';
   html += '<h2 class="header">' + album.label + ' | ' + album.year + ' | ' + album.genres + ' <br/>' + album.authors + ' | ' + album.creationDate + '</h2>';
   html += '<div class="album">';
-  html += '<div class="vote">';
-  if(album.milestone.data == 1)
+  if(album.milestone)
   {
-    html += '<span class="glyphicon glyphicon-star"/>';
+    html += '<p id="vote"><span class="glyphicon glyphicon-star"/></p>';
   }
   else
   {
-    html += album.vote;
+    html += '<p id="vote">' + album.vote + '</p>';
   }
-  html += '</div><img class="album" src="' + album.cover + '"/></div>';
+  html += '<img class="album" src="' + album.cover + '"/></div>';
   html += '<hr>';
   //html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
   //html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
   //html += '</h2>';
 	html += '<div id="detail">' + album.content + '</div>';
 
-  if(album.spotify != null)
+  if(album.spotify != null || (album.youtube != null && album.youtube.length > 0))
   {
     html += '<hr>';
-    html += '<div id="spotify"><iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400"frameborder="0" allowtransparency="true"/></div>';
+    html += '<div id="media">';
+    if(album.spotify != null)
+    {
+      html += '<iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400" frameborder="0" allowtransparency="true"></iframe><br/>';
+    }
+    if(album.youtube.length > 0)
+    {
+      for(var i = 0; i < album.youtube.length; i++) 
+      {
+        html += '<iframe src="https://www.youtube.com/embed/' + album.youtube[i] + '" width="300" height="250" allowfullscreen></iframe><br/>';
+      }
+    }
+    html += '</div>';
   }
 
   content.innerHTML = html;

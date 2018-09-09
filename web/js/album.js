@@ -57,8 +57,8 @@ function loadAlbumHandler(res) {
 	}
 
 	var album = res[0];
-  var html = '<h1 class="header">' + album.band + ' - ' + album.album + '</h1>';
-  html += '<h2 class="header">' + album.label + ' | ' + album.year + ' | ' + album.genres + ' <br/>' + album.authors + ' | ' + album.creationDate + '</h2>';
+  var html = '<h1>' + album.band + ' | ' + album.album + '</h1>';
+  html += '<h2>' + album.label + ' | ' + album.year + ' | ' + album.genres + ' <br/>' + album.authors + ' | ' + date2str(album.creationDate) + '</h2>';
   html += '<div class="album">';
   if(album.milestone)
   {
@@ -97,4 +97,8 @@ function loadAlbumHandler(res) {
 
   window.scrollTo(0, 0);
   history.pushState({status: "album", content: html}, null, "/");
+}
+
+function date2str(date) {
+  return date.substring(0,10);
 }

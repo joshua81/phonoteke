@@ -19,20 +19,17 @@
     <script src="js/concert.js"></script>
     <script src="js/document.js"></script>
 
-    <div class="header">
-      <ul class="header">
-        <li class"header"><a href="javascript:toggleSearch()"><span class="glyphicon glyphicon-search" aria-hidden="true"/></a></li>
-        <li class="header"><a href="javascript:loadStatus('albums')">Album</a></li>
-        <li class="header"><a href="javascript:loadStatus('artists')">Artisti</a></li>
-        <!--li id="interviews" class="header"><a href="javascript:loadStatus('interviews')">Interviste</a></li-->
-        <!--li id="concerts" class"four"><a href="javascript:loadStatus('concerts')">Concerti</a></li-->
-        <!--li id="news"><a href="javascript:loadStatus('news')">News</a></li-->
-      </ul>
-      <input id="searchInput" type="text" class="form-control hidden" placeholder="Cerca" onkeypress="keyPressHandler(event)"/>
+    <div id="header">
+      <div id="headerleft">
+        <a href="javascript:loadStatus('albums')">Album</a> |
+        <a href="javascript:loadStatus('artists')">Artisti</a>
+      </div>
+      <div id="headerright">
+        <a href="javascript:toggleSearch()"><span class="glyphicon glyphicon-search" aria-hidden="true"/></a>
+      </div>
     </div>
-
+    <input id="searchInput" type="text" class="form-control hidden" placeholder="Cerca" onkeypress="keyPressHandler(event)"/>
     <div id="content" class="container"/>
-    <div id="loader" class="throbber-loader hidden"/>
   </body>
 </html>
 

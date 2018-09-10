@@ -1,134 +1,115 @@
 package org.phonoteke;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
+import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
+import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
+import com.wrapper.spotify.model_objects.specification.Paging;
+import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 
 public class PhonotekeSpotify {
 
 	protected static final int THREAD_SLEEP = 3000;
-	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeSpotify.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	protected static final String SQL_FIND_ALBUMS = "SELECT * FROM musicdb.document WHERE albumIdSptf IS NULL AND type = 'REVIEW' ORDER BY creation_date DESC";
-	protected static final String SQL_SET_SPOTIFY_ALBUMID = "UPDATE musicdb.document SET albumIdSptf = ? WHERE id = ?";
+	private static final String MONGO_HOST = "localhost";
+	private static final int MONGO_PORT = 27017;
+	private static final String MONGO_DB = "phonoteke";
 
-	protected static Connection db = null;
-	protected static PreparedStatement queryFindAlbums = null;
-	protected static PreparedStatement querySetSpotifyAlbumId = null;
+	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
+			.setClientId("a6c3686d32cb48d4854d88915d3925be")
+			.setClientSecret("3294564c84e54285adeee3e05caf4b29")
+			.setRedirectUri(SpotifyHttpManager.makeUri("https://phonoteke.org/spotify-redirect"))
+			.build();
 
-	static 
+	private DBCollection articles;
+
+
+	public static void main(String[] args) {
+		new PhonotekeSpotify().getSpotifyIds();
+	}
+
+	public PhonotekeSpotify()
 	{
 		try 
 		{
-			Class.forName("com.mysql.jdbc.Driver");
-			db = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/musicdb", "musicdb", "musicdb");
-			queryFindAlbums = db.prepareStatement(SQL_FIND_ALBUMS);
-			querySetSpotifyAlbumId = db.prepareStatement(SQL_SET_SPOTIFY_ALBUMID);
+			DB db = new MongoClient(MONGO_HOST, MONGO_PORT).getDB(MONGO_DB);
+			articles = db.getCollection("articles");
 		} 
-		catch (Throwable t) 
+		catch (Exception e) 
 		{
-			LOGGER.error("Error connecting to MySQL db: " + t.getMessage());
-			throw new RuntimeException(t);
+			LOGGER.error("Error connecting to Mongo db: " + e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 
-	public static void main(String[] args) {
-		try
-		{
-			ResultSet docs = queryFindAlbums.executeQuery();
-			while(docs.next())
-			{
-				String id = docs.getString("id");
-				String artist = docs.getString("band");
-				String release = docs.getString("album");
-
-				// Spotify
-				String sptfAlbumId = docs.getString("albumIdSptf");
-				if(sptfAlbumId == null)
-				{
-					String sptfid = getSpotifyAlbumId(artist, release);
-					if(sptfid == null)
-					{
-						LOGGER.info(artist + " - " + release + ": SPTFid not found");
-					}
-					else
-					{
-						querySetSpotifyAlbumId.setString(1, sptfid);
-						querySetSpotifyAlbumId.setString(2, id);
-						querySetSpotifyAlbumId.executeUpdate();
-						LOGGER.info(artist + " - " + release + ": SPTFid " + sptfid);
-					}
-				}
-
-				// Sleep a while to prevent 'Found robot'
-				Thread.sleep(THREAD_SLEEP);
-			}
-		}
-		catch(Throwable t)
-		{
-			LOGGER.error("ERROR: " + t.getMessage());
-		}
-	}
-
-	private static String getSpotifyAlbumId(String artist, String release)
+	private void getSpotifyIds()
 	{
-		BufferedReader rd = null;
+		try 
+		{
+			ClientCredentialsRequest credentialsRequest = SPOTIFY_API.clientCredentials().build();
+			ClientCredentials credentials = credentialsRequest.execute();
+			SPOTIFY_API.setAccessToken(credentials.getAccessToken());
+			LOGGER.info("Expires in: " + credentials.getExpiresIn());
+
+			DBCursor i = articles.find(BasicDBObjectBuilder.start().add("spotify", null).add("type", "REVIEW").get());
+			while(i.hasNext())
+			{
+				DBObject page = i.next();
+				String band = (String)page.get("band");
+				String album = (String)page.get("album");
+
+				if(credentials.getExpiresIn() < 5)
+				{
+					credentials = credentialsRequest.execute();
+					SPOTIFY_API.setAccessToken(credentials.getAccessToken());
+					LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
+				}
+				String id = getAlbumId(band, album);
+				LOGGER.info(band + " - " + album + ": " + id);
+			}
+		}
+		catch (Exception e) 
+		{
+			LOGGER.error("Error closing BufferedReader: " + e.getMessage());
+		}
+	}
+
+	private String getAlbumId(String band, String album)
+	{
 		try
 		{
-			String urlString = "https://api.spotify.com/v1/search?q=album:" + release.trim().replace(" ", "%20") + "%20artist:" + artist.trim().replace(" ", "%20") + "&type=album";
-			String result = "";
-			String line = null;
-			HttpURLConnection con = (HttpURLConnection) new URL(urlString).openConnection();
-			rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			while ((line = rd.readLine()) != null) 
+			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(album.trim().replace(" ", "+")).build();
+			Paging<AlbumSimplified> albums = request.execute();
+			for(int j = 0; j < albums.getItems().length; j++)
 			{
-				result += line;
-			}
-
-			List<String> ids = new ArrayList<String>();
-			JsonNode json = new ObjectMapper().readTree(result);
-			JsonNode items = json.get("albums").get("items");
-			for(int i = 0; i < items.size(); i++)
-			{
-				if(release.replace(" ", "").toUpperCase().equals(items.get(i).get("name").textValue().replace(" ", "").toUpperCase()))
+				AlbumSimplified a = albums.getItems()[j];
+				ArtistSimplified[] artists = a.getArtists();
+				for(int k = 0; k < artists.length; k++)
 				{
-					ids.add(items.get(i).get("id").textValue());
-				}
-			}
-
-			return ids.size() > 0 ? ids.get(0) : null;
-		}
-		catch(Throwable t)
-		{
-			LOGGER.error("ERROR: " + t.getMessage());
-			return null;
-		}
-		finally
-		{
-			if(rd != null)
-			{
-				try 
-				{
-					rd.close();
-				} 
-				catch (Throwable t) 
-				{
-					// do nothing
+					ArtistSimplified artist = artists[k];
+					if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
+					{
+						return a.getId();
+					}
 				}
 			}
 		}
+		catch (Exception e) 
+		{
+			LOGGER.error("Error getting " + band + " - " + album + "  id: " + e.getMessage());
+		}
+		return null;
 	}
 }

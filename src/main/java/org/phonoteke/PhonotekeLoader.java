@@ -47,7 +47,9 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new PhonotekeLoader().load();
+		PhonotekeLoader loader = new PhonotekeLoader();
+		loader.loadAlbums();
+		loader.loadSpotifyIds();
 	}
 
 	public PhonotekeLoader()
@@ -64,8 +66,29 @@ public class PhonotekeLoader
 			throw new RuntimeException(t);
 		}
 	}
+	
+	private void loadSpotifyIds()
+	{
+		try 
+		{
+			DBCursor i = articles.find(BasicDBObjectBuilder.start().add("spotify", null).add("type", "REVIEW").get());
+			SpotifyLoader spotify = new SpotifyLoader();
+			while(i.hasNext())
+			{
+				DBObject page = i.next();
+				String band = (String)page.get("band");
+				String album = (String)page.get("album");
+				String id = spotify.getAlbumId(band, album);
+				LOGGER.info(band + " - " + album + ": " + id);
+			}
+		}
+		catch (Exception e) 
+		{
+			LOGGER.error("Error closing BufferedReader: " + e.getMessage());
+		}
+	}
 
-	private void load()
+	private void loadAlbums()
 	{
 		//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "http://www.ondarock.it/recensioni/2018-makai-thecomfortzone.htm").get());
 		DBCursor i = pages.find();
@@ -464,7 +487,7 @@ public class PhonotekeLoader
 				}
 				else if(src.startsWith("//www.youtube.com/embed/"))
 				{
-					int ix = "www.youtube.com/embed/".length();
+					int ix = "//www.youtube.com/embed/".length();
 					youtube.add(src.substring(ix));
 				}
 			}

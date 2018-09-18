@@ -62,7 +62,7 @@ function loadAlbumHandler(res) {
   html += '<div class="album">';
   if(album.milestone)
   {
-    html += '<p id="vote"><span class="glyphicon glyphicon-star"/></p>';
+    html += '<p id="vote"><span class="headerright glyphicon glyphicon-star"/></p>';
   }
   else
   {

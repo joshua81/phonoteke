@@ -70,9 +70,6 @@ function loadAlbumHandler(res) {
   }
   html += '<img class="album" src="' + album.cover + '"/></div>';
   html += '<hr>';
-  //html += '<a class="header" href="javascript:loadLinks(\'' + album.id + '\')"/>Recensioni</a>';
-  //html += '<a class="header" href="javascript:loadConcerts(\'' + album.bandId + '\')"/>Concerti</a>';
-  //html += '</h2>';
 	html += '<div id="detail">' + album.content + '</div>';
 
   if(album.spotify != null || (album.youtube != null && album.youtube.length > 0))

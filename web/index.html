@@ -20,12 +20,12 @@
     <script src="js/document.js"></script>
 
     <div id="header">
-      <div id="headerleft">
-        <a href="javascript:loadStatus('albums')">Album</a> |
-        <a href="javascript:loadStatus('artists')">Artisti</a>
+      <div class="headerleft">
+        <a class="headerleft" href="javascript:loadStatus('albums')">Album</a> |
+        <a class="headerleft" href="javascript:loadStatus('artists')">Artisti</a>
       </div>
-      <div id="headerright">
-        <a href="javascript:toggleSearch()"><span class="glyphicon glyphicon-search" aria-hidden="true"/></a>
+      <div class="headerright">
+        <a class="headerright" href="javascript:toggleSearch()"><span class="headerright glyphicon glyphicon-search" aria-hidden="true"/></a>
       </div>
     </div>
     <input id="searchInput" type="text" class="form-control hidden" placeholder="Cerca" onkeypress="keyPressHandler(event)"/>
@@ -36,27 +36,26 @@
 <script>
 var currentStatus = null;
 var page = 0;
-
-/*window.onscroll = function() {myFunction()};
-
-var header = document.getElementById("myHeader");
+var header = document.getElementById("header");
 var sticky = header.offsetTop;
 
-function myFunction() {
-  if (window.pageYOffset > sticky) {
-    header.classList.add("sticky");
-  } else {
-    header.classList.remove("sticky");
-  }
-}*/
-
-$(window).scroll(function()
+window.onscroll = function()
 {
+    // sticky header
+    if (window.pageYOffset > sticky) 
+    {
+      header.classList.add("sticky");
+    } 
+    else 
+    {
+      header.classList.remove("sticky");
+    }
+
+    // load pages
     if(currentStatus == 'album' || currentStatus == 'artist')
     {
       return;
     }
-
     if(currentStatus == 'albums' && $(window).scrollTop() == $(document).height() - $(window).height())
     {
       page++;
@@ -67,7 +66,7 @@ $(window).scroll(function()
       page++;
       loadArtists(page);
     }
-});
+}
 
 window.onpopstate = function (event) {
   if(event.state) {

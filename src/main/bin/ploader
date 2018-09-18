@@ -1,0 +1,4 @@
+cd $HOME/workspace/phonoteke
+mvn clean install
+cd target
+java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.PhonotekeLoader

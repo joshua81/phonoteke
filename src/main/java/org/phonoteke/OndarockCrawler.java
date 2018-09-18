@@ -11,14 +11,23 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
+import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
+import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
 public class OndarockCrawler extends WebCrawler
 {
 	public static final String ONDAROCK_URL = "http://www.ondarock.it/";
+	
+	private static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
+	private static final int NUMBER_OF_CRAWLERS = 1;
+	
 	private static final Logger LOGGER = LogManager.getLogger(OndarockCrawler.class);
 	private static final Pattern FILTERS = Pattern.compile(".*(\\.(htm|html))$");
 
@@ -28,6 +37,20 @@ public class OndarockCrawler extends WebCrawler
 
 	private DBCollection pages;
 	private DBCollection seq;
+	
+	
+	public static void main(String[] args) throws Exception 
+	{
+		CrawlConfig config = new CrawlConfig();
+		config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+		PageFetcher pageFetcher = new PageFetcher(config);
+		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+		
+		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+		controller.addSeed(ONDAROCK_URL);
+		controller.start(OndarockCrawler.class, NUMBER_OF_CRAWLERS);
+	}
 
 	public OndarockCrawler()
 	{

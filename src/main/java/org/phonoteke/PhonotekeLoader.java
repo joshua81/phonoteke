@@ -29,17 +29,16 @@ import com.mongodb.MongoClient;
 
 public class PhonotekeLoader 
 {
-	public static final String ONDAROCK_URL = "http://www.ondarock.it/";
 	private static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String MONGO_HOST = "localhost";
-	private static final int MONGO_PORT = 27017;
-	private static final String MONGO_DB = "phonoteke";
+	public static final String MONGO_HOST = "localhost";
+	public static final int MONGO_PORT = 27017;
+	public static final String MONGO_DB = "phonoteke";
 
 	private DBCollection pages;
 	private DBCollection articles;
 
-	private enum TYPE {
+	public enum TYPE {
 		MONOGRAPH,
 		REVIEW,
 		UNKNOWN
@@ -71,15 +70,20 @@ public class PhonotekeLoader
 	{
 		try 
 		{
-			DBCursor i = articles.find(BasicDBObjectBuilder.start().add("spotify", null).add("type", "REVIEW").get());
+			DBCursor i = articles.find(BasicDBObjectBuilder.start().add("spotify", null).add("type", TYPE.REVIEW.name()).get());
 			SpotifyLoader spotify = new SpotifyLoader();
 			while(i.hasNext())
 			{
 				DBObject page = i.next();
-				String band = (String)page.get("band");
-				String album = (String)page.get("album");
-				String id = spotify.getAlbumId(band, album);
-				LOGGER.info(band + " - " + album + ": " + id);
+				String id = (String)page.get("id");
+				DBObject album = spotify.getId(id);
+				if(album != null)
+				{
+					String spotifyId = (String)album.get("album");
+					String cover = (String)album.get("image300");
+					articles.findAndModify(BasicDBObjectBuilder.start().add("id", page.get("id")).get(), 
+							BasicDBObjectBuilder.start().add("spotify", spotifyId).add("cover", cover).get());
+				}
 			}
 		}
 		catch (Exception e) 
@@ -175,7 +179,7 @@ public class PhonotekeLoader
 		{
 			if(url.startsWith(".") || url.startsWith("/"))
 			{
-				url = new URL(new URL(ONDAROCK_URL), url).toString();
+				url = new URL(new URL(OndarockCrawler.ONDAROCK_URL), url).toString();
 				url = url.replaceAll("\\.\\./", "");
 			}
 			return url.trim();
@@ -541,19 +545,19 @@ public class PhonotekeLoader
 	}
 
 	private TYPE getType(String url, Document doc) {
-		if(url.startsWith(ONDAROCK_URL + "pietremiliari") || 
-				url.startsWith(ONDAROCK_URL + "recensioni"))
+		if(url.startsWith(OndarockCrawler.ONDAROCK_URL + "pietremiliari") || 
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "recensioni"))
 		{
 			return TYPE.REVIEW;
 		}
-		else if(url.startsWith(ONDAROCK_URL + "songwriter") || 
-				url.startsWith(ONDAROCK_URL + "popmuzik") || 
-				url.startsWith(ONDAROCK_URL + "altrisuoni") || 
-				url.startsWith(ONDAROCK_URL + "rockedintorni") ||
-				url.startsWith(ONDAROCK_URL + "dark") ||
-				url.startsWith(ONDAROCK_URL + "italia") ||
-				url.startsWith(ONDAROCK_URL + "jazz") ||
-				url.startsWith(ONDAROCK_URL + "elettronica"))
+		else if(url.startsWith(OndarockCrawler.ONDAROCK_URL + "songwriter") || 
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "popmuzik") || 
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "altrisuoni") || 
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "rockedintorni") ||
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "dark") ||
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "italia") ||
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "jazz") ||
+				url.startsWith(OndarockCrawler.ONDAROCK_URL + "elettronica"))
 		{
 			return TYPE.MONOGRAPH;
 		}

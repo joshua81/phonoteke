@@ -4,12 +4,12 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -23,7 +23,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class OndarockCrawler extends WebCrawler
 {
-	public static final String ONDAROCK_URL = "http://www.ondarock.it/";
+	public static final String ONDAROCK_URL = "https://www.ondarock.it/";
 	
 	private static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	private static final int NUMBER_OF_CRAWLERS = 1;
@@ -35,8 +35,7 @@ public class OndarockCrawler extends WebCrawler
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
 
-	private DBCollection pages;
-	private DBCollection seq;
+	private MongoCollection<Document> pages;
 	
 	
 	public static void main(String[] args) throws Exception 
@@ -54,18 +53,10 @@ public class OndarockCrawler extends WebCrawler
 
 	public OndarockCrawler()
 	{
-		try 
+		try
 		{
-			DB db = new MongoClient(MONGO_HOST, MONGO_PORT).getDB(MONGO_DB);
+			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
 			pages = db.getCollection("pages");
-			seq = db.getCollection("sequences");
-			DBObject pageId = seq.findOne("pageId");
-			if(pageId == null)
-			{
-				seq.insert(BasicDBObjectBuilder.start().
-						add("_id", "pageId").
-						add("value", 1).get());
-			}
 		} 
 		catch (Throwable t) 
 		{
@@ -91,14 +82,11 @@ public class OndarockCrawler extends WebCrawler
 
 			try
 			{
-				DBObject pageDB = pages.findOne(BasicDBObjectBuilder.start().add("url", url).get());
-				if(pageDB == null)
+				Document json = pages.find(Filters.and(Filters.eq("url", url))).first();
+				if(json == null)
 				{
-					DBObject json = BasicDBObjectBuilder.start().
-							add("_id", nextVal()).
-							add("url", url).
-							add("page", html).get();
-					pages.insert(json);
+					json = new Document("url", url).append("page", html);
+					pages.insertOne(json);
 					LOGGER.info("Page " + url + " added");
 				}
 			} 
@@ -108,13 +96,5 @@ public class OndarockCrawler extends WebCrawler
 				throw new RuntimeException(t);
 			}
 		}
-	}
-
-	private Number nextVal()
-	{
-		DBObject o = seq.findAndModify(BasicDBObjectBuilder.start().add("_id", "pageId").get(), 
-				BasicDBObjectBuilder.start().add("$inc", BasicDBObjectBuilder.start().
-						add("value", 1).get()).get());
-		return (Number)o.get("value");
 	}
 }

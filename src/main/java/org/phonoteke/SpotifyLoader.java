@@ -2,14 +2,13 @@ package org.phonoteke;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
 
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.Bytes;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
@@ -36,8 +35,8 @@ public class SpotifyLoader
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
 
-	private DBCollection spotify;
-	private DBCollection articles;
+	private MongoCollection<Document> spotify;
+	private MongoCollection<Document> articles;
 
 	private ClientCredentials credentials;
 
@@ -50,9 +49,9 @@ public class SpotifyLoader
 
 	public SpotifyLoader()
 	{
-		try 
+		try
 		{
-			DB db = new MongoClient(MONGO_HOST, MONGO_PORT).getDB(MONGO_DB);
+			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
 			spotify = db.getCollection("spotify");
 			articles = db.getCollection("articles");
 		} 
@@ -82,68 +81,66 @@ public class SpotifyLoader
 
 	private void loadAlbums()
 	{
-		DBCursor i = articles.find(BasicDBObjectBuilder.start().add("type", PhonotekeLoader.TYPE.REVIEW.name()).get());
-		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
-		int total = i.count();
-		int j = 1;
+		MongoCursor<Document> i = articles.find(Filters.eq("type", PhonotekeLoader.TYPE.REVIEW.name())).iterator();
+		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
+		//		int total = i.count();
+		int n = 1;
 		while(i.hasNext())
 		{
-			DBObject page = i.next();
-			String band = (String)page.get("band");
-			String album = (String)page.get("album");
-			String id = (String)page.get("id");
+			Document page = i.next();
+			String band = page.get("band", String.class);
+			String album = page.get("album", String.class);
+			String id = page.get("id", String.class);
 			String spotifyId = null;
 
 			// check if the article was already crawled
-			DBObject spotifyDB = spotify.findOne(BasicDBObjectBuilder.start().add("id", id).get());
-			if(spotifyDB == null)
+			MongoCursor<Document> j = spotify.find(Filters.eq("id", id)).iterator();
+			if(!j.hasNext())
 			{
-				DBObject json = getAlbum(band, album);
+				Document json = getAlbum(band, album);
 				if(json != null)
 				{
-					spotifyId = (String)json.get("album");
-					
+					spotifyId = json.get("album", String.class);
 					// insert SPOTIFY
 					json.put("id", id);
-					spotify.insert(json);
+					spotify.insertOne(json);
 				}
 			}
-			LOGGER.info(j++ + "/" + total + " Album " + band + " - " + album + ": " + spotifyId);
+			LOGGER.info(n++ + " Album " + band + " - " + album + ": " + spotifyId);
 		}
 	}
-	
+
 	private void loadArtists()
 	{
-		DBCursor i = articles.find(BasicDBObjectBuilder.start().add("type", PhonotekeLoader.TYPE.MONOGRAPH.name()).get());
-		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
-		int total = i.count();
-		int j = 1;
+		MongoCursor<Document> i = articles.find(Filters.eq("type", PhonotekeLoader.TYPE.MONOGRAPH.name())).iterator();
+		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
+		//		int total = i.count();
+		int n = 1;
 		while(i.hasNext())
 		{
-			DBObject page = i.next();
-			String band = (String)page.get("band");
-			String id = (String)page.get("id");
+			Document page = i.next();
+			String band = page.get("band", String.class);
+			String id = page.get("id", String.class);
 			String spotifyId = null;
 
 			// check if the article was already crawled
-			DBObject spotifyDB = spotify.findOne(BasicDBObjectBuilder.start().add("id", id).get());
-			if(spotifyDB == null)
+			MongoCursor<Document> j = spotify.find(Filters.eq("id", id)).iterator();
+			if(!j.hasNext())
 			{
-				DBObject json = getArtist(band);
+				Document json = getArtist(band);
 				if(json != null)
 				{
-					spotifyId = (String)json.get("artist");
-					
+					spotifyId = json.get("artist", String.class);
 					// insert SPOTIFY
 					json.put("id", id);
-					spotify.insert(json);
+					spotify.insertOne(json);
 				}
 			}
-			LOGGER.info(j++ + "/" + total + " Artist " + band + " : " + spotifyId);
+			LOGGER.info(n++ + " Artist " + band + " : " + spotifyId);
 		}
 	}
 
-	private DBObject getAlbum(String band, String album)
+	private Document getAlbum(String band, String album)
 	{
 		try
 		{
@@ -163,13 +160,12 @@ public class SpotifyLoader
 					LOGGER.info("Spotify: " + artist.getName() + " - " + a.getName());
 					if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
 					{
-						return BasicDBObjectBuilder.start().
-								add("artist", artist.getId()).
-								add("album", a.getId()).
-								add("imageL", a.getImages()[0].getUrl()).
-								add("imageM", a.getImages()[1].getUrl()).
-								add("imageS", a.getImages()[2].getUrl()).
-								add("type", "album").get();
+						return new Document("artist", artist.getId()).
+								append("album", a.getId()).
+								append("imageL", a.getImages()[0].getUrl()).
+								append("imageM", a.getImages()[1].getUrl()).
+								append("imageS", a.getImages()[2].getUrl()).
+								append("type", "album");
 					}
 				}
 			}
@@ -180,8 +176,8 @@ public class SpotifyLoader
 		}
 		return null;
 	}
-	
-	private DBObject getArtist(String band)
+
+	private Document getArtist(String band)
 	{
 		try
 		{
@@ -197,12 +193,11 @@ public class SpotifyLoader
 				LOGGER.info("Spotify: " + artist.getName());
 				if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
 				{
-					return BasicDBObjectBuilder.start().
-							add("artist", artist.getId()).
-							add("imageL", artist.getImages()[0].getUrl()).
-							add("imageM", artist.getImages()[1].getUrl()).
-							add("imageS", artist.getImages()[2].getUrl()).
-							add("type", "artist").get();
+					return new Document("artist", artist.getId()).
+							append("imageL", artist.getImages()[0].getUrl()).
+							append("imageM", artist.getImages()[1].getUrl()).
+							append("imageS", artist.getImages()[2].getUrl()).
+							append("type", "artist");
 				}
 			}
 		}
@@ -212,9 +207,10 @@ public class SpotifyLoader
 		}
 		return null;
 	}
-	
-	public DBObject getId(String id)
+
+	public Document getId(String id)
 	{
-		return spotify.findOne(BasicDBObjectBuilder.start().add("id", id).get());
+		MongoCursor<Document> i = spotify.find(Filters.eq("id", id)).iterator();
+		return i.hasNext() ? i.next() : null;
 	}
 }

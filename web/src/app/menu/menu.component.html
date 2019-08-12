@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-dark flex-md-nowrap shadow">
+  <a class="navbar-brand text-white" [routerLink]="['/']">Phonoteke</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav bd-navbar-nav flex-row">
+      <li class="nav-item">
+        <a class="nav-link text-white" [routerLink]="['/albums']">Albums</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" [routerLink]="['/artists']">Artists</a>
+      </li>
+    </ul>
+  </div>
+  <form class="form-inline w-50">
+    <input class="form-control align-self-lg-end w-100" name="search" type="search" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+  </form>
+</nav>
+

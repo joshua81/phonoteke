@@ -1,0 +1,20 @@
+<div *ngIf="album != null" class="w-100 h-100">
+  <h4>{{album.band + ' | ' + album.album}}</h4>
+  <h6>{{album.label + ' | ' + album.year + ' (' + album.genres + ')'}}</h6>
+  <div class="mx-auto d-block">
+    <p *ngIf="album.milestone" class="vote">
+      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
+    </p>
+    <p *ngIf="!album.milestone" class="vote">{{album.vote}}</p>
+    <img class="rounded" src="{{album.cover}}"/>
+  </div>
+  <p class="text-justify" [innerHTML]="album.content"></p>
+  <p class="text-right"><small>{{album.authors + ' | ' + album.creationDate}}</small></p>
+  <!--hr *ngIf="album.spotify != null || (album.youtube != null && album.youtube.length > 0))">
+  <div *ngIf="album.spotify != null">
+  <iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400" frameborder="0" allowtransparency="true"></iframe><br/>';
+    if(album.youtube.length > 0)
+    for(var i = 0; i < album.youtube.length; i++)
+    html += '<iframe src="https://www.youtube.com/embed/' + album.youtube[i] + '" width="300" height="250" allowfullscreen></iframe><br/>';
+  </div-->
+</div>

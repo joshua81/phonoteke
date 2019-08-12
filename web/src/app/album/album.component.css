@@ -1,0 +1,40 @@
+img {
+  width: 300px;
+  height: 300px;
+}
+
+h4 {
+  padding-top: 10px;
+}
+
+div {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.vote {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: #8AC007;
+
+  font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 8px;
+
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 100;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}

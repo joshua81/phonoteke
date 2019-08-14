@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -27,9 +28,9 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class PhonotekeLoader 
+public class OndarockLoader 
 {
-	private static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
+	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
 
 	public static final String MONGO_HOST = "localhost";
 	public static final int MONGO_PORT = 27017;
@@ -46,12 +47,13 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		PhonotekeLoader loader = new PhonotekeLoader();
+		OndarockLoader loader = new OndarockLoader();
+		loader.deleteAlbums();
 		loader.loadAlbums();
 		loader.loadSpotifyIds();
 	}
 
-	public PhonotekeLoader()
+	public OndarockLoader()
 	{
 		try
 		{
@@ -92,10 +94,23 @@ public class PhonotekeLoader
 		}
 	}
 
+	private void deleteAlbums()
+	{
+		MongoCursor<org.bson.Document> i = articles.find(Filters.eq("content", "")).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document page = i.next();
+			String url = page.get("url", String.class);
+			articles.findOneAndDelete(Filters.eq("url", url));
+			pages.findOneAndDelete(Filters.eq("url", url));
+			LOGGER.info("Deleted page " + url);
+		}
+	}
+
 	private void loadAlbums()
 	{
 		//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "https://www.ondarock.it/jazz/recensioni/1961_billevanstrio.htm").get());
-		MongoCursor<org.bson.Document> i = pages.find().iterator();
+		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", "ondarock")).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
@@ -103,7 +118,9 @@ public class PhonotekeLoader
 			String html = page.get("page", String.class);
 
 			// check if the article was already crawled
-			MongoCursor<org.bson.Document> j = articles.find(Filters.eq("url", getUrl(url))).iterator();
+			MongoCursor<org.bson.Document> j = articles.find(Filters.and(
+					Filters.eq("source", "ondarock"),
+					Filters.eq("url", getUrl(url)))).iterator();
 			if(!j.hasNext())
 			{
 				try
@@ -129,25 +146,28 @@ public class PhonotekeLoader
 						String source = "ondarock";
 
 						// insert DOCUMENT
-						org.bson.Document json = new org.bson.Document("id", id).
-								append("spotify", spotify).
-								append("youtube", youtube).
-								append("url", url).
-								append("type", type.name()).
-								append("content", content).
-								append("band", band).
-								append("album", album).
-								append("creationDate", creationDate).
-								append("cover", cover).
-								append("authors", authors).
-								append("genres", genres).
-								append("label", label).
-								append("year", year).
-								append("vote", vote).
-								append("milestone", milestone).
-								append("source", source);
-						articles.insertOne(json);
-						LOGGER.info("Document " + url + " added");
+						if(StringUtils.isNotEmpty(content))
+						{
+							org.bson.Document json = new org.bson.Document("id", id).
+									append("spotify", spotify).
+									append("youtube", youtube).
+									append("url", url).
+									append("type", type.name()).
+									append("content", content).
+									append("band", band).
+									append("album", album).
+									append("creationDate", creationDate).
+									append("cover", cover).
+									append("authors", authors).
+									append("genres", genres).
+									append("label", label).
+									append("year", year).
+									append("vote", vote).
+									append("milestone", milestone).
+									append("source", source);
+							articles.insertOne(json);
+							LOGGER.info("Document " + url + " added");
+						}
 					} 
 				}
 				catch (Throwable t) 

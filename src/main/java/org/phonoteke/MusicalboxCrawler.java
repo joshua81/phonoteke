@@ -19,14 +19,15 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class OndarockCrawler extends WebCrawler
+public class MusicalboxCrawler extends WebCrawler
 {
-	public static final String ONDAROCK_URL = "https://www.ondarock.it/";
+	public static final String MUSICALBOX_URL = "https://www.raiplayradio.it/programmi/musicalbox/";
+	public static final String MUSICALBOX_URL2 = "https://www.raiplayradio.it/";
 	
-	private static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
+	private static final String CRAWL_STORAGE_FOLDER = "data/musicalbox";
 	private static final int NUMBER_OF_CRAWLERS = 1;
 	
-	private static final Logger LOGGER = LogManager.getLogger(OndarockCrawler.class);
+	private static final Logger LOGGER = LogManager.getLogger(MusicalboxCrawler.class);
 //	private static final Pattern FILTERS = Pattern.compile(".*(\\.(htm|html))$");
 
 	private static final String MONGO_HOST = "localhost";
@@ -45,11 +46,11 @@ public class OndarockCrawler extends WebCrawler
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 		
 		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-		controller.addSeed(ONDAROCK_URL);
-		controller.start(OndarockCrawler.class, NUMBER_OF_CRAWLERS);
+		controller.addSeed(MUSICALBOX_URL);
+		controller.start(MusicalboxCrawler.class, NUMBER_OF_CRAWLERS);
 	}
 
-	public OndarockCrawler()
+	public MusicalboxCrawler()
 	{
 		try
 		{
@@ -67,7 +68,7 @@ public class OndarockCrawler extends WebCrawler
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String dest = url.getURL().toLowerCase();
-		return dest.startsWith(ONDAROCK_URL);
+		return dest.startsWith(MUSICALBOX_URL) || dest.startsWith(MUSICALBOX_URL2);
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class OndarockCrawler extends WebCrawler
 				{
 					json = new Document("url", url).
 							append("page", html).
-							append("source", "ondarock");
+							append("source", "musicalbox");
 					pages.insertOne(json);
 					LOGGER.info("Page " + url + " added");
 				}

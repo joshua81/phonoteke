@@ -81,7 +81,7 @@ public class SpotifyLoader
 
 	private void loadAlbums()
 	{
-		MongoCursor<Document> i = articles.find(Filters.eq("type", PhonotekeLoader.TYPE.REVIEW.name())).iterator();
+		MongoCursor<Document> i = articles.find(Filters.eq("type", OndarockLoader.TYPE.REVIEW.name())).iterator();
 		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
 		//		int total = i.count();
 		int n = 1;
@@ -112,7 +112,7 @@ public class SpotifyLoader
 
 	private void loadArtists()
 	{
-		MongoCursor<Document> i = articles.find(Filters.eq("type", PhonotekeLoader.TYPE.MONOGRAPH.name())).iterator();
+		MongoCursor<Document> i = articles.find(Filters.eq("type", OndarockLoader.TYPE.MONOGRAPH.name())).iterator();
 		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
 		//		int total = i.count();
 		int n = 1;

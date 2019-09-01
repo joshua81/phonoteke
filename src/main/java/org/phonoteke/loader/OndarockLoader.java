@@ -1,4 +1,4 @@
-package org.phonoteke;
+package org.phonoteke.loader;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -8,64 +8,45 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.phonoteke.SpotifyLoader;
+import org.phonoteke.crawler.OndarockCrawler;
 
+import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class OndarockLoader 
+public class OndarockLoader extends PhonotekeLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
-
-	public static final String MONGO_HOST = "localhost";
-	public static final int MONGO_PORT = 27017;
-	public static final String MONGO_DB = "phonoteke";
-
-	private MongoCollection<org.bson.Document> pages;
-	private MongoCollection<org.bson.Document> articles;
-
 	public enum TYPE {
 		MONOGRAPH,
 		REVIEW,
 		UNKNOWN
 	}
 
-	public static void main(String[] args) 
-	{
-		OndarockLoader loader = new OndarockLoader();
-		loader.deleteAlbums();
-		loader.loadAlbums();
-		loader.loadSpotifyIds();
-	}
-
 	public OndarockLoader()
 	{
-		try
-		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			pages = db.getCollection("pages");
-			articles = db.getCollection("articles");
-		} 
-		catch (Throwable t) 
-		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage());
-			throw new RuntimeException(t);
-		}
+		super();
+	}
+	
+	public void load() 
+	{
+		delete();
+		loadAlbumsAndArtists();
+		loadSpotifyIds();
 	}
 
 	private void loadSpotifyIds()
@@ -73,7 +54,7 @@ public class OndarockLoader
 		try 
 		{
 			SpotifyLoader spotify = new SpotifyLoader();
-			MongoCursor<org.bson.Document> i = articles.find(Filters.and(Filters.eq("type", TYPE.REVIEW.name()), Filters.eq("spotify", null))).iterator();
+			MongoCursor<org.bson.Document> i = albums.find(Filters.eq("spotify", null)).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();
@@ -83,7 +64,7 @@ public class OndarockLoader
 				{
 					String spotifyId = album.get("album", String.class);
 					String cover = album.get("image300", String.class);
-					articles.findOneAndUpdate(Filters.eq("id", page.get("id")), 
+					albums.findOneAndUpdate(Filters.eq("id", page.get("id")), 
 							new org.bson.Document("spotify", spotifyId).append("cover", cover));
 				}
 			}
@@ -94,20 +75,20 @@ public class OndarockLoader
 		}
 	}
 
-	private void deleteAlbums()
+	private void delete()
 	{
-		MongoCursor<org.bson.Document> i = articles.find(Filters.eq("content", "")).iterator();
+		MongoCursor<org.bson.Document> i = albums.find(Filters.eq("content", "")).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
 			String url = page.get("url", String.class);
-			articles.findOneAndDelete(Filters.eq("url", url));
+			albums.findOneAndDelete(Filters.eq("url", url));
 			pages.findOneAndDelete(Filters.eq("url", url));
 			LOGGER.info("Deleted page " + url);
 		}
 	}
 
-	private void loadAlbums()
+	private void loadAlbumsAndArtists()
 	{
 		//		DBCursor i = pages.find(BasicDBObjectBuilder.start().add("url", "https://www.ondarock.it/jazz/recensioni/1961_billevanstrio.htm").get());
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", "ondarock")).iterator();
@@ -116,25 +97,25 @@ public class OndarockLoader
 			org.bson.Document page = i.next();
 			String url = page.get("url", String.class);
 			String html = page.get("page", String.class);
+			Document doc = Jsoup.parse(html);
+			TYPE type = getType(url, doc);
 
-			// check if the article was already crawled
-			MongoCursor<org.bson.Document> j = articles.find(Filters.and(
-					Filters.eq("source", "ondarock"),
-					Filters.eq("url", getUrl(url)))).iterator();
-			if(!j.hasNext())
+			try
 			{
-				try
+				// Album
+				if(TYPE.REVIEW.equals(type))
 				{
-					Document doc = Jsoup.parse(html);
-					TYPE type = getType(url, doc);
-					if(type != TYPE.UNKNOWN)
+					MongoCursor<org.bson.Document> j = albums.find(Filters.and(
+							Filters.eq("source", "ondarock"),
+							Filters.eq("url", getUrl(url)))).iterator();
+					if(!j.hasNext())
 					{
 						String id = getId(url);
-						String band = getBand(url, doc);
-						String album = getAlbum(url, doc);
-						String spotify = getSpotify(url, doc);
-						Set<String> youtube = getYoutube(url, doc);
-						Date creationDate = getCreationDate(url, doc);
+						String idsptf = getSpotify(url, doc);
+						String artist = getArtist(url, doc);
+						String title = getTitle(url, doc);
+						List<Map<String,String>> tracks = getTracks(url, doc);
+						Date date = getDate(url, doc);
 						String cover = getCover(url, doc);
 						Set<String> authors = getAuthors(url, doc);
 						Set<String> genres = getGenres(url, doc);
@@ -142,21 +123,17 @@ public class OndarockLoader
 						String label = getLabel(url, doc);
 						Float vote = getVote(url, doc);
 						Boolean milestone = getMilestone(url, doc);
-						String content = getContent(url, doc);
-						String source = "ondarock";
+						String review = getContent(url, doc);
 
-						// insert DOCUMENT
-						if(StringUtils.isNotEmpty(content))
+						if(StringUtils.isNotEmpty(review))
 						{
 							org.bson.Document json = new org.bson.Document("id", id).
-									append("spotify", spotify).
-									append("youtube", youtube).
+									append("idsptf", idsptf).
 									append("url", url).
-									append("type", type.name()).
-									append("content", content).
-									append("band", band).
-									append("album", album).
-									append("creationDate", creationDate).
+									append("artist", artist).
+									append("title", title).
+									append("tracks", tracks).
+									append("date", date).
 									append("cover", cover).
 									append("authors", authors).
 									append("genres", genres).
@@ -164,16 +141,46 @@ public class OndarockLoader
 									append("year", year).
 									append("vote", vote).
 									append("milestone", milestone).
-									append("source", source);
-							articles.insertOne(json);
-							LOGGER.info("Document " + url + " added");
+									append("review", review).
+									append("source", "ondarock");
+							albums.insertOne(json);
+							LOGGER.info("Album " + url + " added");
 						}
-					} 
+					}
 				}
-				catch (Throwable t) 
+				else if(TYPE.MONOGRAPH.equals(type))
 				{
-					LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
+					MongoCursor<org.bson.Document> j = artists.find(Filters.and(
+							Filters.eq("source", "ondarock"),
+							Filters.eq("url", getUrl(url)))).iterator();
+					if(!j.hasNext())
+					{
+						String id = getId(url);
+						String artist = getArtist(url, doc);
+						String desc = getTitle(url, doc);
+						String cover = getCover(url, doc);
+						Set<String> authors = getAuthors(url, doc);
+						String review = getContent(url, doc);
+
+						if(StringUtils.isNotEmpty(review))
+						{
+							org.bson.Document json = new org.bson.Document("id", id).
+									append("url", url).
+									append("review", review).
+									append("artist", artist).
+									append("description", desc).
+									append("cover", cover).
+									append("authors", authors).
+									append("source", "ondarock");
+							artists.insertOne(json);
+							LOGGER.info("Artist " + url + " added");
+						}
+					}
 				}
+			}
+			catch (Throwable t) 
+			{
+				LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
 			}
 		}
 	}
@@ -188,7 +195,7 @@ public class OndarockLoader
 		{
 			if(url.startsWith(".") || url.startsWith("/"))
 			{
-				url = new URL(new URL(OndarockCrawler.ONDAROCK_URL), url).toString();
+				url = new URL(new URL(OndarockCrawler.URL), url).toString();
 				url = url.replaceAll("\\.\\./", "");
 			}
 			return url.trim();
@@ -225,7 +232,7 @@ public class OndarockLoader
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String url = getUrl(elements.get(i).attr("href"));
-			if(url.startsWith(OndarockCrawler.ONDAROCK_URL))
+			if(url.startsWith(OndarockCrawler.URL))
 			{
 				switch(getType(url, doc))
 				{
@@ -282,7 +289,7 @@ public class OndarockLoader
 		}
 	}
 
-	private String getBand(String url, Document doc) {
+	private String getArtist(String url, Document doc) {
 		Element intestazioneElement = null;
 		Element bandElement = null;
 		String band = null;
@@ -306,7 +313,7 @@ public class OndarockLoader
 		}
 	}
 
-	private String getAlbum(String url, Document doc) {
+	private String getTitle(String url, Document doc) {
 		Element intestazioneElement = null;
 		Element albumElement = null;
 		String album = null;
@@ -330,7 +337,7 @@ public class OndarockLoader
 		}
 	}
 
-	private Date getCreationDate(String url, Document doc) {
+	private Date getDate(String url, Document doc) {
 		try
 		{
 			Date reviewDate = null;
@@ -497,28 +504,32 @@ public class OndarockLoader
 		return null;
 	}
 
-	private Set<String> getYoutube(String url, Document doc) {
-		Set<String> youtube = Sets.newHashSet();
-
+	private List<Map<String, String>> getTracks(String url, Document doc) {
+		List<Map<String, String>> tracks = Lists.newArrayList();
 		Elements elements = doc.select("iframe");
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String src = elements.get(i).attr("src");
 			if(src != null && src.contains("youtube.com")) 
 			{
+				String youtube = null;
 				if(src.startsWith("https://www.youtube.com/embed/"))
 				{
 					int ix = "https://www.youtube.com/embed/".length();
-					youtube.add(src.substring(ix));
+					youtube = src.substring(ix);
 				}
 				else if(src.startsWith("//www.youtube.com/embed/"))
 				{
 					int ix = "//www.youtube.com/embed/".length();
-					youtube.add(src.substring(ix));
+					youtube = src.substring(ix);
 				}
+				LOGGER.info("tracks: youtube: " + youtube);
+				Map<String, String> map = Maps.newHashMap();
+				map.put("youtube", youtube);
+				tracks.add(map);
 			}
 		}
-		return youtube;
+		return tracks;
 	}
 
 	private Float getVote(String url, Document doc) {
@@ -567,20 +578,20 @@ public class OndarockLoader
 	}
 
 	private TYPE getType(String url, Document doc) {
-		if(url.startsWith(OndarockCrawler.ONDAROCK_URL + "pietremiliari") || 
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "recensioni") ||
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "jazz/recensioni"))
+		if(url.startsWith(OndarockCrawler.URL + "pietremiliari") || 
+				url.startsWith(OndarockCrawler.URL + "recensioni") ||
+				url.startsWith(OndarockCrawler.URL + "jazz/recensioni"))
 		{
 			return TYPE.REVIEW;
 		}
-		else if(url.startsWith(OndarockCrawler.ONDAROCK_URL + "songwriter") || 
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "popmuzik") || 
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "altrisuoni") || 
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "rockedintorni") ||
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "dark") ||
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "italia") ||
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "jazz") ||
-				url.startsWith(OndarockCrawler.ONDAROCK_URL + "elettronica"))
+		else if(url.startsWith(OndarockCrawler.URL + "songwriter") || 
+				url.startsWith(OndarockCrawler.URL + "popmuzik") || 
+				url.startsWith(OndarockCrawler.URL + "altrisuoni") || 
+				url.startsWith(OndarockCrawler.URL + "rockedintorni") ||
+				url.startsWith(OndarockCrawler.URL + "dark") ||
+				url.startsWith(OndarockCrawler.URL + "italia") ||
+				url.startsWith(OndarockCrawler.URL + "jazz") ||
+				url.startsWith(OndarockCrawler.URL + "elettronica"))
 		{
 			return TYPE.MONOGRAPH;
 		}

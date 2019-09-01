@@ -1,10 +1,10 @@
 <div *ngIf="artist != null" class="w-100 h-100">
-  <h4>{{artist.band + ' | ' + artist.album}}</h4>
+  <h4>{{artist.artist + ' | ' + artist.description}}</h4>
   <div class="mx-auto d-block">
     <img class="rounded" src="{{artist.cover}}"/>
   </div>
-  <p class="text-justify" [innerHTML]="artist.content"></p>
-  <p class="text-right"><small>{{artist.authors + ' | ' + artist.creationDate}}</small></p>
+  <p class="text-justify" [innerHTML]="artist.review"></p>
+  <p class="text-right"><small>{{artist.authors + ' | ' + artist.date}}</small></p>
   <!--hr *ngIf="album.spotify != null || (album.youtube != null && album.youtube.length > 0))">
   <div *ngIf="album.spotify != null">
   <iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400" frameborder="0" allowtransparency="true"></iframe><br/>';

@@ -1,4 +1,4 @@
-package org.phonoteke;
+package org.phonoteke.loader;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,12 +12,11 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
+import org.phonoteke.crawler.MusicalboxCrawler;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequest;
@@ -29,44 +28,21 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class MusicalboxLoader 
+public class MusicalboxLoader extends PhonotekeLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(MusicalboxLoader.class);
 	private static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", "[an error occurred while processing this directive]", "PLAY");
 	
-	public static final String MONGO_HOST = "localhost";
-	public static final int MONGO_PORT = 27017;
-	public static final String MONGO_DB = "phonoteke";
-
-	private MongoCollection<org.bson.Document> pages;
-	private MongoCollection<org.bson.Document> albums;
-
-
-	public static void main(String[] args) 
-	{
-		MusicalboxLoader loader = new MusicalboxLoader();
-		loader.loadAlbums();
-	}
-
 	public MusicalboxLoader()
 	{
-		try
-		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			pages = db.getCollection("pages");
-			albums = db.getCollection("albums");
-		} 
-		catch (Throwable t) 
-		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage());
-			throw new RuntimeException(t);
-		}
+		super();
+	}
+	
+	public void load()
+	{
+		loadAlbums();
 	}
 
 	private void loadAlbums()
@@ -93,21 +69,20 @@ public class MusicalboxLoader
 					String cover = getCover(doc);
 					Date date = getDate(doc);
 					String desc = getDescription(doc);
-					List<Map<String,String>> tracks = getTracks(doc);
+					List<Map<String,String>> tracks = null;//getTracks(doc);
 					String title = getTitle(doc);
-					String source = "musicalbox";
 
 					if(CollectionUtils.isNotEmpty(tracks))
 					{
 						org.bson.Document json = new org.bson.Document("id", id).
 								append("url", url).
-								append("band", source).
+								append("artist", "Musicalbox").
 								append("title", title).
-								append("description", desc).
 								append("tracks", tracks).
 								append("date", date).
 								append("cover", cover).
-								append("source", source);
+								append("description", desc).
+								append("source", "musicalbox");
 						albums.insertOne(json);
 						LOGGER.info("Album " + url + " added");
 					}
@@ -133,7 +108,7 @@ public class MusicalboxLoader
 		{
 			if(url.startsWith(".") || url.startsWith("/"))
 			{
-				url = new URL(new URL(MusicalboxCrawler.MUSICALBOX_URL2), url).toString();
+				url = new URL(new URL(MusicalboxCrawler.URL2), url).toString();
 				url = url.replaceAll("\\.\\./", "");
 			}
 			return url.trim();
@@ -192,7 +167,7 @@ public class MusicalboxLoader
 
 	private List<Map<String, String>> getTracks(Document doc) 
 	{
-		List<Map<String, String>> playlist = Lists.newArrayList();
+		List<Map<String, String>> tracks = Lists.newArrayList();
 		Element content = doc.select("div.aodHtmlDescription").first();
 		if(content != null && content.children() != null)
 		{
@@ -203,11 +178,11 @@ public class MusicalboxLoader
 				if(StringUtils.isNoneBlank(track) && !ERRORS.contains(track))
 				{
 					String youtube = getYoutube(track);
-					LOGGER.info("playlist: " + track + ", youtube: " + youtube);
+					LOGGER.info("tracks: " + track + ", youtube: " + youtube);
 					Map<String, String> map = Maps.newHashMap();
 					map.put("track", track);
 					map.put("youtube", youtube);
-					playlist.add(map);
+					tracks.add(map);
 				}
 			}
 		}
@@ -220,15 +195,15 @@ public class MusicalboxLoader
 				if(StringUtils.isNoneBlank(track) && !ERRORS.contains(track))
 				{
 					String youtube = getYoutube(track);
-					LOGGER.info("playlist: " + track + ", youtube: " + youtube);
+					LOGGER.info("tracks: " + track + ", youtube: " + youtube);
 					Map<String, String> map = Maps.newHashMap();
 					map.put("track", track);
 					map.put("youtube", youtube);
-					playlist.add(map);
+					tracks.add(map);
 				}
 			}
 		}
-		return playlist;
+		return tracks;
 	}
 
 	private String getCover(Document doc) 

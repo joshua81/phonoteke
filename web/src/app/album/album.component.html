@@ -1,5 +1,5 @@
 <div *ngIf="album != null" class="w-100 h-100">
-  <h4>{{album.band + ' | ' + album.album}}</h4>
+  <h4>{{album.artist + ' | ' + album.title}}</h4>
   <h6>{{album.label + ' | ' + album.year + ' (' + album.genres + ')'}}</h6>
   <div class="mx-auto d-block">
     <p *ngIf="album.milestone" class="vote">
@@ -8,8 +8,11 @@
     <p *ngIf="!album.milestone" class="vote">{{album.vote}}</p>
     <img class="rounded" src="{{album.cover}}"/>
   </div>
-  <p class="text-justify" [innerHTML]="album.content"></p>
-  <p class="text-right"><small>{{album.authors + ' | ' + album.creationDate}}</small></p>
+  <p class="text-justify" [innerHTML]="album.review"></p>
+  <div class="list-group">
+    <a href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="list-group-item list-group-item-action" *ngFor="let track of album.tracks">{{track.track}}</a>
+  </div>
+  <p class="text-right"><small>{{album.authors + ' | ' + album.date}}</small></p>
   <!--hr *ngIf="album.spotify != null || (album.youtube != null && album.youtube.length > 0))">
   <div *ngIf="album.spotify != null">
   <iframe src="https://embed.spotify.com/album/' + album.spotify + '" width="300" height="400" frameborder="0" allowtransparency="true"></iframe><br/>';

@@ -1,0 +1,12 @@
+<div *ngIf="playlist != null" class="w-100 h-100">
+  <h4>{{playlist.band}}</h4>
+  <h6>{{playlist.title}}</h6>
+  <div class="mx-auto d-block">
+    <img class="rounded" src="{{playlist.cover}}"/>
+  </div>
+  <p class="text-justify">{{playlist.description}}</p>
+  <div class="list-group">
+    <a href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="list-group-item list-group-item-action" *ngFor="let track of playlist.tracks">{{track.track}}</a>
+  </div>
+  <p class="text-right"><small>{{playlist.date}}</small></p>
+</div>

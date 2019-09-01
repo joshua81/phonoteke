@@ -1,0 +1,30 @@
+a {
+  cursor: pointer;
+}
+
+p {
+  margin-bottom: 0px;
+}
+
+.row {
+  padding-top: 10px;
+}
+
+.col-md-4 {
+  padding-top: 5px;
+}
+
+.card {
+  width: 300px;
+}
+
+.card-img-top {
+  width: 300px;
+  height: 300px;
+}
+
+.card-body {
+  padding-left: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}

@@ -1,73 +1,58 @@
-package org.phonoteke;
+package org.phonoteke.crawler;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class OndarockCrawler extends WebCrawler
+public class OndarockCrawler extends PhonotekeCrawler
 {
-	public static final String ONDAROCK_URL = "https://www.ondarock.it/";
+	public static final String URL = "https://www.ondarock.it/";
 	
-	private static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	private static final int NUMBER_OF_CRAWLERS = 1;
-	
-	private static final Logger LOGGER = LogManager.getLogger(OndarockCrawler.class);
 //	private static final Pattern FILTERS = Pattern.compile(".*(\\.(htm|html))$");
-
-	private static final String MONGO_HOST = "localhost";
-	private static final int MONGO_PORT = 27017;
-	private static final String MONGO_DB = "phonoteke";
 
 	private MongoCollection<Document> pages;
 	
-	
-	public static void main(String[] args) throws Exception 
-	{
-		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
-		PageFetcher pageFetcher = new PageFetcher(config);
-		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-		
-		CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-		controller.addSeed(ONDAROCK_URL);
-		controller.start(OndarockCrawler.class, NUMBER_OF_CRAWLERS);
-	}
 
 	public OndarockCrawler()
 	{
+		super();
+	}
+	
+	public void crawl()
+	{
 		try
 		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			pages = db.getCollection("pages");
+			CrawlConfig config = new CrawlConfig();
+			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+			PageFetcher pageFetcher = new PageFetcher(config);
+			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+			
+			CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+			controller.addSeed(URL);
+			controller.start(OndarockCrawler.class, NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage());
+			LOGGER.error("Error crawling Musilcabox: " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
 
-
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String dest = url.getURL().toLowerCase();
-		return dest.startsWith(ONDAROCK_URL);
+		return dest.startsWith(URL);
 	}
 
 	@Override

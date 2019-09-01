@@ -1,0 +1,14 @@
+img {
+  width: 300px;
+  height: 300px;
+}
+
+h4 {
+  padding-top: 10px;
+}
+
+.d-block {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}

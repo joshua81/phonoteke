@@ -6,13 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
-import org.phonoteke.model.Track;
+import org.phonoteke.model.ModelUtils;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequest;
@@ -65,8 +66,13 @@ public class MusicalboxLoader extends PhonotekeLoader
 		{
 			// nothing to do
 		}
-		LOGGER.info("date: " + date);
+		LOGGER.debug("date: " + date);
 		return date;
+	}
+	
+	protected String getReview(String url, Document doc) 
+	{
+		return getDescription(url, doc);
 	}
 
 	protected String getDescription(String url, Document doc) 
@@ -78,7 +84,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 			desc = content.text();
 
 		}
-		LOGGER.info("description: " + desc);
+		LOGGER.debug("description: " + desc);
 		return desc;
 	}
 
@@ -91,13 +97,13 @@ public class MusicalboxLoader extends PhonotekeLoader
 			title = content.text();
 
 		}
-		LOGGER.info("title: " + title);
+		LOGGER.debug("title: " + title);
 		return title;
 	}
 
-	protected List<Track> getTracks(String url, Document doc) 
+	protected List<Map<String, String>> getTracks(String url, Document doc) 
 	{
-		List<Track> tracks = Lists.newArrayList();
+		List<Map<String, String>> tracks = Lists.newArrayList();
 		Element content = doc.select("div.aodHtmlDescription").first();
 		if(content != null && content.children() != null)
 		{
@@ -108,8 +114,8 @@ public class MusicalboxLoader extends PhonotekeLoader
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
 					String youtube = null;//getYoutube(track);
-					tracks.add(Track.newInstance(title, youtube));
-					LOGGER.info("tracks: " + title + ", youtube: " + youtube);
+					tracks.add(ModelUtils.newTrack(title, youtube));
+					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
 			}
 		}
@@ -122,8 +128,8 @@ public class MusicalboxLoader extends PhonotekeLoader
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
 					String youtube = null;//getYoutube(title);
-					tracks.add(Track.newInstance(title, youtube));
-					LOGGER.info("tracks: " + title + ", youtube: " + youtube);
+					tracks.add(ModelUtils.newTrack(title, youtube));
+					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
 			}
 		}
@@ -139,7 +145,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 			cover = content.attr("src");
 			cover = getUrl(cover);
 		}
-		LOGGER.info("cover: " + cover);
+		LOGGER.debug("cover: " + cover);
 		return cover;
 	}
 
@@ -180,7 +186,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 			{
 				youtubeId = searchResults.get(0).getId().getVideoId();
 			}
-			LOGGER.info("youtube: " + youtubeId);
+			LOGGER.debug("youtube: " + youtubeId);
 			return youtubeId;
 		}
 		catch(Exception e)
@@ -190,7 +196,8 @@ public class MusicalboxLoader extends PhonotekeLoader
 		}
 	}
 
-	protected TYPE getType(String url, Document doc) {
+	protected TYPE getType(String url, Document doc) 
+	{
 		return TYPE.ALBUM;
 	}
 }

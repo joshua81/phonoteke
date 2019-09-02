@@ -4,12 +4,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.phonoteke.model.Track;
 
 import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
@@ -67,6 +67,7 @@ public class PhonotekeLoader
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
+//			String url = "https://www.ondarock.it/recensioni/2019-lanadelrey-normanfuckingrockwell.htm";
 			String url = page.get("url", String.class);
 			String html = page.get("page", String.class);
 
@@ -97,7 +98,7 @@ public class PhonotekeLoader
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
 								append("tracks", getTracks(url, doc)).
-								append("url", getUrl(url, doc)).
+								append("url", getUrl(url)).
 								append("vote", getVote(url, doc)).
 								append("year", getYear(url, doc));
 						albums.insertOne(json);
@@ -121,16 +122,17 @@ public class PhonotekeLoader
 					{
 						Document doc = Jsoup.parse(html);
 						org.bson.Document json = new org.bson.Document("id", getId(url)).
+								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).
 								append("date", getDate(url, doc)).
 								append("description", getDescription(url, doc)).
 								append("idmbrz", getIdmbrz(url, doc)).
 								append("idsptf", getIdsptf(url, doc)).
-								append("name", getName(url, doc)).
 								append("review", getReview(url, doc)).
 								append("source", getSource()).
-								append("url", getUrl(url, doc));
+								append("title", getTitle(url, doc)).
+								append("url", getUrl(url));
 						artists.insertOne(json);
 						LOGGER.info("Artist " + url + " added");
 					}
@@ -201,10 +203,6 @@ public class PhonotekeLoader
 		return null;
 	}
 
-	protected String getName(String url, Document doc) {
-		return null;
-	}
-
 	protected List<String> getAuthors(String url, Document doc) {
 		return null;
 	}
@@ -249,11 +247,7 @@ public class PhonotekeLoader
 		return null;
 	}
 
-	protected List<Track> getTracks(String url, Document doc) {
-		return null;
-	}
-
-	protected String getUrl(String url, Document doc) {
+	protected List<Map<String, String>> getTracks(String url, Document doc) {
 		return null;
 	}
 

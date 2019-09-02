@@ -11,8 +11,6 @@ import { AlbumsComponent } from './albums/albums.component';
 import { AlbumComponent } from './album/album.component';
 import { ArtistsComponent } from './artists/artists.component';
 import { ArtistComponent } from './artist/artist.component';
-import { PlaylistsComponent } from './playlists/playlists.component';
-import { PlaylistComponent } from './playlist/playlist.component';
 
 @NgModule({
   declarations: [
@@ -21,9 +19,7 @@ import { PlaylistComponent } from './playlist/playlist.component';
     AlbumsComponent,
     AlbumComponent,
     ArtistsComponent,
-    ArtistComponent,
-    PlaylistsComponent,
-    PlaylistComponent
+    ArtistComponent
   ],
   imports: [
     BrowserModule,
@@ -32,9 +28,7 @@ import { PlaylistComponent } from './playlist/playlist.component';
       {path: 'albums', component: AlbumsComponent},
       {path: 'albums/:albumId', component: AlbumComponent},
       {path: 'artists', component: ArtistsComponent},
-      {path: 'artists/:artistId', component: ArtistComponent},
-      {path: 'playlists', component: PlaylistsComponent},
-      {path: 'playlists/:playlistId', component: PlaylistComponent}]),
+      {path: 'artists/:artistId', component: ArtistComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule

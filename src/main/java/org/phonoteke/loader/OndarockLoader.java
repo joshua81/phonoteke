@@ -8,6 +8,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
@@ -15,7 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.phonoteke.SpotifyLoader;
-import org.phonoteke.model.Track;
+import org.phonoteke.model.ModelUtils;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
@@ -184,23 +185,41 @@ public class OndarockLoader extends PhonotekeLoader
 	protected String getTitle(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
-		Element albumElement = null;
-		String album = null;
+		Element titleElement = null;
+		String title = null;
 		switch (getType(url)) {
 		case ALBUM:
 			intestazioneElement = doc.select("div[id=intestazionerec]").first();
-			albumElement = intestazioneElement.select("h2").first();
-			album = albumElement.text().trim();
-			return album;
+			titleElement = intestazioneElement.select("h2").first();
+			title = titleElement.text().trim();
+			return title;
 		case ARTIST:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
 				intestazioneElement = doc.select("div[id=intestazione]").first();
 			}
-			albumElement = intestazioneElement.select("h3").first();
-			album = albumElement.text().trim();
-			return album;
+			titleElement = intestazioneElement.select("h3").first();
+			title = titleElement.text().trim();
+			return title;
+		default:
+			return null;
+		}
+	}
+	
+	protected String getDescription(String url, Document doc) 
+	{
+		Element descriptionElement = null;
+		String description = null;
+		switch (getType(url)) {
+		case ALBUM:
+			descriptionElement = doc.select("meta[property=og:description]").first();
+			description = descriptionElement.attr("content").trim();
+			return description;
+		case ARTIST:
+			descriptionElement = doc.select("meta[property=og:description]").first();
+			description = descriptionElement.attr("content").trim();
+			return description;
 		default:
 			return null;
 		}
@@ -376,9 +395,9 @@ public class OndarockLoader extends PhonotekeLoader
 		return null;
 	}
 
-	protected List<Track> getTracks(String url, Document doc) 
+	protected List<Map<String, String>> getTracks(String url, Document doc) 
 	{
-		List<Track> tracks = Lists.newArrayList();
+		List<Map<String, String>> tracks = Lists.newArrayList();
 		Elements elements = doc.select("iframe");
 		for(int i = 0; i < elements.size(); i++)
 		{
@@ -390,14 +409,16 @@ public class OndarockLoader extends PhonotekeLoader
 				{
 					int ix = "https://www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
+					tracks.add(ModelUtils.newTrack(null, youtube));
+					LOGGER.debug("tracks: youtube: " + youtube);
 				}
 				else if(src.startsWith("//www.youtube.com/embed/"))
 				{
 					int ix = "//www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
+					tracks.add(ModelUtils.newTrack(null, youtube));
+					LOGGER.debug("tracks: youtube: " + youtube);
 				}
-				tracks.add(Track.newInstance(null, youtube));
-				LOGGER.info("tracks: youtube: " + youtube);
 			}
 		}
 		return tracks;

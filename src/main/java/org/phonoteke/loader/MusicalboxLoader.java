@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 
 public class MusicalboxLoader extends PhonotekeLoader
 {
-	public static final String URL = "https://www.raiplayradio.it/";
+	private static final String URL = "https://www.raiplayradio.it/";
 	private static final String ARTIST = "Musicalbox";
 	private static final String SOURCE = "musicalbox";
 	private static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", "[an error occurred while processing this directive]", "PLAY");

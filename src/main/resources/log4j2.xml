@@ -4,7 +4,7 @@
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n" />
 		</Console>
-		<File name="File" fileName="phonoteke.log" bufferedIO="false" append="false" advertise="true">
+		<File name="File" fileName="logs/phonoteke.log" bufferedIO="false" append="false" advertise="true">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n" />
 		</File>
 	</Appenders>

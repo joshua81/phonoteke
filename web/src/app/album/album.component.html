@@ -10,7 +10,5 @@
   </div>
   <p class="text-justify" [innerHTML]="album.review"></p>
   <p class="text-right"><small>{{album.authors + ' | ' + album.date}}</small></p>
-  <div class="embed-responsive" *ngFor="let track of album.tracks">
-    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/Qg3DxELVPj4" allowfullscreen></iframe>
-  </div>
+  <iframe *ngFor="let track of album.tracks" width="300" height="300" class="embed-responsive-item" src="https://www.youtube.com/embed/Qg3DxELVPj4" allowfullscreen></iframe>
 </div>

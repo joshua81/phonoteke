@@ -196,7 +196,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 		}
 	}
 
-	protected TYPE getType(String url, Document doc) 
+	protected TYPE getType(String url) 
 	{
 		return TYPE.ALBUM;
 	}

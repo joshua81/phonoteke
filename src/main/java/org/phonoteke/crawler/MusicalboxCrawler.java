@@ -1,5 +1,8 @@
 package org.phonoteke.crawler;
 
+import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.url.WebURL;
+
 public class MusicalboxCrawler extends PhonotekeCrawler
 {
 	private static final String URL1 = "https://www.raiplayradio.it/programmi/musicalbox/";
@@ -12,16 +15,18 @@ public class MusicalboxCrawler extends PhonotekeCrawler
 		super();
 	}
 	
-	protected String getBaseUrl()
+	public static String getBaseUrl()
 	{
 		return URL1;
 	}
 
-	protected Boolean shouldVisit(String url) 
+	@Override
+	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		return url.startsWith(URL1) || url.startsWith(URL2);
+		return url.getURL().toLowerCase().startsWith(URL1) || url.getURL().toLowerCase().startsWith(URL2);
 	}
 	
+	@Override
 	protected String getSource() 
 	{
 		return SOURCE;

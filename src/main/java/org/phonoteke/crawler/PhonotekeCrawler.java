@@ -17,7 +17,6 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import edu.uci.ics.crawler4j.url.WebURL;
 
 public class PhonotekeCrawler extends WebCrawler
 {
@@ -34,8 +33,8 @@ public class PhonotekeCrawler extends WebCrawler
 
 	public static void main(String[] args) throws Exception 
 	{
-		new OndarockCrawler().crawl();
-		new MusicalboxCrawler().crawl();
+		new PhonotekeCrawler().crawl(MusicalboxCrawler.class, MusicalboxCrawler.getBaseUrl());
+		new PhonotekeCrawler().crawl(OndarockCrawler.class, OndarockCrawler.getBaseUrl());
 	}
 
 	public PhonotekeCrawler()
@@ -52,30 +51,25 @@ public class PhonotekeCrawler extends WebCrawler
 		}
 	}
 
-	protected void crawl()
+	protected void crawl(Class<? extends WebCrawler> clazz, String url)
 	{
 		try
 		{
+			LOGGER.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
 			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-			controller.addSeed(getBaseUrl());
-			controller.start(PhonotekeCrawler.class, NUMBER_OF_CRAWLERS);
+			controller.addSeed(url);
+			controller.start(clazz, NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error crawling Musilcabox: " + t.getMessage());
+			LOGGER.error("Error crawling " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
-	}
-
-	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) 
-	{
-		return shouldVisit(url.getURL().toLowerCase());
 	}
 
 	@Override
@@ -113,16 +107,6 @@ public class PhonotekeCrawler extends WebCrawler
 	//---------------------------------
 	// Methods to be overridden
 	//---------------------------------
-	protected String getBaseUrl()
-	{
-		return null;
-	}
-
-	protected Boolean shouldVisit(String url)
-	{
-		return null;
-	}
-
 	protected String getSource() 
 	{
 		return null;

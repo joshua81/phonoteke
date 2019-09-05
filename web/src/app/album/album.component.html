@@ -1,14 +1,21 @@
-<div *ngIf="album != null" class="w-100 h-100">
+<div class="w-100 h-100">
   <h4>{{album.artist + ' | ' + album.title}}</h4>
   <h6>{{album.label + ' | ' + album.year + ' | ' + album.genres}}</h6>
-  <div class="mx-auto d-block">
-    <p *ngIf="album.milestone" class="vote">
-      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
+  <div class="cover mx-auto d-block">
+    <p *ngIf="album.vote != null && album.milestone" class="vote">
+      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
     </p>
-    <p *ngIf="!album.milestone" class="vote">{{album.vote}}</p>
-    <img class="rounded" src="{{album.cover}}"/>
+    <p *ngIf="album.vote != null && !album.milestone" class="vote">{{album.vote}}</p>
+    <img class="cover rounded" src="{{album.cover}}"/>
   </div>
   <p class="text-justify" [innerHTML]="album.review"></p>
   <p class="text-right"><small>{{album.authors + ' | ' + album.date}}</small></p>
-  <iframe *ngFor="let track of album.tracks" width="300" height="300" class="embed-responsive-item" src="https://www.youtube.com/embed/Qg3DxELVPj4" allowfullscreen></iframe>
+  <ul class="list-group w-100 h-100">
+    <li *ngFor="let track of album.tracks" class="track list-group-item d-flex justify-content-between align-items-center">
+      {{track.title}}
+      <a *ngIf="track.youtube != null" class="ml-auto p-2" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+        <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="youtube" class="track align-middle svg-inline--fa fa-youtube fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#ff0000" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg>
+      </a>
+    </li>
+  </ul>
 </div>

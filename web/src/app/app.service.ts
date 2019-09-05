@@ -10,8 +10,6 @@ export class AppService {
   albumLoaded = new EventEmitter();
   artistsLoaded = new EventEmitter();
   artistLoaded = new EventEmitter();
-  playlistsLoaded = new EventEmitter();
-  playlistLoaded = new EventEmitter();
   error = null;
 
   constructor(private http: HttpClient) { }

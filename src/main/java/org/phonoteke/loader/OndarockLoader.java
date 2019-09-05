@@ -102,9 +102,11 @@ public class OndarockLoader extends PhonotekeLoader
 				{
 				case ARTIST:
 					elements.get(i).attr("href", "/artists/" + getId(url));
+					elements.get(i).attr("ng-reflect-router-link", "/artists/" + getId(url));
 					break;
 				case ALBUM:
 					elements.get(i).attr("href", "/albums/" + getId(url));
+					elements.get(i).attr("ng-reflect-router-link", "/albums/" + getId(url));
 					break;
 				default:
 					elements.get(i).unwrap();

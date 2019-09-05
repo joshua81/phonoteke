@@ -1,19 +1,19 @@
-img {
-  width: 300px;
-  height: 300px;
-}
-
 h4 {
   padding-top: 10px;
 }
 
-div {
+img.cover {
+  width: 300px;
+  height: 300px;
+}
+
+div.cover {
   position: relative;
   width: 300px;
   height: 300px;
 }
 
-.vote {
+p.vote {
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -30,11 +30,20 @@ div {
   z-index: 100;
 }
 
-svg {
+svg.vote {
   width: 20px;
   height: 20px;
 
   position: absolute;
   right: 10px;
   top: 10px;
+}
+
+li.track {
+  height: 30px;
+}
+
+svg.track {
+  width: 20px;
+  height: 15px;
 }

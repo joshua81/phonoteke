@@ -1,6 +1,5 @@
 package org.phonoteke.loader;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,20 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.phonoteke.model.ModelUtils;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
-import com.google.api.services.youtube.model.SearchResult;
 import com.google.common.collect.Lists;
 
 public class MusicalboxLoader extends PhonotekeLoader
@@ -113,7 +104,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 				String title = i.next().text().trim();
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
-					String youtube = null;//getYoutube(track);
+					String youtube = null;
 					tracks.add(ModelUtils.newTrack(title, youtube));
 					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
@@ -127,7 +118,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 				String title = i.next().text().trim();
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
-					String youtube = null;//getYoutube(title);
+					String youtube = null;
 					tracks.add(ModelUtils.newTrack(title, youtube));
 					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
@@ -147,53 +138,6 @@ public class MusicalboxLoader extends PhonotekeLoader
 		}
 		LOGGER.debug("cover: " + cover);
 		return cover;
-	}
-
-	private String getYoutube(String track) 
-	{
-		try
-		{
-			// This object is used to make YouTube Data API requests. The last
-			// argument is required, but since we don't need anything
-			// initialized when the HttpRequest is initialized, we override
-			// the interface and provide a no-op function.
-			YouTube youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
-				public void initialize(HttpRequest request) throws IOException {}
-			}).setApplicationName("Phonoteke").build();
-
-			// Define the API request for retrieving search results.
-			YouTube.Search.List search = youtube.search().list("id,snippet");
-
-			// Set your developer key, es. "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI"
-			String apiKey = null;
-			search.setKey(apiKey);
-			search.setQ(track);
-
-			// Restrict the search results to only include videos. See:
-			// https://developers.google.com/youtube/v3/docs/search/list#type
-			search.setType("video");
-
-			// To increase efficiency, only retrieve the fields that the
-			// application uses.
-			search.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
-			search.setMaxResults(1L);
-
-			// Call the API and print results.
-			String youtubeId = null;
-			SearchListResponse searchResponse = search.execute();
-			List<SearchResult> searchResults = searchResponse.getItems();
-			if(CollectionUtils.isNotEmpty(searchResults))
-			{
-				youtubeId = searchResults.get(0).getId().getVideoId();
-			}
-			LOGGER.debug("youtube: " + youtubeId);
-			return youtubeId;
-		}
-		catch(Exception e)
-		{
-			LOGGER.error("ERROR getYoutube(): " + e.getMessage());
-			return null;
-		}
 	}
 
 	protected TYPE getType(String url) 

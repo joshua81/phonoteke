@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 import org.phonoteke.SpotifyLoader;
 import org.phonoteke.model.ModelUtils;
 
+import com.google.api.client.util.Maps;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -26,18 +27,18 @@ public class OndarockLoader extends PhonotekeLoader
 {
 	private static final String URL = "https://www.ondarock.it/";
 	private static final String SOURCE = "ondarock";
-	
+
 
 	public OndarockLoader()
 	{
 		super();
 	}
-	
+
 	protected String getBaseUrl()
 	{
 		return URL;
 	}
-	
+
 	protected String getSource() 
 	{
 		return SOURCE;
@@ -78,7 +79,7 @@ public class OndarockLoader extends PhonotekeLoader
 			removeImages(content);
 			removeScripts(content);
 			removeDivs(content);
-			replaceLinks(content, doc);
+			//			getLinks(content, doc);
 
 			InputStream is =  new ByteArrayInputStream(content.html().getBytes(StandardCharsets.UTF_8));
 			return IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -90,34 +91,36 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
-	private void replaceLinks(Element node, Document doc) 
+	protected List<Map<String, String>> getLinks(String url, Document doc) 
 	{
+		List<Map<String, String>> links = Lists.newArrayList();
+		Element node = doc.select("div[id=maintext]").first();
 		Elements elements = node.select("a[href]");
 		for(int i = 0; i < elements.size(); i++)
 		{
-			String url = getUrl(elements.get(i).attr("href"));
+			String link = getUrl(elements.get(i).attr("href"));
 			if(url.startsWith(URL))
 			{
+				Map<String, String> map = Maps.newHashMap();
+				map.put("source", "phonoteke");
+				map.put("label", null);
 				switch(getType(url))
 				{
 				case ARTIST:
-					elements.get(i).attr("href", "/artists/" + getId(url));
-					elements.get(i).attr("ng-reflect-router-link", "/artists/" + getId(url));
+					map.put("url", "/artists/" + getId(link));
+					links.add(map);
 					break;
 				case ALBUM:
-					elements.get(i).attr("href", "/albums/" + getId(url));
-					elements.get(i).attr("ng-reflect-router-link", "/albums/" + getId(url));
+					map.put("url", "/albums/" + getId(link));
+					links.add(map);
 					break;
 				default:
-					elements.get(i).unwrap();
 					break;
 				}
 			}
-			else
-			{
-				elements.get(i).unwrap();
-			}
+			elements.get(i).unwrap();
 		}
+		return links;
 	}
 
 	private void removeImages(Element node)
@@ -208,7 +211,7 @@ public class OndarockLoader extends PhonotekeLoader
 			return null;
 		}
 	}
-	
+
 	protected String getDescription(String url, Document doc) 
 	{
 		Element descriptionElement = null;

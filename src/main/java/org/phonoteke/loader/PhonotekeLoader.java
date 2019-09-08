@@ -29,7 +29,9 @@ public class PhonotekeLoader
 	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> albums;
 	protected MongoCollection<org.bson.Document> artists;
-
+	protected MongoCollection<org.bson.Document> links;
+	protected MongoCollection<org.bson.Document> tracks;
+	
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
@@ -50,6 +52,8 @@ public class PhonotekeLoader
 			pages = db.getCollection("pages");
 			albums = db.getCollection("albums");
 			artists = db.getCollection("artists");
+			links = db.getCollection("links");
+			tracks = db.getCollection("tracks");
 		} 
 		catch (Throwable t) 
 		{
@@ -84,6 +88,16 @@ public class PhonotekeLoader
 					{
 						Document doc = Jsoup.parse(html);
 						org.bson.Document json = new org.bson.Document("id", getId(url)).
+								append("links", getLinks(url, doc));
+						links.insertOne(json);
+						LOGGER.info("Links " + url + " added");
+						
+						json = new org.bson.Document("id", getId(url)).
+								append("tracks", getTracks(url, doc));
+						tracks.insertOne(json);
+						LOGGER.info("Tracks " + url + " added");
+
+						json = new org.bson.Document("id", getId(url)).
 								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).
@@ -97,7 +111,6 @@ public class PhonotekeLoader
 								append("review", getReview(url, doc)).
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
-								append("tracks", getTracks(url, doc)).
 								append("url", getUrl(url)).
 								append("vote", getVote(url, doc)).
 								append("year", getYear(url, doc));
@@ -240,6 +253,10 @@ public class PhonotekeLoader
 	}
 
 	protected String getReview(String url, Document doc) {
+		return null;
+	}
+
+	protected List<Map<String, String>> getLinks(String url, Document doc) {
 		return null;
 	}
 

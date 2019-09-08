@@ -36,7 +36,13 @@ const init = async () => {
 		handler:getAlbum},
 		{method:'GET', path:'/api/albums/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getAlbum}]);
+		handler:getAlbum},
+		{method:'GET', path:'/api/tracks/{id}',
+		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
+		handler:getTrack},
+		{method:'GET', path:'/api/links/{id}',
+		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
+		handler:getLink}]);
 	await Server.start();
 	console.log('Server running at: ${Server.info.uri}');
 };
@@ -49,10 +55,14 @@ init();
 // Mongo DB
 var artists = null;
 var albums = null;
+var tracks = null;
+var links = null;
 MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
 	console.log("Connected successfully to MongoDB");
 	artists = db.db('phonoteke').collection('artists');
 	albums = db.db('phonoteke').collection('albums');
+	tracks = db.db('phonoteke').collection('tracks');
+	links = db.db('phonoteke').collection('links');
 });
 
 async function getAlbum(request, h)
@@ -101,6 +111,26 @@ async function getArtist(request, h)
 		console.log('Artist: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
 		const result = await artists.find().skip(page*12).limit(12).sort({"date":-1}).toArray();
+		return result;
+	}
+}
+
+async function getTrack(request, h)
+{
+	if(request.params.id)
+	{
+		console.log('Tracks: id ' + request.params.id);
+		const result = await tracks.find({'id': request.params.id}).toArray();
+		return result;
+	}
+}
+
+async function getLink(request, h)
+{
+	if(request.params.id)
+	{
+		console.log('Links: id ' + request.params.id);
+		const result = await links.find({'id': request.params.id}).toArray();
 		return result;
 	}
 }

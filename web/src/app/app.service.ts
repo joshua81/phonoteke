@@ -10,9 +10,11 @@ export class AppService {
   albumLoaded = new EventEmitter();
   artistsLoaded = new EventEmitter();
   artistLoaded = new EventEmitter();
+  linksLoaded = new EventEmitter();
+  tracksLoaded = new EventEmitter();
   error = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   loadAlbums(page: number) {
     console.log('http://localhost:8180/api/albums?p=' + page + '&q=' + this.searchText);
@@ -39,6 +41,20 @@ export class AppService {
     console.log('http://localhost:8180/api/artists/' + id);
     this.http.get('http://localhost:8180/api/artists/' + id).subscribe(
       (data: any) => this.artistLoaded.emit(data[0]),
+      error => this.error = error);
+  }
+
+  loadTracks(id: string) {
+    console.log('http://localhost:8180/api/tracks/' + id);
+    this.http.get('http://localhost:8180/api/tracks/' + id).subscribe(
+      (data: any) => this.tracksLoaded.emit(data[0]),
+      error => this.error = error);
+  }
+
+  loadLinks(id: string) {
+    console.log('http://localhost:8180/api/links/' + id);
+    this.http.get('http://localhost:8180/api/links/' + id).subscribe(
+      (data: any) => this.linksLoaded.emit(data[0]),
       error => this.error = error);
   }
 }

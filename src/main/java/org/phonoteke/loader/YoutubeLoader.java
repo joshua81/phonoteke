@@ -42,7 +42,7 @@ public class YoutubeLoader
 		try 
 		{
 			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			albums = db.getCollection("albums");
+			albums = db.getCollection("tracks");
 			
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}

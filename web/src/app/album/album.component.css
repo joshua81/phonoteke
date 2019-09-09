@@ -1,5 +1,21 @@
-h4 {
-  padding-top: 10px;
+h1 {
+  font-size: 24px; 
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 14px;
+}
+
+p {
+  font-size: 14px;
+}
+
+li {
+  font-size: 14px;
 }
 
 img.cover {
@@ -25,8 +41,8 @@ p.vote {
   padding-top: 8px;
 
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 5px;
+  top: 20px;
   z-index: 100;
 }
 

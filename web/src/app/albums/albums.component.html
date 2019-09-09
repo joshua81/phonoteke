@@ -1,13 +1,13 @@
 <div infinite-scroll class="row" (scrolled)="loadPage()">
-  <div class="col-md-4" *ngFor="let album of albums">
+  <div class="p-2 col-md-4" *ngFor="let album of albums">
     <div class="card">
       <a [routerLink]="['/albums/' + album.id]">
         <img class="card-img-top" src="{{album.cover}}"/>
       </a>
-      <div class="card-body">
+      <div class="card-body p-2">
         <p class="card-text font-weight-bold">{{album.artist + ' | ' + album.title}}</p>
-        <p class="card-text">{{album.description}}</p>
-     </div>
+        <p class="card-text" [innerHTML]="album.description"></p>
+      </div>
     </div>
   </div>
 </div>

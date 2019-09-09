@@ -75,25 +75,25 @@ public class PhonotekeLoader
 			String id = getId(url);
 			Document doc = Jsoup.parse(html);
 
-			// Links
-			if(!links.find(Filters.eq("id", id)).iterator().hasNext())
-			{
-				try
-				{
-					org.bson.Document json = new org.bson.Document("id", id).
-							append("links", getLinks(url, doc));
-					links.insertOne(json);
-					LOGGER.info("Links " + url + " added");
-				}
-				catch (Throwable t) 
-				{
-					LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
-				}
-			}
-
 			TYPE type = getType(url);
 			if(TYPE.ALBUM.equals(type))
 			{
+				// Links
+				if(!links.find(Filters.eq("id", id)).iterator().hasNext())
+				{
+					try
+					{
+						org.bson.Document json = new org.bson.Document("id", id).
+								append("links", getLinks(url, doc));
+						links.insertOne(json);
+						LOGGER.info("Links " + url + " added");
+					}
+					catch (Throwable t) 
+					{
+						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
+					}
+				}
+
 				// Tracks
 				if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
 				{
@@ -144,6 +144,22 @@ public class PhonotekeLoader
 			}
 			else if(TYPE.ARTIST.equals(type))
 			{
+				// Links
+				if(!links.find(Filters.eq("id", id)).iterator().hasNext())
+				{
+					try
+					{
+						org.bson.Document json = new org.bson.Document("id", id).
+								append("links", getLinks(url, doc));
+						links.insertOne(json);
+						LOGGER.info("Links " + url + " added");
+					}
+					catch (Throwable t) 
+					{
+						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
+					}
+				}
+
 				// Artist
 				if(!artists.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())

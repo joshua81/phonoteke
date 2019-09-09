@@ -27,22 +27,22 @@ const init = async () => {
 		handler:(request, h) => {return h.file('./images/'+request.params.file);}},*/
 		{method:'GET', path:'/api/artists',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getArtist},
+		handler:getArtists},
 		{method:'GET', path:'/api/artists/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getArtist},
+		handler:getArtists},
 		{method:'GET', path:'/api/albums',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getAlbum},
+		handler:getAlbums},
 		{method:'GET', path:'/api/albums/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getAlbum},
+		handler:getAlbums},
 		{method:'GET', path:'/api/tracks/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getTrack},
+		handler:getTracks},
 		{method:'GET', path:'/api/links/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getLink}]);
+		handler:getLinks}]);
 	await Server.start();
 	console.log('Server running at: ${Server.info.uri}');
 };
@@ -65,7 +65,7 @@ MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
 	links = db.db('phonoteke').collection('links');
 });
 
-async function getAlbum(request, h)
+async function getAlbums(request, h)
 {
 	if(request.params.id)
 	{
@@ -90,7 +90,7 @@ async function getAlbum(request, h)
 	}
 }
 
-async function getArtist(request, h)
+async function getArtists(request, h)
 {
 	if(request.params.id)
 	{
@@ -115,7 +115,7 @@ async function getArtist(request, h)
 	}
 }
 
-async function getTrack(request, h)
+async function getTracks(request, h)
 {
 	if(request.params.id)
 	{
@@ -125,7 +125,7 @@ async function getTrack(request, h)
 	}
 }
 
-async function getLink(request, h)
+async function getLinks(request, h)
 {
 	if(request.params.id)
 	{

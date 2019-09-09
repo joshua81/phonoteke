@@ -17,8 +17,8 @@ export class AlbumComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private service: AppService) {
     service.albumLoaded.subscribe((album: any) => this.setAlbum(album));
-    service.tracksLoaded.subscribe((tracks: any) => this.setTracks(tracks.tracks));
-    service.linksLoaded.subscribe((links: any) => this.setLinks(links.links));
+    service.tracksLoaded.subscribe((tracks: any) => this.tracks = tracks.tracks);
+    service.linksLoaded.subscribe((links: any) => this.links = links.links);
   }
 
   ngOnInit() {
@@ -30,15 +30,9 @@ export class AlbumComponent implements OnInit {
 
   setAlbum(album: any) {
     this.album = album;
+    this.tracks = null;
+    this.links = null;
     this.service.loadTracks(this.albumId);
     this.service.loadLinks(this.albumId);
-  }
-
-  setTracks(tracks: any) {
-    this.tracks = tracks;
-  }
-
-  setLinks(links: any) {
-    this.links = links;
   }
 }

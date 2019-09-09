@@ -14,7 +14,10 @@
       <h3 *ngIf="album.authors != null">di {{album.authors}}</h3>
     </div>
   </div>
+
   <p class="py-4 text-justify text-white" [innerHTML]="album.review"></p>
+  
+  <h2 class="text-white">Tracce</h2>
   <ul class="list-group w-100 h-100">
     <li *ngFor="let track of tracks" class="track list-group-item d-flex justify-content-between align-items-center">
       {{track.title}}
@@ -23,4 +26,6 @@
       </a>
     </li>
   </ul>
+
+  <h2 class="py-4 text-white">Link</h2>
 </div>

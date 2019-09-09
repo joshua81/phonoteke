@@ -31,7 +31,7 @@ public class PhonotekeLoader
 	protected MongoCollection<org.bson.Document> artists;
 	protected MongoCollection<org.bson.Document> links;
 	protected MongoCollection<org.bson.Document> tracks;
-	
+
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
@@ -65,39 +65,58 @@ public class PhonotekeLoader
 	protected void load()
 	{
 		//		http://musicbrainz.org/ws/2/recording/?query=artist:BROOKZILL%20AND%20recording:LET%E2%80%99S%20GO%20(E%20NOIZ)!
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2017/05/2Night-Musicalbox-del-18052017-958ca610-d269-45e7-a665-b60f21a18590.html")).iterator();
 		String source = getSource();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
-			//			String url = "https://www.ondarock.it/recensioni/2019-lanadelrey-normanfuckingrockwell.htm";
 			String url = page.get("url", String.class);
 			String html = page.get("page", String.class);
+			String id = getId(url);
+			Document doc = Jsoup.parse(html);
+
+			// Links
+			if(!links.find(Filters.eq("id", id)).iterator().hasNext())
+			{
+				try
+				{
+					org.bson.Document json = new org.bson.Document("id", id).
+							append("links", getLinks(url, doc));
+					links.insertOne(json);
+					LOGGER.info("Links " + url + " added");
+				}
+				catch (Throwable t) 
+				{
+					LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
+				}
+			}
 
 			TYPE type = getType(url);
 			if(TYPE.ALBUM.equals(type))
 			{
-				// check if the article was already crawled
-				MongoCursor<org.bson.Document> j = albums.find(Filters.and(
-						Filters.eq("source", source), 
-						Filters.eq("url", url))).iterator();
-				if(!j.hasNext())
+				// Tracks
+				if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
 				{
 					try
 					{
-						Document doc = Jsoup.parse(html);
-						org.bson.Document json = new org.bson.Document("id", getId(url)).
-								append("links", getLinks(url, doc));
-						links.insertOne(json);
-						LOGGER.info("Links " + url + " added");
-						
-						json = new org.bson.Document("id", getId(url)).
+						org.bson.Document json = new org.bson.Document("id", id).
 								append("tracks", getTracks(url, doc));
 						tracks.insertOne(json);
 						LOGGER.info("Tracks " + url + " added");
+					}
+					catch (Throwable t) 
+					{
+						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
+					}
+				}
 
-						json = new org.bson.Document("id", getId(url)).
+				// Albums
+				if(!albums.find(Filters.and(Filters.eq("source", source), 
+						Filters.eq("url", url))).iterator().hasNext())
+				{
+					try
+					{
+						org.bson.Document json = new org.bson.Document("id", id).
 								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).
@@ -125,16 +144,13 @@ public class PhonotekeLoader
 			}
 			else if(TYPE.ARTIST.equals(type))
 			{
-				// check if the article was already crawled
-				MongoCursor<org.bson.Document> j = artists.find(Filters.and(
-						Filters.eq("source", source), 
-						Filters.eq("url", url))).iterator();
-				if(!j.hasNext())
+				// Artist
+				if(!artists.find(Filters.and(Filters.eq("source", source), 
+						Filters.eq("url", url))).iterator().hasNext())
 				{
 					try
 					{
-						Document doc = Jsoup.parse(html);
-						org.bson.Document json = new org.bson.Document("id", getId(url)).
+						org.bson.Document json = new org.bson.Document("id", id).
 								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).

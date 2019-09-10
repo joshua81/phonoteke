@@ -35,11 +35,16 @@ svg.vote {
   top: 10px;
 }
 
-li.track {
-  height: 30px;
-}
-
-svg.track {
+svg.link {
   width: 30px;
   height: 20px;
+}
+
+a.link {
+  height: 40px;
+}
+
+img.link {
+  height: 30px;
+  width: 30px;
 }

@@ -24,8 +24,8 @@ export class AlbumComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.albumId = params.get('albumId');
+      this.service.loadAlbum(this.albumId);
     });
-    this.service.loadAlbum(this.albumId);
   }
 
   setAlbum(album: any) {

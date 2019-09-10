@@ -6,7 +6,7 @@ const MongoClient = require('mongodb').MongoClient;
 const MongoServer = require('mongodb').Server;
 
 //HTTP server
-const Server = new Hapi.Server({host:'localhost', port:8180});
+const Server = new Hapi.Server({host:'0.0.0.0', port:8180});
 const init = async () => {
 	await Server.register(require('inert'));
 	Server.route([

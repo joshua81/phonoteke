@@ -1,2 +1,2 @@
-cd $HOME/workspace/phonoteke/web
+cd $HOME/workspace/phonoteke/node
 node phonoteke.js

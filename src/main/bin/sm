@@ -1,0 +1,1 @@
+mongod --dbpath $HOME/programs/mongodb/db

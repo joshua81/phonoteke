@@ -4,8 +4,7 @@ img.cover {
 }
 
 div.cover {
-  position: relative;
-  width: 300px;
+  width: 310px;
   height: 300px;
 }
 
@@ -21,8 +20,8 @@ p.vote {
   padding-top: 8px;
 
   position: absolute;
-  right: 5px;
-  top: 20px;
+  left: 260px;
+  top: 15px;
   z-index: 100;
 }
 

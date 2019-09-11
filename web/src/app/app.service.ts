@@ -5,8 +5,8 @@ import {HttpClient} from '@angular/common/http';
   providedIn: 'root'
 })
 export class AppService {
-  //server = 'http://localhost:8180';
-  server = 'http://192.168.1.82:8180';
+  server = 'http://localhost:8180';
+  //server = 'http://192.168.1.82:8180';
   searchText = '';
   albumsLoaded = new EventEmitter();
   albumLoaded = new EventEmitter();

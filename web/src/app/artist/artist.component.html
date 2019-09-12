@@ -1,12 +1,10 @@
-<div class="p-2 w-100 h-100">
-  <div class="d-flex flex-row">
-    <div class="p-2 cover">
-      <img class="cover rounded" src="{{artist.cover}}"/>
-    </div>
-    <div class="p-3 text-white">
-      <h1>{{artist.artist}}</h1>
-      <h3 *ngIf="artist.authors != null">di {{artist.authors}}</h3>
-    </div>
+<div class="pt-3 row">
+  <div class="col-md-auto cover">
+    <img class="cover rounded" src="{{artist.cover}}"/>
   </div>
-  <p class="py-4 text-justify text-white" [innerHTML]="artist.review"></p>
+  <div class="col-md-auto text-white">
+    <h1>{{artist.artist}}</h1>
+    <h3 *ngIf="artist.authors != null">di {{artist.authors}}</h3>
+  </div>
 </div>
+<p class="pt-2 text-justify text-white" [innerHTML]="artist.review"></p>

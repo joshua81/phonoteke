@@ -27,6 +27,7 @@ public class YoutubeLoader
 	private static final String MONGO_HOST = "localhost";
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
+	private static final String API_KEY = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
 
 	private MongoCollection<org.bson.Document> albums;
 	private YouTube youtube;
@@ -96,9 +97,8 @@ public class YoutubeLoader
 			// Define the API request for retrieving search results.
 			YouTube.Search.List search = youtube.search().list("id");
 
-			// Set your developer key, es. "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI"
-			String apiKey = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
-			search.setKey(apiKey);
+			// Set your developer key
+			search.setKey(API_KEY);
 			search.setQ(track);
 
 			// Restrict the search results to only include videos. See:
@@ -111,7 +111,7 @@ public class YoutubeLoader
 			search.setMaxResults(1L);
 
 			// Call the API and print results.
-			String youtubeId = null;
+			String youtubeId = "UNKNOWN";
 			SearchListResponse searchResponse = search.execute();
 			List<SearchResult> searchResults = searchResponse.getItems();
 			if(CollectionUtils.isNotEmpty(searchResults))
@@ -134,9 +134,8 @@ public class YoutubeLoader
 			// Define the API request for retrieving search results.
 			YouTube.Search.List search = youtube.search().list("snippet");
 
-			// Set your developer key, es. "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI"
-			String apiKey = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
-			search.setKey(apiKey);
+			// Set your developer key
+			search.setKey(API_KEY);
 			search.setQ(id);
 
 			// Restrict the search results to only include videos. See:
@@ -149,7 +148,7 @@ public class YoutubeLoader
 			search.setMaxResults(1L);
 
 			// Call the API and print results.
-			String youtubeTitle = null;
+			String youtubeTitle = "UNKNOWN";
 			SearchListResponse searchResponse = search.execute();
 			List<SearchResult> searchResults = searchResponse.getItems();
 			if(CollectionUtils.isNotEmpty(searchResults))

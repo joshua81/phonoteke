@@ -23,6 +23,7 @@
     {{track.title}}
   </a>
 </div>
+
 <div *ngIf="links != null" class="list-group pt-2 w-100 h-100">
   <a *ngFor="let link of links" [routerLink]="[link.url]"
     class="link p-1 list-group-item list-group-item-action text-truncate">

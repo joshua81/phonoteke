@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
@@ -18,7 +19,7 @@ import org.jsoup.select.Elements;
 import org.phonoteke.SpotifyLoader;
 import org.phonoteke.model.ModelUtils;
 
-import com.google.api.client.util.Maps;
+import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -34,11 +35,13 @@ public class OndarockLoader extends PhonotekeLoader
 		super();
 	}
 
+	@Override
 	protected String getBaseUrl()
 	{
 		return URL;
 	}
 
+	@Override
 	protected String getSource() 
 	{
 		return SOURCE;
@@ -70,6 +73,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getReview(String url, Document doc) 
 	{
 		try
@@ -79,7 +83,7 @@ public class OndarockLoader extends PhonotekeLoader
 			removeImages(content);
 			removeScripts(content);
 			removeDivs(content);
-			//			getLinks(content, doc);
+			removeLinks(content);
 
 			InputStream is =  new ByteArrayInputStream(content.html().getBytes(StandardCharsets.UTF_8));
 			return IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -91,28 +95,22 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
-	protected List<Map<String, String>> getLinks(String url, Document doc) 
+	@Override
+	protected List<String> getLinks(String url, Document doc) 
 	{
-		List<Map<String, String>> links = Lists.newArrayList();
+		Set<String> links = Sets.newHashSet();
 		Element node = doc.select("div[id=maintext]").first();
 		Elements elements = node.select("a[href]");
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String link = getUrl(elements.get(i).attr("href"));
-			if(url.startsWith(URL))
+			if(link.startsWith(URL))
 			{
-				Map<String, String> map = Maps.newHashMap();
-				map.put("source", "phonoteke");
-				map.put("label", null);
-				switch(getType(url))
+				switch(getType(link))
 				{
 				case ARTIST:
-					map.put("url", "/artists/" + getId(link));
-					links.add(map);
-					break;
 				case ALBUM:
-					map.put("url", "/albums/" + getId(link));
-					links.add(map);
+					links.add(getId(link));
 					break;
 				default:
 					break;
@@ -120,7 +118,16 @@ public class OndarockLoader extends PhonotekeLoader
 			}
 			elements.get(i).unwrap();
 		}
-		return links;
+		return Lists.newArrayList(links);
+	}
+
+	private void removeLinks(Element node)
+	{
+		Elements elements = node.select("a");
+		for(int i = 0; i < elements.size(); i++)
+		{
+			elements.get(i).remove();
+		}
 	}
 
 	private void removeImages(Element node)
@@ -162,6 +169,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getArtist(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
@@ -187,6 +195,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getTitle(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
@@ -212,6 +221,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getDescription(String url, Document doc) 
 	{
 		Element descriptionElement = null;
@@ -230,6 +240,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected Date getDate(String url, Document doc) 
 	{
 		try
@@ -264,6 +275,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getCover(String url, Document doc) 
 	{
 		try
@@ -292,6 +304,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected List<String> getAuthors(String url, Document doc) 
 	{
 		Element authorElement = null;
@@ -321,6 +334,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected List<String> getGenres(String url, Document doc) 
 	{
 		switch (getType(url)) {
@@ -333,6 +347,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected Integer getYear(String url, Document doc) 
 	{
 		switch (getType(url)) {
@@ -347,6 +362,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected String getLabel(String url, Document doc) 
 	{
 		switch (getType(url)) {
@@ -400,6 +416,7 @@ public class OndarockLoader extends PhonotekeLoader
 		return null;
 	}
 
+	@Override
 	protected List<Map<String, String>> getTracks(String url, Document doc) 
 	{
 		List<Map<String, String>> tracks = Lists.newArrayList();
@@ -429,6 +446,7 @@ public class OndarockLoader extends PhonotekeLoader
 		return tracks;
 	}
 
+	@Override
 	protected Float getVote(String url, Document doc) 
 	{
 		try
@@ -465,6 +483,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected Boolean getMilestone(String url, Document doc) 
 	{
 		switch (getType(url)) {
@@ -475,6 +494,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
+	@Override
 	protected TYPE getType(String url) 
 	{
 		if(getUrl(url).startsWith(URL + "pietremiliari") || 

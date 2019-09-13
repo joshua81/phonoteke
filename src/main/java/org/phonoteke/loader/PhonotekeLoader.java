@@ -29,7 +29,6 @@ public class PhonotekeLoader
 	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> albums;
 	protected MongoCollection<org.bson.Document> artists;
-	protected MongoCollection<org.bson.Document> links;
 	protected MongoCollection<org.bson.Document> tracks;
 
 	protected enum TYPE {
@@ -40,8 +39,10 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new OndarockLoader().load();
-		new MusicalboxLoader().load();
+		new OndarockLoader().loadDocuments();
+		new OndarockLoader().loadTracks();
+		new MusicalboxLoader().loadDocuments();
+		new MusicalboxLoader().loadTracks();
 	}
 
 	public PhonotekeLoader()
@@ -52,7 +53,6 @@ public class PhonotekeLoader
 			pages = db.getCollection("pages");
 			albums = db.getCollection("albums");
 			artists = db.getCollection("artists");
-			links = db.getCollection("links");
 			tracks = db.getCollection("tracks");
 		} 
 		catch (Throwable t) 
@@ -62,9 +62,8 @@ public class PhonotekeLoader
 		}
 	}
 
-	protected void load()
+	protected void loadTracks()
 	{
-		//		http://musicbrainz.org/ws/2/recording/?query=artist:BROOKZILL%20AND%20recording:LET%E2%80%99S%20GO%20(E%20NOIZ)!
 		String source = getSource();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
 		while(i.hasNext())
@@ -78,22 +77,6 @@ public class PhonotekeLoader
 			TYPE type = getType(url);
 			if(TYPE.ALBUM.equals(type))
 			{
-				// Links
-				if(!links.find(Filters.eq("id", id)).iterator().hasNext())
-				{
-					try
-					{
-						org.bson.Document json = new org.bson.Document("id", id).
-								append("links", getLinks(url, doc));
-						links.insertOne(json);
-						LOGGER.info("Links " + url + " added");
-					}
-					catch (Throwable t) 
-					{
-						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
-					}
-				}
-
 				// Tracks
 				if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
 				{
@@ -109,8 +92,26 @@ public class PhonotekeLoader
 						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
 					}
 				}
+			}
+		}
+	}
 
-				// Albums
+	protected void loadDocuments()
+	{
+		//		http://musicbrainz.org/ws/2/recording/?query=artist:BROOKZILL%20AND%20recording:LET%E2%80%99S%20GO%20(E%20NOIZ)!
+		String source = getSource();
+		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document page = i.next();
+			String url = page.get("url", String.class);
+			String html = page.get("page", String.class);
+			String id = getId(url);
+			Document doc = Jsoup.parse(html);
+
+			TYPE type = getType(url);
+			if(TYPE.ALBUM.equals(type))
+			{
 				if(!albums.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())
 				{
@@ -122,6 +123,7 @@ public class PhonotekeLoader
 								append("cover", getCover(url, doc)).
 								append("date", getDate(url, doc)).
 								append("description", getDescription(url, doc)).
+								append("links", getLinks(url, doc)).
 								append("genres", getGenres(url, doc)).
 								append("idmbrz", getIdmbrz(url, doc)).
 								append("idsptf", getIdsptf(url, doc)).
@@ -144,23 +146,6 @@ public class PhonotekeLoader
 			}
 			else if(TYPE.ARTIST.equals(type))
 			{
-				// Links
-				if(!links.find(Filters.eq("id", id)).iterator().hasNext())
-				{
-					try
-					{
-						org.bson.Document json = new org.bson.Document("id", id).
-								append("links", getLinks(url, doc));
-						links.insertOne(json);
-						LOGGER.info("Links " + url + " added");
-					}
-					catch (Throwable t) 
-					{
-						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
-					}
-				}
-
-				// Artist
 				if(!artists.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())
 				{
@@ -172,6 +157,7 @@ public class PhonotekeLoader
 								append("cover", getCover(url, doc)).
 								append("date", getDate(url, doc)).
 								append("description", getDescription(url, doc)).
+								append("links", getLinks(url, doc)).
 								append("idmbrz", getIdmbrz(url, doc)).
 								append("idsptf", getIdsptf(url, doc)).
 								append("review", getReview(url, doc)).
@@ -288,7 +274,7 @@ public class PhonotekeLoader
 		return null;
 	}
 
-	protected List<Map<String, String>> getLinks(String url, Document doc) {
+	protected List<String> getLinks(String url, Document doc) {
 		return null;
 	}
 

@@ -80,14 +80,14 @@ async function getAlbums(request, h)
 		var query = request.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		const result = await albums.find({'artist': {'$regex': query, '$options' : 'i'}}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await albums.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 	else
 	{
 		console.log('Album: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
-		const result = await albums.find({'date': {'$ne': 'null'}}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await albums.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 }
@@ -107,14 +107,14 @@ async function getArtists(request, h)
 		var query = request.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		const result = await artists.find({'artist': {'$regex': query, '$options' : 'i'}}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await artists.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 	else
 	{
 		console.log('Artist: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
-		const result = await artists.find().skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await artists.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 }

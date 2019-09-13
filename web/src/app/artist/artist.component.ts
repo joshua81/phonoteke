@@ -10,9 +10,11 @@ import {AppService} from '../app.service';
 export class ArtistComponent implements OnInit {
   artistId = '';
   artist = null;
+  links = null;
 
   constructor(private route: ActivatedRoute, private service: AppService) {
-    service.artistLoaded.subscribe((artist: any) => this.artist = artist);
+    service.artistLoaded.subscribe((artist: any) => this.setArtist(artist));
+    service.linksLoaded.subscribe((links: any) => this.links = links.links);
   }
 
   ngOnInit() {
@@ -20,5 +22,11 @@ export class ArtistComponent implements OnInit {
       this.artistId = params.get('artistId');
       this.service.loadArtist(this.artistId);
     });
+  }
+
+  setArtist(artist: any) {
+    this.artist = artist;
+    this.links = null;
+    this.service.loadLinks(this.artistId);
   }
 }

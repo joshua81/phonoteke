@@ -27,21 +27,25 @@ public class MusicalboxLoader extends PhonotekeLoader
 		super();
 	}
 
+	@Override
 	protected String getBaseUrl()
 	{
 		return URL;
 	}
 
+	@Override
 	protected String getSource() 
 	{
 		return SOURCE;
 	}
 
+	@Override
 	protected String getArtist(String url, Document doc) 
 	{
 		return ARTIST;
 	}
 
+	@Override
 	protected Date getDate(String url, Document doc) 
 	{
 		Date date = null;
@@ -60,12 +64,8 @@ public class MusicalboxLoader extends PhonotekeLoader
 		LOGGER.debug("date: " + date);
 		return date;
 	}
-	
-	protected String getReview(String url, Document doc) 
-	{
-		return getDescription(url, doc);
-	}
 
+	@Override
 	protected String getDescription(String url, Document doc) 
 	{
 		String desc = null;
@@ -79,6 +79,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 		return desc;
 	}
 
+	@Override
 	protected String getTitle(String url, Document doc) 
 	{
 		String title = null;
@@ -92,6 +93,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 		return title;
 	}
 
+	@Override
 	protected List<Map<String, String>> getTracks(String url, Document doc) 
 	{
 		List<Map<String, String>> tracks = Lists.newArrayList();
@@ -127,6 +129,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 		return tracks;
 	}
 
+	@Override
 	protected String getCover(String url, Document doc) 
 	{
 		String cover = null;
@@ -140,6 +143,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 		return cover;
 	}
 
+	@Override
 	protected TYPE getType(String url) 
 	{
 		return TYPE.ALBUM;

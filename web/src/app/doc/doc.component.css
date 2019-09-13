@@ -1,11 +1,11 @@
 img.cover {
   width: 300px;
-  height: 300px;
+  /*height: 300px;*/
 }
 
 div.cover {
   width: 310px;
-  height: 300px;
+  /*height: 300px;*/
 }
 
 p.vote {
@@ -45,5 +45,5 @@ a.link {
 
 img.link {
   width: 30px;
-  height: 30px;
+  /*height: 30px;*/
 }

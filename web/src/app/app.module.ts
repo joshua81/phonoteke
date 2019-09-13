@@ -7,28 +7,22 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { AlbumsComponent } from './albums/albums.component';
-import { AlbumComponent } from './album/album.component';
-import { ArtistsComponent } from './artists/artists.component';
-import { ArtistComponent } from './artist/artist.component';
+import { DocsComponent } from './docs/docs.component';
+import { DocComponent } from './doc/doc.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MenuComponent,
-    AlbumsComponent,
-    AlbumComponent,
-    ArtistsComponent,
-    ArtistComponent
+    DocsComponent,
+    DocComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: AlbumsComponent},
-      {path: 'albums', component: AlbumsComponent},
-      {path: 'albums/:albumId', component: AlbumComponent},
-      {path: 'artists', component: ArtistsComponent},
-      {path: 'artists/:artistId', component: ArtistComponent}]),
+      {path: '', component: DocsComponent},
+      {path: 'docs', component: DocsComponent},
+      {path: 'docs/:docId', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule

@@ -16,13 +16,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.phonoteke.SpotifyLoader;
 import org.phonoteke.model.ModelUtils;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
 
 public class OndarockLoader extends PhonotekeLoader
 {
@@ -47,31 +44,31 @@ public class OndarockLoader extends PhonotekeLoader
 		return SOURCE;
 	}
 
-	private void loadSpotifyIds()
-	{
-		try 
-		{
-			SpotifyLoader spotify = new SpotifyLoader();
-			MongoCursor<org.bson.Document> i = albums.find(Filters.eq("spotify", null)).iterator();
-			while(i.hasNext())
-			{
-				org.bson.Document page = i.next();
-				String id = page.get("id", String.class);
-				org.bson.Document album = spotify.getId(id);
-				if(album != null)
-				{
-					String spotifyId = album.get("album", String.class);
-					String cover = album.get("image300", String.class);
-					albums.findOneAndUpdate(Filters.eq("id", page.get("id")), 
-							new org.bson.Document("spotify", spotifyId).append("cover", cover));
-				}
-			}
-		}
-		catch (Exception e) 
-		{
-			LOGGER.error("Error closing BufferedReader: " + e.getMessage());
-		}
-	}
+//	private void loadSpotifyIds()
+//	{
+//		try 
+//		{
+//			SpotifyLoader spotify = new SpotifyLoader();
+//			MongoCursor<org.bson.Document> i = albums.find(Filters.eq("spotify", null)).iterator();
+//			while(i.hasNext())
+//			{
+//				org.bson.Document page = i.next();
+//				String id = page.get("id", String.class);
+//				org.bson.Document album = spotify.getId(id);
+//				if(album != null)
+//				{
+//					String spotifyId = album.get("album", String.class);
+//					String cover = album.get("image300", String.class);
+//					albums.findOneAndUpdate(Filters.eq("id", page.get("id")), 
+//							new org.bson.Document("spotify", spotifyId).append("cover", cover));
+//				}
+//			}
+//		}
+//		catch (Exception e) 
+//		{
+//			LOGGER.error("Error closing BufferedReader: " + e.getMessage());
+//		}
+//	}
 
 	@Override
 	protected String getReview(String url, Document doc) 

@@ -1,0 +1,13 @@
+<div infinite-scroll class="pt-2 row" (scrolled)="loadPage()">
+  <div class="pt-2 col-md-4" *ngFor="let doc of docs">
+    <div class="card mx-auto">
+      <a [routerLink]="['/docs/' + doc.id]">
+        <img class="card-img-top" src="{{doc.cover}}"/>
+      </a>
+      <div class="card-body p-2">
+        <p class="card-text font-weight-bold">{{doc.artist + ' | ' + doc.title}}</p>
+        <p class="card-text" [innerHTML]="doc.description"></p>
+      </div>
+    </div>
+  </div>
+</div>

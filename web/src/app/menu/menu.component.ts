@@ -15,6 +15,6 @@ export class MenuComponent implements OnInit {
 
   onSearch() {
     this.service.searchText = this.searchText;
-    this.service.loadAlbums(0);
+    this.service.loadDocs(0);
   }
 }

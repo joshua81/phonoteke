@@ -27,8 +27,7 @@ public class PhonotekeLoader
 	protected static final String MONGO_DB = "phonoteke";
 
 	protected MongoCollection<org.bson.Document> pages;
-	protected MongoCollection<org.bson.Document> albums;
-	protected MongoCollection<org.bson.Document> artists;
+	protected MongoCollection<org.bson.Document> docs;
 	protected MongoCollection<org.bson.Document> tracks;
 
 	protected enum TYPE {
@@ -51,8 +50,7 @@ public class PhonotekeLoader
 		{
 			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
 			pages = db.getCollection("pages");
-			albums = db.getCollection("albums");
-			artists = db.getCollection("artists");
+			docs = db.getCollection("docs");
 			tracks = db.getCollection("tracks");
 		} 
 		catch (Throwable t) 
@@ -112,12 +110,13 @@ public class PhonotekeLoader
 			TYPE type = getType(url);
 			if(TYPE.ALBUM.equals(type))
 			{
-				if(!albums.find(Filters.and(Filters.eq("source", source), 
+				if(!docs.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())
 				{
 					try
 					{
 						org.bson.Document json = new org.bson.Document("id", id).
+								append("type", type.name().toLowerCase()).
 								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).
@@ -135,7 +134,7 @@ public class PhonotekeLoader
 								append("url", getUrl(url)).
 								append("vote", getVote(url, doc)).
 								append("year", getYear(url, doc));
-						albums.insertOne(json);
+						docs.insertOne(json);
 						LOGGER.info("Album " + url + " added");
 					}
 					catch (Throwable t) 
@@ -146,12 +145,13 @@ public class PhonotekeLoader
 			}
 			else if(TYPE.ARTIST.equals(type))
 			{
-				if(!artists.find(Filters.and(Filters.eq("source", source), 
+				if(!docs.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())
 				{
 					try
 					{
 						org.bson.Document json = new org.bson.Document("id", id).
+								append("type", type.name().toLowerCase()).
 								append("artist", getArtist(url, doc)).
 								append("authors", getAuthors(url, doc)).
 								append("cover", getCover(url, doc)).
@@ -164,7 +164,7 @@ public class PhonotekeLoader
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
 								append("url", getUrl(url));
-						artists.insertOne(json);
+						docs.insertOne(json);
 						LOGGER.info("Artist " + url + " added");
 					}
 					catch (Throwable t) 

@@ -25,22 +25,16 @@ const init = async () => {
 		{method:'GET', path:'/images/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:(request, h) => {return h.file('./images/'+request.params.file);}},*/
-		{method:'GET', path:'/api/artists',
+		{method:'GET', path:'/api/docs',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getArtists},
-		{method:'GET', path:'/api/artists/{id}',
+		handler:getDocs},
+		{method:'GET', path:'/api/docs/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getArtists},
-		{method:'GET', path:'/api/albums',
-		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getAlbums},
-		{method:'GET', path:'/api/albums/{id}',
-		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getAlbums},
-		{method:'GET', path:'/api/tracks/{id}',
+		handler:getDocs},
+		{method:'GET', path:'/api/docs/{id}/tracks',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getTracks},
-		{method:'GET', path:'/api/links/{id}',
+		{method:'GET', path:'/api/docs/{id}/links',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getLinks}]);
 	await Server.start();
@@ -53,68 +47,37 @@ process.on('unhandledRejection', (err) => {
 init();
 
 // Mongo DB
-var artists = null;
-var albums = null;
+var docs = null;
 var tracks = null;
-var links = null;
 MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
 	console.log("Connected successfully to MongoDB");
-	artists = db.db('phonoteke').collection('artists');
-	albums = db.db('phonoteke').collection('albums');
+	docs = db.db('phonoteke').collection('docs');
 	tracks = db.db('phonoteke').collection('tracks');
-	links = db.db('phonoteke').collection('links');
 });
 
-async function getAlbums(request, h)
+async function getDocs(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Album: id ' + request.params.id);
-		const result = await albums.find({'id': request.params.id}).toArray();
+		console.log('Doc: id ' + request.params.id);
+		const result = await docs.find({'id': request.params.id}).toArray();
 		return result;
 	}
 	else if(request.query.q)
 	{
-		console.log('Album: page ' + request.query.p + ', query ' + request.query.q);
+		console.log('Doc: page ' + request.query.p + ', query ' + request.query.q);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
 		var query = request.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		const result = await albums.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await docs.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 	else
 	{
-		console.log('Album: page ' + request.query.p);
+		console.log('Doc: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
-		const result = await albums.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		return result;
-	}
-}
-
-async function getArtists(request, h)
-{
-	if(request.params.id)
-	{
-		console.log('Artist: id ' + request.params.id);
-		const result = await artists.find({'id': request.params.id}).toArray();
-		return result;
-	}
-	else if(request.query.q)
-	{
-		console.log('Artist: page ' + request.query.p + ', query ' + request.query.q);
-		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
-		var query = request.query.q;
-		query = '.*' + query + '.*';
-		query = query.split(' ').join('.*');
-		const result = await artists.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		return result;
-	}
-	else
-	{
-		console.log('Artist: page ' + request.query.p);
-		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
-		const result = await artists.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await docs.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 }
@@ -134,7 +97,12 @@ async function getLinks(request, h)
 	if(request.params.id)
 	{
 		console.log('Links: id ' + request.params.id);
-		const result = await links.find({'id': request.params.id}).toArray();
-		return result;
+		const doc = await docs.find({'id': request.params.id}).toArray();
+		if(doc && doc.length == 1)
+		{
+			const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).toArray();
+			return result;
+		}
+		return [];
 	}
 }

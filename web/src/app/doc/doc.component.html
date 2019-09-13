@@ -6,15 +6,21 @@
     <p *ngIf="doc.vote != null && !doc.milestone" class="vote">{{doc.vote}}</p>
     <img class="cover rounded" src="{{doc.cover}}"/>
   </div>
-  <div class="col-md-auto text-white pt-2">
+  <!-- album -->
+  <div *ngIf="doc.type == 'album'" class="col-md-auto text-white pt-2">
     <h1>{{doc.title}}</h1>
     <h2>{{doc.artist}}</h2>
     <h3 *ngIf="doc.label != null">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
     <h3 *ngIf="doc.authors != null">di {{doc.authors}}</h3>
   </div>
+  <!-- artist -->
+  <div *ngIf="doc.type == 'artist'" class="col-md-auto text-white pt-2">
+      <h1>{{doc.artist}}</h1>
+      <h3 *ngIf="doc.authors != null">di {{doc.authors}}</h3>
+  </div>
 </div>
 
-<p class="pt-3 text-justify text-white" [innerHTML]="doc.review"></p>
+<p *ngIf="doc.review != null" class="pt-3 text-justify text-white" [innerHTML]="doc.review"></p>
   
 <div *ngIf="tracks != null" class="list-group w-100 h-100">
   <a *ngFor="let track of tracks" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank"
@@ -25,9 +31,9 @@
 </div>
 
 <div *ngIf="links != null" class="list-group pt-2 w-100 h-100">
-  <a *ngFor="let link of links" [routerLink]="[link.url]"
+  <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]"
     class="link p-1 list-group-item list-group-item-action text-truncate">
     <img class="link" src="{{link.cover}}">
-    {{link.title}}
+    {{link.artist + ' - ' +  link.title}}
   </a>
 </div>

@@ -131,6 +131,7 @@ public class PhonotekeLoader
 								append("review", getReview(url, doc)).
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
+								append("title2", getArtist(url, doc) + " | " + getTitle(url, doc)).
 								append("url", getUrl(url)).
 								append("vote", getVote(url, doc)).
 								append("year", getYear(url, doc));
@@ -163,6 +164,7 @@ public class PhonotekeLoader
 								append("review", getReview(url, doc)).
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
+								append("title2", getArtist(url, doc)).
 								append("url", getUrl(url));
 						docs.insertOne(json);
 						LOGGER.info("Artist " + url + " added");

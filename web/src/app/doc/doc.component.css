@@ -1,11 +1,21 @@
-img.cover {
+img.album {
   width: 300px;
-  /*height: 300px;*/
+  height: 300px;
 }
 
-div.cover {
-  width: 310px;
-  /*height: 300px;*/
+img.albumlink {
+  width: 60px;
+  height: 60px;
+}
+
+img.artist {
+  width: 400px;
+  height: 200px;
+}
+
+img.artistlink {
+  width: 60px;
+  height: 30px;
 }
 
 p.vote {
@@ -34,16 +44,7 @@ svg.vote {
   top: 10px;
 }
 
-svg.link {
+svg.youtube {
   width: 30px;
   height: 20px;
-}
-
-a.link {
-  height: 40px;
-}
-
-img.link {
-  width: 30px;
-  /*height: 30px;*/
 }

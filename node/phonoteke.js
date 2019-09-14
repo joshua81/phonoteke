@@ -87,7 +87,7 @@ async function getTracks(request, h)
 	if(request.params.id)
 	{
 		console.log('Tracks: id ' + request.params.id);
-		const result = await tracks.find({'id': request.params.id}).toArray();
+		const result = await tracks.find({'id': request.params.id}).sort({"title":1}).toArray();
 		return result;
 	}
 }
@@ -100,7 +100,7 @@ async function getLinks(request, h)
 		const doc = await docs.find({'id': request.params.id}).toArray();
 		if(doc && doc.length == 1)
 		{
-			const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).toArray();
+			const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
 			return result;
 		}
 		return [];

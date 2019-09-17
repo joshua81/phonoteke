@@ -59,13 +59,13 @@ async function getDocs(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Doc: id ' + request.params.id);
+		console.log('Docs: id ' + request.params.id);
 		const result = await docs.find({'id': request.params.id}).toArray();
 		return result;
 	}
 	else if(request.query.q)
 	{
-		console.log('Doc: page ' + request.query.p + ', query ' + request.query.q);
+		console.log('Docs: page ' + request.query.p + ', query ' + request.query.q);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
 		var query = request.query.q;
 		query = '.*' + query + '.*';
@@ -75,7 +75,7 @@ async function getDocs(request, h)
 	}
 	else
 	{
-		console.log('Doc: page ' + request.query.p);
+		console.log('Docs: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
 		const result = await docs.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;

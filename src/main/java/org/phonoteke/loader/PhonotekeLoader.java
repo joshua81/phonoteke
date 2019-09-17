@@ -96,7 +96,6 @@ public class PhonotekeLoader
 
 	protected void loadDocuments()
 	{
-		//		http://musicbrainz.org/ws/2/recording/?query=artist:BROOKZILL%20AND%20recording:LET%E2%80%99S%20GO%20(E%20NOIZ)!
 		String source = getSource();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
 		while(i.hasNext())

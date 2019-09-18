@@ -35,6 +35,22 @@ p.vote {
   z-index: 100;
 }
 
+p.votelink {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: #8AC007;
+
+  font-size: 16px;
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 8px;
+
+  position: absolute;
+  right: 5px;
+  z-index: 100;
+}
+
 svg.vote {
   width: 20px;
   height: 20px;

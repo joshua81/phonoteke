@@ -39,12 +39,12 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new OndarockLoader().loadDocuments();
-		new OndarockLoader().loadTracks();
-		
-		new MusicalboxLoader().loadDocuments();
-		new MusicalboxLoader().loadTracks();
-		
+//		new OndarockLoader().loadDocuments();
+//		new OndarockLoader().loadTracks();
+//
+//		new MusicalboxLoader().loadDocuments();
+//		new MusicalboxLoader().loadTracks();
+
 		new MusicbrainzLoader().loadArtistsIds();
 		new MusicbrainzLoader().loadAlbumsIds();
 		new MusicbrainzLoader().loadTracksIds();
@@ -130,8 +130,6 @@ public class PhonotekeLoader
 								append("description", getDescription(url, doc)).
 								append("links", getLinks(url, doc)).
 								append("genres", getGenres(url, doc)).
-								append("idmbrz", getIdmbrz(url, doc)).
-								append("idsptf", getIdsptf(url, doc)).
 								append("label", getLabel(url, doc)).
 								append("milestone", getMilestone(url, doc)).
 								append("review", getReview(url, doc)).
@@ -165,8 +163,6 @@ public class PhonotekeLoader
 								append("date", getDate(url, doc)).
 								append("description", getDescription(url, doc)).
 								append("links", getLinks(url, doc)).
-								append("idmbrz", getIdmbrz(url, doc)).
-								append("idsptf", getIdsptf(url, doc)).
 								append("review", getReview(url, doc)).
 								append("source", getSource()).
 								append("title", getTitle(url, doc)).
@@ -259,14 +255,6 @@ public class PhonotekeLoader
 	}
 
 	protected List<String> getGenres(String url, Document doc) {
-		return null;
-	}
-
-	protected String getIdmbrz(String url, Document doc) {
-		return null;
-	}
-
-	protected String getIdsptf(String url, Document doc) {
 		return null;
 	}
 

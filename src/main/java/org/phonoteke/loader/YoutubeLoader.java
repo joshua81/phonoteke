@@ -20,31 +20,26 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class YoutubeLoader 
+public class YoutubeLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
-	
-	private static final String MONGO_HOST = "localhost";
-	private static final int MONGO_PORT = 27017;
-	private static final String MONGO_DB = "phonoteke";
+
 	private static final String API_KEY = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
 
-	private MongoCollection<org.bson.Document> albums;
 	private YouTube youtube;
-	
+
 
 	public static void main(String[] args) 
 	{
 		new YoutubeLoader().load();
 	}
-	
+
 	public YoutubeLoader()
 	{
+		super();
+
 		try 
 		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			albums = db.getCollection("tracks");
-			
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}
 			}).setApplicationName("Phonoteke").build();
@@ -55,36 +50,31 @@ public class YoutubeLoader
 			throw new RuntimeException(t);
 		}
 	}
-	
+
 	private void load()
 	{
-		// Filters.eq("id", "bed0d16292cae9698399ac1ffde7d7b6a0d42572d9762cb2d0cfb5570d8eaf39")
-		MongoCursor<org.bson.Document> i = albums.find().iterator();
+		MongoCursor<org.bson.Document> i = tracks.find().iterator();
 		while(i.hasNext())
 		{
-			org.bson.Document album = i.next();
-			String id = (String)album.get("id");
-			List<org.bson.Document> tracks = (List<org.bson.Document>)album.get("tracks");
-			if(CollectionUtils.isNotEmpty(tracks))
+			org.bson.Document page = i.next();
+			String id = (String)page.get("id");
+			for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 			{
-				for(org.bson.Document track : tracks)
+				String youtube = (String)track.get("youtube");
+				String title = (String)track.get("title");
+				if(youtube == null && title != null)
 				{
-					String youtube = (String)track.get("youtube");
-					String title = (String)track.get("title");
-					if(youtube == null && title != null)
-					{
-						youtube = getYoutubeId(title);
-						track.put("youtube", youtube);
-						albums.updateOne(Filters.eq("id", id), new org.bson.Document("$set", album));
-						LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
-					}
-					else if(title == null && youtube != null)
-					{
-						title = getYoutubeTitle(youtube);
-						track.put("title", title);
-						albums.updateOne(Filters.eq("id", id), new org.bson.Document("$set", album));
-						LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
-					}
+					youtube = getYoutubeId(title);
+					track.put("youtube", youtube);
+					tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+					LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
+				}
+				else if(title == null && youtube != null)
+				{
+					title = getYoutubeTitle(youtube);
+					track.put("title", title);
+					tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+					LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
 				}
 			}
 		}
@@ -126,7 +116,7 @@ public class YoutubeLoader
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private String getYoutubeTitle(String id) 
 	{
 		try

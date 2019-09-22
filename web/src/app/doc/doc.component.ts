@@ -12,12 +12,10 @@ import {AppService} from '../app.service';
 export class DocComponent implements OnInit {
   docId = null;
   doc = null;
-  tracks = null;
   links = null;
 
   constructor(private route: ActivatedRoute, private service: AppService) {
     service.docLoaded.subscribe((doc: any) => this.setDoc(doc));
-    service.tracksLoaded.subscribe((tracks: any) => this.tracks = tracks.tracks);
     service.linksLoaded.subscribe((links: any) => this.links = links);
   }
 
@@ -30,9 +28,7 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
-    this.tracks = null;
     this.links = null;
-    this.service.loadTracks(this.docId);
     this.service.loadLinks(this.docId);
   }
 }

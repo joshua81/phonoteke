@@ -12,7 +12,6 @@ export class AppService {
   docsLoaded = new EventEmitter();
   docLoaded = new EventEmitter();
   linksLoaded = new EventEmitter();
-  tracksLoaded = new EventEmitter();
   error = null;
 
   constructor(private http: HttpClient) {}
@@ -28,13 +27,6 @@ export class AppService {
     console.log(this.server + '/api/docs/' + id);
     this.http.get(this.server + '/api/docs/' + id).subscribe(
       (data: any) => this.docLoaded.emit(data[0]),
-      error => this.error = error);
-  }
-
-  loadTracks(id: string) {
-    console.log(this.server + '/api/docs/' + id + '/tracks');
-    this.http.get(this.server + '/api/docs/' + id + '/tracks').subscribe(
-      (data: any) => this.tracksLoaded.emit(data[0]),
       error => this.error = error);
   }
 

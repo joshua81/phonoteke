@@ -44,9 +44,13 @@ public class PhonotekeLoader
 //
 //		new MusicalboxLoader().loadDocuments();
 //		new MusicalboxLoader().loadTracks();
-
-		new MusicbrainzLoader().loadArtistsIds();
-		new MusicbrainzLoader().loadAlbumsIds();
+//
+//		new YoutubeLoader().loadTracks();
+//		new MusicbrainzLoader().loadArtists();
+//		new MusicbrainzLoader().loadArtistsIds();
+//		new MusicbrainzLoader().loadAlbums();
+//		new MusicbrainzLoader().loadAlbumsIds();
+		new MusicbrainzLoader().loadTracks();
 		new MusicbrainzLoader().loadTracksIds();
 	}
 

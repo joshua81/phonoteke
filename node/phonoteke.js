@@ -21,10 +21,10 @@ const init = async () => {
 		handler:(request, h) => {return h.file('./js/'+request.params.file);}},
 		{method:'GET', path:'/fonts/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},
+		handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},*/
 		{method:'GET', path:'/images/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./images/'+request.params.file);}},*/
+		handler:(request, h) => {return h.file('./images/'+request.params.file);}},
 		{method:'GET', path:'/api/docs',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getDocs},

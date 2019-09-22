@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -266,16 +267,35 @@ public class MusicbrainzLoader extends PhonotekeLoader
 								append("youtube", youtube);
 						tracksjson.add(trackjson);
 						org.bson.Document musicbrainz = track.get("musicbrainz", org.bson.Document.class);
+						if(musicbrainz == null)
+						{
+							break;
+						}
+						
 						List<org.bson.Document> recordings = musicbrainz.get("recordings", List.class);
+						if(CollectionUtils.isEmpty(recordings))
+						{
+							break;
+						}
+						
 						for(org.bson.Document recording : recordings)
 						{
 							String artist =  ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).get("name", String.class);
 							if(StringUtils.stripAccents(title.toLowerCase()).contains(StringUtils.stripAccents(artist.toLowerCase())))
 							{
-								String artistId = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).get("id", String.class);
-								String albumId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).get("id", String.class);
-								trackjson.put("artistid", artistId);
-								trackjson.put("albumid", albumId);
+								String artistId = null;
+								if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))
+								{
+									artistId = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).get("id", String.class);
+									trackjson.put("artistid", artistId);
+								}
+
+								String albumId = null;
+								if(CollectionUtils.isNotEmpty(recording.get("releases", List.class)))
+								{
+									albumId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).get("id", String.class);								
+									trackjson.put("albumid", albumId);
+								}
 								LOGGER.info("Track " + title + ": " + artistId + ", " + albumId);
 								break;
 							}
@@ -287,7 +307,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			}
 			catch(Throwable t)
 			{
-				LOGGER.error("Track Musicbrainz: " + id, t.getMessage());
+				LOGGER.error("Track Musicbrainz: " + id, t);
 			}
 		}
 	}

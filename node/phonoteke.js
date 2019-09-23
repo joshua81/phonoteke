@@ -1,5 +1,6 @@
 'use strict';
 
+const Https = require('https')
 const Hapi = require('hapi');
 const Types = require('hapi').Types;
 const MongoClient = require('mongodb').MongoClient;
@@ -21,7 +22,8 @@ const init = async () => {
 		handler:(request, h) => {return h.file('./js/'+request.params.file);}},
 		{method:'GET', path:'/fonts/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},*/
+		handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},
+		https://api.songkick.com/api/3.0/artists/mbid:b7539c32-53e7-4908-bda3-81449c367da6/calendar.json?apikey=1hOiIfT9pFTkyVkg*/
 		{method:'GET', path:'/images/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:(request, h) => {return h.file('./images/'+request.params.file);}},
@@ -34,6 +36,9 @@ const init = async () => {
 		{method:'GET', path:'/api/docs/{id}/tracks',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getTracks},
+		{method:'GET', path:'/api/docs/{id}/events',
+		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
+		handler:getEvents},
 		{method:'GET', path:'/api/docs/{id}/links',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getLinks}]);
@@ -89,6 +94,26 @@ async function getTracks(request, h)
 		console.log('Tracks: id ' + request.params.id);
 		const result = await tracks.find({'id': request.params.id}).sort({"title":1}).toArray();
 		return result;
+	}
+}
+
+async function getEvents(request, h)
+{
+	if(request.params.id)
+	{
+		console.log('Events: id ' + request.params.id);
+		const result = await new Promise((resolve, reject) => {
+			const req = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + request.params.id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (res) => {
+				if (res.statusCode < 200 || res.statusCode > 299) {
+					reject(new Error('Failed to load page, status code: ' + res.statusCode));
+				}
+				const body = [];
+				res.on('data', (chunk) => body.push(chunk));
+				res.on('end', () => resolve(body.join('')));
+			});
+			req.on('error', (err) => reject(err))
+		});
+		return JSON.parse(result).resultsPage.results.event;
 	}
 }
 

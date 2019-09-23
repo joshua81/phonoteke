@@ -46,6 +46,7 @@ public class YoutubeLoader extends PhonotekeLoader
 	{
 		try
 		{
+			LOGGER.info("Loading Youtube");
 			MongoCursor<org.bson.Document> i = tracks.find().iterator();
 			while(i.hasNext())
 			{

@@ -64,6 +64,12 @@ async function getDocs(request, h)
 	{
 		console.log('Docs: id ' + request.params.id);
 		const result = await docs.find({'id': request.params.id}).toArray();
+		/*if(result && result[0])
+		{
+			const tracks = await getTracks(request, null);
+			result[0].set('tracks', tracks);
+			console.log('Tracks: ' + tracks.length);
+		}*/
 		return result;
 	}
 	else if(request.query.q)
@@ -101,8 +107,6 @@ async function getEvents(request, h)
 	{
 		console.log('Events: id ' + request.params.id);
 		const doc = await docs.find({'id': request.params.id}).toArray();
-		console.log('Tracks: doc ' + doc);
-		console.log('Tracks: doc ' + doc.artistid);
 		if(doc && doc[0] && doc[0].artistid)
 		{
 			const result = await new Promise((resolve, reject) => {

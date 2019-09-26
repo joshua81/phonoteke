@@ -34,6 +34,7 @@ public class PhonotekeLoader
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
+		TRACK,
 		UNKNOWN
 	}
 
@@ -44,14 +45,14 @@ public class PhonotekeLoader
 //
 //		new MusicalboxLoader().loadDocuments();
 //		new MusicalboxLoader().loadTracks();
-
-		new YoutubeLoader().loadTracks();
-		new MusicbrainzLoader().loadArtists();
-		new MusicbrainzLoader().loadArtistsIds();
-		new MusicbrainzLoader().loadAlbums();
-		new MusicbrainzLoader().loadAlbumsIds();
-		new MusicbrainzLoader().loadTracks();
-		new MusicbrainzLoader().loadTracksIds();
+//
+//		new YoutubeLoader().loadTracks();
+//		new MusicbrainzLoader().loadArtists();
+//		new MusicbrainzLoader().loadArtistsMBId();
+//		new MusicbrainzLoader().loadAlbums();
+//		new MusicbrainzLoader().loadAlbumsMBId();
+//		new MusicbrainzLoader().loadTracks();
+		new MusicbrainzLoader().loadTracksMBId();
 	}
 
 	public PhonotekeLoader()
@@ -74,7 +75,7 @@ public class PhonotekeLoader
 	protected void loadTracks()
 	{
 		String source = getSource();
-		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
+		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
@@ -108,7 +109,7 @@ public class PhonotekeLoader
 	protected void loadDocuments()
 	{
 		String source = getSource();
-		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).iterator();
+		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
@@ -186,7 +187,7 @@ public class PhonotekeLoader
 
 	//	private void delete()
 	//	{
-	//		MongoCursor<org.bson.Document> i = albums.find(Filters.eq("content", "")).iterator();
+	//		MongoCursor<org.bson.Document> i = albums.find(Filters.eq("content", "")).noCursorTimeout(true).iterator();
 	//		while(i.hasNext())
 	//		{
 	//			org.bson.Document page = i.next();

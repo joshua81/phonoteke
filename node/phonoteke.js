@@ -53,11 +53,9 @@ init();
 
 // Mongo DB
 var docs = null;
-var tracks = null;
 MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
 	console.log("Connected successfully to MongoDB");
 	docs = db.db('phonoteke').collection('docs');
-	tracks = db.db('phonoteke').collection('tracks');
 });
 
 async function getDocs(request, h)
@@ -91,8 +89,8 @@ async function getTracks(request, h)
 {
 	if(request.params.id)
 	{
-		console.log('Tracks: id ' + request.params.id);
-		const result = await tracks.find({'id': request.params.id}).sort({"title":1}).toArray();
+		console.log('Tracks: docid ' + request.params.id);
+		const result = await docs.find({$and: [{'type': 'track'}, {'docid': request.params.id}]}).sort({"title":1}).toArray();
 		return result;
 	}
 }
@@ -102,18 +100,25 @@ async function getEvents(request, h)
 	if(request.params.id)
 	{
 		console.log('Events: id ' + request.params.id);
-		const result = await new Promise((resolve, reject) => {
-			const req = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + request.params.id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (res) => {
-				if (res.statusCode < 200 || res.statusCode > 299) {
-					reject(new Error('Failed to load page, status code: ' + res.statusCode));
-				}
-				const body = [];
-				res.on('data', (chunk) => body.push(chunk));
-				res.on('end', () => resolve(body.join('')));
+		const doc = await docs.find({'id': request.params.id}).toArray();
+		console.log('Tracks: doc ' + doc);
+		console.log('Tracks: doc ' + doc.artistid);
+		if(doc && doc[0] && doc[0].artistid)
+		{
+			const result = await new Promise((resolve, reject) => {
+				const req = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + doc[0].artistid + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (res) => {
+					if (res.statusCode < 200 || res.statusCode > 299) {
+						reject(new Error('Failed to load page, status code: ' + res.statusCode));
+					}
+					const body = [];
+					res.on('data', (chunk) => body.push(chunk));
+					res.on('end', () => resolve(body.join('')));
+				});
+				req.on('error', (err) => reject(err))
 			});
-			req.on('error', (err) => reject(err))
-		});
-		return JSON.parse(result).resultsPage.results.event;
+			return JSON.parse(result).resultsPage.results.event;
+		}
+		return [];
 	}
 }
 
@@ -123,7 +128,7 @@ async function getLinks(request, h)
 	{
 		console.log('Links: id ' + request.params.id);
 		const doc = await docs.find({'id': request.params.id}).toArray();
-		if(doc && doc.length == 1)
+		if(doc && doc[0] && doc[0].links)
 		{
 			const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
 			return result;

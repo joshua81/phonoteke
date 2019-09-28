@@ -20,31 +20,29 @@ img.artistlink {
 
 p.vote {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   background: #8AC007;
 
-  font-size: 16px;
   color: #FFFFFF;
   text-align: center;
-  padding-top: 8px;
+  padding-top: 5px;
 
   position: absolute;
-  left: 260px;
-  top: 15px;
+  left: 270px;
+  top: 10px;
   z-index: 100;
 }
 
 p.votelink {
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   background: #8AC007;
 
-  font-size: 16px;
   color: #FFFFFF;
   text-align: center;
-  padding-top: 8px;
+  padding-top: 5px;
 
   position: absolute;
   right: 5px;

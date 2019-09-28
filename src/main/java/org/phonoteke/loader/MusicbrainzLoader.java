@@ -241,7 +241,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				String docId = track.get("docid", String.class);
 				String title = track.get("title", String.class);
-				MongoCursor<org.bson.Document> j = docs.find(Filters.and(Filters.eq("type", "track"), Filters.eq("docid", docId), Filters.eq("title", title))).noCursorTimeout(true).iterator();
+				String youtube = track.get("youtube", String.class);
+				MongoCursor<org.bson.Document> j = docs.find(Filters.and(Filters.eq("type", "track"), Filters.eq("docid", docId))).noCursorTimeout(true).iterator();
 				if(!j.hasNext())
 				{
 					docs.insertOne(track);
@@ -249,12 +250,26 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				}
 				else
 				{
-					page = j.next();
-					page.put("youtube", track.get("youtube"));
-					page.put("artistid", track.get("artistid"));
-					page.put("albumid", track.get("albumid"));
-					docs.updateOne(Filters.and(Filters.eq("docid", docId), Filters.eq("title", title)), new org.bson.Document("$set", page));
-					LOGGER.info("Track " + docId + ": " + title + " updated");
+					while(j.hasNext())
+					{
+						page = j.next();
+						if(title != null && title.equals(page.get("title", String.class)))
+						{
+							page.put("youtube", track.get("youtube"));
+							page.put("artistid", track.get("artistid"));
+							page.put("albumid", track.get("albumid"));
+							docs.updateOne(Filters.and(Filters.eq("docid", docId), Filters.eq("title", title)), new org.bson.Document("$set", page));
+							LOGGER.info("Track " + docId + ": " + title + " updated");
+						}
+						else if(youtube != null && youtube.equals(page.get("youtube", String.class)))
+						{
+							page.put("title", track.get("title"));
+							page.put("artistid", track.get("artistid"));
+							page.put("albumid", track.get("albumid"));
+							docs.updateOne(Filters.and(Filters.eq("docid", docId), Filters.eq("youtube", youtube)), new org.bson.Document("$set", page));
+							LOGGER.info("Track " + docId + ": " + youtube + " updated");
+						}
+					}
 				}
 			}	
 		}

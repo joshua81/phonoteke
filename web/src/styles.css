@@ -26,22 +26,44 @@ a {
     font-size: 14px;
 }
 
+div {
+    font-size: 14px;
+}
+
 img.musicbrainz {
+    border-radius: 50%;
     content: url("http://localhost:8180/images/musicbrainz.png");
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
 }
 
 img.ondarock {
+    border-radius: 50%;
     content: url("http://localhost:8180/images/ondarock.png");
-    width: 20px;
-    height: 20px;
+    background: #FFFFFF;
+    width: 30px;
+    height: 30px;
 }
 
 img.musicalbox {
+    border-radius: 50%;
     content: url("http://localhost:8180/images/radio2.jpg");
+    width: 30px;
+    height: 30px;
+}
+
+svg.vote {
     width: 20px;
     height: 20px;
+  
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+  
+svg.youtube {
+    width: 30px;
+    height: 30px;
 }
 
 

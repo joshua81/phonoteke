@@ -26,6 +26,11 @@ public class YoutubeLoader extends PhonotekeLoader
 	private YouTube youtube;
 
 
+	public static void main(String[] args)
+	{
+		new YoutubeLoader().loadTracks();
+	}
+	
 	public YoutubeLoader()
 	{
 		super();

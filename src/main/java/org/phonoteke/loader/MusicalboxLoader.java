@@ -22,6 +22,12 @@ public class MusicalboxLoader extends PhonotekeLoader
 	private static final String SOURCE = "musicalbox";
 	private static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", "[an error occurred while processing this directive]", "PLAY");
 
+	
+	public static void main(String[] args)
+	{
+		new MusicalboxLoader().loadTracks("https://www.raiplayradio.it/audio/2019/09/MUSICAL-BOX-022ff054-578b-4934-a5b5-65ecaaafdc11.html");
+	}
+	
 	public MusicalboxLoader()
 	{
 		super();

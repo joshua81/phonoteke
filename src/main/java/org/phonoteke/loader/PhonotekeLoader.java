@@ -40,19 +40,11 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-//		new OndarockLoader().loadDocuments();
-//		new OndarockLoader().loadTracks();
-//
-//		new MusicalboxLoader().loadDocuments();
-//		new MusicalboxLoader().loadTracks();
-//
-//		new YoutubeLoader().loadTracks();
-//		new MusicbrainzLoader().loadArtists();
-//		new MusicbrainzLoader().loadArtistsMBId();
-//		new MusicbrainzLoader().loadAlbums();
-//		new MusicbrainzLoader().loadAlbumsMBId();
-//		new MusicbrainzLoader().loadTracks();
-		new MusicbrainzLoader().loadTracksMBId();
+		new OndarockLoader().loadDocuments();
+		new OndarockLoader().loadTracks();
+
+		new MusicalboxLoader().loadDocuments();
+		new MusicalboxLoader().loadTracks();
 	}
 
 	public PhonotekeLoader()
@@ -102,6 +94,25 @@ public class PhonotekeLoader
 						LOGGER.error("Error parsing page " + url + ": " + t.getMessage());
 					}
 				}
+			}
+		}
+	}
+	
+	protected void loadTracks(String url)
+	{
+		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document page = i.next();
+			String html = page.get("page", String.class);
+			String id = getId(url);
+			Document doc = Jsoup.parse(html);
+
+			TYPE type = getType(url);
+			if(TYPE.ALBUM.equals(type))
+			{
+				List<Map<String, String>> result = getTracks(url, doc);
+				result.toString();
 			}
 		}
 	}

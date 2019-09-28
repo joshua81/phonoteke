@@ -25,3 +25,23 @@ li {
 a {
     font-size: 14px;
 }
+
+img.musicbrainz {
+    content: url("http://localhost:8180/images/musicbrainz.png");
+    width: 20px;
+    height: 20px;
+}
+
+img.ondarock {
+    content: url("http://localhost:8180/images/ondarock.png");
+    width: 20px;
+    height: 20px;
+}
+
+img.musicalbox {
+    content: url("http://localhost:8180/images/radio2.jpg");
+    width: 20px;
+    height: 20px;
+}
+
+

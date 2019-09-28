@@ -64,6 +64,11 @@
 	        <artifactId>google-api-services-youtube</artifactId>
 	        <version>v3-rev182-1.22.0</version>
         </dependency>
+        <dependency>
+		    <groupId>me.xdrop</groupId>
+		    <artifactId>fuzzywuzzy</artifactId>
+		    <version>1.2.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

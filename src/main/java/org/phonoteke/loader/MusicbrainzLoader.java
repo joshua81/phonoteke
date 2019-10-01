@@ -38,7 +38,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public void loadMBIDs()
 	{
-		//		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("id", "1b53f67afc5a66af8111fb961e68106bb4fb14a6a7a2f573d9379440e7f1fbb1")).noCursorTimeout(true).iterator();
+		//MongoCursor<org.bson.Document> i = docs.find(Filters.eq("id", "1b53f67afc5a66af8111fb961e68106bb4fb14a6a7a2f573d9379440e7f1fbb1")).noCursorTimeout(true).iterator();
 		MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("artistid", null), Filters.eq("albumid", null), Filters.eq("type", "album"))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
@@ -205,7 +205,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		} 
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage());
+			LOGGER.error("ERROR: " + t.getMessage(), t);
 			return null;
 		}
 
@@ -221,7 +221,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage());
+			LOGGER.error("ERROR: " + t.getMessage(), t);
 			return null;
 		}
 		finally

@@ -5,13 +5,15 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -44,38 +46,22 @@ public class OndarockLoader extends PhonotekeLoader
 		return SOURCE;
 	}
 
-//	private void loadSpotifyIds()
-//	{
-//		try 
-//		{
-//			SpotifyLoader spotify = new SpotifyLoader();
-//			MongoCursor<org.bson.Document> i = albums.find(Filters.eq("spotify", null)).iterator();
-//			while(i.hasNext())
-//			{
-//				org.bson.Document page = i.next();
-//				String id = page.get("id", String.class);
-//				org.bson.Document album = spotify.getId(id);
-//				if(album != null)
-//				{
-//					String spotifyId = album.get("album", String.class);
-//					String cover = album.get("image300", String.class);
-//					albums.findOneAndUpdate(Filters.eq("id", page.get("id")), 
-//							new org.bson.Document("spotify", spotifyId).append("cover", cover));
-//				}
-//			}
-//		}
-//		catch (Exception e) 
-//		{
-//			LOGGER.error("Error closing BufferedReader: " + e.getMessage());
-//		}
-//	}
-
 	@Override
 	protected String getReview(String url, Document doc) 
 	{
 		try
 		{
-			Element content = doc.select("div[id=maintext]").first();
+
+			Element content = null;
+			switch (getType(url)) {
+			case ALBUM:
+			case ARTIST:
+				content = doc.select("div[id=maintext]").first();
+				break;
+			case CONCERT:
+				content = doc.select("div[id=maintext2]").first();
+				break;
+			}
 			removeComments(content);
 			removeImages(content);
 			removeScripts(content);
@@ -87,7 +73,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getContent() "+ url + ": " + t.getMessage());
+			LOGGER.error("Error getContent() "+ url + ": " + t.getMessage(), t);
 			return null;
 		}
 	}
@@ -179,10 +165,15 @@ public class OndarockLoader extends PhonotekeLoader
 			band = bandElement.text().trim();
 			return band;
 		case ARTIST:
+		case CONCERT:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
 				intestazioneElement = doc.select("div[id=intestazione]").first();
+			}
+			if(intestazioneElement == null)
+			{
+				intestazioneElement = doc.select("div[id=intestazione_int]").first();
 			}
 			bandElement = intestazioneElement.select("h2").first();
 			band = bandElement.text().trim();
@@ -190,6 +181,17 @@ public class OndarockLoader extends PhonotekeLoader
 		default:
 			return null;
 		}
+	}
+
+	private Date getDate(String dateTxt)
+	{
+		String[] dates = dateTxt.replace("-", "/").replace(")", "").replace("(", "").trim().split("/");
+		int y = Integer.parseInt(dates[dates.length-1].trim());
+		int m = Integer.parseInt(dates[dates.length-2].trim());
+		int d = Integer.parseInt(dates[dates.length-3].trim());
+		Calendar date = Calendar.getInstance();
+		date.set(y, m, d);
+		return date.getTime();
 	}
 
 	@Override
@@ -205,10 +207,15 @@ public class OndarockLoader extends PhonotekeLoader
 			title = titleElement.text().trim();
 			return title;
 		case ARTIST:
+		case CONCERT:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
 				intestazioneElement = doc.select("div[id=intestazione]").first();
+			}
+			if(intestazioneElement == null)
+			{
+				intestazioneElement = doc.select("div[id=intestazione_int]").first();
 			}
 			titleElement = intestazioneElement.select("h3").first();
 			title = titleElement.text().trim();
@@ -249,25 +256,33 @@ public class OndarockLoader extends PhonotekeLoader
 				Element reviewDateElement = reviewElement.select("p[style]").last();
 				if(reviewDateElement != null)
 				{
-					Date date = new SimpleDateFormat("(dd/MM/yyyy)").parse(reviewDateElement.text());
-					reviewDate = new Date(date.getTime());
+					reviewDate = getDate(reviewDateElement.text());
 				}
 				if(reviewDate == null && getYear(url, doc) != null)
 				{
-					Date date = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + getYear(url, doc));
-					reviewDate = new Date(date.getTime());
+					reviewDate = getDate("01/01/" + getYear(url, doc));
 				}
 				return reviewDate;
-			case ARTIST:
-				//				reviewDate = new Date(Calendar.getInstance().getTime().getTime());
-				return null;
+			case CONCERT:
+				reviewElement = doc.select("div[id=intestazione_OR3]").first();
+				if(reviewElement == null)
+				{
+					reviewElement = doc.select("div[id=intestazione]").first();
+				}
+				if(reviewElement == null)
+				{
+					reviewElement = doc.select("div[id=intestazione_int]").first();
+				}
+				reviewElement = reviewElement.select("h4").first();
+				reviewDate = getDate(reviewElement.text());
+				return reviewDate;
 			default:
 				return null;
 			}
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getCreationDate() "+ url + ": " + t.getMessage());
+			LOGGER.error("Error getCreationDate() "+ url + ": " + t.getMessage(), t);
 			return null;
 		}
 	}
@@ -290,13 +305,18 @@ public class OndarockLoader extends PhonotekeLoader
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
+			case CONCERT:
+				coverElement = doc.select("div[class=fotolr]").first();
+				coverElement = coverElement.select("img[src]").first();
+				cover = coverElement.attr("src");
+				return getUrl(cover);
 			default:
 				return null;
 			}
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getCover() "+ url + ": " + t.getMessage());
+			LOGGER.error("Error getCover() "+ url + ": " + t.getMessage(), t);
 			return null;
 		}
 	}
@@ -317,6 +337,7 @@ public class OndarockLoader extends PhonotekeLoader
 				}
 			}
 		case ARTIST:
+		case CONCERT:
 			authorElement = doc.select("span[class=recensore]").first();
 			if(authorElement != null)
 			{
@@ -350,10 +371,12 @@ public class OndarockLoader extends PhonotekeLoader
 		switch (getType(url)) {
 		case ALBUM:
 			Element datiElement = doc.select("div[id=dati]").first();
-			String dati = datiElement.text();
-			String yearStr = dati.split(" ")[0].trim();
-			Integer year = Integer.parseInt(yearStr);
-			return year;
+			if(datiElement != null)
+			{
+				String yearStr = datiElement.text().split(" ")[0].trim();
+				Integer year = Integer.parseInt(yearStr);
+				return year;
+			}
 		default:
 			return 0;
 		}
@@ -417,28 +440,48 @@ public class OndarockLoader extends PhonotekeLoader
 	protected List<Map<String, String>> getTracks(String url, Document doc) 
 	{
 		List<Map<String, String>> tracks = Lists.newArrayList();
-		Elements elements = doc.select("iframe");
-		for(int i = 0; i < elements.size(); i++)
-		{
-			String src = elements.get(i).attr("src");
-			if(src != null && src.contains("youtube.com")) 
+		switch (getType(url)) {
+		case ALBUM:
+			Elements elements = doc.select("iframe");
+			for(int i = 0; i < elements.size(); i++)
 			{
-				String youtube = null;
-				if(src.startsWith("https://www.youtube.com/embed/"))
+				String src = elements.get(i).attr("src");
+				if(src != null && src.contains("youtube.com")) 
 				{
-					int ix = "https://www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(ModelUtils.newTrack(null, youtube));
-					LOGGER.debug("tracks: youtube: " + youtube);
-				}
-				else if(src.startsWith("//www.youtube.com/embed/"))
-				{
-					int ix = "//www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(ModelUtils.newTrack(null, youtube));
-					LOGGER.debug("tracks: youtube: " + youtube);
+					String youtube = null;
+					if(src.startsWith("https://www.youtube.com/embed/"))
+					{
+						int ix = "https://www.youtube.com/embed/".length();
+						youtube = src.substring(ix);
+						tracks.add(ModelUtils.newTrack(null, youtube));
+						LOGGER.debug("tracks: youtube: " + youtube);
+					}
+					else if(src.startsWith("//www.youtube.com/embed/"))
+					{
+						int ix = "//www.youtube.com/embed/".length();
+						youtube = src.substring(ix);
+						tracks.add(ModelUtils.newTrack(null, youtube));
+						LOGGER.debug("tracks: youtube: " + youtube);
+					}
 				}
 			}
+			break;
+		case CONCERT:
+			Element content = doc.select("div[id=boxdiscografia_med]").first();
+			if(content != null && content.children() != null)
+			{
+				Iterator<Element> i = content.children().iterator();
+				while(i.hasNext())
+				{
+					String title = i.next().text().trim();
+					if(StringUtils.isNoneBlank(title))
+					{
+						tracks.add(ModelUtils.newTrack(title, null));
+						LOGGER.debug("tracks: " + title + ", youtube: " + null);
+					}
+				}
+			}
+			break;
 		}
 		return tracks;
 	}
@@ -475,7 +518,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getVote() "+ url + ": " + t.getMessage());
+			LOGGER.error("Error getVote() "+ url + ": " + t.getMessage(), t);
 			return 0F;
 		}
 	}
@@ -510,6 +553,10 @@ public class OndarockLoader extends PhonotekeLoader
 				getUrl(url).startsWith(URL + "elettronica"))
 		{
 			return TYPE.ARTIST;
+		}
+		else if(getUrl(url).startsWith(URL + "livereport"))
+		{
+			return TYPE.CONCERT;
 		}
 		return TYPE.UNKNOWN;
 	}

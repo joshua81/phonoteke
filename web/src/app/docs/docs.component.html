@@ -4,6 +4,7 @@
       <a [routerLink]="['/docs/' + doc.id]">
         <img *ngIf="doc.type == 'album'" class="album card-img-top" src="{{doc.cover}}"/>
         <img *ngIf="doc.type == 'artist'" class="artist card-img-top" src="{{doc.cover}}"/>
+        <img *ngIf="doc.type == 'concert'" class="concert card-img-top" src="{{doc.cover}}"/>
       </a>
       <div class="card-body p-2">
         <p class="card-text font-weight-bold" [innerHTML]="doc.title2"></p>

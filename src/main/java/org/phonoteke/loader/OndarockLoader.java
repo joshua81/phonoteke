@@ -52,15 +52,10 @@ public class OndarockLoader extends PhonotekeLoader
 		try
 		{
 
-			Element content = null;
-			switch (getType(url)) {
-			case ALBUM:
-			case ARTIST:
-				content = doc.select("div[id=maintext]").first();
-				break;
-			case CONCERT:
+			Element content = doc.select("div[id=maintext]").first();
+			if(content == null)
+			{
 				content = doc.select("div[id=maintext2]").first();
-				break;
 			}
 			removeComments(content);
 			removeImages(content);
@@ -83,21 +78,17 @@ public class OndarockLoader extends PhonotekeLoader
 	{
 		Set<String> links = Sets.newHashSet();
 		Element node = doc.select("div[id=maintext]").first();
+		if(node == null)
+		{
+			node = doc.select("div[id=maintext2]").first();
+		}
 		Elements elements = node.select("a[href]");
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String link = getUrl(elements.get(i).attr("href"));
 			if(link.startsWith(URL))
 			{
-				switch(getType(link))
-				{
-				case ARTIST:
-				case ALBUM:
-					links.add(getId(link));
-					break;
-				default:
-					break;
-				}
+				links.add(getId(link));
 			}
 			elements.get(i).unwrap();
 		}
@@ -497,7 +488,7 @@ public class OndarockLoader extends PhonotekeLoader
 				{
 					return 10F;
 				}
-				
+
 				DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 				symbols.setDecimalSeparator('.');
 				DecimalFormat format = new DecimalFormat("##.#");

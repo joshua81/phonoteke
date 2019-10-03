@@ -140,9 +140,9 @@ public class PhonotekeLoader
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
 									append("description", getDescription(url, doc)).
-									append("links", getLinks(url, doc)).
 									append("genres", getGenres(url, doc)).
 									append("label", getLabel(url, doc)).
+									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource()).
 									append("title", title).
@@ -183,6 +183,7 @@ public class PhonotekeLoader
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
 									append("description", getDescription(url, doc)).
+									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource()).
 									append("title", title).

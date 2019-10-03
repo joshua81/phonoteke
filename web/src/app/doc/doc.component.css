@@ -1,19 +1,7 @@
-img.album {
+img.cover {
   width: 300px;
-  height: 300px;
 }
 
-img.albumlink {
+img.link {
   width: 60px;
-  height: 60px;
-}
-
-img.artist {
-  width: 400px;
-  height: 200px;
-}
-
-img.artistlink {
-  width: 60px;
-  height: 30px;
 }

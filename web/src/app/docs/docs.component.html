@@ -5,8 +5,9 @@
         <img class="cover card-img-top" src="{{doc.cover}}"/>
       </a>
       <div class="card-body p-2">
-        <p class="card-text font-weight-bold" [innerHTML]="doc.title2"></p>
-        <p class="card-text" [innerHTML]="doc.description"></p>
+        <div class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
+        <div class="card-text pb-3" [innerHTML]="doc.artist"></div>
+        <div class="card-text" [innerHTML]="doc.description"></div>
       </div>
     </div>
   </div>

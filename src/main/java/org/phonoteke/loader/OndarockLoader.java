@@ -493,6 +493,11 @@ public class OndarockLoader extends PhonotekeLoader
 		{
 			switch (getType(url)) {
 			case ALBUM:
+				if(url.contains("pietremiliari"))
+				{
+					return 10F;
+				}
+				
 				DecimalFormatSymbols symbols = new DecimalFormatSymbols();
 				symbols.setDecimalSeparator('.');
 				DecimalFormat format = new DecimalFormat("##.#");
@@ -520,17 +525,6 @@ public class OndarockLoader extends PhonotekeLoader
 		{
 			LOGGER.error("Error getVote() "+ url + ": " + t.getMessage(), t);
 			return 0F;
-		}
-	}
-
-	@Override
-	protected Boolean getMilestone(String url, Document doc) 
-	{
-		switch (getType(url)) {
-		case ALBUM:
-			return url.contains("pietremiliari");
-		default:
-			return false;
 		}
 	}
 

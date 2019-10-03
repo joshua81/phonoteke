@@ -78,30 +78,27 @@ public class PhonotekeLoader
 			String id = getId(url);
 			Document doc = Jsoup.parse(html);
 
-			switch(getType(url))
+			try
 			{
-			case ALBUM:
-				if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
+				switch(getType(url))
 				{
-					try
+				case ALBUM:
+				case CONCERT:
+					if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
 					{
 						org.bson.Document json = new org.bson.Document("id", id).
 								append("tracks", getTracks(url, doc));
 						tracks.insertOne(json);
 						LOGGER.info("Tracks " + url + " added");
 					}
-					catch (Throwable t) 
-					{
-						LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
-					}
+					break;
+				default:
+					break;
 				}
-				break;
-			case CONCERT:
-				List<Map<String, String>> tracks = getTracks(url, doc);
-				LOGGER.info("Tracks " + url + " added");
-				break;
-			default:
-				break;
+			}
+			catch (Throwable t) 
+			{
+				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
 			}
 		}
 	}
@@ -118,62 +115,79 @@ public class PhonotekeLoader
 			String id = getId(url);
 			Document doc = Jsoup.parse(html);
 
-			if(!docs.find(Filters.and(Filters.eq("source", source), 
-					Filters.eq("url", url))).iterator().hasNext())
+			try
 			{
-				try
+				String artist = getArtist(url, doc);
+				String title = getTitle(url, doc);
+				TYPE type = getType(url);
+
+				if(!docs.find(Filters.and(Filters.eq("source", source), 
+						Filters.eq("url", url))).iterator().hasNext())
 				{
 					org.bson.Document json = null;
-					switch(getType(url))
+					switch(type)
 					{
 					case ALBUM:
-						json = new org.bson.Document("id", id).
-						append("type", TYPE.ALBUM.name().toLowerCase()).
-						append("artist", getArtist(url, doc)).
-						append("authors", getAuthors(url, doc)).
-						append("cover", getCover(url, doc)).
-						append("date", getDate(url, doc)).
-						append("description", getDescription(url, doc)).
-						append("links", getLinks(url, doc)).
-						append("genres", getGenres(url, doc)).
-						append("label", getLabel(url, doc)).
-						append("milestone", getMilestone(url, doc)).
-						append("review", getReview(url, doc)).
-						append("source", getSource()).
-						append("title", getTitle(url, doc)).
-						append("title2", getArtist(url, doc) + " | " + getTitle(url, doc)).
-						append("url", getUrl(url)).
-						append("vote", getVote(url, doc)).
-						append("year", getYear(url, doc));
+						if(!docs.find(Filters.and(Filters.eq("source", source),
+								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("artist", artist),
+								Filters.eq("title", title))).iterator().hasNext())
+						{
+							json = new org.bson.Document("id", id).
+									append("type", type.name().toLowerCase()).
+									append("artist", artist).
+									append("authors", getAuthors(url, doc)).
+									append("cover", getCover(url, doc)).
+									append("date", getDate(url, doc)).
+									append("description", getDescription(url, doc)).
+									append("links", getLinks(url, doc)).
+									append("genres", getGenres(url, doc)).
+									append("label", getLabel(url, doc)).
+									append("review", getReview(url, doc)).
+									append("source", getSource()).
+									append("title", title).
+									append("url", getUrl(url)).
+									append("vote", getVote(url, doc)).
+									append("year", getYear(url, doc));
+						}
 						break;
 					case ARTIST:
-						json = new org.bson.Document("id", id).
-						append("type", TYPE.ARTIST.name().toLowerCase()).
-						append("artist", getArtist(url, doc)).
-						append("authors", getAuthors(url, doc)).
-						append("cover", getCover(url, doc)).
-						append("date", getDate(url, doc)).
-						append("description", getDescription(url, doc)).
-						append("links", getLinks(url, doc)).
-						append("review", getReview(url, doc)).
-						append("source", getSource()).
-						append("title", getTitle(url, doc)).
-						append("title2", getArtist(url, doc)).
-						append("url", getUrl(url));
+						if(!docs.find(Filters.and(Filters.eq("source", source), 
+								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("artist", artist))).iterator().hasNext())
+						{
+							json = new org.bson.Document("id", id).
+									append("type", type.name().toLowerCase()).
+									append("artist", artist).
+									append("authors", getAuthors(url, doc)).
+									append("cover", getCover(url, doc)).
+									append("date", getDate(url, doc)).
+									append("description", getDescription(url, doc)).
+									append("links", getLinks(url, doc)).
+									append("review", getReview(url, doc)).
+									append("source", getSource()).
+									append("title", title).
+									append("url", getUrl(url));
+						}
 						break;
 					case CONCERT:
-						json = new org.bson.Document("id", id).
-						append("type", TYPE.CONCERT.name().toLowerCase()).
-						append("artist", getArtist(url, doc)).
-						append("authors", getAuthors(url, doc)).
-						append("cover", getCover(url, doc)).
-						append("date", getDate(url, doc)).
-						append("description", getDescription(url, doc)).
-						append("review", getReview(url, doc)).
-						append("source", getSource()).
-						append("title", getTitle(url, doc)).
-						append("title2", getArtist(url, doc) + " | " + getTitle(url, doc)).
-						append("url", getUrl(url));
+						if(!docs.find(Filters.and(Filters.eq("source", source), 
+								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("artist", artist),
+								Filters.eq("title", title))).iterator().hasNext())
+						{
+							json = new org.bson.Document("id", id).
+									append("type", type.name().toLowerCase()).
+									append("artist", artist).
+									append("authors", getAuthors(url, doc)).
+									append("cover", getCover(url, doc)).
+									append("date", getDate(url, doc)).
+									append("description", getDescription(url, doc)).
+									append("review", getReview(url, doc)).
+									append("source", getSource()).
+									append("title", title).
+									append("url", getUrl(url));
+						}
 						break;
 					default:
 						break;
@@ -183,27 +197,20 @@ public class PhonotekeLoader
 						docs.insertOne(json);
 						LOGGER.info(json.get("type", String.class).toUpperCase() + " " + url + " added");
 					}
+					else if(TYPE.ALBUM.equals(getType(url)))
+					{
+						page.put("vote", getVote(url, doc));
+						docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+						LOGGER.info(page.get("type", String.class).toUpperCase() + " " + url + " updated");
+					}
 				}
-				catch (Throwable t) 
-				{
-					LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
-				}
+			}
+			catch (Throwable t) 
+			{
+				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
 			}
 		}
 	}
-
-	//	private void delete()
-	//	{
-	//		MongoCursor<org.bson.Document> i = albums.find(Filters.eq("content", "")).noCursorTimeout(true).iterator();
-	//		while(i.hasNext())
-	//		{
-	//			org.bson.Document page = i.next();
-	//			String url = page.get("url", String.class);
-	//			albums.findOneAndDelete(Filters.eq("url", url));
-	//			pages.findOneAndDelete(Filters.eq("url", url));
-	//			LOGGER.info("Deleted page " + url);
-	//		}
-	//	}
 
 	protected String getId(String url) 
 	{
@@ -271,10 +278,6 @@ public class PhonotekeLoader
 	}
 
 	protected String getLabel(String url, Document doc) {
-		return null;
-	}
-
-	protected Boolean getMilestone(String url, Document doc) {
 		return null;
 	}
 

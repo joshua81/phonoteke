@@ -5,13 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
-import org.phonoteke.model.ModelUtils;
 
 import com.google.common.collect.Lists;
 
@@ -95,9 +93,9 @@ public class MusicalboxLoader extends PhonotekeLoader
 	}
 
 	@Override
-	protected List<Map<String, String>> getTracks(String url, Document doc) 
+	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
-		List<Map<String, String>> tracks = Lists.newArrayList();
+		List<org.bson.Document> tracks = Lists.newArrayList();
 		Element content = doc.select("div.aodHtmlDescription").first();
 		if(content != null && content.children() != null)
 		{
@@ -108,7 +106,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
 					String youtube = null;
-					tracks.add(ModelUtils.newTrack(title, youtube));
+					tracks.add(newTrack(title, youtube));
 					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
 			}
@@ -122,7 +120,7 @@ public class MusicalboxLoader extends PhonotekeLoader
 				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
 				{
 					String youtube = null;
-					tracks.add(ModelUtils.newTrack(title, youtube));
+					tracks.add(newTrack(title, youtube));
 					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
 				}
 			}

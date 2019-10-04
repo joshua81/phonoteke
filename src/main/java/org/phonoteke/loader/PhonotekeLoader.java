@@ -4,7 +4,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,13 +27,11 @@ public class PhonotekeLoader
 
 	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> docs;
-	protected MongoCollection<org.bson.Document> tracks;
 	protected MongoCollection<org.bson.Document> musicbrainz;
 
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
-		TRACK,
 		CONCERT,
 		INTERVIEW,
 		UNKNOWN
@@ -43,10 +40,8 @@ public class PhonotekeLoader
 	public static void main(String[] args) 
 	{
 		new OndarockLoader().loadDocuments();
-		new OndarockLoader().loadTracks();
-
 		new MusicalboxLoader().loadDocuments();
-		new MusicalboxLoader().loadTracks();
+		new MusicbrainzLoader().loadMBIDs();
 	}
 
 	public PhonotekeLoader()
@@ -56,50 +51,12 @@ public class PhonotekeLoader
 			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
 			pages = db.getCollection("pages");
 			docs = db.getCollection("docs");
-			tracks = db.getCollection("tracks");
 			musicbrainz = db.getCollection("musicbrainz");
 		} 
 		catch (Throwable t) 
 		{
 			LOGGER.error("Error connecting to Mongo db: " + t.getMessage(), t);
 			throw new RuntimeException(t);
-		}
-	}
-
-	protected void loadTracks()
-	{
-		String source = getSource();
-		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document page = i.next();
-			String url = page.get("url", String.class);
-			String html = page.get("page", String.class);
-			String id = getId(url);
-			Document doc = Jsoup.parse(html);
-
-			try
-			{
-				switch(getType(url))
-				{
-				case ALBUM:
-				case CONCERT:
-					if(!tracks.find(Filters.eq("id", id)).iterator().hasNext())
-					{
-						org.bson.Document json = new org.bson.Document("id", id).
-								append("tracks", getTracks(url, doc));
-						tracks.insertOne(json);
-						LOGGER.info("Tracks " + url + " added");
-					}
-					break;
-				default:
-					break;
-				}
-			}
-			catch (Throwable t) 
-			{
-				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
-			}
 		}
 	}
 
@@ -134,8 +91,10 @@ public class PhonotekeLoader
 								Filters.eq("title", title))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
 									append("type", type.name().toLowerCase()).
 									append("artist", artist).
+									append("title", title).
 									append("authors", getAuthors(url, doc)).
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
@@ -145,10 +104,9 @@ public class PhonotekeLoader
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource()).
-									append("title", title).
-									append("url", getUrl(url)).
 									append("vote", getVote(url, doc)).
-									append("year", getYear(url, doc));
+									append("year", getYear(url, doc)).
+									append("tracks", getTracks(url, doc));
 						}
 						break;
 					case ARTIST:
@@ -157,17 +115,17 @@ public class PhonotekeLoader
 								Filters.eq("artist", artist))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
 									append("type", type.name().toLowerCase()).
 									append("artist", artist).
+									append("title", title).
 									append("authors", getAuthors(url, doc)).
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
 									append("description", getDescription(url, doc)).
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
-									append("source", getSource()).
-									append("title", title).
-									append("url", getUrl(url));
+									append("source", getSource());
 						}
 						break;
 					case CONCERT:
@@ -177,8 +135,10 @@ public class PhonotekeLoader
 								Filters.eq("title", title))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
 									append("type", type.name().toLowerCase()).
 									append("artist", artist).
+									append("title", title).
 									append("authors", getAuthors(url, doc)).
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
@@ -186,8 +146,7 @@ public class PhonotekeLoader
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource()).
-									append("title", title).
-									append("url", getUrl(url));
+									append("tracks", getTracks(url, doc));
 						}
 						break;
 					default:
@@ -234,6 +193,12 @@ public class PhonotekeLoader
 			LOGGER.error("Error getUrl() "+ url + ": " + t.getMessage(), t);
 			return null;
 		} 
+	}
+
+	protected static org.bson.Document newTrack(String title, String youtube)
+	{
+		return new org.bson.Document("title", title).
+				append("youtube", youtube);
 	}
 
 	//---------------------------------
@@ -294,7 +259,7 @@ public class PhonotekeLoader
 		return null;
 	}
 
-	protected List<Map<String, String>> getTracks(String url, Document doc) {
+	protected List<org.bson.Document> getTracks(String url, Document doc) {
 		return null;
 	}
 

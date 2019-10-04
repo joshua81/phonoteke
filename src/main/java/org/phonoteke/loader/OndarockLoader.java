@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -18,7 +17,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.phonoteke.model.ModelUtils;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
@@ -428,9 +426,9 @@ public class OndarockLoader extends PhonotekeLoader
 	}
 
 	@Override
-	protected List<Map<String, String>> getTracks(String url, Document doc) 
+	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
-		List<Map<String, String>> tracks = Lists.newArrayList();
+		List<org.bson.Document> tracks = Lists.newArrayList();
 		switch (getType(url)) {
 		case ALBUM:
 			Elements elements = doc.select("iframe");
@@ -444,14 +442,14 @@ public class OndarockLoader extends PhonotekeLoader
 					{
 						int ix = "https://www.youtube.com/embed/".length();
 						youtube = src.substring(ix);
-						tracks.add(ModelUtils.newTrack(null, youtube));
+						tracks.add(newTrack(null, youtube));
 						LOGGER.debug("tracks: youtube: " + youtube);
 					}
 					else if(src.startsWith("//www.youtube.com/embed/"))
 					{
 						int ix = "//www.youtube.com/embed/".length();
 						youtube = src.substring(ix);
-						tracks.add(ModelUtils.newTrack(null, youtube));
+						tracks.add(newTrack(null, youtube));
 						LOGGER.debug("tracks: youtube: " + youtube);
 					}
 				}
@@ -467,7 +465,7 @@ public class OndarockLoader extends PhonotekeLoader
 					String title = i.next().text().trim();
 					if(StringUtils.isNoneBlank(title))
 					{
-						tracks.add(ModelUtils.newTrack(title, null));
+						tracks.add(newTrack(title, null));
 						LOGGER.debug("tracks: " + title + ", youtube: " + null);
 					}
 				}

@@ -103,7 +103,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		if(!i.hasNext())
 		{
 			org.bson.Document json = getAlbum(artist, title);
-			if(json != null)
+			if(json != null && json.getInteger("count") > 0)
 			{
 				json.append("id", id).
 				append("type", TYPE.ALBUM.name().toLowerCase());
@@ -143,8 +143,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					for(org.bson.Document mbalbum : mbalbums)
 					{
-						int score = mbalbum.get("score", Integer.class);
-						if(score == 100)
+						if(mbalbum.getInteger("score") == 100)
 						{
 							artistId = ((List<org.bson.Document>)mbalbum.get("artist-credit")).get(0).get("artist", org.bson.Document.class).getString("id");
 							page.put("artistid", artistId);
@@ -167,7 +166,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		if(!i.hasNext())
 		{
 			org.bson.Document json = getArtist(artist);
-			if(json != null)
+			if(json != null && json.getInteger("count") > 0)
 			{
 				json.append("id", id).
 				append("type", TYPE.ARTIST.name().toLowerCase());
@@ -205,8 +204,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					for(org.bson.Document mbartist : mbartists)
 					{
-						int score = mbartist.get("score", Integer.class);
-						if(score == 100)
+						if(mbartist.getInteger("score") == 100)
 						{
 							artistId = mbartist.getString("id");
 							page.put("artistid", artistId);
@@ -241,7 +239,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				else
 				{
 					org.bson.Document json = getRecording(title);
-					if(json != null)
+					if(json != null && json.getInteger("count") > 0)
 					{
 						json.append("id", id).
 						append("title", title).
@@ -343,11 +341,11 @@ public class MusicbrainzLoader extends PhonotekeLoader
 							{
 								for(org.bson.Document recording : recordings)
 								{
-									//						int score = recording.get("score", Integer.class);
-									String mbartist = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
-									int score = FuzzySearch.tokenSetRatio(title, mbartist);
-									if(score > 70)
-										//						if(StringUtils.stripAccents(title.toLowerCase()).contains(StringUtils.stripAccents(artist.toLowerCase())))
+									//						String mbartist = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
+									//						int score = FuzzySearch.tokenSetRatio(title, mbartist);
+									//						if(score > 70)
+									//						if(StringUtils.stripAccents(title.toLowerCase()).contains(StringUtils.stripAccents(artist.toLowerCase())))
+									if(recording.getInteger("score") == 100)
 									{
 										if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))
 										{

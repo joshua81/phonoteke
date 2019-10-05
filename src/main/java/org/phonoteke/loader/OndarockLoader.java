@@ -23,8 +23,8 @@ import com.google.common.collect.Lists;
 
 public class OndarockLoader extends PhonotekeLoader
 {
-	private static final String URL = "https://www.ondarock.it/";
-	private static final String SOURCE = "ondarock";
+	public static final String URL = "https://www.ondarock.it/";
+	public static final String SOURCE = "ondarock";
 
 
 	public OndarockLoader()

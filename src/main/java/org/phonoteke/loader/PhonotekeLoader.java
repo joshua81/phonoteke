@@ -63,6 +63,10 @@ public class PhonotekeLoader
 	protected void loadDocuments()
 	{
 		String source = getSource();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/recensioni/2019-lanadelrey-normanfuckingrockwell.htm")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/livereport/2011_calvi.htm")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/popmuzik/air.htm")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/09/MUSICAL-BOX-022ff054-578b-4934-a5b5-65ecaaafdc11.html")).noCursorTimeout(true).iterator();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{

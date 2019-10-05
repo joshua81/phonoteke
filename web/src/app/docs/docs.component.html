@@ -13,7 +13,7 @@
         <div *ngIf="doc.type != 'artist'" class="card-text pb-3" [innerHTML]="doc.artist"></div>
         <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold pb-3" [innerHTML]="doc.artist"></div>
         <div *ngIf="doc.description" class="card-text pb-2" [innerHTML]="doc.description"></div>
-        <footer class="blockquote-footer float-right">di {{doc.authors}}</footer>
+        <footer *ngIf="doc.authors" class="blockquote-footer float-right">di {{doc.authors}}</footer>
       </div>
     </div>
   </div>

@@ -14,7 +14,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -25,15 +24,13 @@ public class YoutubeLoader extends PhonotekeLoader
 	private static final String API_KEY = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
 
 	private YouTube youtube;
-	
-	protected MongoCollection<org.bson.Document> tracks;
 
 
 	public static void main(String[] args)
 	{
 		new YoutubeLoader().loadTracks();
 	}
-	
+
 	public YoutubeLoader()
 	{
 		super();
@@ -43,10 +40,43 @@ public class YoutubeLoader extends PhonotekeLoader
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}
 			}).setApplicationName("Phonoteke").build();
+			beforeStart();
 		}
 		catch (Throwable t) 
 		{
 			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage(), t);
+		}
+	}
+
+	private void beforeStart()
+	{
+		MongoCursor<org.bson.Document> i = tracks.find(Filters.and(Filters.ne("tracks.youtube", null), Filters.ne("tracks.title", null))).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document json = i.next();
+			List<org.bson.Document> mbtracks = json.get("tracks", List.class);
+			org.bson.Document page = docs.find(Filters.eq("id", json.get("id"))).noCursorTimeout(true).iterator().tryNext();
+			if(page != null)
+			{
+				String id = page.getString("id");
+				List<org.bson.Document> tracks = page.get("tracks", List.class);
+				for(org.bson.Document mbtrack : mbtracks)
+				{
+					for(org.bson.Document track : tracks)
+					{
+						if(mbtrack.getString("youtube").equals(track.getString("youtube")))
+						{
+							track.append("title", mbtrack.getString("title"));
+						}
+						else if(mbtrack.getString("title").equals(track.getString("title")))
+						{
+							track.append("youtube", mbtrack.getString("youtube"));
+						}
+					}
+				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				LOGGER.info("YOUTUBE id: " + id + " updated");
+			}
 		}
 	}
 
@@ -69,14 +99,14 @@ public class YoutubeLoader extends PhonotekeLoader
 						youtube = getYoutubeId(title);
 						track.put("youtube", youtube);
 						tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-						LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
+						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
 					}
 					else if(title == null && youtube != null)
 					{
 						title = getYoutubeTitle(youtube);
 						track.put("title", title);
 						tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-						LOGGER.info("id: " + id + ", title: " + title + ", youtube: " + youtube);
+						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
 					}
 				}
 			}

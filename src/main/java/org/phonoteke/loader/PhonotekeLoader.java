@@ -28,10 +28,12 @@ public class PhonotekeLoader
 	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> docs;
 	protected MongoCollection<org.bson.Document> musicbrainz;
+	protected MongoCollection<org.bson.Document> tracks;
 
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
+		TRACK,
 		CONCERT,
 		INTERVIEW,
 		UNKNOWN
@@ -39,8 +41,8 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new OndarockLoader().loadDocuments();
-		new MusicalboxLoader().loadDocuments();
+//		new OndarockLoader().loadDocuments();
+//		new MusicalboxLoader().loadDocuments();
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -52,11 +54,26 @@ public class PhonotekeLoader
 			pages = db.getCollection("pages");
 			docs = db.getCollection("docs");
 			musicbrainz = db.getCollection("musicbrainz");
+			tracks = db.getCollection("tracks");
+			beforeStart();
 		} 
 		catch (Throwable t) 
 		{
 			LOGGER.error("Error connecting to Mongo db: " + t.getMessage(), t);
 			throw new RuntimeException(t);
+		}
+	}
+	
+	private void beforeStart()
+	{
+		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("type", TYPE.CONCERT.name().toLowerCase())).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document page = i.next();
+			String id = page.getString("id");
+			page.remove("tracks");
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info(page.getString("type").toUpperCase() + " " + id + ": tracks deleted");
 		}
 	}
 
@@ -71,8 +88,8 @@ public class PhonotekeLoader
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
-			String url = page.get("url", String.class);
-			String html = page.get("page", String.class);
+			String url = page.getString("url");
+			String html = page.getString("page");
 			String id = getId(url);
 			Document doc = Jsoup.parse(html);
 
@@ -149,8 +166,8 @@ public class PhonotekeLoader
 									append("description", getDescription(url, doc)).
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
-									append("source", getSource()).
-									append("tracks", getTracks(url, doc));
+									append("source", getSource());
+//									append("tracks", getTracks(url, doc));
 						}
 						break;
 					default:
@@ -159,13 +176,13 @@ public class PhonotekeLoader
 					if(json != null)
 					{
 						docs.insertOne(json);
-						LOGGER.info(json.get("type", String.class).toUpperCase() + " " + url + " added");
+						LOGGER.info(json.getString("type").toUpperCase() + " " + url + " added");
 					}
 					else if(TYPE.ALBUM.equals(getType(url)))
 					{
 						page.put("vote", getVote(url, doc));
 						docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-						LOGGER.info(page.get("type", String.class).toUpperCase() + " " + url + " updated");
+						LOGGER.info(page.getString("type").toUpperCase() + " " + url + " updated");
 					}
 				}
 			}

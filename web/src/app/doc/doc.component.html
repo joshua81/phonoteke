@@ -10,7 +10,7 @@
   <div class="col-md-auto text-white pt-2">
     <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
     <h2 [innerHTML]="doc.artist"></h2>
-    <h3 *ngIf="doc.type == 'album'">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
+    <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
     <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
     <a *ngIf="doc.albumid" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
       <img class="musicbrainz">

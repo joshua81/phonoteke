@@ -1,14 +1,10 @@
-package org.phonoteke;
+package org.phonoteke.loader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.phonoteke.loader.OndarockLoader;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
@@ -21,7 +17,7 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 
-public class SpotifyLoader 
+public class SpotifyLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
@@ -31,36 +27,25 @@ public class SpotifyLoader
 			.setRedirectUri(SpotifyHttpManager.makeUri("https://phonoteke.org/spotify-redirect"))
 			.build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
+	private static final int SLEEP_TIME = 2000;
 
-	private static final String MONGO_HOST = "localhost";
-	private static final int MONGO_PORT = 27017;
-	private static final String MONGO_DB = "phonoteke";
-
-	private MongoCollection<Document> spotify;
-	private MongoCollection<Document> articles;
-
-	private ClientCredentials credentials;
+	private static ClientCredentials credentials;
 
 	public static void main(String[] args) 
 	{
-		SpotifyLoader loader = new SpotifyLoader();
-		loader.loadAlbums();
-		loader.loadArtists();
+		new SpotifyLoader().loadAlbums();
+		new SpotifyLoader().loadAlbums();
 	}
 
 	public SpotifyLoader()
 	{
-		try
-		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			spotify = db.getCollection("spotify");
-			articles = db.getCollection("articles");
-		} 
-		catch (Throwable t) 
-		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage());
-			throw new RuntimeException(t);
-		}
+		super();
+		beforeStart();
+	}
+	
+	private void beforeStart()
+	{
+		
 	}
 
 	private void login()
@@ -71,7 +56,11 @@ public class SpotifyLoader
 			{
 				credentials = SPOTIFY_LOGIN.execute();
 				SPOTIFY_API.setAccessToken(credentials.getAccessToken());
-				LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
+				LOGGER.info("SPTF Expires in: " + credentials.getExpiresIn() + " secs");
+			}
+			else
+			{
+				Thread.sleep(SLEEP_TIME);
 			}
 		} 
 		catch (Exception e) 
@@ -82,62 +71,56 @@ public class SpotifyLoader
 
 	private void loadAlbums()
 	{
-		MongoCursor<Document> i = null;//articles.find(Filters.eq("type", OndarockLoader.TYPE.REVIEW.name())).iterator();
-		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
-		//		int total = i.count();
-		int n = 1;
+		MongoCursor<Document> i = docs.find(Filters.eq("type", TYPE.ALBUM.name().toLowerCase())).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
-			String band = page.get("band", String.class);
-			String album = page.get("album", String.class);
-			String id = page.get("id", String.class);
+			String id = page.getString("id");
+			String artist = page.getString("artist");
+			String album = page.getString("title");
 			String spotifyId = null;
 
 			// check if the article was already crawled
-			MongoCursor<Document> j = spotify.find(Filters.eq("id", id)).iterator();
-			if(!j.hasNext())
+			//			MongoCursor<Document> j = musicbrainz.find(Filters.eq("id", id)).noCursorTimeout(true).iterator();
+			//			if(!j.hasNext())
+			//			{
+			Document json = getAlbum(artist, album);
+			if(json != null)
 			{
-				Document json = getAlbum(band, album);
-				if(json != null)
-				{
-					spotifyId = json.get("album", String.class);
-					// insert SPOTIFY
-					json.put("id", id);
-					spotify.insertOne(json);
-				}
+				spotifyId = json.getString("album");
+				// insert SPOTIFY
+				json.put("id", id);
+				//					musicbrainz.insertOne(json);
 			}
-			LOGGER.info(n++ + " Album " + band + " - " + album + ": " + spotifyId);
+			//			}
+			LOGGER.info("SPTF Album " + artist + " - " + album + ": " + spotifyId);
 		}
 	}
 
 	private void loadArtists()
 	{
-		MongoCursor<Document> i = null;//articles.find(Filters.eq("type", OndarockLoader.TYPE.MONOGRAPH.name())).iterator();
-		//		i.setOptions(Bytes.QUERYOPTION_NOTIMEOUT);
-		//		int total = i.count();
-		int n = 1;
+		MongoCursor<Document> i = docs.find(Filters.eq("type", TYPE.ARTIST.name().toLowerCase())).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
-			String band = page.get("band", String.class);
-			String id = page.get("id", String.class);
+			String id = page.getString("id");
+			String artist = page.getString("artist");
 			String spotifyId = null;
 
 			// check if the article was already crawled
-			MongoCursor<Document> j = spotify.find(Filters.eq("id", id)).iterator();
-			if(!j.hasNext())
+			//			MongoCursor<Document> j = musicbrainz.find(Filters.eq("id", id)).iterator();
+			//			if(!j.hasNext())
+			//			{
+			Document json = getArtist(artist);
+			if(json != null)
 			{
-				Document json = getArtist(band);
-				if(json != null)
-				{
-					spotifyId = json.get("artist", String.class);
-					// insert SPOTIFY
-					json.put("id", id);
-					spotify.insertOne(json);
-				}
+				spotifyId = json.getString("artist");
+				// insert SPOTIFY
+				json.put("id", id);
+				//					musicbrainz.insertOne(json);
 			}
-			LOGGER.info(n++ + " Artist " + band + " : " + spotifyId);
+			//			}
+			LOGGER.info("SPTF Artist " + artist + " : " + spotifyId);
 		}
 	}
 
@@ -146,8 +129,6 @@ public class SpotifyLoader
 		try
 		{
 			login();
-
-			Thread.sleep(500);
 			String q =   "album:" + album + " artist:"+band;
 			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
 			Paging<AlbumSimplified> albums = request.execute();
@@ -183,8 +164,6 @@ public class SpotifyLoader
 		try
 		{
 			login();
-
-			Thread.sleep(500);
 			String q = "artist:" + band;
 			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).build();
 			Paging<Artist> artists = request.execute();
@@ -207,11 +186,5 @@ public class SpotifyLoader
 			LOGGER.error("Error getting " + band + "  id: " + e.getMessage());
 		}
 		return null;
-	}
-
-	public Document getId(String id)
-	{
-		MongoCursor<Document> i = spotify.find(Filters.eq("id", id)).iterator();
-		return i.hasNext() ? i.next() : null;
 	}
 }

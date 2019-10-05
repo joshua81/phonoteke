@@ -14,8 +14,6 @@ import org.apache.logging.log4j.Logger;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-
 public class MusicbrainzLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
@@ -304,7 +302,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private void loadTracksMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
-		String artist = page.getString("artist");
 		String source = page.getString("source");
 		String artistId = page.getString("artistid");
 		String albumId = page.getString("albumid");
@@ -314,15 +311,15 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			LOGGER.info("MB Loading Tracks: " + id);
 			for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks", List.class))
 			{
-				String title = track.getString("title");
 				String youtube = track.getString("youtube");
+				String title = track.getString("title");
+				if(source.equals(OndarockLoader.SOURCE))
+				{
+					title = page.getString("artist") + " - " + page.getString("title") + title;
+				}
 
 				if(title != null)
 				{
-					if(source.equals(OndarockLoader.SOURCE))
-					{
-						title = artist + " - " + title;
-					}
 					loadTrack(id, title, youtube, artistId, albumId);
 					org.bson.Document mbtrack = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.TRACK.name().toLowerCase()), Filters.eq("title", title))).noCursorTimeout(true).iterator().tryNext();
 					if(mbtrack != null)
@@ -357,7 +354,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 											mbalbumId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
 											track.append("albumid", mbalbumId);
 										}
-										LOGGER.info("MB " + artist + " - " + title + ": " + mbartistId + " - " + mbalbumId);
+										LOGGER.info("MB " + title + ": " + mbartistId + " - " + mbalbumId);
 										break;
 									}
 								}

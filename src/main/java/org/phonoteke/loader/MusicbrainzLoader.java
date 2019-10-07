@@ -39,14 +39,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	private void beforeStart()
 	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("type", TYPE.CONCERT.name().toLowerCase())).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document page = i.next();
-			String id = page.getString("id");
-			musicbrainz.deleteMany(Filters.eq("id", id));
-			LOGGER.info("MB " + id + ": Concert deleted");
-		}
+		// does nothing
 	}
 
 	public void loadMBIDs(String url)

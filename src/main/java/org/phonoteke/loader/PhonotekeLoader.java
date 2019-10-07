@@ -66,15 +66,7 @@ public class PhonotekeLoader
 	
 	private void beforeStart()
 	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("type", TYPE.CONCERT.name().toLowerCase())).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document page = i.next();
-			String id = page.getString("id");
-			page.remove("tracks");
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info(page.getString("type").toUpperCase() + " " + id + ": tracks deleted");
-		}
+		// does nothing
 	}
 
 	protected void loadDocuments()

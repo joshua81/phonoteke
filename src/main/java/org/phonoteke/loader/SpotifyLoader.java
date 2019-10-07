@@ -27,14 +27,16 @@ public class SpotifyLoader extends PhonotekeLoader
 			.setRedirectUri(SpotifyHttpManager.makeUri("https://phonoteke.org/spotify-redirect"))
 			.build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
+
 	private static final int SLEEP_TIME = 2000;
 
 	private static ClientCredentials credentials;
 
+
 	public static void main(String[] args) 
 	{
 		new SpotifyLoader().loadAlbums();
-		new SpotifyLoader().loadAlbums();
+		new SpotifyLoader().loadArtists();
 	}
 
 	public SpotifyLoader()
@@ -42,10 +44,10 @@ public class SpotifyLoader extends PhonotekeLoader
 		super();
 		beforeStart();
 	}
-	
+
 	private void beforeStart()
 	{
-		
+		// does nothing
 	}
 
 	private void login()
@@ -78,49 +80,22 @@ public class SpotifyLoader extends PhonotekeLoader
 			String id = page.getString("id");
 			String artist = page.getString("artist");
 			String album = page.getString("title");
-			String spotifyId = null;
 
 			// check if the article was already crawled
-			//			MongoCursor<Document> j = musicbrainz.find(Filters.eq("id", id)).noCursorTimeout(true).iterator();
-			//			if(!j.hasNext())
-			//			{
-			Document json = getAlbum(artist, album);
-			if(json != null)
+			MongoCursor<Document> j = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("spotify", null))).iterator();
+			if(j.hasNext())
 			{
-				spotifyId = json.getString("album");
-				// insert SPOTIFY
-				json.put("id", id);
-				//					musicbrainz.insertOne(json);
+				Document mb = i.next();
+				Document spotify = getAlbum(artist, album);
+				if(spotify != null)
+				{
+					String artistId = spotify.get("artistid", String.class);
+					String albumId = spotify.get("albumid", String.class);
+					mb.put("spotify", spotify);
+					//					musicbrainz.insertOne(json);
+					LOGGER.info("SPTF Album " + artist + " - " + album + ": " + artistId + " - " + albumId);
+				}
 			}
-			//			}
-			LOGGER.info("SPTF Album " + artist + " - " + album + ": " + spotifyId);
-		}
-	}
-
-	private void loadArtists()
-	{
-		MongoCursor<Document> i = docs.find(Filters.eq("type", TYPE.ARTIST.name().toLowerCase())).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			Document page = i.next();
-			String id = page.getString("id");
-			String artist = page.getString("artist");
-			String spotifyId = null;
-
-			// check if the article was already crawled
-			//			MongoCursor<Document> j = musicbrainz.find(Filters.eq("id", id)).iterator();
-			//			if(!j.hasNext())
-			//			{
-			Document json = getArtist(artist);
-			if(json != null)
-			{
-				spotifyId = json.getString("artist");
-				// insert SPOTIFY
-				json.put("id", id);
-				//					musicbrainz.insertOne(json);
-			}
-			//			}
-			LOGGER.info("SPTF Artist " + artist + " : " + spotifyId);
 		}
 	}
 
@@ -139,11 +114,11 @@ public class SpotifyLoader extends PhonotekeLoader
 				for(int k = 0; k < artists.length; k++)
 				{
 					ArtistSimplified artist = artists[k];
-					LOGGER.info("Spotify: " + artist.getName() + " - " + a.getName());
 					if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
 					{
-						return new Document("artist", artist.getId()).
-								append("album", a.getId()).
+						LOGGER.info("SPTF Loaded: " + artist.getName() + " - " + a.getName());
+						return new Document("artistid", artist.getId()).
+								append("albumid", a.getId()).
 								append("imageL", a.getImages()[0].getUrl()).
 								append("imageM", a.getImages()[1].getUrl()).
 								append("imageS", a.getImages()[2].getUrl()).
@@ -154,9 +129,35 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error getting " + band + " - " + album + "  id: " + e.getMessage());
+			LOGGER.error("Error loading " + band + " - " + album + ": " + e.getMessage(), e);
 		}
 		return null;
+	}
+
+	private void loadArtists()
+	{
+		MongoCursor<Document> i = docs.find(Filters.ne("type", TYPE.ALBUM.name().toLowerCase())).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			String artist = page.getString("artist");
+
+			// check if the article was already crawled
+			MongoCursor<Document> j = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("spotify", null))).iterator();
+			if(j.hasNext())
+			{
+				Document mb = i.next();
+				Document spotify = getArtist(artist);
+				if(spotify != null)
+				{
+					String artistId = spotify.get("artistid", String.class);
+					mb.put("spotify", spotify);
+					//					musicbrainz.insertOne(json);
+					LOGGER.info("SPTF Artist " + artist + " : " + artistId);
+				}
+			}
+		}
 	}
 
 	private Document getArtist(String band)
@@ -170,20 +171,21 @@ public class SpotifyLoader extends PhonotekeLoader
 			for(int j = 0; j < artists.getItems().length; j++)
 			{
 				Artist artist = artists.getItems()[j];
-				LOGGER.info("Spotify: " + artist.getName());
 				if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
 				{
-					return new Document("artist", artist.getId()).
+					LOGGER.info("SPTF Loaded: " + artist.getName());
+					return new Document("artistid", artist.getId()).
 							append("imageL", artist.getImages()[0].getUrl()).
 							append("imageM", artist.getImages()[1].getUrl()).
 							append("imageS", artist.getImages()[2].getUrl()).
+							append("genres", artist.getGenres()).
 							append("type", "artist");
 				}
 			}
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error getting " + band + "  id: " + e.getMessage());
+			LOGGER.error("Error loading " + band + ": " + e.getMessage(), e);
 		}
 		return null;
 	}

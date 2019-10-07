@@ -305,6 +305,11 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String source = page.getString("source");
 		String artistId = page.getString("artistid");
 		String albumId = page.getString("albumid");
+		
+		if(source.equals(OndarockLoader.SOURCE))
+		{
+			return;
+		}
 
 		try
 		{
@@ -313,11 +318,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				String youtube = track.getString("youtube");
 				String title = track.getString("title");
-				if(source.equals(OndarockLoader.SOURCE))
-				{
-					title = page.getString("artist") + " - " + page.getString("title") + title;
-				}
-
 				if(title != null)
 				{
 					loadTrack(id, title, youtube, artistId, albumId);

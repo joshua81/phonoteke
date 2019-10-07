@@ -41,8 +41,8 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-//		new OndarockLoader().loadDocuments();
-//		new MusicalboxLoader().loadDocuments();
+		new OndarockLoader().loadDocuments();
+		new MusicalboxLoader().loadDocuments();
 		new MusicbrainzLoader().loadMBIDs();
 	}
 

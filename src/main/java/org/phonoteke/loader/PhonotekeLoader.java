@@ -28,7 +28,6 @@ public class PhonotekeLoader
 	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> docs;
 	protected MongoCollection<org.bson.Document> musicbrainz;
-	protected MongoCollection<org.bson.Document> tracks;
 
 	protected enum TYPE {
 		ARTIST,
@@ -54,7 +53,6 @@ public class PhonotekeLoader
 			pages = db.getCollection("pages");
 			docs = db.getCollection("docs");
 			musicbrainz = db.getCollection("musicbrainz");
-			tracks = db.getCollection("tracks");
 			beforeStart();
 		} 
 		catch (Throwable t) 

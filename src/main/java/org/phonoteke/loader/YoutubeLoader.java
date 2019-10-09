@@ -50,34 +50,7 @@ public class YoutubeLoader extends PhonotekeLoader
 
 	private void beforeStart()
 	{
-		MongoCursor<org.bson.Document> i = tracks.find(Filters.and(Filters.ne("tracks.youtube", null), Filters.ne("tracks.title", null))).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document json = i.next();
-			List<org.bson.Document> mbtracks = json.get("tracks", List.class);
-			org.bson.Document page = docs.find(Filters.eq("id", json.get("id"))).noCursorTimeout(true).iterator().tryNext();
-			if(page != null)
-			{
-				String id = page.getString("id");
-				List<org.bson.Document> tracks = page.get("tracks", List.class);
-				for(org.bson.Document mbtrack : mbtracks)
-				{
-					for(org.bson.Document track : tracks)
-					{
-						if(mbtrack.getString("youtube").equals(track.getString("youtube")))
-						{
-							track.append("title", mbtrack.getString("title"));
-						}
-						else if(mbtrack.getString("title").equals(track.getString("title")))
-						{
-							track.append("youtube", mbtrack.getString("youtube"));
-						}
-					}
-				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-				LOGGER.info("YOUTUBE id: " + id + " updated");
-			}
-		}
+		// does nothing
 	}
 
 	public void loadTracks()
@@ -85,30 +58,29 @@ public class YoutubeLoader extends PhonotekeLoader
 		try
 		{
 			LOGGER.info("Loading Youtube");
-			MongoCursor<org.bson.Document> i = tracks.find().noCursorTimeout(true).iterator();
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", "album"), Filters.ne("tracks", null))).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();
 				String id = (String)page.get("id");
 				for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 				{
-					String youtube = (String)track.get("youtube");
-					String title = (String)track.get("title");
+					String youtube = track.getString("youtube");
+					String title = track.getString("title");
 					if(youtube == null && title != null)
 					{
 						youtube = getYoutubeId(title);
 						track.put("youtube", youtube);
-						tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
 					}
 					else if(title == null && youtube != null)
 					{
 						title = getYoutubeTitle(youtube);
 						track.put("title", title);
-						tracks.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
 					}
 				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 		catch(Throwable t)

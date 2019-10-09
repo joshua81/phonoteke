@@ -122,9 +122,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String title = page.getString("title");
 		String albumId = page.getString("albumid");
 
-		LOGGER.info("MB Loading Album " + id);
 		if(artistId == null || albumId == null)
 		{
+			LOGGER.info("MB Loading Album " + id);
 			loadAlbum(id, artist, title);
 			MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ALBUM.name().toLowerCase()))).noCursorTimeout(true).iterator();
 			if(i.hasNext())
@@ -183,9 +183,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String artist = page.getString("artist");
 		String artistId = page.getString("artistid");
 
-		LOGGER.info("MB Loading Artist: " + id);
 		if(artistId == null)
 		{
+			LOGGER.info("MB Loading Artist: " + id);
 			loadArtist(id, artist);
 			MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ARTIST.name().toLowerCase()))).noCursorTimeout(true).iterator();
 			if(i.hasNext())
@@ -306,13 +306,13 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 		try
 		{
-			LOGGER.info("MB Loading Tracks: " + id);
 			for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks", List.class))
 			{
 				String youtube = track.getString("youtube");
 				String title = track.getString("title");
 				if(title != null)
 				{
+					LOGGER.info("MB Loading Tracks: " + id);
 					loadTrack(id, title, youtube, artistId, albumId);
 					org.bson.Document mbtrack = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.TRACK.name().toLowerCase()), Filters.eq("title", title))).noCursorTimeout(true).iterator().tryNext();
 					if(mbtrack != null)

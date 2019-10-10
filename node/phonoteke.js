@@ -101,10 +101,7 @@ async function getEvents(request, h)
 				});
 				req.on('error', (err) => reject(err))
 			});
-			var json = JSON.parse(result);
-			if(json && json.resultsPage && json.resultsPage.results) {
-				return json.resultsPage.results.event;
-			}
+			return JSON.parse(result);
 		}
 	}
 	return [];

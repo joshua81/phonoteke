@@ -25,7 +25,7 @@
   [innerHTML]="doc.review">
 </p>
 
-<div *ngIf="doc.tracks.length != 0" class="pt-3">
+<div *ngIf="doc.tracks != null && doc.tracks.length != 0" class="pt-3">
   <h2 class="text-white">Tracce</h2>
   <div class="list-group">
     <div *ngFor="let track of doc.tracks" class="p-2 list-group-item d-flex align-items-center">
@@ -40,7 +40,7 @@
   </div>
 </div>
 
-<div *ngIf="links.length != 0" class="pt-3">
+<div *ngIf="links != null && links.length != 0" class="pt-3">
   <h2 class="text-white">Link</h2>
   <div class="list-group">
     <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-1 list-group-item list-group-item-action">
@@ -57,7 +57,7 @@
   </div>
 </div>
 
-<div *ngIf="events.length != 0" class="pt-3">
+<div *ngIf="events != null && events.length != 0" class="pt-3">
   <h2 class="text-white">Concerti</h2>
   <div class="list-group">
     <p *ngFor="let event of events" class="p-1 list-group-item">{{event.displayName}} | {{event.location.city}}</p>

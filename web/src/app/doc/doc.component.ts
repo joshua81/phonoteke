@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Injectable } from '@angular/core';
 import {AppService} from '../app.service';
 
 @Component({
@@ -11,15 +10,13 @@ import {AppService} from '../app.service';
 export class DocComponent implements OnInit {
   docId = null;
   doc = null;
-  tracks = null;
   events = null;
   links = null;
 
   constructor(private route: ActivatedRoute, private service: AppService) {
     service.docLoaded.subscribe((doc: any) => this.setDoc(doc));
-    service.tracksLoaded.subscribe((tracks: any) => this.tracks = tracks);
-    service.eventsLoaded.subscribe((events: any) => this.events = events);
-    service.linksLoaded.subscribe((links: any) => this.links = links);
+    service.eventsLoaded.subscribe((events: any) => this.setEvents(events));
+    service.linksLoaded.subscribe((links: any) => this.setLinks(links));
   }
 
   ngOnInit() {
@@ -32,8 +29,16 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
     this.links = null;
-    this.service.loadTracks(this.docId);
-    this.service.loadEvents(this.docId);
+    this.events = null;
     this.service.loadLinks(this.docId);
+    this.service.loadEvents(this.docId);
+  }
+
+  setEvents(events: any) {
+    this.events = events;
+  }
+
+  setLinks(links: any) {
+    this.links = links;
   }
 }

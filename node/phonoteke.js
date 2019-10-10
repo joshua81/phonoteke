@@ -33,9 +33,6 @@ const init = async () => {
 		{method:'GET', path:'/api/docs/{id}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getDocs},
-		{method:'GET', path:'/api/docs/{id}/tracks',
-		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:getTracks},
 		{method:'GET', path:'/api/docs/{id}/events',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getEvents},
@@ -64,12 +61,6 @@ async function getDocs(request, h)
 	{
 		console.log('Docs: id ' + request.params.id);
 		const result = await docs.find({'id': request.params.id}).toArray();
-		/*if(result && result[0])
-		{
-			const tracks = await getTracks(request, null);
-			result[0].set('tracks', tracks);
-			console.log('Tracks: ' + tracks.length);
-		}*/
 		return result;
 	}
 	else if(request.query.q)
@@ -87,16 +78,6 @@ async function getDocs(request, h)
 		console.log('Docs: page ' + request.query.p);
 		var page = Number(request.query.p) > 0 ? Number(request.query.p) : 0;
 		const result = await docs.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		return result;
-	}
-}
-
-async function getTracks(request, h)
-{
-	if(request.params.id)
-	{
-		console.log('Tracks: docid ' + request.params.id);
-		const result = await docs.find({$and: [{'type': 'track'}, {'docid': request.params.id}]}).sort({"title":1}).toArray();
 		return result;
 	}
 }
@@ -120,10 +101,13 @@ async function getEvents(request, h)
 				});
 				req.on('error', (err) => reject(err))
 			});
-			return JSON.parse(result).resultsPage.results.event;
+			var json = JSON.parse(result);
+			if(json && json.resultsPage && json.resultsPage.results) {
+				return json.resultsPage.results.event;
+			}
 		}
-		return [];
 	}
+	return [];
 }
 
 async function getLinks(request, h)
@@ -134,7 +118,8 @@ async function getLinks(request, h)
 		const doc = await docs.find({'id': request.params.id}).toArray();
 		if(doc && doc[0] && doc[0].links)
 		{
-			const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
+			//const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
+			const result = await docs.find({$or: [{'artistid': doc[0].artistid}, {'tracks.artistid': doc[0].artistid}]}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
 			return result;
 		}
 		return [];

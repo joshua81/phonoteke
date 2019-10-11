@@ -36,7 +36,6 @@ export class DocsComponent implements OnInit {
   loadPage(page: number) {
     this.page = page;
     if(this.page == 0) {
-      //this.page++;
       this.docs.splice(0, this.docs.length);
     }
 

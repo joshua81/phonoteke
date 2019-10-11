@@ -14,7 +14,6 @@ export class MenuComponent implements OnInit {
   ngOnInit() {}
 
   onSearch() {
-    this.service.searchText = this.searchText;
-    this.service.loadDocs(0);
+    this.service.onSearch.emit(this.searchText);
   }
 }

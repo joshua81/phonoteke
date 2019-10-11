@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {AppService} from '../app.service';
 
 @Component({
@@ -7,25 +8,45 @@ import {AppService} from '../app.service';
   styleUrls: ['./docs.component.css']
 })
 export class DocsComponent implements OnInit {
+  server = 'http://localhost:8180';
+  //server = 'http://192.168.1.82:8180';
+  //server = 'http://10.103.2.31:8180';
+  searchText = '';
+  error = null;
   page = 0;
   docs = [];
 
-  constructor(private service: AppService) {}
+  constructor(private http: HttpClient, private service: AppService) {}
 
   ngOnInit() {
-    this.service.docsLoaded.subscribe((msg: any) => this.pageLoaded(msg));
-    this.loadPage();
+    this.service.onSearch.subscribe((searchText: string) => this.loadPageSearch(searchText));
+    this.loadPage(0);
   }
 
-  pageLoaded(msg: any) {
-    if(msg.pageNum === 0) {
-      this.page = 1;
+  loadPageSearch(searchText: string) {
+    this.searchText = searchText;
+    this.loadPage(0);
+  }
+
+  loadPageScroll() {
+    this.page++;
+    this.loadPage(this.page);
+  }
+
+  loadPage(page: number) {
+    this.page = page;
+    if(this.page == 0) {
+      //this.page++;
       this.docs.splice(0, this.docs.length);
     }
-    this.docs.push.apply(this.docs, msg.content);
+
+    console.log(this.server + '/api/docs?p=' + this.page + '&q=' + this.searchText);
+    this.http.get(this.server + '/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
+      (data: any) => this.pageLoaded(data),
+      error => this.error = error);
   }
 
-  loadPage() {
-    this.service.loadDocs(this.page++);
+  pageLoaded(data: any) {
+    this.docs.push.apply(this.docs, data);
   }
 }

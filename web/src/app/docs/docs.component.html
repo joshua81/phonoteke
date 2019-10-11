@@ -1,4 +1,4 @@
-<div infinite-scroll class="pt-2 row" (scrolled)="loadPage()">
+<div infinite-scroll class="pt-2 row" (scrolled)="loadPageScroll()">
   <div class="pt-2 col-md-4" *ngFor="let doc of docs">
     <div class="cover card mx-auto">
       <a [routerLink]="['/docs/' + doc.id]">

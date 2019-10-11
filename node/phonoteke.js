@@ -101,7 +101,7 @@ async function getEvents(request, h)
 				});
 				req.on('error', (err) => reject(err))
 			});
-			return JSON.parse(result);
+			return JSON.parse(result).resultsPage.results.event;
 		}
 	}
 	return [];
@@ -113,12 +113,28 @@ async function getLinks(request, h)
 	{
 		console.log('Links: id ' + request.params.id);
 		const doc = await docs.find({'id': request.params.id}).toArray();
-		if(doc && doc[0] && doc[0].links)
+		if(doc && doc[0])
 		{
+			var artists = [];
+			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null) {
+				artists.push(doc[0].artistid);
+			}
+			if(doc[0].type == 'album')
+			{
+				doc[0].tracks.forEach(function(track) {
+					if(typeof(track.artistid) != 'undefined' && track.artistid != null) {
+						artists.push(track.artistid);
+					}
+				});
+			}
+			console.log(artists);
 			//const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
-			const result = await docs.find({$or: [{'artistid': doc[0].artistid}, {'tracks.artistid': doc[0].artistid}]}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
+			var result = await docs.find({$or: [{'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artistid":1, "year":-1}).toArray();
+			result = result.filter(function(value, index, arr){
+				return value.id != doc[0].id;
+			});
 			return result;
 		}
-		return [];
 	}
+	return [];
 }

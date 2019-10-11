@@ -43,6 +43,7 @@ public class PhonotekeLoader
 		new OndarockLoader().loadDocuments();
 		new MusicalboxLoader().loadDocuments();
 		new MusicbrainzLoader().loadMBIDs();
+		new YoutubeLoader().loadTracks();
 	}
 
 	public PhonotekeLoader()

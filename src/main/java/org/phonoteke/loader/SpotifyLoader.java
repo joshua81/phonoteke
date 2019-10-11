@@ -17,6 +17,8 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 public class SpotifyLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
@@ -73,7 +75,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadAlbums()
 	{
-		MongoCursor<Document> i = docs.find(Filters.eq("type", TYPE.ALBUM.name().toLowerCase())).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
@@ -82,29 +84,29 @@ public class SpotifyLoader extends PhonotekeLoader
 			String album = page.getString("title");
 
 			// check if the article was already crawled
-			MongoCursor<Document> j = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("spotify", null))).iterator();
-			if(j.hasNext())
+			Document spotify = getAlbum(artist, album);
+			if(spotify != null)
 			{
-				Document mb = i.next();
-				Document spotify = getAlbum(artist, album);
-				if(spotify != null)
-				{
-					String artistId = spotify.get("artistid", String.class);
-					String albumId = spotify.get("albumid", String.class);
-					mb.put("spotify", spotify);
-					//					musicbrainz.insertOne(json);
-					LOGGER.info("SPTF Album " + artist + " - " + album + ": " + artistId + " - " + albumId);
-				}
+				String artistId = spotify.getString("spartistid");
+				String albumId = spotify.getString("spalbumid");
+				LOGGER.info("SPTF " + artist + " - " + album + ": " + artistId + " - " + albumId);
+
+				page.append("spartistid", artistId).
+				append("spalbumid", albumId).
+				append("coverL", spotify.getString("coverL")).
+				append("coverM", spotify.getString("coverM")).
+				append("coverS", spotify.getString("coverS"));
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 	}
 
-	private Document getAlbum(String band, String album)
+	private Document getAlbum(String artist, String album)
 	{
 		try
 		{
 			login();
-			String q =   "album:" + album + " artist:"+band;
+			String q = "artist:"+ artist + " album:" + album;
 			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
@@ -113,79 +115,79 @@ public class SpotifyLoader extends PhonotekeLoader
 				ArtistSimplified[] artists = a.getArtists();
 				for(int k = 0; k < artists.length; k++)
 				{
-					ArtistSimplified artist = artists[k];
-					if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
+					String spartist = artists[k].getName();
+					String artistid = artists[k].getId();
+					String spalbum = a.getName();
+					String albumId = a.getId();
+					int score = FuzzySearch.tokenSetRatio(artist + " " + album, spartist + " " + spalbum);
+					if(score > 90)
 					{
-						LOGGER.info("SPTF Loaded: " + artist.getName() + " - " + a.getName());
-						return new Document("artistid", artist.getId()).
-								append("albumid", a.getId()).
-								append("imageL", a.getImages()[0].getUrl()).
-								append("imageM", a.getImages()[1].getUrl()).
-								append("imageS", a.getImages()[2].getUrl()).
-								append("type", "album");
+						return new Document("spartistid", artistid).
+								append("spalbumid", albumId).
+								append("coverL", a.getImages()[0].getUrl()).
+								append("coverM", a.getImages()[1].getUrl()).
+								append("coverS", a.getImages()[2].getUrl());
 					}
 				}
 			}
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error loading " + band + " - " + album + ": " + e.getMessage(), e);
+			LOGGER.error("Error loading " + artist + " - " + album + ": " + e.getMessage(), e);
 		}
 		return null;
 	}
 
 	private void loadArtists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.ne("type", TYPE.ALBUM.name().toLowerCase())).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
 			String id = page.getString("id");
 			String artist = page.getString("artist");
 
-			// check if the article was already crawled
-			MongoCursor<Document> j = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("spotify", null))).iterator();
-			if(j.hasNext())
+			Document spotify = getArtist(artist);
+			if(spotify != null)
 			{
-				Document mb = i.next();
-				Document spotify = getArtist(artist);
-				if(spotify != null)
-				{
-					String artistId = spotify.get("artistid", String.class);
-					mb.put("spotify", spotify);
-					//					musicbrainz.insertOne(json);
-					LOGGER.info("SPTF Artist " + artist + " : " + artistId);
-				}
+				String artistId = spotify.getString("spartistid");
+				LOGGER.info("SPTF " + artist + ": " + artistId);
+
+				page.append("spartistid", artistId).
+				append("coverL", spotify.getString("coverL")).
+				append("coverM", spotify.getString("coverM")).
+				append("coverS", spotify.getString("coverS"));
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 	}
 
-	private Document getArtist(String band)
+	private Document getArtist(String artist)
 	{
 		try
 		{
 			login();
-			String q = "artist:" + band;
+			String q = "artist:" + artist;
 			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).build();
 			Paging<Artist> artists = request.execute();
 			for(int j = 0; j < artists.getItems().length; j++)
 			{
-				Artist artist = artists.getItems()[j];
-				if(artist.getName().toLowerCase().replace(" ", "").trim().equals(band.toLowerCase().replace(" ", "").trim()))
+				Artist a = artists.getItems()[j];
+				String spartist = a.getName();
+				String artistid = a.getId();
+				int score = FuzzySearch.tokenSetRatio(artist, spartist);
+				if(score > 90)
 				{
-					LOGGER.info("SPTF Loaded: " + artist.getName());
-					return new Document("artistid", artist.getId()).
-							append("imageL", artist.getImages()[0].getUrl()).
-							append("imageM", artist.getImages()[1].getUrl()).
-							append("imageS", artist.getImages()[2].getUrl()).
-							append("genres", artist.getGenres()).
-							append("type", "artist");
+					return new Document("spartistid", artistid).
+							append("coverL", a.getImages()[0].getUrl()).
+							append("coverM", a.getImages()[1].getUrl()).
+							append("coverS", a.getImages()[2].getUrl());
 				}
 			}
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error loading " + band + ": " + e.getMessage(), e);
+			LOGGER.error("Error loading " + artist + ": " + e.getMessage(), e);
 		}
 		return null;
 	}

@@ -52,6 +52,13 @@ img.musicalbox {
     height: 30px;
 }
 
+img.spotify {
+    border-radius: 50%;
+    content: url("http://localhost:8180/images/spotify.jpg");
+    width: 30px;
+    height: 30px;
+}
+
 svg.vote {
     width: 20px;
     height: 20px;

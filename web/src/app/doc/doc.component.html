@@ -12,11 +12,17 @@
     <h2 [innerHTML]="doc.artist"></h2>
     <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
     <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
-    <a *ngIf="doc.albumid" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+    <a class="pr-2" href="{{doc.url}}" target="_blank">
+      <img class="{{doc.source}}">
+    </a>
+    <a *ngIf="doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
       <img class="musicbrainz">
     </a>
-    <a href="{{doc.url}}" target="_blank">
-      <img class="{{doc.source}}">
+    <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+      <img class="spotify">
+    </a>
+    <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+      <img class="spotify">
     </a>
   </div>
 </div>

@@ -8,10 +8,6 @@ import {AppService} from '../app.service';
   styleUrls: ['./docs.component.css']
 })
 export class DocsComponent implements OnInit {
-  server = 'http://localhost:8180';
-  //server = 'http://192.168.1.82:8180';
-  //server = 'http://10.103.2.31:8180';
-  searchText = '';
   error = null;
   page = 0;
   docs = [];
@@ -24,7 +20,6 @@ export class DocsComponent implements OnInit {
   }
 
   loadPageSearch(searchText: string) {
-    this.searchText = searchText;
     this.loadPage(0);
   }
 
@@ -39,8 +34,8 @@ export class DocsComponent implements OnInit {
       this.docs.splice(0, this.docs.length);
     }
 
-    console.log(this.server + '/api/docs?p=' + this.page + '&q=' + this.searchText);
-    this.http.get(this.server + '/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
+    console.log(this.service.server + '/api/docs?p=' + this.page + '&q=' + this.service.searchText);
+    this.http.get(this.service.server + '/api/docs?p=' + this.page + '&q=' + this.service.searchText).subscribe(
       (data: any) => this.pageLoaded(data),
       error => this.error = error);
   }

@@ -2,7 +2,8 @@
   <div class="pt-2 col-md-4" *ngFor="let doc of docs">
     <div class="cover card mx-auto">
       <a [routerLink]="['/docs/' + doc.id]">
-        <img class="cover card-img-top" src="{{doc.cover}}"/>
+        <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover card-img-top" src="{{doc.cover}}"/>
+        <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover card-img-top" src="{{doc.coverL}}"/>
       </a>
       <div class="card-body p-2">
         <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>

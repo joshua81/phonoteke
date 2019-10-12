@@ -1,10 +1,11 @@
 <div class="pt-3 row">
   <div class="col-md-auto">
-    <img class="cover rounded" src="{{doc.cover}}"/>
-    <div *ngIf="doc.vote && doc.vote == 10 && doc.milestone" class="vote">
+    <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
+    <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
+    <div *ngIf="doc.type == 'album' && doc.vote == 10" class="vote">
       <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
     </div>
-    <div *ngIf="doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
+    <div *ngIf="doc.type == 'album' && doc.vote != 10" class="vote">{{doc.vote}}</div>
   </div>
 
   <div class="col-md-auto text-white pt-2">
@@ -27,11 +28,11 @@
   </div>
 </div>
 
-<p *ngIf="doc.review != null" class="pt-3 text-justify text-white" 
+<p *ngIf="doc.review" class="pt-3 text-justify text-white" 
   [innerHTML]="doc.review">
 </p>
 
-<div *ngIf="doc.tracks.length != 0" class="pt-3">
+<div *ngIf="doc.tracks && doc.tracks.length != 0" class="pt-3">
   <h2 class="text-white">Tracks</h2>
   <div class="list-group">
     <div *ngFor="let track of doc.tracks" class="p-2 list-group-item d-flex align-items-center">
@@ -46,13 +47,15 @@
   </div>
 </div>
 
-<div *ngIf="links.length != 0" class="pt-3">
+<div *ngIf="links && links.length != 0" class="pt-3">
   <h2 class="text-white">Links</h2>
   <div class="list-group">
     <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-1 list-group-item list-group-item-action">
       <div class="d-flex align-items-center">
-        <img class="link" src="{{link.cover}}">
-        <div *ngIf="link.type != 'artist'" class="pl-2 text-truncate">({{link.year}}) {{link.artist}} | {{link.title}}</div>
+        <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
+        <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
+        <div *ngIf="link.type == 'album'" class="pl-2 text-truncate">({{link.year}}) {{link.artist}} | {{link.title}}</div>
+        <div *ngIf="link.type == 'concert'" class="pl-2 text-truncate">{{link.artist}} | {{link.title}}</div>
         <div *ngIf="link.type == 'artist'" class="pl-2 text-truncate">{{link.artist}}</div>
         <div *ngIf="link.vote && link.vote == 10" class="votelink">
           <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
@@ -63,7 +66,7 @@
   </div>
 </div>
 
-<div *ngIf="events.length != 0" class="pt-3">
+<div *ngIf="events && events.length != 0" class="pt-3">
   <h2 class="text-white">Tour</h2>
   <div class="list-group">
     <p *ngFor="let event of events" class="p-1 list-group-item">{{event.start.date}} | {{event.venue.displayName}} | {{event.location.city}}</p>

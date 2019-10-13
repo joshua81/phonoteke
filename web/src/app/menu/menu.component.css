@@ -1,3 +1,7 @@
 nav {
   opacity: 0.8;
 }
+
+div.brand {
+  flex: 0 0 80px;
+}

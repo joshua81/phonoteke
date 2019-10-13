@@ -1,5 +1,5 @@
 <div infinite-scroll class="pt-2 row" (scrolled)="loadPageScroll()">
-  <div class="pt-2 col-md-4" *ngFor="let doc of docs">
+  <div class="pt-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let doc of docs">
     <div class="cover card mx-auto">
       <a [routerLink]="['/docs/' + doc.id]">
         <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover card-img-top" src="{{doc.cover}}"/>

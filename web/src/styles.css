@@ -54,7 +54,7 @@ img.musicalbox {
 
 img.spotify {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/spotify.jpg");
+    content: url("http://localhost:8180/images/spotify.png");
     width: 30px;
     height: 30px;
 }

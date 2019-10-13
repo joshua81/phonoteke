@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-dark d-flex">
-  <a class="navbar-brand text-white" [routerLink]="['/']">Phonoteke</a>
-  <!--div class="collapse navbar-collapse">
-    <ul class="navbar-nav bd-navbar-nav flex-row">
-      <li class="nav-item" routerLinkActive="active"><a class="nav-link text-white" [routerLink]="['/albums']">Album</a></li>
-      <li class="nav-item" routerLinkActive="active"><a class="nav-link text-white" [routerLink]="['/artists']">Artisti</a></li>
-    </ul>
-  </div-->
-  <form class="form-inline w-100">
-    <input class="form-control w-100" name="search" type="search" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+  <form class="w-100">
+    <div class="row">
+      <div class="col brand">
+        <a class="navbar-brand text-white" [routerLink]="['/']">Phonoteke</a>
+      </div>
+      <div class="col">
+        <input class="form-control" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+      </div>
+    </div>
   </form>
 </nav>
 

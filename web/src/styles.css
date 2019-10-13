@@ -105,8 +105,4 @@ div.votelink {
     color: #FFFFFF;
     text-align: center;
     padding-top: 5px;
-  
-    position: absolute;
-    right: 5px;
-    z-index: 100;
 }

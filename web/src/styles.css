@@ -84,6 +84,7 @@ div.vote {
     border-radius: 50%;
     width: 30px;
     height: 30px;
+    flex: 0 0 30px;
     background: #8AC007;
   
     color: #FFFFFF;
@@ -100,6 +101,7 @@ div.votelink {
     border-radius: 50%;
     width: 30px;
     height: 30px;
+    flex: 0 0 30px;
     background: #8AC007;
   
     color: #FFFFFF;

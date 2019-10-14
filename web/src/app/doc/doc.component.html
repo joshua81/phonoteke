@@ -1,4 +1,4 @@
-<div class="container-fluid pt-5" style="max-width: 1200px;">
+<div *ngIf="doc" class="container pt-5" style="max-width: 1200px;">
   <div class="pt-3 row">
     <div class="col-md-auto">
       <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>

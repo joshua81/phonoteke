@@ -1,90 +1,92 @@
-<div class="pt-3 row">
-  <div class="col-md-auto">
-    <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
-    <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
-    <div *ngIf="doc.type == 'album' && doc.vote == 10" class="vote">
-      <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
+<div class="container-fluid pt-5" style="max-width: 1200px;">
+  <div class="pt-3 row">
+    <div class="col-md-auto">
+      <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
+      <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
+      <div *ngIf="doc.type == 'album' && doc.vote == 10" class="vote">
+        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
+      </div>
+      <div *ngIf="doc.type == 'album' && doc.vote != 10" class="vote">{{doc.vote}}</div>
     </div>
-    <div *ngIf="doc.type == 'album' && doc.vote != 10" class="vote">{{doc.vote}}</div>
+
+    <div class="col-md-auto text-white pt-2">
+      <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
+      <h2 [innerHTML]="doc.artist"></h2>
+      <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
+      <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
+      <a class="pr-2" href="{{doc.url}}" target="_blank">
+        <img class="{{doc.source}}">
+      </a>
+      <a *ngIf="doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+        <img class="musicbrainz">
+      </a>
+      <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+        <img class="spotify">
+      </a>
+      <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+        <img class="spotify">
+      </a>
+    </div>
   </div>
 
-  <div class="col-md-auto text-white pt-2">
-    <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
-    <h2 [innerHTML]="doc.artist"></h2>
-    <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
-    <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
-    <a class="pr-2" href="{{doc.url}}" target="_blank">
-      <img class="{{doc.source}}">
-    </a>
-    <a *ngIf="doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
-      <img class="musicbrainz">
-    </a>
-    <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-      <img class="spotify">
-    </a>
-    <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-      <img class="spotify">
-    </a>
-  </div>
-</div>
+  <p *ngIf="doc.review" class="pt-3 text-justify text-white" 
+    [innerHTML]="doc.review">
+  </p>
 
-<p *ngIf="doc.review" class="pt-3 text-justify text-white" 
-  [innerHTML]="doc.review">
-</p>
-
-<div *ngIf="doc.tracks && doc.tracks.length != 0" class="pt-3">
-  <div class="list-group">
-    <div *ngFor="let track of doc.tracks" class="p-2 list-group-item">
-      <div class="d-flex align-items-center">
-        <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
-        <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
-          <svg class="youtube svg-inline--fa fa-youtube fa-w-18" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="youtube" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#ff0000" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg>
-        </a>
-        <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
-          <img class="musicbrainz">
-        </a>
+  <div *ngIf="doc.tracks && doc.tracks.length != 0" class="pt-3">
+    <div class="list-group">
+      <div *ngFor="let track of doc.tracks" class="p-2 list-group-item">
+        <div class="d-flex align-items-center">
+          <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
+          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+            <svg class="youtube svg-inline--fa fa-youtube fa-w-18" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="youtube" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#ff0000" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg>
+          </a>
+          <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
+            <img class="musicbrainz">
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div *ngIf="links && links.length != 0" class="pt-3">
-  <div class="list-group">
-    <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-2 list-group-item list-group-item-action">
-      <div class="d-flex align-items-center">
-        <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
-        <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
-        <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">
-            <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
-            <div>{{link.artist}}</div>
+  <div *ngIf="links && links.length != 0" class="pt-3">
+    <div class="list-group">
+      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-2 list-group-item list-group-item-action">
+        <div class="d-flex align-items-center">
+          <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
+          <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
+          <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">
+              <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
+              <div>{{link.artist}}</div>
+          </div>
+          <div *ngIf="link.type == 'concert'" class="pl-2 w-100 text-truncate">
+              <div class="font-weight-bold">{{link.title}}</div>
+              <div>{{link.artist}}</div>
+          </div>
+          <div *ngIf="link.type == 'artist'" class="pl-2 w-100 text-truncate">
+              <div class="font-weight-bold">{{link.artist}}</div>
+          </div>
+          <div *ngIf="link.type == 'album' && link.vote == 10" class="votelink">
+            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
+          </div>
+          <div *ngIf="link.type == 'album' && link.vote != 10" class="votelink">{{link.vote}}</div>
         </div>
-        <div *ngIf="link.type == 'concert'" class="pl-2 w-100 text-truncate">
-            <div class="font-weight-bold">{{link.title}}</div>
-            <div>{{link.artist}}</div>
-        </div>
-        <div *ngIf="link.type == 'artist'" class="pl-2 w-100 text-truncate">
-            <div class="font-weight-bold">{{link.artist}}</div>
-        </div>
-        <div *ngIf="link.type == 'album' && link.vote == 10" class="votelink">
-          <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="star" class="vote svg-inline--fa fa-star fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path></svg>
-        </div>
-        <div *ngIf="link.type == 'album' && link.vote != 10" class="votelink">{{link.vote}}</div>
-      </div>
-    </a>
+      </a>
+    </div>
   </div>
-</div>
 
-<div *ngIf="events && events.length != 0" class="pt-3">
-  <div class="list-group">
-    <div *ngFor="let event of events" class="p-2 list-group-item">
-      <div class="d-flex align-items-center">
-        <div class="w-100 text-truncate">
-          <div class="font-weight-bold">{{event.start.date}} {{event.location.city}}</div>
-          <div>{{event.venue.displayName}}</div>
+  <div *ngIf="events && events.length != 0" class="pt-3">
+    <div class="list-group">
+      <div *ngFor="let event of events" class="p-2 list-group-item">
+        <div class="d-flex align-items-center">
+          <div class="w-100 text-truncate">
+            <div class="font-weight-bold">{{event.start.date}} {{event.location.city}}</div>
+            <div>{{event.venue.displayName}}</div>
+          </div>
+          <a href="{{event.uri}}" target="_blank">
+            <img class="songkick">
+          </a>
         </div>
-        <a href="{{event.uri}}" target="_blank">
-          <img class="songkick">
-        </a>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-<div class="container pt-5" style="max-width: 1200px;">
+<div class="container pt-5">
   <div infinite-scroll class="pt-2 row" (scrolled)="loadPageScroll()">
     <div class="pt-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let doc of docs">
       <div class="cover card mx-auto">
@@ -11,7 +11,7 @@
           <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
           <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
           <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
-          <footer *ngIf="doc.authors" class="blockquote-footer float-right">di {{doc.authors}}</footer>
+          <footer *ngIf="doc.authors" class="blockquote-footer pt-2 float-right">di {{doc.authors}}</footer>
         </div>
       </div>
     </div>

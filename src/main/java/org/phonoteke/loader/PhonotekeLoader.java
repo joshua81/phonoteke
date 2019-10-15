@@ -62,7 +62,7 @@ public class PhonotekeLoader
 			throw new RuntimeException(t);
 		}
 	}
-	
+
 	private void beforeStart()
 	{
 		// does nothing
@@ -71,10 +71,7 @@ public class PhonotekeLoader
 	protected void loadDocuments()
 	{
 		String source = getSource();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/recensioni/2019-lanadelrey-normanfuckingrockwell.htm")).noCursorTimeout(true).iterator();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/livereport/2011_calvi.htm")).noCursorTimeout(true).iterator();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.ondarock.it/popmuzik/air.htm")).noCursorTimeout(true).iterator();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/09/MUSICAL-BOX-022ff054-578b-4934-a5b5-65ecaaafdc11.html")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-fd971566-ca6e-4c3f-a297-04832d90e33a.html")).noCursorTimeout(true).iterator();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
@@ -97,7 +94,7 @@ public class PhonotekeLoader
 					switch(type)
 					{
 					case ALBUM:
-						if(!docs.find(Filters.and(Filters.eq("source", source),
+						if(source.equals(MusicalboxLoader.SOURCE) || !docs.find(Filters.and(Filters.eq("source", source),
 								Filters.eq("type", type.name().toLowerCase()),
 								Filters.eq("artist", artist),
 								Filters.eq("title", title))).iterator().hasNext())
@@ -158,7 +155,7 @@ public class PhonotekeLoader
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
-//									append("tracks", getTracks(url, doc));
+							//									append("tracks", getTracks(url, doc));
 						}
 						break;
 					default:

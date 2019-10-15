@@ -26,11 +26,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("https://www.ondarock.it/recensioni/2019-lanadelrey-normanfuckingrockwell.htm");
-		//		new MusicbrainzLoader().loadMBIDs("https://www.ondarock.it/livereport/2011_calvi.htm");
-		//		new MusicbrainzLoader().loadMBIDs("https://www.ondarock.it/popmuzik/air.htm");
-		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/09/MUSICAL-BOX-022ff054-578b-4934-a5b5-65ecaaafdc11.html");
-		//		new MusicbrainzLoader().loadMBIDs("https://www.ondarock.it/livereport/2019-queensryche-cervia.htm");
+		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-22af6316-e860-47ee-bd39-f41cc5177fce.html");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -42,25 +38,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	private void beforeStart()
 	{
-//		MongoCursor<org.bson.Document> i = docs.find().noCursorTimeout(true).iterator();
-//		while(i.hasNext())
-//		{
-//			org.bson.Document page = i.next();
-//			String id = page.getString("id");
-//			page.append("artistid", null);
-//			page.append("albumid", null);
-//			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
-//			if(CollectionUtils.isNotEmpty(tracks))
-//			{
-//				for(org.bson.Document track : tracks)
-//				{
-//					track.append("artistid", null);
-//					track.append("albumid", null);
-//				}
-//			}
-//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-//			LOGGER.info("MB " + id + ": id reset");
-//		}
+		// does nothing
 	}
 
 	public void loadMBIDs(String url)

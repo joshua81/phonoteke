@@ -37,14 +37,19 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new SpotifyLoader().loadAlbums();
-		new SpotifyLoader().loadArtists();
+		new SpotifyLoader().load();
 	}
 
 	public SpotifyLoader()
 	{
 		super();
 		beforeStart();
+	}
+	
+	public void load()
+	{
+		loadAlbums();
+		loadArtists();
 	}
 
 	private void beforeStart()

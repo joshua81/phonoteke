@@ -70,7 +70,7 @@ async function getDocs(request, h)
 		var query = request.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		const result = await docs.find({'artist': {'$regex': query, '$options' : 'i'}}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		const result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		return result;
 	}
 	else

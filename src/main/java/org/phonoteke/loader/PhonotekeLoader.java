@@ -44,6 +44,7 @@ public class PhonotekeLoader
 		new MusicalboxLoader().loadDocuments();
 		new MusicbrainzLoader().loadMBIDs();
 		new YoutubeLoader().loadTracks();
+		new SpotifyLoader().load();
 	}
 
 	public PhonotekeLoader()

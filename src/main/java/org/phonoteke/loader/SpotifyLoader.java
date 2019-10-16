@@ -61,7 +61,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		try 
 		{
-			if(credentials == null || credentials.getExpiresIn() < 5)
+			if(credentials == null)
 			{
 				credentials = SPOTIFY_LOGIN.execute();
 				SPOTIFY_API.setAccessToken(credentials.getAccessToken());
@@ -75,6 +75,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		catch (Exception e) 
 		{
 			LOGGER.error("Error connecting to Spotify: " + e.getMessage());
+			credentials = null;
 		}
 	}
 
@@ -89,6 +90,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			String album = page.getString("title");
 
 			// check if the article was already crawled
+			LOGGER.info("SPTF Loading album " + artist + " - " + album);
 			Document spotify = getAlbum(artist, album);
 			if(spotify != null)
 			{
@@ -152,6 +154,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			String id = page.getString("id");
 			String artist = page.getString("artist");
 
+			LOGGER.info("SPTF Loading artist " + artist);
 			Document spotify = getArtist(artist);
 			if(spotify != null)
 			{

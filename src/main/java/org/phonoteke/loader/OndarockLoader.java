@@ -27,6 +27,11 @@ public class OndarockLoader extends PhonotekeLoader
 	public static final String SOURCE = "ondarock";
 
 
+	public static void main(String[] args) 
+	{
+		new OndarockLoader().loadDocuments();
+	}
+	
 	public OndarockLoader()
 	{
 		super();

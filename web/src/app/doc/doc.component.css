@@ -1,3 +1,54 @@
+div.cover:hover .cover {
+  opacity: 0.3;
+}
+
+div.cover:hover .audio {
+  opacity: 1;
+}
+
+div.audio {
+  transition: .5s ease;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+
+  color: #FFFFFF;
+  cursor: pointer;
+
+  position: absolute;
+  left: 165px;
+  top: 150px;
+  z-index: 100;
+}
+
+div.vote {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  background: #8AC007;
+
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+
+  position: absolute;
+  left: 270px;
+  top: 10px;
+  z-index: 100;
+}
+
+div.votelink {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  background: #8AC007;
+
+  color: #FFFFFF;
+  text-align: center;
+  padding-top: 5px;
+}
+
 img.cover {
   width: 300px;
   height: 300px;
@@ -5,6 +56,10 @@ img.cover {
   border-width: 1px;
   border-color: white;
   object-fit:cover;
+
+  opacity: 1;
+  transition: .5s ease;
+  backface-visibility: hidden;
 }
 
 img.link {
@@ -12,3 +67,24 @@ img.link {
   height: 60px;
   object-fit:cover;
 }
+
+svg.audio {
+  width: 60px;
+  height: 60px;
+}
+
+svg.vote {
+  width: 20px;
+  height: 20px;
+
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+svg.youtube {
+  width: 30px;
+  height: 30px;
+}
+
+

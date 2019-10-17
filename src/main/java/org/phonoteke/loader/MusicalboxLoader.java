@@ -1,12 +1,16 @@
 package org.phonoteke.loader;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
@@ -17,11 +21,16 @@ public class MusicalboxLoader extends PhonotekeLoader
 {
 	public static final String URL = "https://www.raiplayradio.it/";
 	public static final String SOURCE = "musicalbox";
-	
+
 	private static final String ARTIST = "Musicalbox";
 	private static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", "[an error occurred while processing this directive]", "PLAY");
-	
-	
+
+
+	public static void main(String[] args) 
+	{
+		new MusicalboxLoader().loadDocuments();
+	}
+
 	public MusicalboxLoader()
 	{
 		super();
@@ -63,6 +72,20 @@ public class MusicalboxLoader extends PhonotekeLoader
 		}
 		LOGGER.debug("date: " + date);
 		return date;
+	}
+
+	@Override
+	protected Integer getYear(String url, Document doc) 
+	{
+		Integer year = null;
+		Date date = getDate(url, doc);
+		if(date != null)
+		{
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			year = cal.get(Calendar.YEAR);
+		}
+		return year;
 	}
 
 	@Override
@@ -147,5 +170,25 @@ public class MusicalboxLoader extends PhonotekeLoader
 	protected TYPE getType(String url) 
 	{
 		return TYPE.ALBUM;
+	}
+
+	@Override
+	protected String getAudio(String url, Document doc) 
+	{
+		String audio = null;
+		try
+		{
+			Element content = doc.select("div[data-mediapolis]").first();
+			if(content != null)
+			{
+				Jsoup.connect(content.attr("data-mediapolis")).get();
+			}
+		}
+		catch(IOException e)
+		{
+			audio = ((UnsupportedMimeTypeException)e).getUrl();
+		}
+		LOGGER.debug("audio: " + audio);
+		return audio;
 	}
 }

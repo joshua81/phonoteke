@@ -57,25 +57,27 @@ public class SpotifyLoader extends PhonotekeLoader
 		// does nothing
 	}
 
+	private void relogin()
+	{
+		credentials = null;
+		login();
+	}
+	
 	private void login()
 	{
 		try 
 		{
+			Thread.sleep(SLEEP_TIME);
 			if(credentials == null)
 			{
 				credentials = SPOTIFY_LOGIN.execute();
 				SPOTIFY_API.setAccessToken(credentials.getAccessToken());
 				LOGGER.info("SPTF Expires in: " + credentials.getExpiresIn() + " secs");
 			}
-			else
-			{
-				Thread.sleep(SLEEP_TIME);
-			}
 		} 
 		catch (Exception e) 
 		{
 			LOGGER.error("Error connecting to Spotify: " + e.getMessage());
-			credentials = null;
 		}
 	}
 
@@ -103,8 +105,13 @@ public class SpotifyLoader extends PhonotekeLoader
 				append("coverL", spotify.getString("coverL")).
 				append("coverM", spotify.getString("coverM")).
 				append("coverS", spotify.getString("coverS"));
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
+			else
+			{
+				page.append("spartistid", "UNKNOWN").
+				append("spalbumid", "UNKNOWN");
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -141,6 +148,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		catch (Exception e) 
 		{
 			LOGGER.error("Error loading " + artist + " - " + album + ": " + e.getMessage(), e);
+			relogin();
 		}
 		return null;
 	}
@@ -165,8 +173,12 @@ public class SpotifyLoader extends PhonotekeLoader
 				append("coverL", spotify.getString("coverL")).
 				append("coverM", spotify.getString("coverM")).
 				append("coverS", spotify.getString("coverS"));
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
+			else
+			{
+				page.append("spartistid", "UNKNOWN");
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -196,6 +208,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		catch (Exception e) 
 		{
 			LOGGER.error("Error loading " + artist + ": " + e.getMessage(), e);
+			relogin();
 		}
 		return null;
 	}

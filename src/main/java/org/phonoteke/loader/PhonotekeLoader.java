@@ -116,7 +116,8 @@ public class PhonotekeLoader
 									append("source", getSource()).
 									append("vote", getVote(url, doc)).
 									append("year", getYear(url, doc)).
-									append("tracks", getTracks(url, doc));
+									append("tracks", getTracks(url, doc)).
+									append("audio", getAudio(url, doc));
 						}
 						break;
 					case ARTIST:
@@ -166,12 +167,6 @@ public class PhonotekeLoader
 					{
 						docs.insertOne(json);
 						LOGGER.info(json.getString("type").toUpperCase() + " " + url + " added");
-					}
-					else if(TYPE.ALBUM.equals(getType(url)))
-					{
-						page.put("vote", getVote(url, doc));
-						docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-						LOGGER.info(page.getString("type").toUpperCase() + " " + url + " updated");
 					}
 				}
 			}
@@ -278,6 +273,10 @@ public class PhonotekeLoader
 	}
 
 	protected Integer getYear(String url, Document doc) {
+		return null;
+	}
+
+	protected String getAudio(String url, Document doc) {
 		return null;
 	}
 }

@@ -48,8 +48,12 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
-    this.audio.src = "http://creativemedia4-rai-it.akamaized.net/podcastcdn/NewsVod/Omnibus/11163594.mp3";
-    this.audio.load();
+    this.audio = null;
+    if(this.doc.audio) {
+      this.audio = new Audio();
+      this.audio.src = this.doc.audio;
+      this.audio.load();
+    }
 
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);

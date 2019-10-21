@@ -9,6 +9,7 @@ export class AppService {
   //server = 'http://10.103.2.31:8180';
   searchText = '';
   onSearch = new EventEmitter();
+  audio = null;
 
   constructor() {}
 

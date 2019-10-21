@@ -1,23 +1,7 @@
-div.cover:hover .cover {
-  opacity: 0.5;
-}
-
-div.cover:hover .audio {
-  opacity: 1;
-}
-
 div.audio {
-  transition: .5s ease;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-
-  color: #FFFFFF;
-  cursor: pointer;
-
   position: absolute;
-  left: 165px;
-  top: 150px;
-  z-index: 100;
+  bottom: 0px;
+  left: 115px;
 }
 
 div.vote {
@@ -66,25 +50,6 @@ img.link {
   width: 60px;
   height: 60px;
   object-fit:cover;
-}
-
-svg.audio {
-  width: 60px;
-  height: 60px;
-}
-
-svg.vote {
-  width: 20px;
-  height: 20px;
-
-  position: absolute;
-  right: 5px;
-  top: 5px;
-}
-
-svg.youtube {
-  width: 30px;
-  height: 30px;
 }
 
 

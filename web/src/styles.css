@@ -69,3 +69,60 @@ img.songkick {
     width: 30px;
     height: 30px;
 }
+
+.play {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/play.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.pause {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/pause.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.forward {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/forward.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.backward {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/backward.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.youtube {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/youtube.svg");
+    width: 30px;
+    height: 30px;
+    background: #FF0000;
+    cursor: pointer;
+}
+
+.star {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/star.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+}

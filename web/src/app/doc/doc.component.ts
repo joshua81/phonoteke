@@ -12,7 +12,6 @@ export class DocComponent implements OnInit {
   error = null;
   docId = null;
   doc = null;
-  audio = new Audio();
   events = [];
   links = [];
 
@@ -48,11 +47,16 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
-    this.audio = null;
+
+    if(this.service.audio)
+    {
+      this.service.audio.pause();
+      this.service.audio = null;
+    }
     if(this.doc.audio) {
-      this.audio = new Audio();
-      this.audio.src = this.doc.audio;
-      this.audio.load();
+      this.service.audio = new Audio();
+      this.service.audio.src = this.doc.audio;
+      this.service.audio.load();
     }
 
     this.events.splice(0, this.events.length);
@@ -74,11 +78,23 @@ export class DocComponent implements OnInit {
   }
 
   playPause(event: Event){
-    if(this.audio.paused){
-      this.audio.play();
+    if(this.service.audio.paused){
+      this.service.audio.play();
     }
     else{
-      this.audio.pause();
+      this.service.audio.pause();
+    }
+  }
+
+  forward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime += 60.0;
+    }
+  }
+
+  backward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime -= 60.0;
     }
   }
 }

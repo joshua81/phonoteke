@@ -26,6 +26,10 @@ a {
     font-size: 14px;
 }
 
+nav {
+    opacity: 0.8;
+}
+
 div {
     font-size: 14px;
 }
@@ -125,4 +129,13 @@ img.songkick {
     width: 20px;
     height: 20px;
     background: #FFFFFF;
+}
+
+.vinyl {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/vinyl.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    cursor: pointer;
 }

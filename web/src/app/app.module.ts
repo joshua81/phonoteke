@@ -6,15 +6,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
+import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
+import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent,
+    DocsMenuComponent,
     DocsComponent,
+    DocMenuComponent,
     DocComponent
   ],
   imports: [

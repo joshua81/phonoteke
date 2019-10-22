@@ -28,6 +28,7 @@ a {
 
 nav {
     opacity: 0.8;
+    height: 50px;
 }
 
 div {
@@ -131,11 +132,3 @@ img.songkick {
     background: #FFFFFF;
 }
 
-.vinyl {
-    display: inline-block;
-    mask: url("http://localhost:8180/images/vinyl.svg");
-    width: 30px;
-    height: 30px;
-    background: #FFFFFF;
-    cursor: pointer;
-}

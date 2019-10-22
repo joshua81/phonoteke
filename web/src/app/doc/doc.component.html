@@ -1,6 +1,6 @@
 <doc-menu></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5">
-  <div class="pt-3 row">
+  <div class="row pt-2">
     <div class="col-auto cover">
       <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
       <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
@@ -8,18 +8,6 @@
         <span class="star"></span>
       </div>
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
-      <div *ngIf="service.audio" class="audio d-flex align-items-center p-2">
-        <div class="d-flex align-items-center" (click)="backward($event)">
-          <span class="backward"></span>
-        </div>
-        <div class="d-flex align-items-center pr-2 pl-2" (click)="playPause($event)">
-          <span *ngIf="service.audio.paused" class="play"></span>
-          <span *ngIf="!service.audio.paused" class="pause"></span>
-        </div>
-        <div class="d-flex align-items-center" (click)="forward($event)">
-          <span class="forward"></span>
-        </div>
-      </div>
     </div>
 
     <div class="col-auto text-white">
@@ -27,18 +15,6 @@
       <h2 [innerHTML]="doc.artist"></h2>
       <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
       <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
-      <a class="pr-2" href="{{doc.url}}" target="_blank">
-        <img class="{{doc.source}}">
-      </a>
-      <a *ngIf="doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
-        <img class="musicbrainz">
-      </a>
-      <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        <img class="spotify">
-      </a>
-      <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-        <img class="spotify">
-      </a>
     </div>
   </div>
 
@@ -72,11 +48,11 @@
               <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
               <div>{{link.artist}}</div>
           </div>
-          <div *ngIf="link.type == 'concert'" class="pl-2 w-100 text-truncate">
+          <div *ngIf="link.type == 'concert'" class="pl-2 text-truncate">
               <div class="font-weight-bold">{{link.title}}</div>
               <div>{{link.artist}}</div>
           </div>
-          <div *ngIf="link.type == 'artist'" class="pl-2 w-100 text-truncate">
+          <div *ngIf="link.type == 'artist'" class="pl-2 text-truncate">
               <div class="font-weight-bold">{{link.artist}}</div>
           </div>
           <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="votelink">

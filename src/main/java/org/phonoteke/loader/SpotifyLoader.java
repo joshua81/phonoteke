@@ -43,18 +43,12 @@ public class SpotifyLoader extends PhonotekeLoader
 	public SpotifyLoader()
 	{
 		super();
-		beforeStart();
 	}
 	
 	public void load()
 	{
 		loadAlbums();
 		loadArtists();
-	}
-
-	private void beforeStart()
-	{
-		// does nothing
 	}
 
 	private void relogin()
@@ -133,7 +127,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					String artistid = artists[k].getId();
 					String spalbum = a.getName();
 					String albumId = a.getId();
-					int score = FuzzySearch.tokenSetRatio(artist + " " + album, spartist + " " + spalbum);
+					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
 					if(score > 90)
 					{
 						return new Document("spartistid", artistid).
@@ -195,7 +189,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				Artist a = artists.getItems()[j];
 				String spartist = a.getName();
 				String artistid = a.getId();
-				int score = FuzzySearch.tokenSetRatio(artist, spartist);
+				int score = FuzzySearch.tokenSortRatio(artist, spartist);
 				if(score > 90)
 				{
 					return new Document("spartistid", artistid).

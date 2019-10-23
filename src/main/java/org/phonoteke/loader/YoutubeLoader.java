@@ -40,17 +40,11 @@ public class YoutubeLoader extends PhonotekeLoader
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}
 			}).setApplicationName("Phonoteke").build();
-			beforeStart();
 		}
 		catch (Throwable t) 
 		{
 			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage(), t);
 		}
-	}
-
-	private void beforeStart()
-	{
-		// does nothing
 	}
 
 	public void loadTracks()

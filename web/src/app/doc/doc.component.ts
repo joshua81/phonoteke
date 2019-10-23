@@ -58,6 +58,9 @@ export class DocComponent implements OnInit {
       this.service.audio.src = this.doc.audio;
       this.service.audio.load();
     }
+    if(this.doc.spalbumid && this.doc.spalbumid == 'UNKNOWN') {
+      this.doc.spalbumid = null;
+    }
 
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);

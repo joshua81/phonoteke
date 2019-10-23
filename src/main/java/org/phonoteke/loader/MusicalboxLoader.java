@@ -70,6 +70,22 @@ public class MusicalboxLoader extends PhonotekeLoader
 		{
 			// nothing to do
 		}
+		try
+		{
+			if(date == null)
+			{
+				int year = Integer.parseInt(url.split("/")[4]);
+				int month = Integer.parseInt(url.split("/")[5])-1;
+				int day = 1;
+				Calendar cal = Calendar.getInstance();
+				cal.set(year, month, day);
+				date = cal.getTime();
+			}
+		}
+		catch(NumberFormatException e)
+		{
+			// nothing to do
+		}
 		LOGGER.debug("date: " + date);
 		return date;
 	}

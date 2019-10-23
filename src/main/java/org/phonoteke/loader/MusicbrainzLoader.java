@@ -26,19 +26,13 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-22af6316-e860-47ee-bd39-f41cc5177fce.html");
+//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-d2103941-93a1-42c3-811e-9878b604791e.html");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
 	public MusicbrainzLoader()
 	{
 		super();
-		beforeStart();
-	}
-
-	private void beforeStart()
-	{
-		// does nothing
 	}
 
 	public void loadMBIDs(String url)
@@ -133,7 +127,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					{
 						String mbartist = ((org.bson.Document)release.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
 						String mbalbum = release.getString("title");
-						int score = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbalbum);
+						int score = FuzzySearch.tokenSortRatio(title, mbartist + " - " + mbalbum);
 						if(score > 90)
 						{
 							artistId = ((List<org.bson.Document>)release.get("artist-credit")).get(0).get("artist", org.bson.Document.class).getString("id");
@@ -196,7 +190,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					for(org.bson.Document mbartist : mbartists)
 					{
 						String mbartist2 = mbartist.getString("name");
-						int score = FuzzySearch.tokenSetRatio(artist, mbartist2);
+						int score = FuzzySearch.tokenSortRatio(artist, mbartist2);
 						if(score > 90)
 						{
 							artistId = mbartist.getString("id");
@@ -334,8 +328,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 								for(org.bson.Document recording : recordings)
 								{
 									String mbartist = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
-									String mbalbum = recording.getString("title");
-									int score = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbalbum);
+									String mbtitle = recording.getString("title");
+									int score = FuzzySearch.tokenSortRatio(title, mbartist + " - " + mbtitle);
 									if(score > 90)
 									{
 										if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))

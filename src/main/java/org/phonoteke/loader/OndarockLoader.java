@@ -7,12 +7,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -31,7 +29,7 @@ public class OndarockLoader extends PhonotekeLoader
 	{
 		new OndarockLoader().loadDocuments();
 	}
-	
+
 	public OndarockLoader()
 	{
 		super();
@@ -180,11 +178,11 @@ public class OndarockLoader extends PhonotekeLoader
 	private Date getDate(String dateTxt)
 	{
 		String[] dates = dateTxt.replace("-", "/").replace(")", "").replace("(", "").trim().split("/");
-		int y = Integer.parseInt(dates[dates.length-1].trim());
-		int m = Integer.parseInt(dates[dates.length-2].trim());
-		int d = Integer.parseInt(dates[dates.length-3].trim());
+		int year = Integer.parseInt(dates[dates.length-1].trim());
+		int month = Integer.parseInt(dates[dates.length-2].trim())-1;
+		int day = Integer.parseInt(dates[dates.length-3].trim());
 		Calendar date = Calendar.getInstance();
-		date.set(y, m, d);
+		date.set(year, month, day);
 		return date.getTime();
 	}
 
@@ -392,44 +390,6 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 	}
 
-	private String getSpotify(String url, Document doc) 
-	{
-		Elements elements = doc.select("iframe");
-		for(int i = 0; i < elements.size(); i++)
-		{
-			String src = elements.get(i).attr("src");
-			if(src != null && src.contains("spotify.com")) 
-			{
-				if(src.startsWith("https://open.spotify.com/embed/album/"))
-				{
-					int ix = "https://open.spotify.com/embed/album/".length();
-					return src.substring(ix, ix+22);
-				}
-				else if(src.startsWith("https://open.spotify.com/album/"))
-				{
-					int ix = "https://open.spotify.com/album/".length();
-					return src.substring(ix, ix+22);
-				}
-				else if(src.startsWith("https://embed.spotify.com/?uri=spotify:album:"))
-				{
-					int ix = "https://embed.spotify.com/?uri=spotify:album:".length();
-					return src.substring(ix, ix+22);
-				}
-				else if(src.startsWith("https://embed.spotify.com/?uri=spotify%3Aalbum%3A"))
-				{
-					int ix = "https://embed.spotify.com/?uri=spotify%3Aalbum%3A".length();
-					return src.substring(ix, ix+22);
-				}
-				else if(src.startsWith("https://embed.spotify.com/?uri=https://open.spotify.com/album/"))
-				{
-					int ix = "https://embed.spotify.com/?uri=https://open.spotify.com/album/".length();
-					return src.substring(ix, ix+22);
-				}
-			}
-		}
-		return null;
-	}
-
 	@Override
 	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
@@ -460,21 +420,7 @@ public class OndarockLoader extends PhonotekeLoader
 				}
 			}
 			break;
-		case CONCERT:
-			Element content = doc.select("div[id=boxdiscografia_med]").first();
-			if(content != null && content.children() != null)
-			{
-				Iterator<Element> i = content.children().iterator();
-				while(i.hasNext())
-				{
-					String title = i.next().text().trim();
-					if(StringUtils.isNoneBlank(title))
-					{
-						tracks.add(newTrack(title, null));
-						LOGGER.debug("tracks: " + title + ", youtube: " + null);
-					}
-				}
-			}
+		default:
 			break;
 		}
 		return tracks;

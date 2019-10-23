@@ -55,7 +55,6 @@ public class PhonotekeLoader
 			pages = db.getCollection("pages");
 			docs = db.getCollection("docs");
 			musicbrainz = db.getCollection("musicbrainz");
-			beforeStart();
 		} 
 		catch (Throwable t) 
 		{
@@ -64,15 +63,10 @@ public class PhonotekeLoader
 		}
 	}
 
-	private void beforeStart()
-	{
-		// does nothing
-	}
-
 	protected void loadDocuments()
 	{
 		String source = getSource();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-fd971566-ca6e-4c3f-a297-04832d90e33a.html")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-d2103941-93a1-42c3-811e-9878b604791e.html")).noCursorTimeout(true).iterator();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{

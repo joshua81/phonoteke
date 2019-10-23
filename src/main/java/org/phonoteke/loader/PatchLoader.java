@@ -5,17 +5,19 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader  extends MusicalboxLoader
+public class PatchLoader extends OndarockLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 	
 	public static void main(String[] args) 
 	{
-		new PatchLoader().resetMBIds();
+		new PatchLoader().resetDates();
 	}
 	
 	public PatchLoader()
@@ -23,7 +25,25 @@ public class PatchLoader  extends MusicalboxLoader
 		super();
 	}
 	
-	public void resetMBIds()
+	private void resetDates()
+	{
+		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", OndarockLoader.SOURCE)).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document doc = i.next();
+			String id = doc.getString("id");
+			String url = doc.getString("url");
+			
+			org.bson.Document page = pages.find(Filters.eq("url", url)).noCursorTimeout(true).iterator().tryNext();
+			Document html = Jsoup.parse(page.getString("page"));
+			doc.append("date", getDate(url, html));
+			doc.append("year", getYear(url, html));
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+			LOGGER.info(id + " MB ids reset");
+		}
+	}
+	
+	private void resetMBIds()
 	{
 		MongoCursor<org.bson.Document> i = docs.find().noCursorTimeout(true).iterator();
 		while(i.hasNext())

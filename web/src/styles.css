@@ -1,5 +1,6 @@
 a {
     cursor: pointer;
+    color: white;
 }
   
 h1 {
@@ -130,5 +131,14 @@ img.songkick {
     width: 20px;
     height: 20px;
     background: #FFFFFF;
+}
+
+.cc {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/cc.svg");
+    width: 100px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
 }
 

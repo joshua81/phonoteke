@@ -39,7 +39,7 @@ public class PatchLoader extends OndarockLoader
 			doc.append("date", getDate(url, html));
 			doc.append("year", getYear(url, html));
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-			LOGGER.info(id + " MB ids reset");
+			LOGGER.info(id + " data set");
 		}
 	}
 	

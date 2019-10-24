@@ -354,17 +354,17 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			for(org.bson.Document recording : recordings)
 			{
 				String mbartist = getRecordingArtist(recording);
-				String mbtitle = getRecordingTitle(recording);
 				String mbreleaseartist = getReleaseArtist(recording);
-				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 				int scoreArtist = FuzzySearch.tokenSetRatio(mbreleaseartist, mbartist);
+				String mbtitle = getRecordingTitle(recording);
+				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 
 				String artistId = null;
 				String recordingId = null;
 				if(scoreArtist > 90 && scoreTitle > 90)
 				{
-					artistId = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
-					recordingId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
+					artistId = getRecordingArtistId(recording);
+					recordingId = getRecordingId(recording);
 					return new String[] {artistId, recordingId};
 				}
 			}
@@ -372,6 +372,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		return null;
 	}
 
+	private String getRecordingArtistId(org.bson.Document recording)
+	{
+		return ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
+	}
+	
+	private String getRecordingId(org.bson.Document recording)
+	{
+		return ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
+	}
+	
 	private String getRecordingArtist(org.bson.Document recording) 
 	{
 		String artist = "";

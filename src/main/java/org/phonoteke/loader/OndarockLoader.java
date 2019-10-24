@@ -177,7 +177,7 @@ public class OndarockLoader extends PhonotekeLoader
 
 	private Date getDate(String dateTxt)
 	{
-		String[] dates = dateTxt.replace("-", "/").replace(")", "").replace("(", "").trim().split("/");
+		String[] dates = dateTxt.replace("\\", "/").replace("-", "/").replace(")", "").replace("(", "").trim().split("/");
 		int year = Integer.parseInt(dates[dates.length-1].trim());
 		int month = Integer.parseInt(dates[dates.length-2].trim())-1;
 		int day = Integer.parseInt(dates[dates.length-3].trim());

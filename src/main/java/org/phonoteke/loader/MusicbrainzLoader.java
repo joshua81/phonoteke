@@ -26,8 +26,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-d2103941-93a1-42c3-811e-9878b604791e.html");
-		new MusicbrainzLoader().loadMBIDs();
+		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-0e607914-4cee-466d-bd94-88c291570a96.html");
+		//		new MusicbrainzLoader().loadMBIDs();
 	}
 
 	public MusicbrainzLoader()
@@ -127,7 +127,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					{
 						String mbartist = ((org.bson.Document)release.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
 						String mbalbum = release.getString("title");
-						int score = FuzzySearch.tokenSortRatio(title, mbartist + " - " + mbalbum);
+						int score = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbalbum);
 						if(score > 90)
 						{
 							artistId = ((List<org.bson.Document>)release.get("artist-credit")).get(0).get("artist", org.bson.Document.class).getString("id");
@@ -190,7 +190,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					for(org.bson.Document mbartist : mbartists)
 					{
 						String mbartist2 = mbartist.getString("name");
-						int score = FuzzySearch.tokenSortRatio(artist, mbartist2);
+						int score = FuzzySearch.tokenSetRatio(artist, mbartist2);
 						if(score > 90)
 						{
 							artistId = mbartist.getString("id");
@@ -322,30 +322,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						}
 						else
 						{
-							List<org.bson.Document> recordings = mbtrack.get("recordings", List.class);
-							if(CollectionUtils.isNotEmpty(recordings))
+							String[] ids = getTracksIds(title, mbtrack);
+							if(ids != null)
 							{
-								for(org.bson.Document recording : recordings)
-								{
-									String mbartist = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("name");
-									String mbtitle = recording.getString("title");
-									int score = FuzzySearch.tokenSortRatio(title, mbartist + " - " + mbtitle);
-									if(score > 90)
-									{
-										if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))
-										{
-											mbartistId = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
-											track.append("artistid", mbartistId);
-										}
-										if(CollectionUtils.isNotEmpty(recording.get("releases", List.class)))
-										{
-											mbalbumId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
-											track.append("albumid", mbalbumId);
-										}
-										LOGGER.info("MB " + title + ": " + mbartistId + " - " + mbalbumId);
-										break;
-									}
-								}
+								mbartistId = ids[0];
+								mbalbumId = ids[1];
+								track.append("artistid", mbartistId);
+								track.append("albumid", mbalbumId);
+								LOGGER.info("MB " + title + ": " + mbartistId + " - " + mbalbumId);
 							}
 						}
 					}
@@ -360,5 +344,80 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			t.printStackTrace();
 			LOGGER.error("Track Musicbrainz: " + id, t);
 		}
+	}
+
+	private String[] getTracksIds(String title, org.bson.Document track)
+	{
+		List<org.bson.Document> recordings = track.get("recordings", List.class);
+		if(CollectionUtils.isNotEmpty(recordings))
+		{
+			for(org.bson.Document recording : recordings)
+			{
+				String mbartist = getRecordingArtist(recording);
+				String mbtitle = getRecordingTitle(recording);
+				String mbreleaseartist = getReleaseArtist(recording);
+				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
+				int scoreArtist = FuzzySearch.tokenSetRatio(mbreleaseartist, mbartist);
+
+				String artistId = null;
+				String recordingId = null;
+				if(scoreArtist > 90 && scoreTitle > 90)
+				{
+					artistId = ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
+					recordingId = ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
+					return new String[] {artistId, recordingId};
+				}
+			}
+		}
+		return null;
+	}
+
+	private String getRecordingArtist(org.bson.Document recording) 
+	{
+		String artist = "";
+		if(recording != null)
+		{
+			if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))
+			{
+				for(org.bson.Document credit : (List<org.bson.Document>)recording.get("artist-credit", List.class))
+				{
+					artist += credit.getString("name");
+					String joinphrase = credit.getString("joinphrase");
+					if(joinphrase != null)
+					{
+						artist += joinphrase;
+					}
+				}
+			}
+		}
+		return artist;
+	}
+
+	private String getRecordingTitle(org.bson.Document recording) 
+	{
+		String title = "";
+		if(recording != null)
+		{
+			title = recording.getString("title");
+		}
+		return title;
+	}
+
+	private String getReleaseArtist(org.bson.Document recording)
+	{
+		String artist = "";
+		if(recording != null)
+		{
+			if(CollectionUtils.isNotEmpty(recording.get("releases", List.class)))
+			{
+				org.bson.Document release = ((List<org.bson.Document>)recording.get("releases", List.class)).get(0);
+				if(CollectionUtils.isNotEmpty(release.get("artist-credit", List.class)))
+				{
+					artist = ((org.bson.Document)release.get("artist-credit", List.class).get(0)).getString("name");
+				}
+			}
+		}
+		return artist;
+
 	}
 }

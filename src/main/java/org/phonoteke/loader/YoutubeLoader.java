@@ -14,8 +14,10 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 
 public class YoutubeLoader extends PhonotekeLoader
 {
@@ -52,7 +54,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		try
 		{
 			LOGGER.info("Loading Youtube");
-			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", "album"), Filters.ne("tracks", null))).noCursorTimeout(true).iterator();
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", "album"), Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();

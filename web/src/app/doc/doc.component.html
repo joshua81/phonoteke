@@ -27,11 +27,11 @@
       <div *ngFor="let track of doc.tracks" class="p-2 list-group-item">
         <div class="d-flex align-items-center">
           <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
-          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
-            <span class="youtube"></span>
-          </a>
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
+          </a>
+          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+            <span class="youtube"></span>
           </a>
         </div>
       </div>

@@ -17,7 +17,7 @@ public class PatchLoader extends OndarockLoader
 	
 	public static void main(String[] args) 
 	{
-		new PatchLoader().resetDates();
+		new PatchLoader().resetMBIds();
 	}
 	
 	public PatchLoader()

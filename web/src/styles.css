@@ -79,40 +79,36 @@ img.songkick {
 .play {
     display: inline-block;
     mask: url("http://localhost:8180/images/play.svg");
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background: #FFFFFF;
-    opacity: 0.9;
     cursor: pointer;
 }
 
 .pause {
     display: inline-block;
     mask: url("http://localhost:8180/images/pause.svg");
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background: #FFFFFF;
-    opacity: 0.9;
     cursor: pointer;
 }
 
 .forward {
     display: inline-block;
     mask: url("http://localhost:8180/images/forward.svg");
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background: #FFFFFF;
-    opacity: 0.9;
     cursor: pointer;
 }
 
 .backward {
     display: inline-block;
     mask: url("http://localhost:8180/images/backward.svg");
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background: #FFFFFF;
-    opacity: 0.9;
     cursor: pointer;
 }
 
@@ -137,6 +133,33 @@ img.songkick {
     display: inline-block;
     mask: url("http://localhost:8180/images/cc.svg");
     width: 100px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.mail {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/mail.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.linkedin {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/linkedin.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.github {
+    display: inline-block;
+    mask: url("http://localhost:8180/images/github.svg");
+    width: 20px;
     height: 20px;
     background: #FFFFFF;
     cursor: pointer;

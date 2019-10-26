@@ -12,7 +12,8 @@
 
     <div class="col-auto text-white">
       <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
-      <h2 [innerHTML]="doc.artist"></h2>
+      <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
+      <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>
       <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
       <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
     </div>

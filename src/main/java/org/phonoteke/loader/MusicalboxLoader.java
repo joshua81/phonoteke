@@ -22,8 +22,11 @@ public class MusicalboxLoader extends PhonotekeLoader
 	public static final String URL = "https://www.raiplayradio.it/";
 	public static final String SOURCE = "musicalbox";
 
+	public static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", 
+			"[an error occurred while processing this directive]", 
+			"PLAY:", "PLAY",
+			"TRACKLIST:", "TRACKLIST");
 	private static final String ARTIST = "Musicalbox";
-	private static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", "[an error occurred while processing this directive]", "PLAY");
 
 
 	public static void main(String[] args) 
@@ -143,7 +146,18 @@ public class MusicalboxLoader extends PhonotekeLoader
 			while(i.hasNext())
 			{
 				String title = i.next().text().trim();
-				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
+				if(StringUtils.isNotBlank(title))
+				{
+					for(String error : ERRORS)
+					{
+						if(title.startsWith(error))
+						{
+							title = title.substring(error.length()).trim();
+							break;
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(title))
 				{
 					String youtube = null;
 					tracks.add(newTrack(title, youtube));
@@ -157,7 +171,18 @@ public class MusicalboxLoader extends PhonotekeLoader
 			while(i.hasNext())
 			{
 				String title = i.next().text().trim();
-				if(StringUtils.isNoneBlank(title) && !ERRORS.contains(title))
+				if(StringUtils.isNotBlank(title))
+				{
+					for(String error : ERRORS)
+					{
+						if(title.startsWith(error))
+						{
+							title = title.substring(error.length()).trim();
+							break;
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(title))
 				{
 					String youtube = null;
 					tracks.add(newTrack(title, youtube));

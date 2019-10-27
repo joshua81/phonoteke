@@ -31,6 +31,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 
 	private static final int SLEEP_TIME = 2000;
+	private static final int THRESHOLD = 90;
 
 	private static ClientCredentials credentials;
 
@@ -128,7 +129,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					String spalbum = a.getName();
 					String albumId = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
-					if(score > 90)
+					if(score > THRESHOLD)
 					{
 						return new Document("spartistid", artistid).
 								append("spalbumid", albumId).
@@ -149,7 +150,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadArtists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spartistid", null))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
@@ -190,7 +191,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spartist = a.getName();
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
-				if(score > 90)
+				if(score > THRESHOLD)
 				{
 					return new Document("spartistid", artistid).
 							append("coverL", a.getImages()[0].getUrl()).

@@ -3,11 +3,13 @@ package org.phonoteke.loader;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.google.api.client.util.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -23,6 +25,45 @@ public class PatchLoader extends OndarockLoader
 	public PatchLoader()
 	{
 		super();
+	}
+	
+	private void patchTracks()
+	{
+		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", MusicalboxLoader.SOURCE)).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document doc = i.next();
+			String id = doc.getString("id");
+			List<org.bson.Document> tracks = doc.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				List<org.bson.Document> toremove = Lists.newArrayList();
+				for(org.bson.Document track : tracks)
+				{
+					String title = track.getString("title");
+					if(StringUtils.isNotBlank(title))
+					{
+						for(String error : MusicalboxLoader.ERRORS)
+						{
+							if(title.startsWith(error))
+							{
+								title = title.substring(error.length()).trim();
+								track.append("title", title);
+								break;
+							}
+						}
+					}
+					if(StringUtils.isBlank(title))
+					{
+						toremove.add(track);
+					}
+				}
+				tracks.removeAll(toremove);
+			}
+			
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+			LOGGER.info(id + " tracks patched");
+		}
 	}
 	
 	private void resetDates()

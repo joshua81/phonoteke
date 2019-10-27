@@ -23,12 +23,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
+
 	private static final int SLEEP_TIME = 2000;
+	private static final int THRESHOLD = 90;
 
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-d2103941-93a1-42c3-811e-9878b604791e.html");
+		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2017/05/2Night-Musicalbox-del-04052017-512dbc0b-bd1c-4d5a-ad1e-3c7e93d29ae0.html");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -289,7 +291,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String title = track.getString("title");
 				if(title != null)
 				{
-					LOGGER.info("MB Loading Tracks: " + id);
+					LOGGER.info("MB Loading Track: " + title);
 					loadTrack(id, title, youtube, artistId, albumId);
 					org.bson.Document mbtrack = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.TRACK.name().toLowerCase()), Filters.eq("title", title))).noCursorTimeout(true).iterator().tryNext();
 					if(mbtrack != null)
@@ -338,7 +340,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 
-				if(score > 95 && scoreTitle > 95)
+				if(score > THRESHOLD && scoreTitle > THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					String recordingId = getReleaseId(release);
@@ -367,16 +369,19 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 				String artistId =  getRecordingArtistId(recording);
 				String recordingId = getRecordingId(recording);
-				if(score > 95)
+				if(score > THRESHOLD)
 				{
-					if(scoreArtist > 95 && scoreTitle > 95)
+					if(scoreArtist > THRESHOLD && scoreTitle > THRESHOLD)
 					{
 						scores.put(scoreArtist + scoreTitle, new String[] {artistId, recordingId});
 						break;
 					}
 					else if(scoreTitle == 100)
 					{
-						scores.put(100, new String[] {artistId, recordingId});
+						if(!scores.containsKey(100))
+						{
+							scores.put(100, new String[] {artistId, recordingId});
+						}
 					}
 				}
 			}
@@ -394,7 +399,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score > 95 && scoreArtist > 95)
+				if(score > THRESHOLD && scoreArtist > THRESHOLD)
 				{
 					return mbartist.getString("id");
 				}

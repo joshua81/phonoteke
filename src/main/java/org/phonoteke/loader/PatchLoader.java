@@ -19,12 +19,34 @@ public class PatchLoader extends OndarockLoader
 	
 	public static void main(String[] args) 
 	{
-		new PatchLoader().resetMBIds();
+		new PatchLoader().findLongTracks();
 	}
 	
 	public PatchLoader()
 	{
 		super();
+	}
+	
+	private void findLongTracks()
+	{
+		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", MusicalboxLoader.SOURCE)).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document doc = i.next();
+			String id = doc.getString("id");
+			List<org.bson.Document> tracks = doc.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String title = track.getString("title");
+					if(title.trim().length() > 200)
+					{
+						LOGGER.info(id + ": track " + title);
+					}
+				}
+			}
+		}
 	}
 	
 	private void patchTracks()

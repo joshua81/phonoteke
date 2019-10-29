@@ -30,7 +30,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2017/05/2Night-Musicalbox-del-04052017-512dbc0b-bd1c-4d5a-ad1e-3c7e93d29ae0.html");
+		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-0e607914-4cee-466d-bd94-88c291570a96.html");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -83,29 +83,13 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 	}
 
-	private void loadAlbum(String id, String artist, String title)
-	{
-		MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ALBUM.name().toLowerCase()))).iterator();
-		if(!i.hasNext())
-		{
-			org.bson.Document json = getAlbum(artist, title);
-			if(json != null && json.getInteger("count") > 0)
-			{
-				json.append("id", id).
-				append("type", TYPE.ALBUM.name().toLowerCase());
-				musicbrainz.insertOne(json);
-				LOGGER.info("MB " + id + ": Album added");
-			}
-		}
-	}
-
 	private org.bson.Document getAlbum(String artist, String title)
 	{
 		if(StringUtils.isBlank(artist) || StringUtils.isBlank(title))
 		{
 			return null;
 		}
-		String url = MUSICBRAINZ + "/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20" + "release:" + title.trim().replace(" ", "%20") + "&fmt=json";
+		String url = MUSICBRAINZ + "/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20release:" + title.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
 	}
 
@@ -120,12 +104,10 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		if(artistId == null || albumId == null)
 		{
 			LOGGER.info("MB Loading Album " + id);
-			loadAlbum(id, artist, title);
-			MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ALBUM.name().toLowerCase()))).noCursorTimeout(true).iterator();
-			if(i.hasNext())
+			org.bson.Document mbalbum = getAlbum(artist, title);
+			if(mbalbum != null && mbalbum.getInteger("count") > 0)
 			{
-				org.bson.Document album = i.next();
-				String[] ids = getAlbumId(artist + " - " + title, album);
+				String[] ids = getAlbumId(artist + " - " + title, mbalbum);
 				if(ids != null)
 				{
 					artistId = ids[0];
@@ -134,22 +116,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 					LOGGER.info("MB " + artist + " - " + title + ": " + artistId + " - " + albumId);
 				}
-			}
-		}
-	}
-
-	private void loadArtist(String id, String artist)
-	{
-		MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ARTIST.name().toLowerCase()))).iterator();
-		if(!i.hasNext())
-		{
-			org.bson.Document json = getArtist(artist);
-			if(json != null && json.getInteger("count") > 0)
-			{
-				json.append("id", id).
-				append("type", TYPE.ARTIST.name().toLowerCase());
-				musicbrainz.insertOne(json);
-				LOGGER.info("MB " + id + ": Artist added");
 			}
 		}
 	}
@@ -173,11 +139,10 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		if(artistId == null)
 		{
 			LOGGER.info("MB Loading Artist: " + id);
-			loadArtist(id, artist);
-			MongoCursor<org.bson.Document> i = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.ARTIST.name().toLowerCase()))).noCursorTimeout(true).iterator();
-			if(i.hasNext())
+			org.bson.Document mbartist = getArtist(artist);
+			if(mbartist != null && mbartist.getInteger("count") > 0)
 			{
-				artistId = getArtistId(artist, i.next());
+				artistId = getArtistId(artist, mbartist);
 				if(artistId != null)
 				{
 					page.put("artistid", artistId);
@@ -188,48 +153,13 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 	}
 
-	protected void loadTrack(String id, String title, String youtube, String artistId, String albumId)
-	{
-		if(title != null)
-		{
-			org.bson.Document mbtrack = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.TRACK.name().toLowerCase()), Filters.eq("title", title))).noCursorTimeout(true).iterator().tryNext();
-			if(mbtrack == null)
-			{
-				if(artistId != null && albumId != null)
-				{
-					org.bson.Document page = new org.bson.Document("id", id).
-							append("title", title).
-							append("youtube", youtube).
-							append("artistid", artistId).
-							append("albumid", albumId).
-							append("type", TYPE.TRACK.name().toLowerCase());
-					musicbrainz.insertOne(page);
-					LOGGER.info("MB " + id + ": Tracks added");
-				}
-				else
-				{
-					org.bson.Document json = getRecording(title);
-					if(json != null && json.getInteger("count") > 0)
-					{
-						json.append("id", id).
-						append("title", title).
-						append("youtube", youtube).
-						append("type", TYPE.TRACK.name().toLowerCase());
-						musicbrainz.insertOne(json);
-						LOGGER.info("MB " + id + ": Tracks added");
-					}
-				}
-			}
-		}
-	}
-
-	private org.bson.Document getRecording(String recording)
+	private org.bson.Document getRecording(String artist, String recording)
 	{
 		if(StringUtils.isBlank(recording))
 		{
 			return null;
 		}
-		String url = MUSICBRAINZ + "/recording/?query=recording:" + recording.trim().replace(" ", "%20") + "&fmt=json";
+		String url = MUSICBRAINZ + "/recording/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20recording:" + recording.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
 	}
 
@@ -287,38 +217,44 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		{
 			for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks", List.class))
 			{
-				String youtube = track.getString("youtube");
 				String title = track.getString("title");
 				if(title != null)
 				{
-					LOGGER.info("MB Loading Track: " + title);
-					loadTrack(id, title, youtube, artistId, albumId);
-					org.bson.Document mbtrack = musicbrainz.find(Filters.and(Filters.eq("id", id), Filters.eq("type", TYPE.TRACK.name().toLowerCase()), Filters.eq("title", title))).noCursorTimeout(true).iterator().tryNext();
-					if(mbtrack != null)
+					if(artistId != null && albumId != null)
 					{
-						String mbartistId = mbtrack.getString("artistid");
-						String mbalbumId = mbtrack.getString("albumid");
-						if(mbartistId != null && mbalbumId != null)
+						track.append("artistid", artistId).append("albumid", albumId);
+						LOGGER.info("MB " + title + ": " + artistId + " - " + albumId);
+					}
+					else
+					{
+						String tartistId = track.getString("artistid");
+						String talbumId = track.getString("albumid");
+						if(tartistId == null || talbumId == null)
 						{
-							track.append("artistid", mbartistId).append("albumid", mbalbumId);
-							docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-							LOGGER.info("MB " + title + ": " + mbartistId + " - " + mbalbumId);
-						}
-						else
-						{
-							String[] ids = getTrackId(title, mbtrack);
-							if(ids != null)
+							LOGGER.info("MB Loading Track: " + title);
+							String recording = title.split("-")[0].trim();
+							String artist = "";
+							if(title.split("-").length > 1)
 							{
-								mbartistId = ids[0];
-								mbalbumId = ids[1];
-								track.append("artistid", mbartistId).append("albumid", mbalbumId);
-								docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-								LOGGER.info("MB " + title + ": " + mbartistId + " - " + mbalbumId);
+								artist = title.split("-")[1].trim();
+							}
+							org.bson.Document mbtrack = getRecording(artist, recording);
+							if(mbtrack != null && mbtrack.getInteger("count") > 0)
+							{
+								String[] ids = getTrackId(title, mbtrack);
+								if(ids != null)
+								{
+									tartistId = ids[0];
+									talbumId = ids[1];
+									track.append("artistid", tartistId).append("albumid", talbumId);
+									LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+								}
 							}
 						}
 					}
 				}
 			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 		catch(Throwable t)
 		{
@@ -369,19 +305,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 				String artistId =  getRecordingArtistId(recording);
 				String recordingId = getRecordingId(recording);
-				if(score > THRESHOLD)
+				if(score > THRESHOLD && artistId != null && recordingId != null)
 				{
 					if(scoreArtist > THRESHOLD && scoreTitle > THRESHOLD)
 					{
 						scores.put(scoreArtist + scoreTitle, new String[] {artistId, recordingId});
 						break;
 					}
-					else if(scoreTitle == 100)
+					else if(scoreTitle == 100 && !scores.containsKey(100))
 					{
-						if(!scores.containsKey(100))
-						{
-							scores.put(100, new String[] {artistId, recordingId});
-						}
+						scores.put(100, new String[] {artistId, recordingId});
 					}
 				}
 			}
@@ -410,12 +343,12 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	private String getRecordingArtistId(org.bson.Document recording)
 	{
-		return ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
+		return CollectionUtils.isEmpty(recording.get("artist-credit", List.class)) ? null : ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
 	}
 
 	private String getRecordingId(org.bson.Document recording)
 	{
-		return ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
+		return CollectionUtils.isEmpty(recording.get("releases", List.class)) ? null : ((org.bson.Document)recording.get("releases", List.class).get(0)).get("release-group", org.bson.Document.class).getString("id");
 	}
 
 	private String getReleaseId(org.bson.Document release)

@@ -41,9 +41,9 @@ public class PhonotekeLoader
 	{
 		new OndarockLoader().loadDocuments();
 		new MusicalboxLoader().loadDocuments();
-		new MusicbrainzLoader().loadMBIDs();
 		new YoutubeLoader().loadTracks();
 		new SpotifyLoader().load();
+		new MusicbrainzLoader().loadMBIDs();
 	}
 
 	public PhonotekeLoader()

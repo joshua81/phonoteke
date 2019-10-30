@@ -31,7 +31,10 @@
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
           </a>
-          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+          <a *ngIf="doc.artistid == null && track.artistid != null" (click)="loadEvents(track.artistid)">
+            <img class="songkick">
+          </a>
+          <a *ngIf="track.youtube" class="youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
             <span class="youtube"></span>
           </a>
         </div>

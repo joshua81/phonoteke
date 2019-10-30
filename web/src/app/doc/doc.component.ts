@@ -32,8 +32,8 @@ export class DocComponent implements OnInit {
   }
 
   loadEvents(id: string) {
-    console.log(this.service.server + '/api/docs/' + id + '/events');
-    this.http.get(this.service.server + '/api/docs/' + id + '/events').subscribe(
+    console.log(this.service.server + '/api/artists/' + id + '/events');
+    this.http.get(this.service.server + '/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),
       error => this.error = error);
   }
@@ -64,17 +64,19 @@ export class DocComponent implements OnInit {
 
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);
-    this.loadEvents(this.docId);
+    this.loadEvents(this.doc.artistid);
     this.loadLinks(this.docId);
   }
 
   setEvents(events: any) {
+    this.events.splice(0, this.events.length);
     if(typeof(events) != 'undefined' && events != null && events.length > 0){
       this.events.push.apply(this.events, events);
     }
   }
 
   setLinks(links: any) {
+    this.links.splice(0, this.links.length);
     if(typeof(links) != 'undefined' && links != null && links.length > 0){
       this.links.push.apply(this.links, links);
     }

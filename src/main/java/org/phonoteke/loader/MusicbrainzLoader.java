@@ -163,6 +163,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		return callMusicbrainz(url);
 	}
 
+	private org.bson.Document getRecording(String recording)
+	{
+		if(StringUtils.isBlank(recording))
+		{
+			return null;
+		}
+		String url = MUSICBRAINZ + "/recording/?query=recording:" + recording.trim().replace(" ", "%20") + "&fmt=json";
+		return callMusicbrainz(url);
+	}
+
 	private org.bson.Document callMusicbrainz(String url)
 	{
 		HttpURLConnection con;
@@ -232,22 +242,56 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						if(tartistId == null || talbumId == null)
 						{
 							LOGGER.info("MB Loading Track: " + title);
-							String recording = title.split("-")[0].trim();
-							String artist = "";
-							if(title.split("-").length > 1)
+							// no Artist - Recording separator
+							if(title.split("-").length == 1)
 							{
-								artist = title.split("-")[1].trim();
-							}
-							org.bson.Document mbtrack = getRecording(artist, recording);
-							if(mbtrack != null && mbtrack.getInteger("count") > 0)
-							{
-								String[] ids = getTrackId(title, mbtrack);
-								if(ids != null)
+								org.bson.Document mbtrack = getRecording(title);
+								if(mbtrack != null && mbtrack.getInteger("count") > 0)
 								{
-									tartistId = ids[0];
-									talbumId = ids[1];
-									track.append("artistid", tartistId).append("albumid", talbumId);
-									LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+									String[] ids = getTrackId(title, mbtrack);
+									if(ids != null)
+									{
+										tartistId = ids[0];
+										talbumId = ids[1];
+										track.append("artistid", tartistId).append("albumid", talbumId);
+										LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+									}
+								}
+							}
+							else
+							{
+								// Recording - Artist
+								String recording = title.split("-")[0].trim();
+								String artist = title.split("-")[1].trim();
+								org.bson.Document mbtrack = getRecording(artist, recording);
+								if(mbtrack != null && mbtrack.getInteger("count") > 0)
+								{
+									String[] ids = getTrackId(title, mbtrack);
+									if(ids != null)
+									{
+										tartistId = ids[0];
+										talbumId = ids[1];
+										track.append("artistid", tartistId).append("albumid", talbumId);
+										LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+									}
+								}
+								// Artist - Recording
+								if(tartistId == null || talbumId == null)
+								{
+									artist = title.split("-")[0].trim();
+									recording = title.split("-")[1].trim();
+									mbtrack = getRecording(artist, recording);
+									if(mbtrack != null && mbtrack.getInteger("count") > 0)
+									{
+										String[] ids = getTrackId(title, mbtrack);
+										if(ids != null)
+										{
+											tartistId = ids[0];
+											talbumId = ids[1];
+											track.append("artistid", tartistId).append("albumid", talbumId);
+											LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+										}
+									}
 								}
 							}
 						}

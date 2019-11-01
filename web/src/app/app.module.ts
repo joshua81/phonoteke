@@ -10,6 +10,7 @@ import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
+import { EventsComponent } from './doc/events/events.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { DocComponent } from './doc/doc.component';
     DocsMenuComponent,
     DocsComponent,
     DocMenuComponent,
-    DocComponent
+    DocComponent,
+    EventsComponent
   ],
   imports: [
     BrowserModule,

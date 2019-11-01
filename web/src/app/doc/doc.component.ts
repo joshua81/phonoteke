@@ -12,7 +12,7 @@ export class DocComponent implements OnInit {
   error = null;
   docId = null;
   doc = null;
-  events = [];
+  events = null;
   links = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private service: AppService) {}
@@ -62,15 +62,15 @@ export class DocComponent implements OnInit {
       this.doc.spalbumid = null;
     }
 
-    this.events.splice(0, this.events.length);
+    this.events = null;
     this.links.splice(0, this.links.length);
     this.loadEvents(this.doc.artistid);
     this.loadLinks(this.docId);
   }
 
   setEvents(events: any) {
-    this.events.splice(0, this.events.length);
-    if(typeof(events) != 'undefined' && events != null && events.length > 0){
+    this.events = [];
+    if(typeof(events) != 'undefined' && events != null){
       this.events.push.apply(this.events, events);
     }
   }

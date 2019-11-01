@@ -42,6 +42,8 @@
     </div>
   </div>
 
+  <app-events *ngIf="events" [events]="events"></app-events>
+
   <div *ngIf="links && links.length != 0" class="pt-3">
     <div class="list-group">
       <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-2 list-group-item list-group-item-action">
@@ -49,15 +51,15 @@
           <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
           <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
           <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">
-              <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
-              <div>{{link.artist}}</div>
+            <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
+            <div>{{link.artist}}</div>
           </div>
           <div *ngIf="link.type == 'concert'" class="pl-2 text-truncate">
-              <div class="font-weight-bold">{{link.title}}</div>
-              <div>{{link.artist}}</div>
+            <div class="font-weight-bold">{{link.title}}</div>
+            <div>{{link.artist}}</div>
           </div>
           <div *ngIf="link.type == 'artist'" class="pl-2 text-truncate">
-              <div class="font-weight-bold">{{link.artist}}</div>
+            <div class="font-weight-bold">{{link.artist}}</div>
           </div>
           <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="votelink">
             <span class="star"></span>
@@ -67,21 +69,4 @@
       </a>
     </div>
   </div>
-
-  <div *ngIf="events && events.length != 0" class="pt-3">
-    <div class="list-group">
-      <div *ngFor="let event of events" class="p-2 list-group-item">
-        <div class="d-flex align-items-center">
-          <div class="w-100 text-truncate">
-            <div class="font-weight-bold">{{event.start.date}} {{event.location.city}}</div>
-            <div>{{event.venue.displayName}}</div>
-          </div>
-          <a href="{{event.uri}}" target="_blank">
-            <img class="songkick">
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
-

@@ -14,6 +14,6 @@ export class EventsComponent {
     ngOnInit() {}
 
     close() {
-        this.component.events = null;
+        this.component.showEvents = false;
     }
 }

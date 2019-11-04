@@ -31,6 +31,12 @@
         <img class="musicbrainz">
       </a>
     </div>
+
+    <div class="pr-2">
+      <a *ngIf="component.doc.artistid != null" (click)="component.loadEvents(component.doc.artistid)">
+          <img class="songkick">
+      </a>
+    </div>
       
     <div class="pr-2">
       <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">

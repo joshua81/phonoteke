@@ -157,3 +157,21 @@ img.songkick {
     cursor: pointer;
 }
 
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 30;
+    background: rgba(52, 58, 64, 0.75);
+    cursor: pointer;
+}
+
+.modal-box {
+    width: 400px;
+    max-height: 600px;
+    z-index: 40;
+    background: white;
+}
+

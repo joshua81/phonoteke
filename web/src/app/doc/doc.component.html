@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <app-events *ngIf="events" [events]="events"></app-events>
+  <app-events *ngIf="showEvents == true" [events]="events"></app-events>
 
   <div *ngIf="links && links.length != 0" class="pt-3">
     <div class="list-group">

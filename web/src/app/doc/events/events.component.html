@@ -1,5 +1,5 @@
-<div class="d-flex justify-content-center backdrop" (click)="close()">
-    <div *ngIf="events && events.length != 0" class="align-self-center overflow-auto alert-box">
+<div class="d-flex justify-content-center modal-bg" (click)="close()">
+    <div *ngIf="events && events.length != 0" class="align-self-center overflow-auto modal-box">
         <div class="list-group">
             <div *ngFor="let event of events" class="p-2 list-group-item">
                 <div class="d-flex align-items-center">

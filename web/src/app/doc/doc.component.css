@@ -18,7 +18,7 @@ div.vote {
   position: absolute;
   left: 270px;
   top: 10px;
-  z-index: 100;
+  z-index: 20;
 }
 
 div.votelink {

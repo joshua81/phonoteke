@@ -12,7 +12,8 @@ export class DocComponent implements OnInit {
   error = null;
   docId = null;
   doc = null;
-  events = null;
+  showEvents = false;
+  events = [];
   links = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private service: AppService) {}
@@ -26,6 +27,9 @@ export class DocComponent implements OnInit {
 
   loadDoc(id: string) {
     console.log(this.service.server + '/api/docs/' + id);
+    this.showEvents = false;
+    this.events = [];
+    this.links = [];
     this.http.get(this.service.server + '/api/docs/' + id).subscribe(
       (data: any) => this.setDoc(data[0]),
       error => this.error = error);
@@ -33,6 +37,7 @@ export class DocComponent implements OnInit {
 
   loadEvents(id: string) {
     console.log(this.service.server + '/api/artists/' + id + '/events');
+    this.showEvents = true;
     this.http.get(this.service.server + '/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),
       error => this.error = error);
@@ -62,14 +67,15 @@ export class DocComponent implements OnInit {
       this.doc.spalbumid = null;
     }
 
-    this.events = null;
+    this.showEvents = false;
+    this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);
-    this.loadEvents(this.doc.artistid);
+    //this.loadEvents(this.doc.artistid);
     this.loadLinks(this.docId);
   }
 
   setEvents(events: any) {
-    this.events = [];
+    this.events.splice(0, this.events.length);
     if(typeof(events) != 'undefined' && events != null){
       this.events.push.apply(this.events, events);
     }

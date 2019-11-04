@@ -104,7 +104,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		search.setMaxResults(1L);
 
 		// Call the API and print results.
-		String youtubeId = "UNKNOWN";
+		String youtubeId = UNKNOWN;
 		SearchListResponse searchResponse = search.execute();
 		List<SearchResult> searchResults = searchResponse.getItems();
 		if(CollectionUtils.isNotEmpty(searchResults))
@@ -133,7 +133,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		search.setMaxResults(1L);
 
 		// Call the API and print results.
-		String youtubeTitle = "UNKNOWN";
+		String youtubeTitle = UNKNOWN;
 		SearchListResponse searchResponse = search.execute();
 		List<SearchResult> searchResults = searchResponse.getItems();
 		if(CollectionUtils.isNotEmpty(searchResults))

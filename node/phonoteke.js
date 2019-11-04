@@ -112,18 +112,18 @@ async function getLinks(request, h)
 		if(doc && doc[0])
 		{
 			var artists = [];
-			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null) {
+			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null && doc[0].artistid != 'UNKNOWN') {
 				artists.push(doc[0].artistid);
 			}
 			if(doc[0].type == 'album')
 			{
 				doc[0].tracks.forEach(function(track) {
-					if(typeof(track.artistid) != 'undefined' && track.artistid != null) {
+					if(typeof(track.artistid) != 'undefined' && track.artistid != null && track.artistid != 'UNKNOWN') {
 						artists.push(track.artistid);
 					}
 				});
 			}
-			console.log(artists);
+			//console.log(artists);
 			//const result = await docs.find({'id': {'$in': doc[0].links}}).project({review: 0, description: 0, links: 0}).sort({"type":1, "artist":1, "title":1}).toArray();
 			var result = await docs.find({$or: [{'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artistid":1, "year":-1}).toArray();
 			result = result.filter(function(value, index, arr){

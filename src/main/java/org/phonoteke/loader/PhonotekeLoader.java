@@ -21,6 +21,7 @@ public class PhonotekeLoader
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
+	protected static final String UNKNOWN = "UNKNOWN";
 	protected static final String MONGO_HOST = "localhost";
 	protected static final int MONGO_PORT = 27017;
 	protected static final String MONGO_DB = "phonoteke";

@@ -112,11 +112,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					artistId = ids[0];
 					albumId = ids[1];
-					page.append("artistid", artistId).append("albumid", albumId);
-					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-					LOGGER.info("MB " + artist + " - " + title + ": " + artistId + " - " + albumId);
 				}
 			}
+			if(artistId == null || albumId == null)
+			{
+				artistId = UNKNOWN;
+				albumId = UNKNOWN;
+			}
+			page.append("artistid", artistId).append("albumid", albumId);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("MB " + artist + " - " + title + ": " + artistId + " - " + albumId);
 		}
 	}
 
@@ -143,13 +148,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			if(mbartist != null && mbartist.getInteger("count") > 0)
 			{
 				artistId = getArtistId(artist, mbartist);
-				if(artistId != null)
-				{
-					page.put("artistid", artistId);
-					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-					LOGGER.info("MB " + artist + ": " + artistId);
-				}
 			}
+			if(artistId == null)
+			{
+				artistId = UNKNOWN;
+			}
+			page.append("artistid", artistId);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("MB " + artist + ": " + artistId);
 		}
 	}
 
@@ -243,7 +249,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
-							if(title.split("-").length == 1)
+							if(title.split("-").length != 2)
 							{
 								org.bson.Document mbtrack = getRecording(title);
 								if(mbtrack != null && mbtrack.getInteger("count") > 0)
@@ -253,8 +259,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
-										track.append("artistid", tartistId).append("albumid", talbumId);
-										LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
 									}
 								}
 							}
@@ -271,8 +275,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
-										track.append("artistid", tartistId).append("albumid", talbumId);
-										LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
 									}
 								}
 								// Artist - Recording
@@ -288,12 +290,17 @@ public class MusicbrainzLoader extends PhonotekeLoader
 										{
 											tartistId = ids[0];
 											talbumId = ids[1];
-											track.append("artistid", tartistId).append("albumid", talbumId);
-											LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
 										}
 									}
 								}
 							}
+							if(tartistId == null || talbumId == null)
+							{
+								tartistId = UNKNOWN;
+								talbumId = UNKNOWN;
+							}
+							track.append("artistid", tartistId).append("albumid", talbumId);
+							LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
 						}
 					}
 				}

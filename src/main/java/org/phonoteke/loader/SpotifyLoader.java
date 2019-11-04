@@ -103,8 +103,8 @@ public class SpotifyLoader extends PhonotekeLoader
 			}
 			else
 			{
-				page.append("spartistid", "UNKNOWN").
-				append("spalbumid", "UNKNOWN");
+				page.append("spartistid", UNKNOWN).
+				append("spalbumid", UNKNOWN);
 			}
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
@@ -171,7 +171,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			}
 			else
 			{
-				page.append("spartistid", "UNKNOWN");
+				page.append("spartistid", UNKNOWN);
 			}
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}

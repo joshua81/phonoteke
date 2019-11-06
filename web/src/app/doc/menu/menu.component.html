@@ -19,10 +19,6 @@
         </div>
       </div>
     </div>
-
-    <a class="pr-2" href="{{component.doc.url}}" target="_blank">
-      <img class="{{component.doc.source}}">
-    </a>
      
     <a class="pr-2" *ngIf="component.doc.albumid" href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
       <img class="musicbrainz">
@@ -32,11 +28,17 @@
       <img class="songkick">
     </a>
       
-    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
+    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" class="pr-2"
+      href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
       <img class="spotify">
     </a>
-    <a *ngIf="component.doc.type != 'album' && component.doc.spartistid" href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
+    <a *ngIf="component.doc.type != 'album' && component.doc.spartistid" class="pr-2"
+      href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
       <img class="spotify">
+    </a>
+
+    <a href="{{component.doc.url}}" target="_blank">
+      <img class="{{component.doc.source}}">
     </a>
   </div>
 </nav>

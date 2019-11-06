@@ -76,20 +76,24 @@ async function getDocs(request, h)
 			if(doc.spalbumid && doc.spalbumid == 'UNKNOWN') {
 				doc.spalbumid = null;
 			}
-			doc.tracks.forEach(function(track) {
-				if(track.title == null || track.title == 'UNKNOWN') {
-					track.title = 'Unknown title';
-				}
-				if(track.youtube && track.youtube == 'UNKNOWN') {
-					track.youtube = null;
-				}
-				if(track.artistid && track.artistid == 'UNKNOWN') {
-					track.artistid = null;
-				}
-				if(track.albumid && track.albumid == 'UNKNOWN') {
-					track.albumid = null;
-				}
-			});
+			if(doc.type == 'album')
+			{
+				doc.tracks.forEach(function(track) 
+				{
+					if(track.title == null || track.title == 'UNKNOWN') {
+						track.title = 'Unknown title';
+					}
+					if(track.youtube && track.youtube == 'UNKNOWN') {
+						track.youtube = null;
+					}
+					if(track.artistid && track.artistid == 'UNKNOWN') {
+						track.artistid = null;
+					}
+					if(track.albumid && track.albumid == 'UNKNOWN') {
+						track.albumid = null;
+					}
+				});
+			}
 		}
 		return result;
 	}
@@ -128,7 +132,8 @@ async function getEvents(request, h)
 			});
 			req.on('error', (err) => reject(err))
 		});
-		return JSON.parse(result).resultsPage.results.event;
+		const json = JSON.parse(result);
+		return json.resultsPage.results.event ? json.resultsPage.results.event : [];
 	}
 	return [];
 }

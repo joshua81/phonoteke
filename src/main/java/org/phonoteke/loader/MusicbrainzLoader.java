@@ -30,7 +30,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-0e607914-4cee-466d-bd94-88c291570a96.html");
+		//		new MusicbrainzLoader().loadMBIDs("");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -236,7 +236,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String title = track.getString("title");
 				if(title != null)
 				{
-					if(artistId != null && albumId != null)
+					if(!UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
 					{
 						track.append("artistid", artistId).append("albumid", albumId);
 						LOGGER.info("MB " + title + ": " + artistId + " - " + albumId);
@@ -245,7 +245,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					{
 						String tartistId = track.getString("artistid");
 						String talbumId = track.getString("albumid");
-						if(tartistId == null || talbumId == null)
+						if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
@@ -278,7 +278,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									}
 								}
 								// Artist - Recording
-								if(tartistId == null || talbumId == null)
+								if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
 								{
 									artist = title.split("-")[0].trim();
 									recording = title.split("-")[1].trim();

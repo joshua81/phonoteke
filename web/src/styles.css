@@ -71,8 +71,8 @@ img.songkick {
 .play {
     display: inline-block;
     mask: url("http://localhost:8180/images/play.svg");
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -80,8 +80,8 @@ img.songkick {
 .pause {
     display: inline-block;
     mask: url("http://localhost:8180/images/pause.svg");
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     background: #FFFFFF;
     cursor: pointer;
 }

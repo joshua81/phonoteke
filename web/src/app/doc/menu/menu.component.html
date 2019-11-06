@@ -1,50 +1,42 @@
-<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-dark d-flex">
-  <div class="row d-flex align-items-center w-100 pl-2 pr-2">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-dark">
+  <div class="d-flex flex-row align-items-center w-100">
     
-    <div class="pr-2">
-      <a [routerLink]="['/']">
-        <img class="cover rounded" src="{{component.doc.cover}}"/>
-      </a>
-    </div>
+    <a [routerLink]="['/']">
+      <img class="cover rounded" src="{{component.doc.cover}}"/>
+    </a>
      
-    <div *ngIf="service.audio" class="audio d-flex align-items-center pr-2">
-      <div class="d-flex align-items-center pr-2" (click)="backward($event)">
-        <span class="backward"></span>
-      </div>
-      <div class="d-flex align-items-center pr-2" (click)="playPause($event)">
-        <span *ngIf="service.audio.paused" class="play"></span>
-        <span *ngIf="!service.audio.paused" class="pause"></span>
-      </div>
-      <div class="d-flex align-items-center" (click)="forward($event)">
-        <span class="forward"></span>
+    <div class="flex-fill w-100 p-2">
+      <div *ngIf="service.audio" class="d-flex flex-row align-items-center justify-content-center">
+        <div (click)="backward($event)">
+          <span class="backward"></span>
+        </div>
+        <div class="pl-3 pr-3" (click)="playPause($event)">
+          <span *ngIf="service.audio.paused" class="play"></span>
+          <span *ngIf="!service.audio.paused" class="pause"></span>
+        </div>
+        <div (click)="forward($event)">
+          <span class="forward"></span>
+        </div>
       </div>
     </div>
 
-    <div class="pr-2">
-      <a href="{{component.doc.url}}" target="_blank">
-        <img class="{{component.doc.source}}">
-      </a>
-    </div>
+    <a class="pr-2" href="{{component.doc.url}}" target="_blank">
+      <img class="{{component.doc.source}}">
+    </a>
      
-    <div *ngIf="component.doc.albumid" class="pr-2">
-      <a href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
-        <img class="musicbrainz">
-      </a>
-    </div>
+    <a class="pr-2" *ngIf="component.doc.albumid" href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
+      <img class="musicbrainz">
+    </a>
 
-    <div class="pr-2">
-      <a *ngIf="component.doc.artistid != null" (click)="component.loadEvents(component.doc.artistid)">
-          <img class="songkick">
-      </a>
-    </div>
+    <a class="pr-2" *ngIf="component.doc.artistid != null" (click)="component.loadEvents(component.doc.artistid)">
+      <img class="songkick">
+    </a>
       
-    <div class="pr-2">
-      <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
-        <img class="spotify">
-      </a>
-      <a *ngIf="component.doc.type != 'album' && component.doc.spartistid" href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
-        <img class="spotify">
-      </a>
-    </div>
+    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
+      <img class="spotify">
+    </a>
+    <a *ngIf="component.doc.type != 'album' && component.doc.spartistid" href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
+      <img class="spotify">
+    </a>
   </div>
 </nav>

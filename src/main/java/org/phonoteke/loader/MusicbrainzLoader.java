@@ -236,7 +236,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String title = track.getString("title");
 				if(title != null)
 				{
-					if(!UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
+					if(artistId != null && albumId != null && !UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
 					{
 						track.append("artistid", artistId).append("albumid", albumId);
 						LOGGER.info("MB " + title + ": " + artistId + " - " + albumId);
@@ -245,7 +245,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					{
 						String tartistId = track.getString("artistid");
 						String talbumId = track.getString("albumid");
-						if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
+						if(tartistId == null || talbumId == null)
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
@@ -278,7 +278,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									}
 								}
 								// Artist - Recording
-								if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
+								if(tartistId == null || talbumId == null)
 								{
 									artist = title.split("-")[0].trim();
 									recording = title.split("-")[1].trim();

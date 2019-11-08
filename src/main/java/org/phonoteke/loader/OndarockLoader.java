@@ -158,6 +158,7 @@ public class OndarockLoader extends PhonotekeLoader
 			return band;
 		case ARTIST:
 		case CONCERT:
+		case INTERVIEW:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
@@ -200,6 +201,7 @@ public class OndarockLoader extends PhonotekeLoader
 			return title;
 		case ARTIST:
 		case CONCERT:
+		case INTERVIEW:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
@@ -302,6 +304,11 @@ public class OndarockLoader extends PhonotekeLoader
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
+			case INTERVIEW:
+				coverElement = doc.select("div[class=article_foto_cont]").first();
+				coverElement = coverElement.select("img[src]").first();
+				cover = coverElement.attr("src");
+				return getUrl(cover);
 			default:
 				return null;
 			}
@@ -330,6 +337,7 @@ public class OndarockLoader extends PhonotekeLoader
 			}
 		case ARTIST:
 		case CONCERT:
+		case INTERVIEW:
 			authorElement = doc.select("span[class=recensore]").first();
 			if(authorElement != null)
 			{
@@ -491,6 +499,10 @@ public class OndarockLoader extends PhonotekeLoader
 		else if(getUrl(url).startsWith(URL + "livereport"))
 		{
 			return TYPE.CONCERT;
+		}
+		else if(getUrl(url).startsWith(URL + "interviste"))
+		{
+			return TYPE.INTERVIEW;
 		}
 		return TYPE.UNKNOWN;
 	}

@@ -54,6 +54,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				loadArtistMBId(page);
 				break;
 			case CONCERT:
+			case INTERVIEW:
 				loadArtistMBId(page);
 			default:
 				break;
@@ -76,6 +77,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				loadArtistMBId(page);
 				break;
 			case CONCERT:
+			case INTERVIEW:
 				loadArtistMBId(page);
 			default:
 				break;

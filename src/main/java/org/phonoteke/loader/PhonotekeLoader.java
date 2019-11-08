@@ -65,7 +65,7 @@ public class PhonotekeLoader
 	protected void loadDocuments()
 	{
 		String source = getSource();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2019/10/MUSICAL-BOX-d2103941-93a1-42c3-811e-9878b604791e.html")).noCursorTimeout(true).iterator();
+		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2018/06/MUSICAL-BOX-766c1018-9ac1-4ba2-ad76-b07a37197cd8.html")).noCursorTimeout(true).iterator();
 		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
@@ -146,11 +146,30 @@ public class PhonotekeLoader
 									append("authors", getAuthors(url, doc)).
 									append("cover", getCover(url, doc)).
 									append("date", getDate(url, doc)).
-									append("description", getDescription(url, doc)).
+									//									append("description", getDescription(url, doc)).
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
-							//									append("tracks", getTracks(url, doc));
+						}
+						break;
+					case INTERVIEW:
+						if(!docs.find(Filters.and(Filters.eq("source", source), 
+								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("artist", artist),
+								Filters.eq("title", title))).iterator().hasNext())
+						{
+							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
+									append("type", type.name().toLowerCase()).
+									append("artist", artist).
+									append("title", title).
+									append("authors", getAuthors(url, doc)).
+									append("cover", getCover(url, doc)).
+									//									append("date", getDate(url, doc)).
+									//									append("description", getDescription(url, doc)).
+									append("links", getLinks(url, doc)).
+									append("review", getReview(url, doc)).
+									append("source", getSource());
 						}
 						break;
 					default:

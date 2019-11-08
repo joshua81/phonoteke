@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
@@ -190,6 +191,10 @@ public class MusicalboxLoader extends PhonotekeLoader
 				}
 			}
 		}
+		if(CollectionUtils.isEmpty(tracks))
+		{
+			throw new IllegalArgumentException("Empty tracks!");
+		}
 		return tracks;
 	}
 
@@ -219,10 +224,15 @@ public class MusicalboxLoader extends PhonotekeLoader
 		String audio = null;
 		try
 		{
-			Element content = doc.select("div[data-mediapolis]").first();
+			Element content = doc.select("div[data-player-href]").first();
 			if(content != null)
 			{
-				Jsoup.connect(content.attr("data-mediapolis")).get();
+				doc = Jsoup.connect(URL + content.attr("data-player-href")).get();
+				content = doc.select("li[data-mediapolis]").first();
+				if(content != null)
+				{
+					Jsoup.connect(content.attr("data-mediapolis")).get();
+				}
 			}
 		}
 		catch(IOException e)

@@ -32,7 +32,6 @@ public class PhonotekeLoader
 	protected enum TYPE {
 		ARTIST,
 		ALBUM,
-		TRACK,
 		CONCERT,
 		INTERVIEW,
 		UNKNOWN

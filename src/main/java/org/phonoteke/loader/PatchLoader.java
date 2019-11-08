@@ -13,13 +13,13 @@ import com.google.api.client.util.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader extends MusicalboxLoader
+public class PatchLoader extends OndarockLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 	
 	public static void main(String[] args) 
 	{
-		new PatchLoader().deleteEmptyTracks();
+		new PatchLoader().blankReview();
 	}
 	
 	public PatchLoader()
@@ -27,29 +27,18 @@ public class PatchLoader extends MusicalboxLoader
 		super();
 	}
 	
-	private void deleteEmptyTracks()
+	private void blankReview()
 	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", MusicalboxLoader.SOURCE)).noCursorTimeout(true).iterator();
+		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", OndarockLoader.SOURCE)).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document doc = i.next();
 			String id = doc.getString("id");
-			String url = doc.getString("url");
-			List<org.bson.Document> tracks = doc.get("tracks", List.class);
-			if(CollectionUtils.isEmpty(tracks))
+			String review = doc.getString("review");
+			if(StringUtils.isBlank(review))
 			{
 				docs.deleteOne(Filters.eq("id", id));
-				LOGGER.info(id + " deleted");
-			}
-			else
-			{
-				org.bson.Document page = pages.find(Filters.eq("url", url)).noCursorTimeout(true).iterator().tryNext();
-				Document html = Jsoup.parse(page.getString("page"));
-				String audioOld = doc.getString("audio");
-				String audioNew = getAudio(url, html);
-				doc.append("audio", audioNew);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-				LOGGER.info(id + " audio " + audioOld + " " + audioNew);
+				LOGGER.info(id + " is blank");
 			}
 		}
 	}

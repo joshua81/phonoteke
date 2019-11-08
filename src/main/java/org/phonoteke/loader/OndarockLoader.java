@@ -1,8 +1,5 @@
 package org.phonoteke.loader;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
@@ -10,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -50,28 +47,23 @@ public class OndarockLoader extends PhonotekeLoader
 	@Override
 	protected String getReview(String url, Document doc) 
 	{
-		try
+		Element content = doc.select("div[id=maintext]").first();
+		if(content == null)
 		{
-
-			Element content = doc.select("div[id=maintext]").first();
-			if(content == null)
-			{
-				content = doc.select("div[id=maintext2]").first();
-			}
-			removeComments(content);
-			removeImages(content);
-			removeScripts(content);
-			removeDivs(content);
-			removeLinks(content);
-
-			InputStream is =  new ByteArrayInputStream(content.html().getBytes(StandardCharsets.UTF_8));
-			return IOUtils.toString(is, StandardCharsets.UTF_8);
+			content = doc.select("div[id=maintext2]").first();
 		}
-		catch(Throwable t)
+		removeComments(content);
+		removeImages(content);
+		removeScripts(content);
+		removeDivs(content);
+		removeLinks(content);
+
+		String review = content.html();
+		if(StringUtils.isBlank(review))
 		{
-			LOGGER.error("Error getContent() "+ url + ": " + t.getMessage(), t);
-			return null;
+			throw new IllegalArgumentException("Empty review!");
 		}
+		return review;
 	}
 
 	@Override

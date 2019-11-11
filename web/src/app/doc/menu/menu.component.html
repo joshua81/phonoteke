@@ -20,7 +20,10 @@
       </div>
     </div>
      
-    <a class="pr-2" *ngIf="component.doc.albumid" href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
+    <a class="pr-2" *ngIf="component.doc.type != 'album' && component.doc.artistid" href="{{'https://musicbrainz.org/artist/' + component.doc.artistid}}" target="_blank">
+      <img class="musicbrainz">
+    </a>
+    <a class="pr-2" *ngIf="component.doc.type == 'album' && component.doc.albumid" href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
       <img class="musicbrainz">
     </a>
 
@@ -28,12 +31,12 @@
       <img class="songkick">
     </a>
       
-    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" class="pr-2"
-      href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
-      <img class="spotify">
-    </a>
     <a *ngIf="component.doc.type != 'album' && component.doc.spartistid" class="pr-2"
       href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
+      <img class="spotify">
+    </a>
+    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" class="pr-2"
+      href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
       <img class="spotify">
     </a>
 

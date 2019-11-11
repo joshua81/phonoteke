@@ -1,3 +1,7 @@
+div.track {
+  cursor: pointer;
+}
+
 div.vote {
   border-radius: 50%;
   width: 30px;

@@ -44,17 +44,18 @@ export class DocComponent implements OnInit {
   }
 
   loadLinks(id: string) {
-    console.log(this.service.server + '/api/docs/' + id + '/links');
-    this.http.get(this.service.server + '/api/docs/' + id + '/links').subscribe(
-      (data: any) => this.setLinks(data),
-      error => this.error = error);
+    if(typeof(id) != 'undefined' && id != null){
+      console.log(this.service.server + '/api/artists/' + id + '/links');
+      this.http.get(this.service.server + '/api/artists/' + id + '/links').subscribe(
+        (data: any) => this.setLinks(data),
+        error => this.error = error);
+    }
   }
 
   setDoc(doc: any) {
     this.doc = doc;
 
-    if(this.service.audio)
-    {
+    if(this.service.audio){
       this.service.audio.pause();
       this.service.audio = null;
     }
@@ -67,8 +68,9 @@ export class DocComponent implements OnInit {
     this.showEvents = false;
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);
-    //this.loadEvents(this.doc.artistid);
-    this.loadLinks(this.docId);
+    if(this.doc.artistid) {
+      this.loadLinks(this.doc.artistid);
+    }
   }
 
   setEvents(events: any) {
@@ -82,6 +84,10 @@ export class DocComponent implements OnInit {
     this.links.splice(0, this.links.length);
     if(typeof(links) != 'undefined' && links != null && links.length > 0){
       this.links.push.apply(this.links, links);
+      var id = this.doc.id;
+      this.links = this.links.filter(function(value, index, arr){
+				return value.id != id;
+			});
     }
   }
 }

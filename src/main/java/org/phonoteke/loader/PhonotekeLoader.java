@@ -13,20 +13,30 @@ import org.jsoup.nodes.Document;
 import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class PhonotekeLoader 
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
+import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.crawler.WebCrawler;
+import edu.uci.ics.crawler4j.fetcher.PageFetcher;
+import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+
+public class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
+
+	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
+	protected static final int NUMBER_OF_CRAWLERS = 1;
 
 	protected static final String UNKNOWN = "UNKNOWN";
 	protected static final String MONGO_HOST = "localhost";
 	protected static final int MONGO_PORT = 27017;
 	protected static final String MONGO_DB = "phonoteke";
 
-	protected MongoCollection<org.bson.Document> pages;
 	protected MongoCollection<org.bson.Document> docs;
 
 	protected enum TYPE {
@@ -39,8 +49,8 @@ public class PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new OndarockLoader().loadDocuments();
-		new MusicalboxLoader().loadDocuments();
+		new OndarockLoader().crawl(OndarockLoader.URL);
+		new MusicalboxLoader().crawl(MusicalboxLoader.URL1);
 		new YoutubeLoader().loadTracks();
 		new SpotifyLoader().load();
 		new MusicbrainzLoader().loadMBIDs();
@@ -51,7 +61,6 @@ public class PhonotekeLoader
 		try
 		{
 			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-			pages = db.getCollection("pages");
 			docs = db.getCollection("docs");
 		} 
 		catch (Throwable t) 
@@ -61,28 +70,54 @@ public class PhonotekeLoader
 		}
 	}
 
-	protected void loadDocuments()
+	protected void crawl(String url)
 	{
-		String source = getSource();
-		//		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("url", "https://www.raiplayradio.it/audio/2018/06/MUSICAL-BOX-766c1018-9ac1-4ba2-ad76-b07a37197cd8.html")).noCursorTimeout(true).iterator();
-		MongoCursor<org.bson.Document> i = pages.find(Filters.eq("source", source)).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		try
 		{
-			org.bson.Document page = i.next();
-			String url = page.getString("url");
-			String html = page.getString("page");
-			String id = getId(url);
-			Document doc = Jsoup.parse(html);
+			LOGGER.info("Crawling " + url);
+			CrawlConfig config = new CrawlConfig();
+			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+			PageFetcher pageFetcher = new PageFetcher(config);
+			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+			CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+			controller.addSeed(url);
+			controller.start(getClass(), NUMBER_OF_CRAWLERS);
+		} 
+		catch (Throwable t) 
+		{
+			LOGGER.error("Error crawling " + url + ": " + t.getMessage());
+			throw new RuntimeException(t);
+		}
+	}
+
+	@Override
+	public void visit(Page page) 
+	{
+		if(page.getParseData() instanceof HtmlParseData) 
+		{
+			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+			String html = htmlParseData.getHtml();
+			String url = page.getWebURL().getURL();
+			String source = getSource();
+			TYPE type = getType(url);
+			
+			if(!url.endsWith(".htm") && !url.endsWith(".html") && !TYPE.UNKNOWN.equals(type))
+			{
+				return;
+			}
 
 			try
 			{
-				String artist = getArtist(url, doc);
-				String title = getTitle(url, doc);
-				TYPE type = getType(url);
-
 				if(!docs.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().hasNext())
 				{
+					LOGGER.debug("Parsing page " + url);
+					String id = getId(url);
+					Document doc = Jsoup.parse(html);
+					String artist = getArtist(url, doc);
+					String title = getTitle(url, doc);
+					
 					org.bson.Document json = null;
 					switch(type)
 					{
@@ -184,6 +219,7 @@ public class PhonotekeLoader
 			catch (Throwable t) 
 			{
 				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
+				throw new RuntimeException(t);
 			}
 		}
 	}

@@ -16,6 +16,9 @@ import org.jsoup.select.Elements;
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
 
+import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.url.WebURL;
+
 public class OndarockLoader extends PhonotekeLoader
 {
 	public static final String URL = "https://www.ondarock.it/";
@@ -24,12 +27,18 @@ public class OndarockLoader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new OndarockLoader().loadDocuments();
+		new OndarockLoader().crawl(OndarockLoader.URL);
 	}
 
 	public OndarockLoader()
 	{
 		super();
+	}
+	
+	@Override
+	public boolean shouldVisit(Page referringPage, WebURL url) 
+	{
+		return url.getURL().toLowerCase().startsWith(URL);
 	}
 
 	@Override

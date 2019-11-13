@@ -18,9 +18,14 @@ import org.jsoup.nodes.TextNode;
 
 import com.google.common.collect.Lists;
 
+import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.url.WebURL;
+
 public class MusicalboxLoader extends PhonotekeLoader
 {
 	public static final String URL = "https://www.raiplayradio.it/";
+	public static final String URL1 = "https://www.raiplayradio.it/programmi/musicalbox/";
+	public static final String URL2 = "https://www.raiplayradio.it/audio";
 	public static final String SOURCE = "musicalbox";
 
 	public static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", 
@@ -32,12 +37,18 @@ public class MusicalboxLoader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		new MusicalboxLoader().loadDocuments();
+		new MusicalboxLoader().crawl(MusicalboxLoader.URL1);
 	}
 
 	public MusicalboxLoader()
 	{
 		super();
+	}
+	
+	@Override
+	public boolean shouldVisit(Page referringPage, WebURL url) 
+	{
+		return url.getURL().toLowerCase().startsWith(URL1) || url.getURL().toLowerCase().startsWith(URL2);
 	}
 
 	@Override

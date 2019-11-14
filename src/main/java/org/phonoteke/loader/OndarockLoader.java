@@ -68,7 +68,7 @@ public class OndarockLoader extends PhonotekeLoader
 		removeLinks(content);
 
 		String review = content.html();
-		if(StringUtils.isBlank(review))
+		if(StringUtils.isBlank(review) || review.trim().length() < 100)
 		{
 			throw new IllegalArgumentException("Empty review!");
 		}
@@ -155,7 +155,7 @@ public class OndarockLoader extends PhonotekeLoader
 		case ALBUM:
 			intestazioneElement = doc.select("div[id=intestazionerec]").first();
 			bandElement = intestazioneElement.select("h1").first();
-			band = bandElement.text().trim();
+			band = bandElement.html().trim();
 			return band;
 		case ARTIST:
 		case CONCERT:
@@ -170,7 +170,7 @@ public class OndarockLoader extends PhonotekeLoader
 				intestazioneElement = doc.select("div[id=intestazione_int]").first();
 			}
 			bandElement = intestazioneElement.select("h2").first();
-			band = bandElement.text().trim();
+			band = bandElement.html().trim();
 			return band;
 		default:
 			return null;
@@ -198,7 +198,7 @@ public class OndarockLoader extends PhonotekeLoader
 		case ALBUM:
 			intestazioneElement = doc.select("div[id=intestazionerec]").first();
 			titleElement = intestazioneElement.select("h2").first();
-			title = titleElement.text().trim();
+			title = titleElement.html().trim();
 			return title;
 		case ARTIST:
 		case CONCERT:
@@ -213,7 +213,7 @@ public class OndarockLoader extends PhonotekeLoader
 				intestazioneElement = doc.select("div[id=intestazione_int]").first();
 			}
 			titleElement = intestazioneElement.select("h3").first();
-			title = titleElement.text().trim();
+			title = titleElement.html().trim();
 			return title;
 		default:
 			return null;

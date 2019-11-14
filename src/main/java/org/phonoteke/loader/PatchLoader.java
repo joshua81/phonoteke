@@ -6,8 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import com.google.api.client.util.Lists;
 import com.mongodb.client.MongoCursor;
@@ -19,7 +17,7 @@ public class PatchLoader extends OndarockLoader
 	
 	public static void main(String[] args) 
 	{
-		new PatchLoader().blankReview();
+//		new PatchLoader().resetArtistAndTitle();
 	}
 	
 	public PatchLoader()
@@ -35,7 +33,7 @@ public class PatchLoader extends OndarockLoader
 			org.bson.Document doc = i.next();
 			String id = doc.getString("id");
 			String review = doc.getString("review");
-			if(StringUtils.isBlank(review))
+			if(StringUtils.isBlank(review) || review.trim().length() < 100)
 			{
 				docs.deleteOne(Filters.eq("id", id));
 				LOGGER.info(id + " is blank");
@@ -104,9 +102,9 @@ public class PatchLoader extends OndarockLoader
 		}
 	}
 	
-//	private void resetDates()
+//	private void resetArtistAndTitle()
 //	{
-//		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", OndarockLoader.SOURCE)).noCursorTimeout(true).iterator();
+//		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("url", "https://www.ondarock.it/recensioni/2016_trentemoller_fixion.htm")).noCursorTimeout(true).iterator();
 //		while(i.hasNext())
 //		{
 //			org.bson.Document doc = i.next();
@@ -115,10 +113,10 @@ public class PatchLoader extends OndarockLoader
 //			
 //			org.bson.Document page = pages.find(Filters.eq("url", url)).noCursorTimeout(true).iterator().tryNext();
 //			Document html = Jsoup.parse(page.getString("page"));
-//			doc.append("date", getDate(url, html));
-//			doc.append("year", getYear(url, html));
-//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-//			LOGGER.info(id + " data set");
+//			doc.append("artist", getArtist(url, html));
+//			doc.append("title", getTitle(url, html));
+////			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+//			LOGGER.info(id + " Artist and Title set");
 //		}
 //	}
 	

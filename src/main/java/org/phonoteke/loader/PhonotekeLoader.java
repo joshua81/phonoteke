@@ -1,15 +1,20 @@
 package org.phonoteke.loader;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
+import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -20,12 +25,16 @@ import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
+import edu.uci.ics.crawler4j.crawler.exceptions.ParseException;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import edu.uci.ics.crawler4j.parser.Parser;
+import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
+import edu.uci.ics.crawler4j.url.WebURL;
 
-public class PhonotekeLoader extends WebCrawler
+public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
@@ -45,15 +54,6 @@ public class PhonotekeLoader extends WebCrawler
 		CONCERT,
 		INTERVIEW,
 		UNKNOWN
-	}
-
-	public static void main(String[] args) 
-	{
-		new OndarockLoader().crawl(OndarockLoader.URL);
-		new MusicalboxLoader().crawl(MusicalboxLoader.URL1);
-		new YoutubeLoader().loadTracks();
-		new SpotifyLoader().load();
-		new MusicbrainzLoader().loadMBIDs();
 	}
 
 	public PhonotekeLoader()
@@ -80,7 +80,7 @@ public class PhonotekeLoader extends WebCrawler
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-			CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);
 			controller.start(getClass(), NUMBER_OF_CRAWLERS);
 		} 
@@ -101,7 +101,7 @@ public class PhonotekeLoader extends WebCrawler
 			String url = page.getWebURL().getURL();
 			String source = getSource();
 			TYPE type = getType(url);
-			
+
 			if(!url.endsWith(".htm") && !url.endsWith(".html") && !TYPE.UNKNOWN.equals(type))
 			{
 				return;
@@ -109,16 +109,25 @@ public class PhonotekeLoader extends WebCrawler
 
 			try
 			{
-				if(!docs.find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("url", url))).iterator().hasNext())
+				LOGGER.debug("Parsing page " + url);
+				String id = getId(url);
+				Document doc = Jsoup.parse(html);
+				String artist = getArtist(url, doc);
+				String title = getTitle(url, doc);
+
+				// TODO: remove after patch
+				org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
+						Filters.eq("url", url))).iterator().tryNext();
+				if(json != null)
 				{
-					LOGGER.debug("Parsing page " + url);
-					String id = getId(url);
-					Document doc = Jsoup.parse(html);
-					String artist = getArtist(url, doc);
-					String title = getTitle(url, doc);
-					
-					org.bson.Document json = null;
+					json.	append("artist", artist).
+					append("title", title).
+					append("review", getReview(url, doc));
+					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", json));
+					LOGGER.info(json.getString("type").toUpperCase() + " " + url + " updated");
+				}
+				else
+				{
 					switch(type)
 					{
 					case ALBUM:
@@ -325,5 +334,53 @@ public class PhonotekeLoader extends WebCrawler
 
 	protected String getAudio(String url, Document doc) {
 		return null;
+	}
+
+	private class PhonotekeParser extends Parser {
+		public PhonotekeParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {
+			super(config, new PhonotekeHtmlParser(config));
+		}
+	}
+
+	private class PhonotekeHtmlParser extends TikaHtmlParser {
+		public PhonotekeHtmlParser(CrawlConfig config) throws InstantiationException, IllegalAccessException {
+			super(config);
+		}
+
+		public HtmlParseData parse(Page page, String contextURL) throws ParseException {
+			try {
+				Document doc = Jsoup.parse(new URL(contextURL), 10000);
+				HtmlParseData parsedData = new HtmlParseData();
+				parsedData.setContentCharset("UTF-8");
+				parsedData.setHtml(doc.html());
+				parsedData.setText(doc.html());
+				parsedData.setTitle(doc.title());
+				parsedData.setOutgoingUrls(getOutgoingUrls(doc));
+				parsedData.setMetaTags(Maps.newHashMap());
+				return parsedData;
+			} catch (IOException e) {
+				LOGGER.error("Error parsing page " + contextURL + ": " + e.getMessage(), e);
+				throw new ParseException();
+			}
+		}
+
+		private Set<WebURL> getOutgoingUrls(Document doc) {
+			Set<WebURL> urls = new HashSet<>();
+			Elements elements = doc.select("a[href]");
+			for(int i = 0; i < elements.size(); i++)
+			{
+				String link = getUrl(elements.get(i).attr("href"));
+				if(link.startsWith(getBaseUrl()))
+				{
+					WebURL webURL = new WebURL();
+					webURL.setURL(link);
+//					webURL.setTag(urlAnchorPair.getTag());
+//					webURL.setAnchor(urlAnchorPair.getAnchor());
+//					webURL.setAttributes(urlAnchorPair.getAttributes());
+					urls.add(webURL);
+				}
+			}
+			return urls;
+		}
 	}
 }

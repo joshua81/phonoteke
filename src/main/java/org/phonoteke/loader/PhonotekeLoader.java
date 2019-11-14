@@ -39,7 +39,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	protected static final int NUMBER_OF_CRAWLERS = 1;
+	protected static final int NUMBER_OF_CRAWLERS = 50;
 
 	protected static final String UNKNOWN = "UNKNOWN";
 	protected static final String MONGO_HOST = "localhost";

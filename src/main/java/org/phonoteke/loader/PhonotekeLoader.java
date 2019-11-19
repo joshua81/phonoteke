@@ -39,7 +39,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	protected static final int NUMBER_OF_CRAWLERS = 50;
+	protected static final int NUMBER_OF_CRAWLERS = 20;
 
 	protected static final String UNKNOWN = "UNKNOWN";
 	protected static final String MONGO_HOST = "localhost";
@@ -115,18 +115,9 @@ public abstract class PhonotekeLoader extends WebCrawler
 				String artist = getArtist(url, doc);
 				String title = getTitle(url, doc);
 
-				// TODO: remove after patch
 				org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", url))).iterator().tryNext();
-				if(json != null)
-				{
-					json.	append("artist", artist).
-					append("title", title).
-					append("review", getReview(url, doc));
-					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", json));
-					LOGGER.info(json.getString("type").toUpperCase() + " " + url + " updated");
-				}
-				else
+				if(json == null)
 				{
 					switch(type)
 					{

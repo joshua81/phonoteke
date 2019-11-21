@@ -54,6 +54,13 @@ img.musicalbox {
     height: 30px;
 }
 
+img.babylon {
+    border-radius: 50%;
+    content: url("http://localhost:8180/images/radio2.jpg");
+    width: 30px;
+    height: 30px;
+}
+
 img.spotify {
     border-radius: 50%;
     content: url("http://localhost:8180/images/spotify.png");

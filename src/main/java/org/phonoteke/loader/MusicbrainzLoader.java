@@ -223,6 +223,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	{
 		String id = page.getString("id");
 		String source = page.getString("source");
+		String artist = page.getString("artist");
+		String album = page.getString("title");
 		String artistId = page.getString("artistid");
 		String albumId = page.getString("albumid");
 
@@ -240,18 +242,21 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					if(artistId != null && albumId != null && !UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
 					{
-						track.append("artistid", artistId).append("albumid", albumId);
-						LOGGER.info("MB " + title + ": " + artistId + " - " + albumId);
+						track.append("artistid", artistId).append("albumid", albumId).
+						append("artist", artist).append("album", album);
+						LOGGER.info("MB " + artist + " - " + album + " (" + artistId + ", " + albumId + ")");
 					}
 					else
 					{
 						String tartistId = track.getString("artistid");
+						String tartist = track.getString("artist");
 						String talbumId = track.getString("albumid");
-						if(tartistId == null || talbumId == null)
+						String talbum = track.getString("album");
+						if(tartistId == null || talbumId == null || tartist == null || talbum == null)
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
-							if(title.split("-").length != 2)
+							if(title.split("-").length != 2 && title.split("–").length != 2)
 							{
 								org.bson.Document mbtrack = getRecording(title);
 								if(mbtrack != null && mbtrack.getInteger("count") > 0)
@@ -261,14 +266,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
+										tartist = ids[2];
+										talbum = ids[3];
 									}
 								}
 							}
 							else
 							{
 								// Recording - Artist
-								String recording = title.split("-")[0].trim();
-								String artist = title.split("-")[1].trim();
+								String recording = title.split("-").length == 2 ? title.split("-")[0].trim() : title.split("–")[0].trim();
+								artist = title.split("-").length == 2 ? title.split("-")[1].trim() : title.split("–")[1].trim();
 								org.bson.Document mbtrack = getRecording(artist, recording);
 								if(mbtrack != null && mbtrack.getInteger("count") > 0)
 								{
@@ -277,13 +284,15 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
+										tartist = ids[2];
+										talbum = ids[3];
 									}
 								}
 								// Artist - Recording
 								if(tartistId == null || talbumId == null)
 								{
-									artist = title.split("-")[0].trim();
-									recording = title.split("-")[1].trim();
+									artist = title.split("-").length == 2 ? title.split("-")[0].trim() : title.split("–")[0].trim();
+									recording = title.split("-").length == 2 ? title.split("-")[1].trim() : title.split("–")[1].trim();
 									mbtrack = getRecording(artist, recording);
 									if(mbtrack != null && mbtrack.getInteger("count") > 0)
 									{
@@ -292,17 +301,22 @@ public class MusicbrainzLoader extends PhonotekeLoader
 										{
 											tartistId = ids[0];
 											talbumId = ids[1];
+											tartist = ids[2];
+											talbum = ids[3];
 										}
 									}
 								}
 							}
-							if(tartistId == null || talbumId == null)
+							if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
 							{
 								tartistId = UNKNOWN;
 								talbumId = UNKNOWN;
+								tartist = UNKNOWN;
+								talbum = UNKNOWN;
 							}
-							track.append("artistid", tartistId).append("albumid", talbumId);
-							LOGGER.info("MB " + title + ": " + tartistId + " - " + talbumId);
+							track.append("artistid", tartistId).append("albumid", talbumId).
+							append("artist", tartist).append("album", talbum);
+							LOGGER.info("MB " + tartist + " - " + talbum + " (" + tartistId + ", " + talbumId + ")");
 						}
 					}
 				}
@@ -362,12 +376,12 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					if(scoreArtist > THRESHOLD && scoreTitle > THRESHOLD)
 					{
-						scores.put(scoreArtist + scoreTitle, new String[] {artistId, recordingId});
+						scores.put(scoreArtist + scoreTitle, new String[] {artistId, recordingId, mbartist, mbtitle});
 						break;
 					}
 					else if(scoreTitle == 100 && !scores.containsKey(100))
 					{
-						scores.put(100, new String[] {artistId, recordingId});
+						scores.put(100, new String[] {artistId, recordingId, mbartist, mbtitle});
 					}
 				}
 			}

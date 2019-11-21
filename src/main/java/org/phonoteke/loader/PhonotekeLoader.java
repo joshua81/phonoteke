@@ -122,7 +122,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 					switch(type)
 					{
 					case ALBUM:
-						if(source.equals(MusicalboxLoader.SOURCE) || !docs.find(Filters.and(Filters.eq("source", source),
+						if(!source.equals(OndarockLoader.SOURCE) || !docs.find(Filters.and(Filters.eq("source", source),
 								Filters.eq("type", type.name().toLowerCase()),
 								Filters.eq("artist", artist),
 								Filters.eq("title", title))).iterator().hasNext())
@@ -340,7 +340,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 		public HtmlParseData parse(Page page, String contextURL) throws ParseException {
 			try {
-				Document doc = Jsoup.parse(new URL(contextURL), 10000);
+				Document doc = Jsoup.parse(new URL(contextURL), 60000);
 				HtmlParseData parsedData = new HtmlParseData();
 				parsedData.setContentCharset("UTF-8");
 				parsedData.setHtml(doc.html());

@@ -104,8 +104,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String artistId = page.getString("artistid");
 		String title = page.getString("title");
 		String albumId = page.getString("albumid");
+		String source = page.getString("source");
 
-		if(artistId == null || albumId == null)
+		if(OndarockLoader.SOURCE.equals(source) && (artistId == null || albumId == null))
 		{
 			LOGGER.info("MB Loading Album " + id);
 			org.bson.Document mbalbum = getAlbum(artist, title);
@@ -254,7 +255,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						String tartist = track.getString("artist");
 						String talbumId = track.getString("albumid");
 						String talbum = track.getString("album");
-						if(tartistId == null || talbumId == null || tartist == null || talbum == null)
+						if(tartistId == null || talbumId == null)// || tartist == null || talbum == null)
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator

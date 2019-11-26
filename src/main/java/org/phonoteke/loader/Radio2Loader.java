@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,41 +13,70 @@ import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
 
 import com.google.common.collect.Lists;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class MusicalboxLoader extends PhonotekeLoader
+public class Radio2Loader extends PhonotekeLoader
 {
-	public static final String URL = "https://www.raiplayradio.it/";
-	public static final String URL1 = "https://www.raiplayradio.it/programmi/musicalbox/";
-	public static final String URL2 = "https://www.raiplayradio.it/audio";
-	public static final String SOURCE = "musicalbox";
+	private static final String URL = "https://www.raiplayradio.it/";
+	private static final String BABYLON = "https://www.raiplayradio.it/programmi/babylon/";
+	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
+	private static final List<String> URLS = Lists.newArrayList(
+			BABYLON, MUSICALBOX, 
+			"https://www.raiplayradio.it/audio");
+	private static final String NEW_LINE = "-NL-";
 
-	public static final List<String> ERRORS = Lists.newArrayList("An internal error occurred", 
-			"[an error occurred while processing this directive]", 
-			"PLAY:", "PLAY",
-			"TRACKLIST:", "TRACKLIST");
-	private static final String ARTIST = "Musicalbox";
+	public static final List<String> PLAYLIST = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
+
+	private static String artist;
+	private static String source;
 
 
 	public static void main(String[] args) 
 	{
-		new MusicalboxLoader().crawl(MusicalboxLoader.URL1);
+		//		new Radio2Loader("Babylon", "babylon").crawl("https://www.raiplayradio.it/audio/2019/05/BABYLON-7e9a3bbb-70b2-4962-be66-7638155d4699.html");
+		//		new Radio2Loader("Musicalbox", "musicalbox").crawl("https://www.raiplayradio.it/audio/2018/05/MUSICAL-BOX-2bff934c-70ee-4c04-bc80-566ab8956250.html");
+		//		new Radio2Loader("Babylon", "babylon").crawl(BABYLON);
+		//		new Radio2Loader().crawl(MUSICALBOX, "Musicalbox", "musicalbox");
+		if(args.length == 1)
+		{
+			if("babylon".equals(args[0]))
+			{
+				new Radio2Loader("Babylon", "babylon").crawl(BABYLON);
+			}
+			else if("musicalbox".equals(args[0]))
+			{
+				new Radio2Loader("Musicalbox", "musicalbox").crawl(MUSICALBOX);
+			}
+		}
 	}
 
-	public MusicalboxLoader()
+	public Radio2Loader()
+	{
+		// default constructor
+	}
+
+	public Radio2Loader(String artist, String source)
 	{
 		super();
+		Radio2Loader.artist = artist;
+		Radio2Loader.source = source;
 	}
-	
+
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		return url.getURL().toLowerCase().startsWith(URL1) || url.getURL().toLowerCase().startsWith(URL2);
+		for(String u : URLS)
+		{
+			if(url.getURL().toLowerCase().startsWith(u))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -60,13 +88,13 @@ public class MusicalboxLoader extends PhonotekeLoader
 	@Override
 	protected String getSource() 
 	{
-		return SOURCE;
+		return source;
 	}
 
 	@Override
 	protected String getArtist(String url, Document doc) 
 	{
-		return ARTIST;
+		return artist;
 	}
 
 	@Override
@@ -152,44 +180,22 @@ public class MusicalboxLoader extends PhonotekeLoader
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		Element content = doc.select("div.aodHtmlDescription").first();
-		if(content != null && content.children() != null)
+		if(content != null)
 		{
-			Iterator<Element> i = content.children().iterator();
-			while(i.hasNext())
+			content.select("br").after(NEW_LINE);
+			content.select("p").after(NEW_LINE);
+			content.select("li").after(NEW_LINE);
+			String[] chunks = content.text().split(NEW_LINE);
+			for(int i = 0; i < chunks.length; i++)
 			{
-				String title = i.next().text().trim();
+				String title = chunks[i].trim();
 				if(StringUtils.isNotBlank(title))
 				{
-					for(String error : ERRORS)
+					for(String p : PLAYLIST)
 					{
-						if(title.startsWith(error))
+						if(title.toUpperCase().startsWith(p))
 						{
-							title = title.substring(error.length()).trim();
-							break;
-						}
-					}
-				}
-				if(StringUtils.isNotBlank(title))
-				{
-					String youtube = null;
-					tracks.add(newTrack(title, youtube));
-					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
-				}
-			}
-		}
-		if(content != null && content.textNodes() != null)
-		{
-			Iterator<TextNode> i = content.textNodes().iterator();
-			while(i.hasNext())
-			{
-				String title = i.next().text().trim();
-				if(StringUtils.isNotBlank(title))
-				{
-					for(String error : ERRORS)
-					{
-						if(title.startsWith(error))
-						{
-							title = title.substring(error.length()).trim();
+							title = title.substring(p.length()).trim();
 							break;
 						}
 					}

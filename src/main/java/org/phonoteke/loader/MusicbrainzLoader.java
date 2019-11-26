@@ -13,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.api.client.util.Maps;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -24,13 +26,13 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
 
+	private static final List<String> SEPARATOR = Lists.newArrayList("-", "–");
 	private static final int SLEEP_TIME = 2000;
 	private static final int THRESHOLD = 90;
 
 
 	public static void main(String[] args)
 	{
-		//		new MusicbrainzLoader().loadMBIDs("");
 		new MusicbrainzLoader().loadMBIDs();
 	}
 
@@ -256,7 +258,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
-							if(title.split("-").length != 2 && title.split("–").length != 2)
+							if(!isChunkTitle(title))
 							{
 								org.bson.Document mbtrack = getRecording(title);
 								if(mbtrack != null && mbtrack.getInteger("count") > 0)
@@ -274,8 +276,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 							else
 							{
 								// Recording - Artist
-								String recording = title.split("-").length == 2 ? title.split("-")[0].trim() : title.split("–")[0].trim();
-								artist = title.split("-").length == 2 ? title.split("-")[1].trim() : title.split("–")[1].trim();
+								String recording = getTitleChunk(title, 0);
+								artist = getTitleChunk(title, 1);
 								org.bson.Document mbtrack = getRecording(artist, recording);
 								if(mbtrack != null && mbtrack.getInteger("count") > 0)
 								{
@@ -291,8 +293,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 								// Artist - Recording
 								if(tartistId == null || talbumId == null)
 								{
-									artist = title.split("-").length == 2 ? title.split("-")[0].trim() : title.split("–")[0].trim();
-									recording = title.split("-").length == 2 ? title.split("-")[1].trim() : title.split("–")[1].trim();
+									artist = getTitleChunk(title, 0);
+									recording = getTitleChunk(title, 1);
 									mbtrack = getRecording(artist, recording);
 									if(mbtrack != null && mbtrack.getInteger("count") > 0)
 									{
@@ -328,6 +330,35 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			t.printStackTrace();
 			LOGGER.error("Track Musicbrainz: " + id, t);
 		}
+	}
+
+	private boolean isChunkTitle(String title)
+	{
+		Preconditions.checkNotNull(title);
+
+		for(String s : SEPARATOR)
+		{
+			if(title.split(s).length == 2)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String getTitleChunk(String title, int i)
+	{
+		Preconditions.checkNotNull(title);
+		Preconditions.checkArgument(i == 0 || i == 1);
+
+		for(String s : SEPARATOR)
+		{
+			if(title.split(s).length == 2)
+			{
+				return title.split(s)[i];
+			}
+		}
+		return null;
 	}
 
 	private String[] getAlbumId(String title, org.bson.Document album)

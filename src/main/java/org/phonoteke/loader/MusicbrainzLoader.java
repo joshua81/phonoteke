@@ -245,17 +245,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					if(artistId != null && albumId != null && !UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
 					{
-						track.append("artistid", artistId).append("albumid", albumId).
-						append("artist", artist).append("album", album);
+						track.append("artistid", artistId).append("albumid", albumId);
 						LOGGER.info("MB " + artist + " - " + album + " (" + artistId + ", " + albumId + ")");
 					}
 					else
 					{
 						String tartistId = track.getString("artistid");
-						String tartist = track.getString("artist");
 						String talbumId = track.getString("albumid");
-						String talbum = track.getString("album");
-						if(tartistId == null || talbumId == null)// || tartist == null || talbum == null)
+						if(tartistId == null || talbumId == null)
 						{
 							LOGGER.info("MB Loading Track: " + title);
 							// no Artist - Recording separator
@@ -269,8 +266,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
-										tartist = ids[2];
-										talbum = ids[3];
 									}
 								}
 							}
@@ -287,8 +282,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 									{
 										tartistId = ids[0];
 										talbumId = ids[1];
-										tartist = ids[2];
-										talbum = ids[3];
 									}
 								}
 								// Artist - Recording
@@ -304,8 +297,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 										{
 											tartistId = ids[0];
 											talbumId = ids[1];
-											tartist = ids[2];
-											talbum = ids[3];
 										}
 									}
 								}
@@ -314,12 +305,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 							{
 								tartistId = UNKNOWN;
 								talbumId = UNKNOWN;
-								tartist = UNKNOWN;
-								talbum = UNKNOWN;
 							}
-							track.append("artistid", tartistId).append("albumid", talbumId).
-							append("artist", tartist).append("album", talbum);
-							LOGGER.info("MB " + tartist + " - " + talbum + " (" + tartistId + ", " + talbumId + ")");
+							track.append("artistid", tartistId).append("albumid", talbumId);
+							LOGGER.info("MB " + title + " (" + tartistId + ", " + talbumId + ")");
 						}
 					}
 				}

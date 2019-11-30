@@ -2,10 +2,6 @@ html, body {
     height: 100%;
 }
 
-.container-fluid {
-    min-height: 100%;
-}
-
 a {
     cursor: pointer;
     color: white;
@@ -180,5 +176,16 @@ img.songkick {
     max-height: 600px;
     z-index: 40;
     background: white;
+}
+
+.container-fluid {
+    min-height: 100%;
+}
+
+.list-group-item {
+    background-color: transparent;
+    border: 0 none;
+    color: white;
+    cursor: pointer;
 }
 

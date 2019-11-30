@@ -1,9 +1,13 @@
 package org.phonoteke.loader;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
@@ -13,9 +17,11 @@ import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Paging;
+import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
+import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
@@ -30,6 +36,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			.build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 
+	private static final List<String> SEPARATOR = Lists.newArrayList("-", "–");
 	private static final int SLEEP_TIME = 2000;
 	private static final int THRESHOLD = 90;
 
@@ -45,9 +52,11 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		super();
 	}
-	
+
 	public void load()
 	{
+		loadTracks("musicalbox");
+		loadTracks("babylon");
 		loadAlbums();
 		loadArtists();
 	}
@@ -57,7 +66,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		credentials = null;
 		login();
 	}
-	
+
 	private void login()
 	{
 		try 
@@ -203,6 +212,107 @@ public class SpotifyLoader extends PhonotekeLoader
 		catch (Exception e) 
 		{
 			LOGGER.error("Error loading " + artist + ": " + e.getMessage(), e);
+			relogin();
+		}
+		return null;
+	}
+
+	private void loadTracks(String source)
+	{
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("source", source), Filters.eq("tracks.sptrackid", null))).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String title = track.getString("title");
+					LOGGER.info("SPTF Loading track " + title);
+					Document spotify = getTrack(title);
+					if(spotify != null)
+					{
+						String trackId = spotify.getString("sptrackid");
+						LOGGER.info("SPTF " + title + ": " + trackId);
+
+						track.append("sptrackid", trackId).
+						append("coverL", spotify.getString("coverL")).
+						append("coverM", spotify.getString("coverM")).
+						append("coverS", spotify.getString("coverS"));
+					}
+					else
+					{
+						track.append("sptrackid", UNKNOWN);
+					}
+				}
+			}
+			//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+		}
+	}
+
+	private Document getTrack(String title)
+	{
+		try
+		{
+			login();
+			for(String s : SEPARATOR)
+			{
+				if(title.split(s).length == 2)
+				{
+					// artist - song
+					String artist = title.split(s)[0];
+					String song = title.split(s)[1];
+					String q = "artist:" + artist + " track: " + song;
+					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
+					Paging<Track> tracks = request.execute();
+					for(int i = 0; i < tracks.getItems().length; i++)
+					{
+						Track track = tracks.getItems()[i];
+						String spartist = track.getArtists()[0].getName();
+						String spsong = track.getName();
+						String trackid = track.getId();
+						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+						if(score > THRESHOLD)
+						{
+							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
+							return new Document("sptrackid", trackid).
+									append("coverL", track.getAlbum().getImages()[0].getUrl()).
+									append("coverM", track.getAlbum().getImages()[1].getUrl()).
+									append("coverS", track.getAlbum().getImages()[2].getUrl());
+						}
+					}
+
+					// song - artist
+					artist = title.split(s)[1];
+					song = title.split(s)[0];
+					q = "artist:" + artist + " track: " + song;
+					request = SPOTIFY_API.searchTracks(q).build();
+					tracks = request.execute();
+					for(int i = 0; i < tracks.getItems().length; i++)
+					{
+						Track track = tracks.getItems()[i];
+						String spartist = track.getArtists()[0].getName();
+						String spsong = track.getName();
+						String trackid = track.getId();
+						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+						if(score > THRESHOLD)
+						{
+							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
+							return new Document("sptrackid", trackid).
+									append("coverL", track.getAlbum().getImages()[0].getUrl()).
+									append("coverM", track.getAlbum().getImages()[1].getUrl()).
+									append("coverS", track.getAlbum().getImages()[2].getUrl());
+						}
+					}
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
 			relogin();
 		}
 		return null;

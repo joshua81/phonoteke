@@ -71,6 +71,13 @@ img.songkick {
     height: 30px;
 }
 
+img.youtube {
+    border-radius: 50%;
+    content: url("http://localhost:8180/images/youtube.png");
+    width: 30px;
+    height: 30px;
+}
+
 .play {
     display: inline-block;
     mask: url("http://localhost:8180/images/play.svg");
@@ -104,15 +111,6 @@ img.songkick {
     width: 20px;
     height: 20px;
     background: #FFFFFF;
-    cursor: pointer;
-}
-
-.youtube {
-    display: inline-block;
-    mask: url("http://localhost:8180/images/youtube.svg");
-    width: 30px;
-    height: 30px;
-    background: #FF0000;
     cursor: pointer;
 }
 

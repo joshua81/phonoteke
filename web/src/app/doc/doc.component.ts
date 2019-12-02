@@ -45,8 +45,8 @@ export class DocComponent implements OnInit {
   }
 
   loadLinks(id: string) {
-    this.links.splice(0, this.links.length);
     if(typeof(id) != 'undefined' && id != null){
+      this.links.splice(0, this.links.length);
       console.log(this.service.server + '/api/artists/' + id + '/links');
       this.http.get(this.service.server + '/api/artists/' + id + '/links').subscribe(
         (data: any) => this.setLinks(data),

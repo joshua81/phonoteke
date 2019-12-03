@@ -1,13 +1,11 @@
 div.track {
   cursor: pointer;
-  max-width: 600px;
-  min-width: 400px;
+  width: 600px;
 }
 
 div.link {
   cursor: pointer;
-  max-width: 600px;
-  min-width: 400px;
+  width: 600px;
 }
 
 div.vote {
@@ -22,7 +20,7 @@ div.vote {
   padding-top: 5px;
 
   position: absolute;
-  left: 270px;
+  left: 260px;
   top: 10px;
   z-index: 20;
 }
@@ -46,10 +44,6 @@ img.cover {
   border-width: 1px;
   border-color: white;
   object-fit:cover;
-
-  opacity: 1;
-  transition: .5s ease;
-  backface-visibility: hidden;
 }
 
 img.link {

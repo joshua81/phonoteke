@@ -1,7 +1,7 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5">
   <div class="row pt-2">
-    <div class="col-auto cover">
+    <div class="col-auto cover p-0">
       <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
       <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
@@ -26,9 +26,9 @@
   </div>
 
   <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
-    <div class="list-group">
-      <div *ngFor="let track of doc.tracks" class="list-group-item pl-0 pr-0">
-        <div class="track d-flex align-items-center" (click)="loadLinks(track.artistid)">
+    <div class="track list-group">
+      <div *ngFor="let track of doc.tracks" class="w-100 list-group-item">
+        <div class="w-100 d-flex" (click)="loadLinks(track.artistid)">
           <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
@@ -45,9 +45,9 @@
   </div>
 
   <div *ngIf="links && links.length != 0" class="row justify-content-center">
-    <div class="list-group">
-      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="list-group-item pl-0 pr-0">
-        <div class="link d-flex align-items-center">
+    <div class="link list-group">
+      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 list-group-item">
+        <div class="w-100 d-flex align-items-center">
           <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
           <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
           <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">

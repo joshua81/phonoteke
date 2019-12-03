@@ -5,6 +5,12 @@ html, body {
 a {
     cursor: pointer;
     color: white;
+    text-decoration: none !important;
+}
+a:hover {
+    cursor: pointer;
+    color: white;
+    text-decoration: none !important;
 }
   
 h1 {

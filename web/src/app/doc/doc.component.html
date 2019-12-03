@@ -47,7 +47,7 @@
   <div *ngIf="links && links.length != 0" class="row justify-content-center">
     <div class="link list-group">
       <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 list-group-item">
-        <div class="w-100 d-flex align-items-center">
+        <div class="w-100 d-flex">
           <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
           <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
           <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">

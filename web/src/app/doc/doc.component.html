@@ -1,7 +1,7 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5">
   <div class="row pt-2">
-    <div class="col-auto cover p-0">
+    <div class="col-auto cover pl-0 pr-2">
       <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
       <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
@@ -10,10 +10,10 @@
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
     </div>
 
-    <div class="col-auto text-white">
-      <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
-      <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
-      <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>
+    <div class="col-auto text-white pl-0 pr-0 pt-3">
+      <h1 *ngIf="doc.type != 'artist'">{{doc.title}}</h1>
+      <h2 *ngIf="doc.type != 'artist'">{{doc.artist}}</h2>
+      <h1 *ngIf="doc.type == 'artist'">{{doc.artist}}</h1>
       <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
       <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
     </div>
@@ -27,9 +27,9 @@
 
   <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
     <div class="track list-group">
-      <div *ngFor="let track of doc.tracks" class="w-100 list-group-item">
-        <div class="w-100 d-flex" (click)="loadLinks(track.artistid)">
-          <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
+      <div *ngFor="let track of doc.tracks" class="list-group-item">
+        <div class="d-flex" (click)="loadLinks(track.artistid)">
+          <div class="w-100">{{track.title}}</div>
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
           </a>
@@ -47,18 +47,18 @@
   <div *ngIf="links && links.length != 0" class="row justify-content-center">
     <div class="link list-group">
       <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 list-group-item">
-        <div class="w-100 d-flex">
+        <div class="d-flex">
           <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
           <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
-          <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">
+          <div *ngIf="link.type == 'album'" class="pl-2 w-100">
             <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
             <div>{{link.artist}}</div>
           </div>
-          <div *ngIf="link.type == 'concert' || link.type == 'interview'" class="pl-2 text-truncate">
+          <div *ngIf="link.type == 'concert' || link.type == 'interview'" class="pl-2">
             <div class="font-weight-bold">{{link.title}}</div>
             <div>{{link.artist}}</div>
           </div>
-          <div *ngIf="link.type == 'artist'" class="pl-2 text-truncate">
+          <div *ngIf="link.type == 'artist'" class="pl-2">
             <div class="font-weight-bold">{{link.artist}}</div>
           </div>
           <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="votelink">

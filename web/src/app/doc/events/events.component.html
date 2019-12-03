@@ -3,7 +3,7 @@
         <div class="list-group">
             <div *ngFor="let event of events" class="p-2 list-group-item">
                 <div class="d-flex align-items-center">
-                    <div class="w-100 text-truncate">
+                    <div class="w-100">
                         <div class="font-weight-bold">{{event.start.date}} {{event.location.city}}</div>
                         <div>{{event.venue.displayName}}</div>
                     </div>
@@ -14,7 +14,9 @@
             </div>
         </div>
     </div>
-    <div *ngIf="events && events.length == 0" class="align-self-center overflow-auto alert-box">
-         <p class="font-weight-bold text-white">No upcoming events</p>
+    <div *ngIf="events && events.length == 0" class="align-self-center overflow-auto modal-box">
+        <div class="d-flex justify-content-center align-middle">
+            <p class="font-weight-bold text-white pt-2">No upcoming events</p>
+        </div>
     </div>
 </div>

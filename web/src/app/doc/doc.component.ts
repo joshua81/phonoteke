@@ -36,7 +36,6 @@ export class DocComponent implements OnInit {
   }
 
   loadEvents(id: string) {
-    this.events.splice(0, this.events.length);
     console.log(this.service.server + '/api/artists/' + id + '/events');
     this.showEvents = true;
     this.http.get(this.service.server + '/api/artists/' + id + '/events').subscribe(
@@ -46,7 +45,6 @@ export class DocComponent implements OnInit {
 
   loadLinks(id: string) {
     if(typeof(id) != 'undefined' && id != null){
-      this.links.splice(0, this.links.length);
       console.log(this.service.server + '/api/artists/' + id + '/links');
       this.http.get(this.service.server + '/api/artists/' + id + '/links').subscribe(
         (data: any) => this.setLinks(data),

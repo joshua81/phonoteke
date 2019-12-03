@@ -1,5 +1,13 @@
 div.track {
   cursor: pointer;
+  max-width: 600px;
+  min-width: 400px;
+}
+
+div.link {
+  cursor: pointer;
+  max-width: 600px;
+  min-width: 400px;
 }
 
 div.vote {

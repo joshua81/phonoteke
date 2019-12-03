@@ -19,22 +19,24 @@
     </div>
   </div>
 
-  <p *ngIf="doc.review" class="pt-3 text-justify text-white" 
-    [innerHTML]="doc.review">
-  </p>
+  <div class="row pt-3">
+    <p *ngIf="doc.review" class="text-justify text-white" 
+      [innerHTML]="doc.review">
+    </p>
+  </div>
 
-  <div *ngIf="doc.tracks && doc.tracks.length != 0" class="pt-3">
+  <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
     <div class="list-group">
-      <div *ngFor="let track of doc.tracks" class="p-2 list-group-item">
+      <div *ngFor="let track of doc.tracks" class="list-group-item pl-0 pr-0">
         <div class="track d-flex align-items-center" (click)="loadLinks(track.artistid)">
           <div class="w-100 text-truncate" [innerHTML]="track.title"></div>
-          <a *ngIf="track.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
+          <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
           </a>
-          <a *ngIf="doc.artistid == null && track.artistid != null" class="pr-2" (click)="loadEvents(track.artistid)">
+          <a *ngIf="doc.artistid == null && track.artistid != null" (click)="loadEvents(track.artistid)" class="pl-2">
             <img class="songkick">
           </a>
-          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="pl-2" target="_blank">
             <img class="youtube">
           </a>
         </div>
@@ -42,10 +44,10 @@
     </div>
   </div>
 
-  <div *ngIf="links && links.length != 0" class="pt-3">
+  <div *ngIf="links && links.length != 0" class="row justify-content-center">
     <div class="list-group">
-      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="p-2 list-group-item">
-        <div class="d-flex align-items-center">
+      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="list-group-item pl-0 pr-0">
+        <div class="link d-flex align-items-center">
           <img *ngIf="link.type == 'album' || link.coverS === undefined" class="link" src="{{link.cover}}">
           <img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}">
           <div *ngIf="link.type == 'album'" class="pl-2 w-100 text-truncate">
@@ -66,7 +68,7 @@
         </div>
       </a>
     </div>
-
-    <app-events *ngIf="showEvents == true" [events]="events"></app-events>
   </div>
+
+  <app-events *ngIf="showEvents == true" [events]="events"></app-events>
 </div>

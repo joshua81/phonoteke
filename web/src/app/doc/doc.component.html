@@ -28,7 +28,7 @@
   <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
     <div class="track list-group">
       <div *ngFor="let track of doc.tracks" class="list-group-item">
-        <div class="d-flex" (click)="loadLinks(track.artistid)">
+        <div class="d-flex">
           <div class="w-100">{{track.title}}</div>
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">

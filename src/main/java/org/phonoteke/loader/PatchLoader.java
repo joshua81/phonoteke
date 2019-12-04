@@ -1,11 +1,9 @@
 package org.phonoteke.loader;
 
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -15,7 +13,7 @@ public class PatchLoader extends OndarockLoader
 
 	public static void main(String[] args) 
 	{
-		new PatchLoader().patchBabylonTracks();
+		new PatchLoader().radio2Authors();
 	}
 
 	public PatchLoader()
@@ -23,39 +21,50 @@ public class PatchLoader extends OndarockLoader
 		super();
 	}
 
-	private void removeBabylon()
+	private void radio2Authors()
 	{
 		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", "babylon")).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document doc = i.next();
 			String id = doc.getString("id");
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info(id + " removed");
-		}
-	}
-
-	private void patchBabylonTracks()
-	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", "babylon")).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document doc = i.next();
-			String id = doc.getString("id");
-
-			doc.append("artistid", null).append("albumid", null);
-			List<org.bson.Document> tracks = doc.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
-			{
-				for(org.bson.Document track : tracks)
-				{
-					track.append("artistid", null).append("albumid", null);
-				}
-			}
+			doc.append("authors", Lists.newArrayList("Carlo Pastore"));
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-			LOGGER.info(id + " tracks patched");
+			LOGGER.info(id + " Babylon authors added");
+		}
+
+		i = docs.find(Filters.eq("source", "musicalbox")).noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document doc = i.next();
+			String id = doc.getString("id");
+			doc.append("authors", Lists.newArrayList("Raffaele Costantino"));
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+			LOGGER.info(id + " Musicalbox authors added");
 		}
 	}
+
+	//	private void patchBabylonTracks()
+	//	{
+	//		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", "babylon")).noCursorTimeout(true).iterator();
+	//		while(i.hasNext())
+	//		{
+	//			org.bson.Document doc = i.next();
+	//			String id = doc.getString("id");
+	//
+	//			doc.append("artistid", null).append("albumid", null);
+	//			List<org.bson.Document> tracks = doc.get("tracks", List.class);
+	//			if(CollectionUtils.isNotEmpty(tracks))
+	//			{
+	//				for(org.bson.Document track : tracks)
+	//				{
+	//					track.append("artistid", null).append("albumid", null);
+	//				}
+	//			}
+	//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+	//			LOGGER.info(id + " tracks patched");
+	//		}
+	//	}
 
 	//	private void blankReview()
 	//	{

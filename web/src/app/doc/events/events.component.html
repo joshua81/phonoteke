@@ -4,7 +4,8 @@
             <div *ngFor="let event of events" class="p-2 list-group-item">
                 <div class="d-flex align-items-center">
                     <div class="w-100">
-                        <div class="font-weight-bold">{{event.start.date}} {{event.location.city}}</div>
+                        <div class="font-weight-bold">{{event.displayName}}</div>
+                        <div>{{event.start.date}} {{event.location.city}}</div>
                         <div>{{event.venue.displayName}}</div>
                     </div>
                     <a href="{{event.uri}}" target="_blank">

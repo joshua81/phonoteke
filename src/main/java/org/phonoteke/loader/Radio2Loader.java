@@ -259,4 +259,10 @@ public class Radio2Loader extends PhonotekeLoader
 		LOGGER.debug("audio: " + audio);
 		return audio;
 	}
+
+	@Override
+	protected List<String> getAuthors(String url, Document doc) 
+	{
+		return Radio2Loader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : Lists.newArrayList("Raffaele Costantino");
+	}
 }

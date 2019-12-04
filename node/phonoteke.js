@@ -36,7 +36,7 @@ const init = async () => {
 		{method:'GET', path:'/api/artists/{id}/events',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getEvents},
-		{method:'GET', path:'/api/artists/{id}/links',
+		{method:'GET', path:'/api/docs/{id}/links',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:getLinks}]);
 	await Server.start();
@@ -143,8 +143,27 @@ async function getLinks(request, h)
 	if(request.params.id)
 	{
 		console.log('Links: id ' + request.params.id);
-		const result = await docs.find({$or: [{'artistid': request.params.id}, {'tracks.artistid': request.params.id}]}).project({review: 0, description: 0, links: 0}).sort({"artistid":1, "year":-1}).toArray();
-		return result;
+		const doc = await docs.find({'id': request.params.id}).toArray();
+		if(doc && doc[0])
+		{
+			var artists = [];
+			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null && doc[0].artistid != 'UNKNOWN') {
+				artists.push(doc[0].artistid);
+			}
+			if(doc[0].type == 'album')
+			{
+				doc[0].tracks.forEach(function(track) {
+					if(typeof(track.artistid) != 'undefined' && track.artistid != null && track.artistid != 'UNKNOWN') {
+						artists.push(track.artistid);
+					}
+				});
+			}
+			var result = await docs.find({$or: [{'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artistid":1, "year":-1}).toArray();
+			result = result.filter(function(value, index, arr){
+				return value.id != doc[0].id;
+			});
+			return result;
+		}
 	}
 	return [];
 }

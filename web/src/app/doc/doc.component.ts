@@ -22,6 +22,7 @@ export class DocComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.docId = params.get('docId');
       this.loadDoc(this.docId);
+      this.loadLinks(this.docId);
     });
   }
 
@@ -29,7 +30,6 @@ export class DocComponent implements OnInit {
     console.log(this.service.server + '/api/docs/' + id);
     this.showEvents = false;
     this.events = [];
-    this.links = [];
     this.http.get(this.service.server + '/api/docs/' + id).subscribe(
       (data: any) => this.setDoc(data[0]),
       error => this.error = error);
@@ -44,12 +44,11 @@ export class DocComponent implements OnInit {
   }
 
   loadLinks(id: string) {
-    if(typeof(id) != 'undefined' && id != null){
-      console.log(this.service.server + '/api/artists/' + id + '/links');
-      this.http.get(this.service.server + '/api/artists/' + id + '/links').subscribe(
-        (data: any) => this.setLinks(data),
-        error => this.error = error);
-    }
+    console.log(this.service.server + '/api/docs/' + id + '/links');
+    this.links = [];
+    this.http.get(this.service.server + '/api/docs/' + id + '/links').subscribe(
+      (data: any) => this.setLinks(data),
+      error => this.error = error);
   }
 
   setDoc(doc: any) {
@@ -82,12 +81,10 @@ export class DocComponent implements OnInit {
 
   setLinks(links: any) {
     this.links.splice(0, this.links.length);
-    if(typeof(links) != 'undefined' && links != null && links.length > 0){
-      this.links.push.apply(this.links, links);
-      var id = this.doc.id;
-      this.links = this.links.filter(function(value, index, arr){
-				return value.id != id;
-			});
-    }
+    this.links.push.apply(this.links, links);
+    var id = this.doc.id;
+    this.links = this.links.filter(function(value, index, arr){
+		  return value.id != id;
+		});
   }
 }

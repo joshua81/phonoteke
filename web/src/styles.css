@@ -49,14 +49,7 @@ img.ondarock {
     height: 30px;
 }
 
-img.musicalbox {
-    border-radius: 50%;
-    content: url("http://localhost:8180/images/radio2.jpg");
-    width: 30px;
-    height: 30px;
-}
-
-img.babylon {
+img.musicalbox, img.inthemix, img.babylon {
     border-radius: 50%;
     content: url("http://localhost:8180/images/radio2.jpg");
     width: 30px;

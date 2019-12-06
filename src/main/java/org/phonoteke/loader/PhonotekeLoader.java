@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
@@ -40,8 +41,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 20;
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\"].{1,100}[‘,’,',\\\"].{0,100}", ".{1,100}[-,–,_].{1,100}");
 
-	protected static final String UNKNOWN = "UNKNOWN";
 	protected static final String MONGO_HOST = "localhost";
 	protected static final int MONGO_PORT = 27017;
 	protected static final String MONGO_DB = "phonoteke";
@@ -245,6 +246,18 @@ public abstract class PhonotekeLoader extends WebCrawler
 			LOGGER.error("Error getUrl() "+ url + ": " + t.getMessage(), t);
 			return null;
 		} 
+	}
+	
+	protected static boolean isTrack(String title)
+	{
+		for(String match : TRACKS_MATCH)
+		{
+			if(title.matches(match))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected static org.bson.Document newTrack(String title, String youtube)

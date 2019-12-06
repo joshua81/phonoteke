@@ -119,11 +119,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					albumId = ids[1];
 				}
 			}
-			if(artistId == null || albumId == null)
-			{
-				artistId = UNKNOWN;
-				albumId = UNKNOWN;
-			}
 			page.append("artistid", artistId).append("albumid", albumId);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("MB " + artist + " - " + title + ": " + artistId + " - " + albumId);
@@ -153,10 +148,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			if(mbartist != null && mbartist.getInteger("count") > 0)
 			{
 				artistId = getArtistId(artist, mbartist);
-			}
-			if(artistId == null)
-			{
-				artistId = UNKNOWN;
 			}
 			page.append("artistid", artistId);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
@@ -243,7 +234,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String title = track.getString("title");
 				if(title != null)
 				{
-					if(artistId != null && albumId != null && !UNKNOWN.equals(artistId) && !UNKNOWN.equals(albumId))
+					if(artistId != null && albumId != null)
 					{
 						track.append("artistid", artistId).append("albumid", albumId);
 						LOGGER.info("MB " + artist + " - " + album + " (" + artistId + ", " + albumId + ")");
@@ -300,11 +291,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 										}
 									}
 								}
-							}
-							if(tartistId == null || talbumId == null || UNKNOWN.equals(tartistId) || UNKNOWN.equals(talbumId))
-							{
-								tartistId = UNKNOWN;
-								talbumId = UNKNOWN;
 							}
 							track.append("artistid", tartistId).append("albumid", talbumId);
 							LOGGER.info("MB " + title + " (" + tartistId + ", " + talbumId + ")");

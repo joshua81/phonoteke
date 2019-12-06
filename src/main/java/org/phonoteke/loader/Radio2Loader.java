@@ -26,9 +26,8 @@ public class Radio2Loader extends PhonotekeLoader
 	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
 	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
 	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, "https://www.raiplayradio.it/audio");
-	private static final String NEW_LINE = "-NL-";
-
-	public static final List<String> PLAYLIST = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
+	private static final String NEW_LINE = "_NEW_LINE_";
+	private static final List<String> TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 
 	private static String artist;
 	private static String source;
@@ -36,7 +35,6 @@ public class Radio2Loader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		//		new Radio2Loader("Inthemix", "inthemix").crawl(INTHEMIX);
 		if(args.length == 1)
 		{
 			if("babylon".equals(args[0]))
@@ -50,6 +48,10 @@ public class Radio2Loader extends PhonotekeLoader
 			else if("inthemix".equals(args[0]))
 			{
 				new Radio2Loader("Inthemix", "inthemix").crawl(INTHEMIX);
+			}
+			else if("test".equals(args[0]))
+			{
+				new Radio2Loader("Musicalbox", "musicalbox").crawl("https://www.raiplayradio.it/audio/2018/03/MUSICAL-BOX-996c7a54-e845-4f4f-a9e1-3dd18379f956.html");
 			}
 		}
 	}
@@ -185,22 +187,21 @@ public class Radio2Loader extends PhonotekeLoader
 			content.select("br").after(NEW_LINE);
 			content.select("p").after(NEW_LINE);
 			content.select("li").after(NEW_LINE);
-			String[] chunks = content.text().split(NEW_LINE);
+			String[] chunks = content.text().replace("||", NEW_LINE).split(NEW_LINE);
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
 				if(StringUtils.isNotBlank(title))
 				{
-					for(String p : PLAYLIST)
+					for(String p : TRIM)
 					{
 						if(title.toUpperCase().startsWith(p))
 						{
 							title = title.substring(p.length()).trim();
-							break;
 						}
 					}
 				}
-				if(StringUtils.isNotBlank(title))
+				if(StringUtils.isNotBlank(title) && isTrack(title))
 				{
 					String youtube = null;
 					tracks.add(newTrack(title, youtube));

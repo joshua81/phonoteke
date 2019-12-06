@@ -109,13 +109,8 @@ public class SpotifyLoader extends PhonotekeLoader
 				append("coverL", spotify.getString("coverL")).
 				append("coverM", spotify.getString("coverM")).
 				append("coverS", spotify.getString("coverS"));
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
-			else
-			{
-				page.append("spartistid", UNKNOWN).
-				append("spalbumid", UNKNOWN);
-			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -177,12 +172,8 @@ public class SpotifyLoader extends PhonotekeLoader
 				append("coverL", spotify.getString("coverL")).
 				append("coverM", spotify.getString("coverM")).
 				append("coverS", spotify.getString("coverS"));
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
-			else
-			{
-				page.append("spartistid", UNKNOWN);
-			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -243,13 +234,9 @@ public class SpotifyLoader extends PhonotekeLoader
 						append("coverM", spotify.getString("coverM")).
 						append("coverS", spotify.getString("coverS"));
 					}
-					else
-					{
-						track.append("sptrackid", UNKNOWN);
-					}
 				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
-			//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 

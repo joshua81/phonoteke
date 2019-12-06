@@ -1,19 +1,22 @@
 package org.phonoteke.loader;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.Lists;
+import com.google.api.client.util.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader extends OndarockLoader
+public class PatchLoader extends Radio2Loader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
 	public static void main(String[] args) 
 	{
-		new PatchLoader().radio2Authors();
+		new PatchLoader().matchingTracks();
 	}
 
 	public PatchLoader()
@@ -21,26 +24,39 @@ public class PatchLoader extends OndarockLoader
 		super();
 	}
 
-	private void radio2Authors()
+	private void matchingTracks()
 	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("source", "babylon")).noCursorTimeout(true).iterator();
+		MongoCursor<org.bson.Document> i = docs.find(Filters.not(Filters.eq("source", "ondarock"))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			org.bson.Document doc = i.next();
 			String id = doc.getString("id");
-			doc.append("authors", Lists.newArrayList("Carlo Pastore"));
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-			LOGGER.info(id + " Babylon authors added");
-		}
-
-		i = docs.find(Filters.eq("source", "musicalbox")).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document doc = i.next();
-			String id = doc.getString("id");
-			doc.append("authors", Lists.newArrayList("Raffaele Costantino"));
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
-			LOGGER.info(id + " Musicalbox authors added");
+			List<org.bson.Document> tracks = doc.get("tracks", List.class);
+			List<org.bson.Document> toremove = Lists.newArrayList();
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String title = track.getString("title");
+					if(!isTrack(title))
+					{
+						//						LOGGER.info(id + ": " + title);
+						toremove.add(track);
+					}
+				}
+				tracks.removeAll(toremove);
+			}
+			if(CollectionUtils.isEmpty(tracks))
+			{
+				docs.deleteOne(Filters.eq("id", id));
+				LOGGER.info(id + ": deleted");
+			}
+			else if(CollectionUtils.isNotEmpty(toremove))
+			{
+				doc.append("tracks", tracks);
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+				LOGGER.info(id + ": tracks removed " + toremove.size());
+			}
 		}
 	}
 

@@ -24,9 +24,8 @@ public class Radio2Loader extends PhonotekeLoader
 	private static final String URL = "https://www.raiplayradio.it/";
 	private static final String BABYLON = "https://www.raiplayradio.it/programmi/babylon/";
 	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
-	private static final List<String> URLS = Lists.newArrayList(
-			BABYLON, MUSICALBOX, 
-			"https://www.raiplayradio.it/audio");
+	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
+	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, "https://www.raiplayradio.it/audio");
 	private static final String NEW_LINE = "-NL-";
 
 	public static final List<String> PLAYLIST = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
@@ -37,10 +36,7 @@ public class Radio2Loader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
-		//		new Radio2Loader("Babylon", "babylon").crawl("https://www.raiplayradio.it/audio/2019/05/BABYLON-7e9a3bbb-70b2-4962-be66-7638155d4699.html");
-		//		new Radio2Loader("Musicalbox", "musicalbox").crawl("https://www.raiplayradio.it/audio/2018/05/MUSICAL-BOX-2bff934c-70ee-4c04-bc80-566ab8956250.html");
-		//		new Radio2Loader("Babylon", "babylon").crawl(BABYLON);
-		//		new Radio2Loader().crawl(MUSICALBOX, "Musicalbox", "musicalbox");
+		//		new Radio2Loader("Inthemix", "inthemix").crawl(INTHEMIX);
 		if(args.length == 1)
 		{
 			if("babylon".equals(args[0]))
@@ -50,6 +46,10 @@ public class Radio2Loader extends PhonotekeLoader
 			else if("musicalbox".equals(args[0]))
 			{
 				new Radio2Loader("Musicalbox", "musicalbox").crawl(MUSICALBOX);
+			}
+			else if("inthemix".equals(args[0]))
+			{
+				new Radio2Loader("Inthemix", "inthemix").crawl(INTHEMIX);
 			}
 		}
 	}
@@ -263,6 +263,8 @@ public class Radio2Loader extends PhonotekeLoader
 	@Override
 	protected List<String> getAuthors(String url, Document doc) 
 	{
-		return Radio2Loader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : Lists.newArrayList("Raffaele Costantino");
+		return Radio2Loader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : 
+			Radio2Loader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
+				Radio2Loader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : null;
 	}
 }

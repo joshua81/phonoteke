@@ -48,15 +48,61 @@ public class PatchLoader extends Radio2Loader
 			}
 			if(CollectionUtils.isEmpty(tracks))
 			{
-				docs.deleteOne(Filters.eq("id", id));
+//				docs.deleteOne(Filters.eq("id", id));
 				LOGGER.info(id + ": deleted");
 			}
 			else if(CollectionUtils.isNotEmpty(toremove))
 			{
-				doc.append("tracks", tracks);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+//				doc.append("tracks", tracks);
+//				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
 				LOGGER.info(id + ": tracks removed " + toremove.size());
 			}
+		}
+	}
+
+	private void unknown()
+	{
+		MongoCursor<org.bson.Document> i = docs.find().noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			org.bson.Document doc = i.next();
+			String id = doc.getString("id");
+			String albumid = doc.getString("albumid");
+			String artistid = doc.getString("artistid");
+			String spalbumid = doc.getString("spalbumid");
+			String spartistid = doc.getString("spartistid");
+			if("UNKNOWN".equals(albumid) || "UNKNOWN".equals(artistid))
+			{
+				LOGGER.info(id + ": UNKNOWN albumid or artistid");
+				doc.append("albumid", null);
+				doc.append("artistid", null);
+			}
+			if("UNKNOWN".equals(spalbumid) || "UNKNOWN".equals(spartistid))
+			{
+				LOGGER.info(id + ": UNKNOWN spalbumid or spartistid");
+				doc.append("spalbumid", null);
+				doc.append("spartistid", null);
+			}
+			List<org.bson.Document> tracks = doc.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					albumid = track.getString("albumid");
+					artistid = track.getString("artistid");
+					track.append("spalbumid", null);
+					track.append("spartistid", null);
+					track.remove("album");
+					track.remove("artist");
+					if("UNKNOWN".equals(albumid) || "UNKNOWN".equals(artistid))
+					{
+						LOGGER.info(id + ": UNKNOWN track albumid or artistid");
+						track.append("albumid", null);
+						track.append("artistid", null);
+					}
+				}
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
 		}
 	}
 

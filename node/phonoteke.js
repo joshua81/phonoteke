@@ -64,33 +64,15 @@ async function getDocs(request, h)
 		if(result.length == 1)
 		{
 			var doc = result[0];
-			if(doc.artistid && doc.artistid == 'UNKNOWN') {
-				doc.artistid = null;
-			}
-			if(doc.albumid && doc.albumid == 'UNKNOWN') {
-				doc.albumid = null;
-			}
-			if(doc.spartistid && doc.spartistid == 'UNKNOWN') {
-				doc.spartistid = null;
-			}
-			if(doc.spalbumid && doc.spalbumid == 'UNKNOWN') {
-				doc.spalbumid = null;
-			}
 			if(doc.type == 'album')
 			{
 				doc.tracks.forEach(function(track) 
 				{
-					if(track.title == null || track.title == 'UNKNOWN') {
+					if(track.title == null) {
 						track.title = 'Unknown title';
 					}
 					if(track.youtube && track.youtube == 'UNKNOWN') {
 						track.youtube = null;
-					}
-					if(track.artistid && track.artistid == 'UNKNOWN') {
-						track.artistid = null;
-					}
-					if(track.albumid && track.albumid == 'UNKNOWN') {
-						track.albumid = null;
 					}
 				});
 			}
@@ -147,13 +129,13 @@ async function getLinks(request, h)
 		if(doc && doc[0])
 		{
 			var artists = [];
-			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null && doc[0].artistid != 'UNKNOWN') {
+			if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null) {
 				artists.push(doc[0].artistid);
 			}
 			if(doc[0].type == 'album')
 			{
 				doc[0].tracks.forEach(function(track) {
-					if(typeof(track.artistid) != 'undefined' && track.artistid != null && track.artistid != 'UNKNOWN') {
+					if(typeof(track.artistid) != 'undefined' && track.artistid != null) {
 						artists.push(track.artistid);
 					}
 				});

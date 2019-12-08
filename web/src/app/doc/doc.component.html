@@ -1,7 +1,7 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5">
   <div class="row pt-2">
-    <div class="col-auto cover pl-0 pr-2">
+    <div class="col-auto cover pl-0 pr-4">
       <img *ngIf="doc.type == 'album' || doc.coverL === undefined" class="cover rounded" src="{{doc.cover}}"/>
       <img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/>
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">

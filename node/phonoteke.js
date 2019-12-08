@@ -11,19 +11,12 @@ const Server = new Hapi.Server({host:'0.0.0.0', port:8180});
 const init = async () => {
 	await Server.register(require('inert'));
 	Server.route([
-		/*{method:'GET', path:'/',
+		{method:'GET', path:'/',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./index.html');}},
-		{method:'GET', path:'/css/{file}',
+		handler:(request, h) => {return h.file('./web/index.html');}},
+		{method:'GET', path:'/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./css/'+request.params.file);}},
-		{method:'GET', path:'/js/{file}',
-		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./js/'+request.params.file);}},
-		{method:'GET', path:'/fonts/{file}',
-		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
-		handler:(request, h) => {return h.file('./fonts/'+request.params.file);}},
-		https://api.songkick.com/api/3.0/artists/mbid:b7539c32-53e7-4908-bda3-81449c367da6/calendar.json?apikey=1hOiIfT9pFTkyVkg*/
+		handler:(request, h) => {return h.file('./web/'+request.params.file);}},
 		{method:'GET', path:'/images/{file}',
 		config: {cors: {origin: ['*'], additionalHeaders: ['cache-control', 'x-requested-with']}},
 		handler:(request, h) => {return h.file('./images/'+request.params.file);}},

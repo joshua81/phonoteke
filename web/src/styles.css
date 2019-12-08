@@ -36,14 +36,14 @@ div.container {
 
 img.musicbrainz {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/musicbrainz.png");
+    content: url("/images/musicbrainz.png");
     width: 30px;
     height: 30px;
 }
 
 img.ondarock {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/ondarock.png");
+    content: url("/images/ondarock.png");
     background: #FFFFFF;
     width: 30px;
     height: 30px;
@@ -51,35 +51,35 @@ img.ondarock {
 
 img.musicalbox, img.inthemix, img.babylon {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/radio2.jpg");
+    content: url("/images/radio2.jpg");
     width: 30px;
     height: 30px;
 }
 
 img.spotify {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/spotify.png");
+    content: url("/images/spotify.png");
     width: 30px;
     height: 30px;
 }
 
 img.songkick {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/songkick.jpg");
+    content: url("/images/songkick.jpg");
     width: 30px;
     height: 30px;
 }
 
 img.youtube {
     border-radius: 50%;
-    content: url("http://localhost:8180/images/youtube.png");
+    content: url("/images/youtube.png");
     width: 30px;
     height: 30px;
 }
 
 .play {
     display: inline-block;
-    mask: url("http://localhost:8180/images/play.svg");
+    mask: url("/images/play.svg");
     width: 25px;
     height: 25px;
     background: #FFFFFF;
@@ -88,7 +88,7 @@ img.youtube {
 
 .pause {
     display: inline-block;
-    mask: url("http://localhost:8180/images/pause.svg");
+    mask: url("/images/pause.svg");
     width: 25px;
     height: 25px;
     background: #FFFFFF;
@@ -97,7 +97,7 @@ img.youtube {
 
 .forward {
     display: inline-block;
-    mask: url("http://localhost:8180/images/forward.svg");
+    mask: url("/images/forward.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -106,7 +106,7 @@ img.youtube {
 
 .backward {
     display: inline-block;
-    mask: url("http://localhost:8180/images/backward.svg");
+    mask: url("/images/backward.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -115,7 +115,7 @@ img.youtube {
 
 .star {
     display: inline-block;
-    mask: url("http://localhost:8180/images/star.svg");
+    mask: url("/images/star.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -123,7 +123,7 @@ img.youtube {
 
 .cc {
     display: inline-block;
-    mask: url("http://localhost:8180/images/cc.svg");
+    mask: url("/images/cc.svg");
     width: 100px;
     height: 20px;
     background: #FFFFFF;
@@ -132,7 +132,7 @@ img.youtube {
 
 .mail {
     display: inline-block;
-    mask: url("http://localhost:8180/images/mail.svg");
+    mask: url("/images/mail.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -141,7 +141,7 @@ img.youtube {
 
 .linkedin {
     display: inline-block;
-    mask: url("http://localhost:8180/images/linkedin.svg");
+    mask: url("/images/linkedin.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -150,7 +150,7 @@ img.youtube {
 
 .github {
     display: inline-block;
-    mask: url("http://localhost:8180/images/github.svg");
+    mask: url("/images/github.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;

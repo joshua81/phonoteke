@@ -27,26 +27,26 @@ export class DocComponent implements OnInit {
   }
 
   loadDoc(id: string) {
-    console.log(this.service.server + '/api/docs/' + id);
+    console.log('/api/docs/' + id);
     this.showEvents = false;
     this.events = [];
-    this.http.get(this.service.server + '/api/docs/' + id).subscribe(
+    this.http.get('/api/docs/' + id).subscribe(
       (data: any) => this.setDoc(data[0]),
       error => this.error = error);
   }
 
   loadEvents(id: string) {
-    console.log(this.service.server + '/api/artists/' + id + '/events');
+    console.log('/api/artists/' + id + '/events');
     this.showEvents = true;
-    this.http.get(this.service.server + '/api/artists/' + id + '/events').subscribe(
+    this.http.get('/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),
       error => this.error = error);
   }
 
   loadLinks(id: string) {
-    console.log(this.service.server + '/api/docs/' + id + '/links');
+    console.log('/api/docs/' + id + '/links');
     this.links = [];
-    this.http.get(this.service.server + '/api/docs/' + id + '/links').subscribe(
+    this.http.get('/api/docs/' + id + '/links').subscribe(
       (data: any) => this.setLinks(data),
       error => this.error = error);
   }

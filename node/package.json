@@ -1,8 +1,8 @@
 {
-  "name": "electron",
+  "name": "Phonoteke",
   "version": "1.0.0",
-  "description": "electron test",
-  "main": "app.js",
+  "description": "Phonoteke",
+  "main": "phonoteke.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

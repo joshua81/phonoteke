@@ -24,6 +24,18 @@ div.vote {
   z-index: 20;
 }
 
+div.player {
+  width: 298px;
+  height: 30px;
+  flex: 0 0 30px;
+  background: rgba(52, 58, 64, 0.75);
+
+  position: absolute;
+  left: 1px;
+  bottom: 5px;
+  z-index: 20;
+}
+
 div.votelink {
   border-radius: 50%;
   width: 30px;

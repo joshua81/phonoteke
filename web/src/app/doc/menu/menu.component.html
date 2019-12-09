@@ -5,24 +5,9 @@
       <img class="cover rounded" src="{{component.doc.cover}}"/>
     </a>
 
-    <div class="pr-2 d-flex flex-row flex-fill align-items-center">
-      <div class="pr-3">
-        <div class="text-white text-truncate p-0 font-weight-bold" [innerHTML]="component.doc.title"></div>
-        <div class="text-white text-truncate p-0" [innerHTML]="component.doc.artist"></div>
-      </div>
-      
-      <div *ngIf="service.audio" class="d-flex flex-row align-items-center">
-        <div (click)="backward($event)">
-          <span class="backward"></span>
-        </div>
-        <div class="pl-2 pr-2" (click)="playPause($event)">
-          <span *ngIf="service.audio.paused" class="play"></span>
-          <span *ngIf="!service.audio.paused" class="pause"></span>
-        </div>
-        <div (click)="forward($event)">
-          <span class="forward"></span>
-        </div>
-      </div>
+    <div class="pr-2 d-flex flex-column flex-fill">
+      <div class="text-white text-truncate p-0 font-weight-bold" [innerHTML]="component.doc.title"></div>
+      <div class="text-white text-truncate p-0" [innerHTML]="component.doc.artist"></div>
     </div>
      
     <a class="pr-2" *ngIf="component.doc.type != 'album' && component.doc.artistid" href="{{'https://musicbrainz.org/artist/' + component.doc.artistid}}" target="_blank">

@@ -15,8 +15,10 @@ import org.apache.logging.log4j.Logger;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
@@ -66,24 +68,27 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public void loadMBIDs()
 	{
-		MongoCursor<org.bson.Document> i = docs.find().noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		for(int p = 0; p < 10; p++)
 		{
-			org.bson.Document page = i.next();
-			switch (TYPE.valueOf(page.getString("type").toUpperCase())) {
-			case ALBUM:
-				loadAlbumMBId(page);
-				loadTracksMBId(page);
-				break;
-			case ARTIST:
-				loadArtistMBId(page);
-				break;
-			case CONCERT:
-			case INTERVIEW:
-				loadArtistMBId(page);
-			default:
-				break;
-			};
+			MongoCursor<org.bson.Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
+			while(i.hasNext())
+			{
+				org.bson.Document page = i.next();
+				switch (TYPE.valueOf(page.getString("type").toUpperCase())) {
+				case ALBUM:
+					loadAlbumMBId(page);
+					loadTracksMBId(page);
+					break;
+				case ARTIST:
+					loadArtistMBId(page);
+					break;
+				case CONCERT:
+				case INTERVIEW:
+					loadArtistMBId(page);
+				default:
+					break;
+				};
+			}
 		}
 	}
 
@@ -108,7 +113,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 		if(OndarockLoader.SOURCE.equals(source) && (artistId == null || albumId == null))
 		{
-			LOGGER.info("MB Loading Album " + id);
+			LOGGER.debug("Loading Album " + id);
 			org.bson.Document mbalbum = getAlbum(artist, title);
 			if(mbalbum != null && mbalbum.getInteger("count") > 0)
 			{
@@ -121,7 +126,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			}
 			page.append("artistid", artistId).append("albumid", albumId);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("MB " + artist + " - " + title + ": " + artistId + " - " + albumId);
+			LOGGER.info(artist + " - " + title + ": " + artistId + " - " + albumId);
 		}
 	}
 
@@ -143,7 +148,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 		if(artistId == null)
 		{
-			LOGGER.info("MB Loading Artist: " + id);
+			LOGGER.debug("Loading Artist: " + id);
 			org.bson.Document mbartist = getArtist(artist);
 			if(mbartist != null && mbartist.getInteger("count") > 0)
 			{
@@ -151,7 +156,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			}
 			page.append("artistid", artistId);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("MB " + artist + ": " + artistId);
+			LOGGER.debug(artist + ": " + artistId);
 		}
 	}
 
@@ -237,7 +242,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					if(artistId != null && albumId != null)
 					{
 						track.append("artistid", artistId).append("albumid", albumId);
-						LOGGER.info("MB " + artist + " - " + album + " (" + artistId + ", " + albumId + ")");
+						LOGGER.info(artist + " - " + album + " (" + artistId + ", " + albumId + ")");
 					}
 					else
 					{
@@ -245,7 +250,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						String talbumId = track.getString("albumid");
 						if(tartistId == null || talbumId == null)
 						{
-							LOGGER.info("MB Loading Track: " + title);
+							LOGGER.debug("Loading Track: " + title);
 							// no Artist - Recording separator
 							if(!isChunkTitle(title))
 							{
@@ -293,7 +298,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 								}
 							}
 							track.append("artistid", tartistId).append("albumid", talbumId);
-							LOGGER.info("MB " + title + " (" + tartistId + ", " + talbumId + ")");
+							LOGGER.info(title + " (" + tartistId + ", " + talbumId + ")");
 						}
 					}
 				}

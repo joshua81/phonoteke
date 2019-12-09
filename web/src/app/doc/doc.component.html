@@ -2,12 +2,28 @@
 <div *ngIf="doc" class="container pt-5 pb-5">
   <div class="row pt-2">
     <div class="col-auto cover pl-0 pr-3">
-      <img class="cover rounded" src="{{doc.cover}}"/>
-      <!--img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/-->
-      <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
-        <span class="star"></span>
+      <!--cover-->
+      <div>
+        <img class="cover rounded" src="{{doc.cover}}"/>
+        <!--img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/-->
+        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+          <span class="star"></span>
+        </div>
+        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
       </div>
-      <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
+      <!--player-->
+      <div *ngIf="service.audio" class="player d-flex flex-row align-items-center justify-content-center">
+        <div (click)="backward($event)">
+          <span class="backward"></span>
+        </div>
+        <div class="pl-2 pr-2" (click)="playPause($event)">
+          <span *ngIf="service.audio.paused" class="play"></span>
+          <span *ngIf="!service.audio.paused" class="pause"></span>
+        </div>
+        <div (click)="forward($event)">
+          <span class="forward"></span>
+        </div>
+      </div>
     </div>
 
     <div class="col-auto text-white pl-0 pr-0 pt-3">

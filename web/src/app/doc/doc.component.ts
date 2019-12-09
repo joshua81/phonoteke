@@ -16,7 +16,7 @@ export class DocComponent implements OnInit {
   events = [];
   links = [];
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private service: AppService) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -86,5 +86,26 @@ export class DocComponent implements OnInit {
     this.links = this.links.filter(function(value, index, arr){
 		  return value.id != id;
 		});
+  }
+
+  playPause(event: Event){
+    if(this.service.audio.paused){
+      this.service.audio.play();
+    }
+    else{
+      this.service.audio.pause();
+    }
+  }
+
+  forward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime += 60.0;
+    }
+  }
+
+  backward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime -= 60.0;
+    }
   }
 }

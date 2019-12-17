@@ -23,7 +23,7 @@ public class YoutubeLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
-	private static final String API_KEY = "AIzaSyDshyjPIgMCMIcwIG2JQfqZ7AR3kfrqHNI";
+	private static final String API_KEY = "AIzaSyAYqrw65aNPioXzxuzlW4qW9j3GiKkqduo";
 	private static final String UNKNOWN = "UNKNOWN";
 	private YouTube youtube;
 
@@ -41,7 +41,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		{
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}
-			}).setApplicationName("Phonoteke").build();
+			}).setApplicationName("humanbeats").build();
 		}
 		catch (Throwable t) 
 		{

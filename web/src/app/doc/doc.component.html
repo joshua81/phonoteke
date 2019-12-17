@@ -45,7 +45,7 @@
     <div class="track list-group">
       <div *ngFor="let track of doc.tracks" class="list-group-item">
         <div class="d-flex">
-          <div class="w-100">{{track.title}}</div>
+          <div class="w-100" [innerHTML]="track.title"></div>
           <a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
           </a>

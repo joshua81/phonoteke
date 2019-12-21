@@ -80,8 +80,8 @@ img.youtube {
 .play {
     display: inline-block;
     mask: url("/images/play.svg");
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -89,8 +89,8 @@ img.youtube {
 .pause {
     display: inline-block;
     mask: url("/images/pause.svg");
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -98,8 +98,8 @@ img.youtube {
 .forward {
     display: inline-block;
     mask: url("/images/forward.svg");
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -107,8 +107,8 @@ img.youtube {
 .backward {
     display: inline-block;
     mask: url("/images/backward.svg");
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -169,8 +169,9 @@ img.youtube {
 }
 
 .modal-box {
-    width: 400px;
-    max-height: 600px;
+    width: 80vw;
+    max-width: 600px;
+    max-height: 80vh;
     z-index: 40;
     background: rgba(52, 58, 64, 1);
     border-style: solid;

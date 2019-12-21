@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -43,10 +44,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final int NUMBER_OF_CRAWLERS = 10;
 	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\"].{1,100}[‘,’,',\\\"].{0,100}", ".{1,100}[-,–,_].{1,100}");
 
-	protected static final String MONGO_HOST = "localhost";
-	protected static final int MONGO_PORT = 27017;
-	protected static final String MONGO_DB = "phonoteke";
-
 	protected MongoCollection<org.bson.Document> docs;
 
 	protected enum TYPE {
@@ -61,7 +58,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 	{
 		try
 		{
-			MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
+			MongoClientURI uri = new MongoClientURI("mongodb://mbeats:PwlVOgNqv36lvVXb@hbeats-shard-00-00-31tc8.gcp.mongodb.net:27017,hbeats-shard-00-01-31tc8.gcp.mongodb.net:27017,hbeats-shard-00-02-31tc8.gcp.mongodb.net:27017/test?ssl=true&replicaSet=HBeats-shard-0&authSource=admin&retryWrites=true&w=majority");
+			MongoDatabase db = new MongoClient(uri).getDatabase("mbeats");
 			docs = db.getCollection("docs");
 		} 
 		catch (Throwable t) 

@@ -34,7 +34,6 @@ export class DocsComponent implements OnInit {
       this.docs.splice(0, this.docs.length);
     }
 
-    console.log('/api/docs?p=' + this.page + '&q=' + this.service.searchText);
     this.http.get('/api/docs?p=' + this.page + '&q=' + this.service.searchText).subscribe(
       (data: any) => this.pageLoaded(data),
       error => this.error = error);

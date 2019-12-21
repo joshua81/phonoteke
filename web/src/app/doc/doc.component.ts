@@ -27,7 +27,6 @@ export class DocComponent implements OnInit {
   }
 
   loadDoc(id: string) {
-    console.log('/api/docs/' + id);
     this.showEvents = false;
     this.events = [];
     this.http.get('/api/docs/' + id).subscribe(
@@ -36,7 +35,6 @@ export class DocComponent implements OnInit {
   }
 
   loadEvents(id: string) {
-    console.log('/api/artists/' + id + '/events');
     this.showEvents = true;
     this.http.get('/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),
@@ -44,7 +42,6 @@ export class DocComponent implements OnInit {
   }
 
   loadLinks(id: string) {
-    console.log('/api/docs/' + id + '/links');
     this.links = [];
     this.http.get('/api/docs/' + id + '/links').subscribe(
       (data: any) => this.setLinks(data),

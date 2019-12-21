@@ -4,11 +4,20 @@ const express = require('express');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 const Https = require('https');
+const PORT = process.env.PORT || 8080;
 
 var docs = null;
-MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
+/*MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
 	console.log("Successfully Connected to MongoDB");
 	docs = db.db('phonoteke').collection('docs');
+});*/
+const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+db.connect(err => {
+  docs = db.db("mbeats").collection("docs");
+  // perform actions on the collection object
+  //db.close();
+  console.log("Successfully Connected to MongoDB");
 });
 
 app.use('/images', express.static('images'));
@@ -94,10 +103,9 @@ app.get('/api/artists/:id/events', async(req, res)=>{
 	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
 
-const PORT = process.env.PORT || 8180;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
-  console.log('Press Ctrl+C to quit.');
+  //console.log('Press Ctrl+C to quit.');
 });
 module.exports = app;
 

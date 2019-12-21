@@ -26,13 +26,13 @@ div.vote {
 
 div.player {
   width: 298px;
-  height: 30px;
+  height: 50px;
   flex: 0 0 30px;
   background: rgba(52, 58, 64, 0.75);
 
   position: absolute;
   left: 1px;
-  bottom: 5px;
+  bottom: 1px;
   z-index: 20;
 }
 

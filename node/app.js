@@ -7,16 +7,11 @@ const Https = require('https');
 const PORT = process.env.PORT || 8080;
 
 var docs = null;
-/*MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
-	console.log("Successfully Connected to MongoDB");
-	docs = db.db('phonoteke').collection('docs');
-});*/
+//const uri = "mongodb://localhost:27017/";
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 db.connect(err => {
   docs = db.db("mbeats").collection("docs");
-  // perform actions on the collection object
-  //db.close();
   console.log("Successfully Connected to MongoDB");
 });
 
@@ -105,7 +100,6 @@ app.get('/api/artists/:id/events', async(req, res)=>{
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
-  //console.log('Press Ctrl+C to quit.');
 });
 module.exports = app;
 

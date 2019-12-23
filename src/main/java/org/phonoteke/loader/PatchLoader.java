@@ -1,5 +1,8 @@
 package org.phonoteke.loader;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -18,11 +21,11 @@ public class PatchLoader extends OndarockLoader
 	private static final int MONGO_PORT = 27017;
 	private static final String MONGO_DB = "phonoteke";
 
-	private MongoCollection<org.bson.Document> docsLocal;
+	private MongoCollection<Document> docsLocal;
 
 	public static void main(String[] args) 
 	{
-		new PatchLoader().missingDocs();
+		new PatchLoader().missingYoutube();
 	}
 
 	public PatchLoader()
@@ -34,19 +37,42 @@ public class PatchLoader extends OndarockLoader
 
 	private void missingDocs()
 	{
-		MongoCursor<org.bson.Document> i = docsLocal.find().noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docsLocal.find().noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
-			org.bson.Document docLocal = i.next();
+			Document docLocal = i.next();
 			String id = docLocal.getString("id");
 			String url = docLocal.getString("url");
-			MongoCursor<org.bson.Document> j = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
+			MongoCursor<Document> j = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
 			Document doc = j.tryNext();
 			if(doc == null)
 			{
 				crawl(url);
 				j = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
 				doc = j.tryNext();
+			}
+		}
+	}
+
+	private void missingYoutube()
+	{
+		MongoCursor<Document> i = docsLocal.find().noCursorTimeout(true).iterator();
+		while(i.hasNext())
+		{
+			Document docLocal = i.next();
+			String idLocal = docLocal.getString("id");
+			MongoCursor<Document> j = docs.find(Filters.eq("id", idLocal)).noCursorTimeout(true).iterator();
+			Document doc = j.tryNext();
+			if(doc != null)
+			{
+				List<Document> tracksLocal = docLocal.get("tracks", List.class);
+//				List<Document> tracks = doc.get("tracks", List.class);
+				if(CollectionUtils.isNotEmpty(tracksLocal))
+				{
+					doc.append("tracks", tracksLocal);
+					docs.updateOne(Filters.eq("id", idLocal), new Document("$set", doc));
+					LOGGER.info(idLocal + " patched");
+				}
 			}
 		}
 	}

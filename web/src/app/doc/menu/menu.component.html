@@ -11,33 +11,5 @@
       <div class="text-truncate font-weight-bold" [innerHTML]="component.doc.title"></div>
       <div class="text-truncate" [innerHTML]="component.doc.artist"></div>
     </div>
-     
-    <!--a class="pr-2" *ngIf="component.doc.type != 'album' && component.doc.artistid" href="{{'https://musicbrainz.org/artist/' + component.doc.artistid}}" target="_blank">
-      <img class="musicbrainz">
-    </a>
-    <a class="pr-2" *ngIf="component.doc.type == 'album' && component.doc.albumid" href="{{'https://musicbrainz.org/release-group/' + component.doc.albumid}}" target="_blank">
-      <img class="musicbrainz">
-    </a-->
-
-    <div *ngIf="component.doc.artistid != null" class="pr-2">
-      <a (click)="component.loadEvents(component.doc.artistid)">
-        <img class="songkick">
-      </a>
-    </div>
-      
-    <!--a *ngIf="component.doc.type != 'album' && component.doc.spartistid" class="pr-2"
-      href="{{'https://open.spotify.com/artist/' + component.doc.spartistid}}" target="_blank">
-      <img class="spotify">
-    </a>
-    <a *ngIf="component.doc.type == 'album' && component.doc.spalbumid" class="pr-2"
-      href="{{'https://open.spotify.com/album/' + component.doc.spalbumid}}" target="_blank">
-      <img class="spotify">
-    </a-->
-
-    <div>
-      <a href="{{component.doc.url}}" target="_blank">
-        <img class="{{component.doc.source}}">
-      </a>
-  </div>
   </div>
 </nav>

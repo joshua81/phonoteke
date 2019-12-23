@@ -1,10 +1,12 @@
 div.track {
-  width: 600px;
+  width: 100vw;
+  max-width: 600px;
 }
 
 div.link {
   cursor: pointer;
-  width: 600px;
+  width: 100vw;
+  max-width: 600px;
 }
 
 div.vote {

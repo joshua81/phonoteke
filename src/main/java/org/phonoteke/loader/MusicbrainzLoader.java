@@ -68,9 +68,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public void loadMBIDs()
 	{
-		for(int p = 0; p < 10; p++)
+		for(int p = 0; p < 20; p++)
 		{
-			MongoCursor<org.bson.Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
+			MongoCursor<org.bson.Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*1000).limit(1000).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();

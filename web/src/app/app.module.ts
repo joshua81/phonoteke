@@ -11,6 +11,7 @@ import { DocsComponent } from './docs/docs.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { EventsComponent } from './doc/events/events.component';
+import { YoutubeModule } from './youtube/youtube.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { EventsComponent } from './doc/events/events.component';
       {path: 'docs/:docId', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    YoutubeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

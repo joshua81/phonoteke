@@ -7,6 +7,8 @@ export class AppService {
   searchText = '';
   onSearch = new EventEmitter();
   audio = null;
+  videos = [];
+  video = null;
 
   constructor() {}
 

@@ -51,6 +51,8 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
 
+    this.service.videos = [];
+    this.service.video = null;
     if(this.service.audio){
       this.service.audio.pause();
       this.service.audio = null;
@@ -60,6 +62,20 @@ export class DocComponent implements OnInit {
       this.service.audio.src = this.doc.audio;
       this.service.audio.load();
     }
+    if(this.doc.tracks) {
+      this.doc.tracks.forEach(function(track) 
+			{
+        if(track.youtube)
+        {
+          this.service.videos.push(track.youtube);
+        }
+      });
+      if(this.service.videos.length > 0)
+      {
+        this.service.video = this.service.videos[0];
+      }
+    }
+    console.log(this.service.videos);
 
     this.showEvents = false;
     this.events.splice(0, this.events.length);

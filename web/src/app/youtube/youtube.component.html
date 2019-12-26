@@ -1,0 +1,17 @@
+<div class="d-flex align-items-center youtube pl-2 pr-2">
+    <youtube-player height="60px" width="180px" suggestedQuality="default" videoId="RecY5iZn6B0"
+        (stateChange)="onStateChange($event)"
+        (ready)="onReady($event)">
+        Loading...
+    </youtube-player>
+    <div class="text-white font-weight-bold text-truncate w-100 pl-2">Chaka Khan - Like Sugar (Official Video)</div>
+    <div class="pl-2">
+        <span class="backwardbtn" (click)="close($event)"></span>
+    </div>
+    <div class="pl-2">
+        <span class="forwardbtn" (click)="close($event)"></span>
+    </div>
+    <div class="pl-2">
+        <span class="closebtn" (click)="close($event)"></span>
+    </div>
+</div>

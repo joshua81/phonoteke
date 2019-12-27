@@ -4,7 +4,6 @@
     <div class="col-auto cover pl-0 pr-3">
       <div>
         <img class="cover rounded" src="{{doc.cover}}"/>
-        <!--img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover rounded" src="{{doc.coverL}}"/-->
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
         </div>
@@ -74,14 +73,14 @@
       <div *ngFor="let track of doc.tracks" class="w-100 pl-0 pr-0 list-group-item">
         <div class="d-flex">
           <div class="w-100" [innerHTML]="track.title"></div>
-          <!--a *ngIf="track.albumid" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
+          <a *ngIf="track.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
-          </a-->
-          <a *ngIf="doc.artistid == null && track.artistid != null" (click)="loadEvents(track.artistid)" class="pl-2">
+          </a>
+          <a *ngIf="track.artistid != null && doc.artistid == null" class="pr-2" (click)="loadEvents(track.artistid)">
             <img class="songkick">
           </a>
           <!--href="{{'https://www.youtube.com/watch?v=' + track.youtube}}"-->
-          <div *ngIf="track.youtube" (click)="loadVideo(track)" class="pl-2">
+          <div *ngIf="track.youtube" (click)="loadVideo(track)">
             <span class="youtubebtn"></span>
           </div>
         </div>
@@ -94,7 +93,6 @@
       <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 pl-0 pr-0 list-group-item">
         <div class="d-flex">
           <img class="link" src="{{link.cover}}">
-          <!--img *ngIf="link.type != 'album' && link.coverS !== undefined" class="link" src="{{link.coverS}}"-->
           <div *ngIf="link.type == 'album'" class="pl-2 w-100">
             <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
             <div>{{link.artist}}</div>

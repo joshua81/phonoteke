@@ -1,15 +1,19 @@
-<div class="d-flex align-items-center youtube pl-2 pr-2">
-    <youtube-player height="60px" width="180px" suggestedQuality="default" videoId="RecY5iZn6B0"
+<div class="d-flex align-items-center youtube pl-3 pr-3">
+    <youtube-player height="60px" width="120px" suggestedQuality="default" videoId="{{video.youtube}}"
         (stateChange)="onStateChange($event)"
         (ready)="onReady($event)">
         Loading...
     </youtube-player>
-    <div class="text-white font-weight-bold text-truncate w-100 pl-2">Chaka Khan - Like Sugar (Official Video)</div>
+    <div class="text-white text-truncate w-100 pl-2">{{video.title}}</div>
     <div class="pl-2">
-        <span class="backwardbtn" (click)="close($event)"></span>
+        <span class="backwardbtn" (click)="previous($event)"></span>
     </div>
+    <!--div class="pl-2">
+        <span *ngIf="status == 2" class="playbtn" (click)="play($event)"></span>
+        <span *ngIf="status == 1" class="pausebtn" (click)="pause($event)"></span>
+    </div-->
     <div class="pl-2">
-        <span class="forwardbtn" (click)="close($event)"></span>
+        <span class="forwardbtn" (click)="next($event)"></span>
     </div>
     <div class="pl-2">
         <span class="closebtn" (click)="close($event)"></span>

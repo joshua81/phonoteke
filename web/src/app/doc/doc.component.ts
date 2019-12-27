@@ -15,6 +15,8 @@ export class DocComponent implements OnInit {
   showEvents = false;
   events = [];
   links = [];
+  videos = [];
+  showVideos = false;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService) {}
 
@@ -51,8 +53,6 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
 
-    this.service.videos = [];
-    this.service.video = null;
     if(this.service.audio){
       this.service.audio.pause();
       this.service.audio = null;
@@ -62,24 +62,23 @@ export class DocComponent implements OnInit {
       this.service.audio.src = this.doc.audio;
       this.service.audio.load();
     }
+
+    this.videos = [];
+    this.showVideos = false;
     if(this.doc.tracks) {
-      this.doc.tracks.forEach(function(track) 
+      this.doc.tracks.forEach(function(track: any) 
 			{
         if(track.youtube)
         {
-          this.service.videos.push(track.youtube);
+          this.videos.push(track);
         }
-      });
-      if(this.service.videos.length > 0)
-      {
-        this.service.video = this.service.videos[0];
-      }
+      }, this);
     }
-    console.log(this.service.videos);
 
     this.showEvents = false;
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);
+
     if(this.doc.artistid) {
       this.loadLinks(this.doc.artistid);
     }
@@ -99,6 +98,10 @@ export class DocComponent implements OnInit {
     this.links = this.links.filter(function(value, index, arr){
 		  return value.id != id;
 		});
+  }
+
+  loadVideos() {
+    this.showVideos = true;
   }
 
   playPause(event: Event){

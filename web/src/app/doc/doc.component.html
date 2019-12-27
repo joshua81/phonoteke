@@ -35,17 +35,22 @@
   </div>
 
   <div class="row pt-3">
-    <div>
-      <a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
+    <div class="pr-2">
+      <a *ngIf="doc.type != 'album' && doc.artistid" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
         <img class="musicbrainz">
       </a>
-      <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+      <a *ngIf="doc.type == 'album' && doc.albumid" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
         <img class="musicbrainz">
       </a>
     </div>
     <div *ngIf="doc.artistid != null" class="pr-2">
       <a (click)="loadEvents(doc.artistid)">
         <img class="songkick">
+      </a>
+    </div>
+    <div *ngIf="videos.length > 0" class="pr-2">
+      <a (click)="loadVideos()">
+        <img class="youtube">
       </a>
     </div>
     <!--a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
@@ -80,9 +85,9 @@
           <a *ngIf="doc.artistid == null && track.artistid != null" (click)="loadEvents(track.artistid)" class="pl-2">
             <img class="songkick">
           </a>
-          <a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="pl-2" target="_blank">
+          <!--a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="pl-2" target="_blank">
             <img class="youtube">
-          </a>
+          </a-->
         </div>
       </div>
     </div>
@@ -115,5 +120,5 @@
   </div>
 </div>
 
-<app-youtube></app-youtube>
+<app-youtube *ngIf="showVideos == true" [videos]="videos"></app-youtube>
 <app-events *ngIf="showEvents == true" [events]="events"></app-events>

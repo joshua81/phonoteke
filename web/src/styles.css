@@ -80,8 +80,8 @@ img.youtube {
 .playbtn {
     display: inline-block;
     mask: url("/images/play.svg");
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -89,8 +89,8 @@ img.youtube {
 .pausebtn {
     display: inline-block;
     mask: url("/images/pause.svg");
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -98,8 +98,8 @@ img.youtube {
 .forwardbtn {
     display: inline-block;
     mask: url("/images/forward.svg");
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -107,8 +107,8 @@ img.youtube {
 .backwardbtn {
     display: inline-block;
     mask: url("/images/backward.svg");
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -116,8 +116,8 @@ img.youtube {
 .closebtn {
     display: inline-block;
     mask: url("/images/close.svg");
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -125,8 +125,8 @@ img.youtube {
 .podcastbtn {
     display: inline-block;
     mask: url("/images/podcast.svg");
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     background: #FFFFFF;
     cursor: pointer;
 }

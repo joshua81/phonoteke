@@ -7,7 +7,7 @@ import {DocComponent} from '../doc.component';
     styleUrls: ['./events.component.css']
 })
 export class EventsComponent {
-    @Input() events: any;
+    @Input() events = [];
 
     constructor(private component: DocComponent) { }
 

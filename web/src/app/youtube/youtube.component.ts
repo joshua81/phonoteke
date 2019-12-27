@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {AppService} from '../app.service';
+import { Component, OnInit, Input } from '@angular/core';
+import {DocComponent} from '../doc/doc.component';
 
 @Component({
   selector: 'app-youtube',
@@ -7,9 +7,22 @@ import {AppService} from '../app.service';
   styleUrls: ['./youtube.component.css']
 })
 export class YoutubeComponent implements OnInit {
+  private _videos = [];
+  video = null;
   player = null;
+  status = null;
 
-  constructor(public service: AppService) {}
+  constructor(private component: DocComponent) {}
+
+  get videos(): any {
+    return this._videos;
+  }
+  
+  @Input()
+  set videos(val: any) {
+    this._videos = val;
+    this.video = this._videos.length > 0 ? this._videos[0] : null;
+  }
 
   ngOnInit() {
     const tag = document.createElement('script');
@@ -17,23 +30,29 @@ export class YoutubeComponent implements OnInit {
     document.body.appendChild(tag);
   }
 
-  onReady(event){
+  onReady(event: any){
     console.log(event);
     this.player = event.target;
     this.player.playVideo();
   }
 
-  onStateChange(event){
-    console.log(event);
-    switch(event.data) {
+  onStateChange(event: any){
+    this.status = event.data;
+    switch(this.status) {
       case 0:
         console.log('video ended');
+        this.next(null);
         break;
       case 1:
         console.log('video playing');
         break;
       case 2:
         console.log('video paused');
+        break;
+      case 5:
+        console.log('video cued');
+        this.play(null);
+        break;
     }
   }
 
@@ -46,14 +65,20 @@ export class YoutubeComponent implements OnInit {
   }
 
   close(event: Event){
-    this.player.pauseVideo();
+    this.component.showVideos = false;
   }
 
   next(event: Event){
-    this.service.video = null;
+    if(this.videos.indexOf(this.video) < this.videos.length-1)
+    {
+      this.video = this.videos[this.videos.indexOf(this.video)+1];
+    }
   }
 
   previous(event: Event){
-
+    if(this.videos.indexOf(this.video) > 0)
+    {
+      this.video = this.videos[this.videos.indexOf(this.video)-1];
+    }
   }
 }

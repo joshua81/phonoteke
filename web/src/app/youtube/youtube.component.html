@@ -8,10 +8,10 @@
     <div class="pl-2">
         <span class="backwardbtn" (click)="previous($event)"></span>
     </div>
-    <!--div class="pl-2">
-        <span *ngIf="status == 2" class="playbtn" (click)="play($event)"></span>
+    <div class="pl-2">
+        <span *ngIf="status != 1" class="playbtn" (click)="play($event)"></span>
         <span *ngIf="status == 1" class="pausebtn" (click)="pause($event)"></span>
-    </div-->
+    </div>
     <div class="pl-2">
         <span class="forwardbtn" (click)="next($event)"></span>
     </div>

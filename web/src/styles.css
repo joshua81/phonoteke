@@ -133,6 +133,15 @@ img.songkick {
     cursor: pointer;
 }
 
+.songkickbtn {
+    display: inline-block;
+    mask: url("/images/songkick.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
 .star {
     display: inline-block;
     mask: url("/images/star.svg");

@@ -48,11 +48,6 @@
         <img class="songkick">
       </a>
     </div>
-    <div *ngIf="videos.length > 0" class="pr-2">
-      <a (click)="loadVideos()">
-        <img class="youtube">
-      </a>
-    </div>
     <!--a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
       href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
       <img class="spotify">
@@ -85,9 +80,10 @@
           <a *ngIf="doc.artistid == null && track.artistid != null" (click)="loadEvents(track.artistid)" class="pl-2">
             <img class="songkick">
           </a>
-          <!--a *ngIf="track.youtube" href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" class="pl-2" target="_blank">
-            <img class="youtube">
-          </a-->
+          <!--href="{{'https://www.youtube.com/watch?v=' + track.youtube}}"-->
+          <div *ngIf="track.youtube" (click)="loadVideo(track)" class="pl-2">
+            <span class="youtubebtn"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -120,5 +116,5 @@
   </div>
 </div>
 
-<app-youtube *ngIf="showVideos == true" [videos]="videos"></app-youtube>
+<app-youtube [videos]="videos" [video]="video"></app-youtube>
 <app-events *ngIf="showEvents == true" [events]="events"></app-events>

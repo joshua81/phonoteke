@@ -7,10 +7,10 @@ import {DocComponent} from '../doc/doc.component';
   styleUrls: ['./youtube.component.css']
 })
 export class YoutubeComponent implements OnInit {
-  private _videos = [];
-  video = null;
+  @Input() video = null;
   player = null;
   status = null;
+  private _videos = [];
 
   constructor(private component: DocComponent) {}
 
@@ -21,7 +21,7 @@ export class YoutubeComponent implements OnInit {
   @Input()
   set videos(val: any) {
     this._videos = val;
-    this.video = this._videos.length > 0 ? this._videos[0] : null;
+    //this.video = this._videos.length > 0 ? this._videos[0] : null;
   }
 
   ngOnInit() {
@@ -31,7 +31,6 @@ export class YoutubeComponent implements OnInit {
   }
 
   onReady(event: any){
-    console.log(event);
     this.player = event.target;
     this.player.playVideo();
   }
@@ -56,6 +55,10 @@ export class YoutubeComponent implements OnInit {
     }
   }
 
+  loadVideo(video: any){
+    this.video = video;
+  }
+
   play(event: Event){
     this.player.playVideo();
   }
@@ -65,7 +68,7 @@ export class YoutubeComponent implements OnInit {
   }
 
   close(event: Event){
-    this.component.showVideos = false;
+    this.video = null;
   }
 
   next(event: Event){

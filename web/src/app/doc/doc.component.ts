@@ -16,7 +16,7 @@ export class DocComponent implements OnInit {
   events = [];
   links = [];
   videos = [];
-  showVideos = false;
+  video = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService) {}
 
@@ -43,6 +43,10 @@ export class DocComponent implements OnInit {
       error => this.error = error);
   }
 
+  loadVideo(track: any) {
+    this.video = track;
+  }
+
   loadLinks(id: string) {
     this.links = [];
     this.http.get('/api/docs/' + id + '/links').subscribe(
@@ -64,7 +68,6 @@ export class DocComponent implements OnInit {
     }
 
     this.videos = [];
-    this.showVideos = false;
     if(this.doc.tracks) {
       this.doc.tracks.forEach(function(track: any) 
 			{
@@ -98,10 +101,6 @@ export class DocComponent implements OnInit {
     this.links = this.links.filter(function(value, index, arr){
 		  return value.id != id;
 		});
-  }
-
-  loadVideos() {
-    this.showVideos = true;
   }
 
   playPause(event: Event){

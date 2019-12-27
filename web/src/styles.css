@@ -70,13 +70,6 @@ img.songkick {
     height: 30px;
 }
 
-img.youtube {
-    border-radius: 50%;
-    content: url("/images/youtube.png");
-    width: 30px;
-    height: 30px;
-}
-
 .playbtn {
     display: inline-block;
     mask: url("/images/play.svg");
@@ -125,6 +118,15 @@ img.youtube {
 .podcastbtn {
     display: inline-block;
     mask: url("/images/podcast.svg");
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.youtubebtn {
+    display: inline-block;
+    mask: url("/images/youtube.svg");
     width: 30px;
     height: 30px;
     background: #FFFFFF;

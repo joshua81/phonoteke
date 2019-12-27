@@ -35,11 +35,11 @@
   </div>
 
   <div class="row pt-3">
-    <div class="pr-2">
-      <a *ngIf="doc.type != 'album' && doc.artistid" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
+    <div>
+      <a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
         <img class="musicbrainz">
       </a>
-      <a *ngIf="doc.type == 'album' && doc.albumid" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+      <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
         <img class="musicbrainz">
       </a>
     </div>

@@ -245,7 +245,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 			return null;
 		} 
 	}
-	
+
 	protected static boolean isTrack(String title)
 	{
 		for(String match : TRACKS_MATCH)
@@ -345,6 +345,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 	}
 
 	private class PhonotekeHtmlParser extends TikaHtmlParser {
+
 		public PhonotekeHtmlParser(CrawlConfig config) throws InstantiationException, IllegalAccessException {
 			super(config);
 		}
@@ -376,9 +377,9 @@ public abstract class PhonotekeLoader extends WebCrawler
 				{
 					WebURL webURL = new WebURL();
 					webURL.setURL(link);
-//					webURL.setTag(urlAnchorPair.getTag());
-//					webURL.setAnchor(urlAnchorPair.getAnchor());
-//					webURL.setAttributes(urlAnchorPair.getAttributes());
+					//					webURL.setTag(urlAnchorPair.getTag());
+					//					webURL.setAnchor(urlAnchorPair.getAnchor());
+					//					webURL.setAttributes(urlAnchorPair.getAttributes());
 					urls.add(webURL);
 				}
 			}

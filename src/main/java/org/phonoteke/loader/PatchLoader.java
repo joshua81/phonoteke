@@ -1,8 +1,5 @@
 package org.phonoteke.loader;
 
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -13,7 +10,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader extends OndarockLoader
+public class PatchLoader extends Radio2Loader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
@@ -25,7 +22,7 @@ public class PatchLoader extends OndarockLoader
 
 	public static void main(String[] args) 
 	{
-		new PatchLoader().missingYoutube();
+		new PatchLoader().missingDocs();
 	}
 
 	public PatchLoader()
@@ -47,32 +44,7 @@ public class PatchLoader extends OndarockLoader
 			Document doc = j.tryNext();
 			if(doc == null)
 			{
-				crawl(url);
-				j = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
-				doc = j.tryNext();
-			}
-		}
-	}
-
-	private void missingYoutube()
-	{
-		MongoCursor<Document> i = docsLocal.find().noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			Document docLocal = i.next();
-			String idLocal = docLocal.getString("id");
-			MongoCursor<Document> j = docs.find(Filters.eq("id", idLocal)).noCursorTimeout(true).iterator();
-			Document doc = j.tryNext();
-			if(doc != null)
-			{
-				List<Document> tracksLocal = docLocal.get("tracks", List.class);
-//				List<Document> tracks = doc.get("tracks", List.class);
-				if(CollectionUtils.isNotEmpty(tracksLocal))
-				{
-					doc.append("tracks", tracksLocal);
-					docs.updateOne(Filters.eq("id", idLocal), new Document("$set", doc));
-					LOGGER.info(idLocal + " patched");
-				}
+				LOGGER.info(url);
 			}
 		}
 	}

@@ -187,6 +187,10 @@ public class Radio2Loader extends PhonotekeLoader
 			content.select("br").after(NEW_LINE);
 			content.select("p").after(NEW_LINE);
 			content.select("li").after(NEW_LINE);
+			content.select("h1").after(NEW_LINE);
+			content.select("h2").after(NEW_LINE);
+			content.select("h3").after(NEW_LINE);
+			content.select("div").after(NEW_LINE);
 			String[] chunks = content.text().replace("||", NEW_LINE).split(NEW_LINE);
 			for(int i = 0; i < chunks.length; i++)
 			{

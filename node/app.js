@@ -97,9 +97,9 @@ app.get('/api/artists/:id/events', async(req, res)=>{
 	const json = JSON.parse(result);
 	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
+app.get('/*', (req,res)=>{res.sendFile(__dirname + '/web/index.html');});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
 module.exports = app;
-

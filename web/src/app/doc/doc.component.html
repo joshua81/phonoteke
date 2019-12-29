@@ -93,16 +93,12 @@
       <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 pl-0 pr-0 list-group-item">
         <div class="d-flex">
           <img class="link" src="{{link.cover}}">
-          <div *ngIf="link.type == 'album'" class="pl-2 w-100">
-            <div class="font-weight-bold">({{link.year}}) {{link.title}}</div>
-            <div>{{link.artist}}</div>
+          <div *ngIf="link.type != 'artist'" class="pl-2 w-100">
+            <div class="font-weight-bold" [innerHTML]="link.title"></div>
+            <div [innerHTML]="link.artist"></div>
           </div>
-          <div *ngIf="link.type == 'concert' || link.type == 'interview'" class="pl-2">
-            <div class="font-weight-bold">{{link.title}}</div>
-            <div>{{link.artist}}</div>
-          </div>
-          <div *ngIf="link.type == 'artist'" class="pl-2">
-            <div class="font-weight-bold">{{link.artist}}</div>
+          <div *ngIf="link.type == 'artist'" class="pl-2 w-100">
+            <div class="font-weight-bold" [innerHTML]="link.artist"></div>
           </div>
           <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="votelink">
             <span class="star"></span>

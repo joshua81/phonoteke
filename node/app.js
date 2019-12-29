@@ -74,7 +74,8 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 				}
 			});
 		}
-		var result = await docs.find({$or: [{'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artistid":1, "year":-1}).toArray();
+		var links = doc[0].links != null ? doc[0].links : [];
+		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
@@ -97,7 +98,8 @@ app.get('/api/artists/:id/events', async(req, res)=>{
 	const json = JSON.parse(result);
 	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
-app.get('/*', (req,res)=>{res.sendFile(__dirname + '/web/index.html');});
+app.get('/*', (req,res)=>{
+	res.sendFile(__dirname + '/web/index.html');});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

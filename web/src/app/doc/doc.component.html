@@ -79,11 +79,13 @@
           <a *ngIf="track.artistid != null && doc.artistid == null" class="pr-2" (click)="loadEvents(track.artistid)">
             <img class="songkick">
           </a>
-          <!--href="{{'https://www.youtube.com/watch?v=' + track.youtube}}"-->
-          <div *ngIf="track.youtube" (click)="loadVideo(track)">
+          <!--div *ngIf="track.youtube" (click)="loadVideo(track)">
             <span class="youtubebtn"></span>
-          </div>
+          </div-->
         </div>
+      </div>
+      <div *ngIf="videos && videos.length != 0">
+        <app-youtube [videos]="videos"></app-youtube>
       </div>
     </div>
   </div>
@@ -105,5 +107,5 @@
   </div>
 </div>
 
-<app-youtube [videos]="videos" [video]="video"></app-youtube>
+<!--app-youtube [videos]="videos" [video]="video"></!--app-youtube-->
 <app-events *ngIf="showEvents == true" [events]="events"></app-events>

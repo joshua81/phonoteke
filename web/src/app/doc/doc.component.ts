@@ -17,7 +17,6 @@ export class DocComponent implements OnInit {
   events = [];
   links = [];
   videos = [];
-  video = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private meta: Meta, public service: AppService) {}
 
@@ -42,10 +41,6 @@ export class DocComponent implements OnInit {
     this.http.get('/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),
       error => this.error = error);
-  }
-
-  loadVideo(track: any) {
-    this.video = track;
   }
 
   loadLinks(id: string) {

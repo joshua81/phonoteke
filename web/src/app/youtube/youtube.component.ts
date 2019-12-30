@@ -7,12 +7,10 @@ import {DocComponent} from '../doc/doc.component';
   styleUrls: ['./youtube.component.css']
 })
 export class YoutubeComponent implements OnInit {
-  @Input() video = null;
+  video = null;
   player = null;
   status = null;
   private _videos = [];
-
-  constructor(private component: DocComponent) {}
 
   get videos(): any {
     return this._videos;
@@ -21,8 +19,10 @@ export class YoutubeComponent implements OnInit {
   @Input()
   set videos(val: any) {
     this._videos = val;
-    //this.video = this._videos.length > 0 ? this._videos[0] : null;
+    this.video = this._videos.length > 0 ? this._videos[0] : null;
   }
+
+  constructor(private component: DocComponent) {}
 
   ngOnInit() {
     const tag = document.createElement('script');
@@ -32,7 +32,7 @@ export class YoutubeComponent implements OnInit {
 
   onReady(event: any){
     this.player = event.target;
-    this.player.playVideo();
+    //this.player.playVideo();
   }
 
   onStateChange(event: any){
@@ -55,20 +55,12 @@ export class YoutubeComponent implements OnInit {
     }
   }
 
-  loadVideo(video: any){
-    this.video = video;
-  }
-
   play(event: Event){
     this.player.playVideo();
   }
 
   pause(event: Event){
     this.player.pauseVideo();
-  }
-
-  close(event: Event){
-    this.video = null;
   }
 
   next(event: Event){

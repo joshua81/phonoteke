@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {HttpClient} from '@angular/common/http';
-import {AppService} from '../app.service';
+import { HttpClient } from '@angular/common/http';
+import { Meta } from '@angular/platform-browser'; 
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-doc',
@@ -18,7 +19,7 @@ export class DocComponent implements OnInit {
   videos = [];
   video = null;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private meta: Meta, public service: AppService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -56,6 +57,18 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
+    this.meta.updateTag({ name: 'og:site_name', content: 'Human Beats' });
+    this.meta.updateTag({ name: 'og:title', content: this.doc.artist + ' - ' + this.doc.title + ' :: Human Beats' });
+    this.meta.updateTag({ name: 'og:type', content: 'music.album' });
+    //this.meta.updateTag({ name: 'og:type', content: 'music.playlist' });
+    this.meta.updateTag({ name: 'og:image', content: this.doc.cover });
+    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/docs/' + this.doc.id });
+    this.meta.updateTag({ name: 'og:locale', content: 'it_IT' });
+    this.meta.updateTag({ name: 'og:description', content: this.doc.description });
+    this.meta.updateTag({ name: 'music:musician', content: this.doc.artist });
+    this.meta.updateTag({ name: 'music:release_date', content: this.doc.year + '-01-01' });
+    this.meta.updateTag({ name: 'music:album', content: this.doc.title });
+    //this.meta.updateTag({ name: 'music:creator', content: this.doc.title });
 
     if(this.service.audio){
       this.service.audio.pause();

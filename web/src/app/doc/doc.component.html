@@ -1,5 +1,5 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container pt-5 pb-5">
+<div *ngIf="doc" class="container pt-5">
   <div class="row pt-2">
     <div class="col-auto cover pl-0 pr-3">
       <div>
@@ -88,24 +88,19 @@
     </div>
   </div>
 
-  <div *ngIf="links && links.length != 0" class="row pt-3 justify-content-center">
-    <div class="link list-group">
-      <a *ngFor="let link of links" [routerLink]="['/docs/' + link.id]" class="w-100 pl-0 pr-0 list-group-item">
-        <div class="d-flex">
+  <div *ngIf="links && links.length != 0" class="row pt-3">
+    <div class="link d-flex flex-nowrap">
+      <div *ngFor="let link of links" class="pr-2">
+        <a [routerLink]="['/docs/' + link.id]" class="link">
           <img class="link" src="{{link.cover}}">
-          <div *ngIf="link.type != 'artist'" class="pl-2 w-100">
-            <div class="font-weight-bold" [innerHTML]="link.title"></div>
-            <div [innerHTML]="link.artist"></div>
-          </div>
-          <div *ngIf="link.type == 'artist'" class="pl-2 w-100">
-            <div class="font-weight-bold" [innerHTML]="link.artist"></div>
-          </div>
-          <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="votelink">
+          <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="linkvote">
             <span class="star"></span>
           </div>
-          <div *ngIf="link.type == 'album' && link.vote && link.vote != 10" class="votelink">{{link.vote}}</div>
-        </div>
-      </a>
+          <div *ngIf="link.type == 'album' && link.vote && link.vote != 10" class="linkvote">{{link.vote}}</div>
+          <div class="font-weight-bold" [innerHTML]="link.title"></div>
+          <div [innerHTML]="link.artist"></div>
+        </a>
+      </div>
     </div>
   </div>
 </div>

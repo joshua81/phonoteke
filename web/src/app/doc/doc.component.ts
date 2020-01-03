@@ -16,8 +16,6 @@ export class DocComponent implements OnInit {
   showEvents = false;
   events = [];
   links = [];
-  video = null;
-  videos = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private meta: Meta, public service: AppService) {}
 
@@ -76,17 +74,6 @@ export class DocComponent implements OnInit {
       this.service.audio.load();
     }
 
-    this.videos = [];
-    if(this.doc.tracks) {
-      this.doc.tracks.forEach(function(track: any) 
-			{
-        if(track.youtube)
-        {
-          this.videos.push(track);
-        }
-      }, this);
-    }
-
     this.showEvents = false;
     this.events.splice(0, this.events.length);
     this.links.splice(0, this.links.length);
@@ -130,13 +117,6 @@ export class DocComponent implements OnInit {
   backward(event: Event){
     if(!this.service.audio.paused){
       this.service.audio.currentTime -= 60.0;
-    }
-  }
-
-  playVideo(track: any){
-    if(track && track.youtube)
-    {
-      this.video = track;
     }
   }
 }

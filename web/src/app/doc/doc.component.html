@@ -68,26 +68,8 @@
     </p>
   </div>
 
-  <div *ngIf="doc.source != 'ondarock' && doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
-    <div class="track list-group">
-      <div *ngFor="let track of doc.tracks" class="w-100 pl-0 pr-0 list-group-item" (click)="playVideo(track)">
-        <div class="d-flex align-items-center">
-          <div *ngIf="video == track" class="pr-2">
-            <span class="youtubebtn"></span>
-          </div>
-          <div class="w-100" [innerHTML]="track.title"></div>
-          <a *ngIf="track.albumid" class="pl-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
-            <img class="musicbrainz">
-          </a>
-          <a *ngIf="track.artistid" class="pl-2" (click)="loadEvents(track.artistid)">
-            <img class="songkick">
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="videos && videos.length != 0" class="row justify-content-center">
-    <app-youtube [videos]="videos" [(video)]="video"></app-youtube>
+  <div class="row justify-content-center">
+    <app-youtube [tracks]="doc.tracks"></app-youtube>
   </div>
 
   <div *ngIf="links && links.length != 0" class="row pt-3 justify-content-center">

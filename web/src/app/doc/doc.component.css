@@ -1,8 +1,3 @@
-div.track {
-  width: 100vw;
-  max-width: 600px;
-}
-
 div.vote {
   border-radius: 50%;
   width: 30px;
@@ -77,5 +72,3 @@ div.linkvote {
   top: -60px;
   z-index: 20;
 }
-
-

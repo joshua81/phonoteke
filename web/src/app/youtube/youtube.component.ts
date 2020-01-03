@@ -9,29 +9,31 @@ import {DocComponent} from '../doc/doc.component';
 export class YoutubeComponent implements OnInit {
   player = null;
   status = null;
-  private _video = null;
-  private _videos = [];
+  video = null;
+  videos = [];
+  private _tracks = [];
 
-  get video(): any {
-    return this._video;
+  get tracks(): any {
+    return this._tracks;
   }
   
   @Input()
-  set video(val: any) {
-    this._video = val;
+  set tracks(val: any) {
+    this._tracks = val;
+    this.videos = [];
+    if(this.tracks) {
+      this.tracks.forEach(function(track: any) 
+			{
+        if(track.youtube)
+        {
+          this.videos.push(track);
+        }
+      }, this);
+    }
+    this.video = this.videos.length > 0 ? this.videos[0] : null;
   }
 
-  get videos(): any {
-    return this._videos;
-  }
-  
-  @Input()
-  set videos(val: any) {
-    this._videos = val;
-    this.video = this._videos.length > 0 ? this._videos[0] : null;
-  }
-
-  constructor(private component: DocComponent) {}
+  constructor(public component: DocComponent) {}
 
   ngOnInit() {
     const tag = document.createElement('script');
@@ -64,21 +66,22 @@ export class YoutubeComponent implements OnInit {
     }
   }
 
+  loadVideo(video: any){
+    this.video = video;
+  }
+
   play(event: Event){
     this.player.playVideo();
-    this.component.video = this.video;
   }
 
   pause(event: Event){
     this.player.pauseVideo();
-    this.component.video = this.video;
   }
 
   next(event: Event){
     if(this.videos.indexOf(this.video) < this.videos.length-1)
     {
       this.video = this.videos[this.videos.indexOf(this.video)+1];
-      this.component.video = this.video;
     }
   }
 
@@ -86,7 +89,6 @@ export class YoutubeComponent implements OnInit {
     if(this.videos.indexOf(this.video) > 0)
     {
       this.video = this.videos[this.videos.indexOf(this.video)-1];
-      this.component.video = this.video;
     }
   }
 }

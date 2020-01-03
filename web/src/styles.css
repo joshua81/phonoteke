@@ -218,7 +218,9 @@ img.songkick {
 
 .list-group-item {
     background-color: transparent;
-    border: 0 none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
     color: white;
     cursor: pointer;
 }

@@ -1,20 +1,43 @@
-<!--div class="d-flex align-items-center justify-content-center text-white text-truncate" [innerHTML]="video.title"></!--div-->
-<div class="d-flex align-items-center justify-content-center">
-    <youtube-player class="justify-content-center" height="150px" width="300px" suggestedQuality="default" videoId="{{video.youtube}}"
-        (stateChange)="onStateChange($event)"
-        (ready)="onReady($event)">
-        Loading...
-    </youtube-player>
-</div>
-<div class="d-flex align-items-center justify-content-center">
-    <div>
-        <span class="backwardbtn" (click)="previous($event)"></span>
+<div *ngIf="tracks && tracks.length != 0" class="pr-2 pl-2 track">
+    <div class="list-group justify-content-center">
+        <div *ngFor="let track of tracks" class="w-100 pl-2 pr-2 list-group-item" (click)="loadVideo(track)">
+            <div class="d-flex align-items-center">
+            <div *ngIf="video == track" class="pr-2">
+                <span class="youtubebtn"></span>
+            </div>
+            <div class="w-100" [innerHTML]="track.title"></div>
+            <a *ngIf="track.albumid" class="pl-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
+                <img class="musicbrainz">
+            </a>
+            <a *ngIf="track.artistid" class="pl-2" (click)="component.loadEvents(track.artistid)">
+                <img class="songkick">
+            </a>
+            </div>
+        </div>
     </div>
-    <div class="pl-2 pr-2">
-        <span *ngIf="status != 1" class="playbtn" (click)="play($event)"></span>
-        <span *ngIf="status == 1" class="pausebtn" (click)="pause($event)"></span>
+    <div class="pt-3 d-flex align-items-center justify-content-center">
+        <!--div class="pr-2">
+            <span class="backwardbtn" (click)="previous($event)"></span>
+        </div-->
+        <youtube-player class="justify-content-center" height="150px" width="300px" suggestedQuality="default" videoId="{{video.youtube}}"
+            (stateChange)="onStateChange($event)"
+            (ready)="onReady($event)">
+            Loading...
+        </youtube-player>
+        <!--div class="pl-2">
+            <span class="forwardbtn" (click)="next($event)"></span>
+        </div-->
     </div>
-    <div>
-        <span class="forwardbtn" (click)="next($event)"></span>
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="pr-2">
+            <span class="backwardbtn" (click)="previous($event)"></span>
+        </div>
+        <!--div class="pl-2 pr-2">
+            <span *ngIf="status != 1" class="playbtn" (click)="play($event)"></span>
+            <span *ngIf="status == 1" class="pausebtn" (click)="pause($event)"></span>
+        </div-->
+        <div>
+            <span class="forwardbtn" (click)="next($event)"></span>
+        </div>
     </div>
 </div>

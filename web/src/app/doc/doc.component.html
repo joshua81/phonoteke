@@ -68,29 +68,29 @@
     </p>
   </div>
 
-  <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
+  <div *ngIf="doc.source != 'ondarock' && doc.tracks && doc.tracks.length != 0" class="row justify-content-center">
     <div class="track list-group">
-      <div *ngFor="let track of doc.tracks" class="w-100 pl-0 pr-0 list-group-item">
-        <div class="d-flex">
+      <div *ngFor="let track of doc.tracks" class="w-100 pl-0 pr-0 list-group-item" (click)="playVideo(track)">
+        <div class="d-flex align-items-center">
+          <div *ngIf="video == track" class="pr-2">
+            <span class="youtubebtn"></span>
+          </div>
           <div class="w-100" [innerHTML]="track.title"></div>
-          <a *ngIf="track.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
+          <a *ngIf="track.albumid" class="pl-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
             <img class="musicbrainz">
           </a>
-          <a *ngIf="track.artistid != null && doc.artistid == null" class="pr-2" (click)="loadEvents(track.artistid)">
+          <a *ngIf="track.artistid" class="pl-2" (click)="loadEvents(track.artistid)">
             <img class="songkick">
           </a>
-          <!--div *ngIf="track.youtube" (click)="loadVideo(track)">
-            <span class="youtubebtn"></span>
-          </div-->
         </div>
-      </div>
-      <div *ngIf="videos && videos.length != 0">
-        <app-youtube [videos]="videos"></app-youtube>
       </div>
     </div>
   </div>
+  <div *ngIf="videos && videos.length != 0" class="row justify-content-center">
+    <app-youtube [videos]="videos" [(video)]="video"></app-youtube>
+  </div>
 
-  <div *ngIf="links && links.length != 0" class="row pt-3">
+  <div *ngIf="links && links.length != 0" class="row pt-3 justify-content-center">
     <div class="link d-flex flex-nowrap">
       <div *ngFor="let link of links" class="pr-2">
         <a [routerLink]="['/docs/' + link.id]" class="link">
@@ -107,5 +107,4 @@
   </div>
 </div>
 
-<!--app-youtube [videos]="videos" [video]="video"></!--app-youtube-->
 <app-events *ngIf="showEvents == true" [events]="events"></app-events>

@@ -16,6 +16,7 @@ export class DocComponent implements OnInit {
   showEvents = false;
   events = [];
   links = [];
+  video = null;
   videos = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private meta: Meta, public service: AppService) {}
@@ -129,6 +130,13 @@ export class DocComponent implements OnInit {
   backward(event: Event){
     if(!this.service.audio.paused){
       this.service.audio.currentTime -= 60.0;
+    }
+  }
+
+  playVideo(track: any){
+    if(track && track.youtube)
+    {
+      this.video = track;
     }
   }
 }

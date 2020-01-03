@@ -7,10 +7,19 @@ import {DocComponent} from '../doc/doc.component';
   styleUrls: ['./youtube.component.css']
 })
 export class YoutubeComponent implements OnInit {
-  video = null;
   player = null;
   status = null;
+  private _video = null;
   private _videos = [];
+
+  get video(): any {
+    return this._video;
+  }
+  
+  @Input()
+  set video(val: any) {
+    this._video = val;
+  }
 
   get videos(): any {
     return this._videos;
@@ -57,16 +66,19 @@ export class YoutubeComponent implements OnInit {
 
   play(event: Event){
     this.player.playVideo();
+    this.component.video = this.video;
   }
 
   pause(event: Event){
     this.player.pauseVideo();
+    this.component.video = this.video;
   }
 
   next(event: Event){
     if(this.videos.indexOf(this.video) < this.videos.length-1)
     {
       this.video = this.videos[this.videos.indexOf(this.video)+1];
+      this.component.video = this.video;
     }
   }
 
@@ -74,6 +86,7 @@ export class YoutubeComponent implements OnInit {
     if(this.videos.indexOf(this.video) > 0)
     {
       this.video = this.videos[this.videos.indexOf(this.video)-1];
+      this.component.video = this.video;
     }
   }
 }

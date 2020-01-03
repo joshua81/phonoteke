@@ -1,18 +1,20 @@
-<youtube-player height="150px" width="300px" suggestedQuality="default" videoId="{{video.youtube}}"
-    (stateChange)="onStateChange($event)"
-    (ready)="onReady($event)">
-    Loading...
-</youtube-player>
-<div class="d-flex align-items-center">
-    <div class="pr-2">
+<!--div class="d-flex align-items-center justify-content-center text-white text-truncate" [innerHTML]="video.title"></!--div-->
+<div class="d-flex align-items-center justify-content-center">
+    <youtube-player class="justify-content-center" height="150px" width="300px" suggestedQuality="default" videoId="{{video.youtube}}"
+        (stateChange)="onStateChange($event)"
+        (ready)="onReady($event)">
+        Loading...
+    </youtube-player>
+</div>
+<div class="d-flex align-items-center justify-content-center">
+    <div>
         <span class="backwardbtn" (click)="previous($event)"></span>
     </div>
-    <div class="pr-2">
+    <div class="pl-2 pr-2">
         <span *ngIf="status != 1" class="playbtn" (click)="play($event)"></span>
         <span *ngIf="status == 1" class="pausebtn" (click)="pause($event)"></span>
     </div>
-    <div class="pr-2">
+    <div>
         <span class="forwardbtn" (click)="next($event)"></span>
     </div>
-    <div class="text-white text-truncate">{{video.title}}</div>
 </div>

@@ -47,6 +47,8 @@ div.link {
 }
 
 a.link {
+  width: 150px;
+  max-width: 150px;
   position: relative;
 }
 

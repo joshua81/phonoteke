@@ -68,13 +68,11 @@
     </p>
   </div>
 
-  <div class="row justify-content-center">
-    <app-youtube [tracks]="doc.tracks"></app-youtube>
-  </div>
+  <app-youtube [tracks]="doc.tracks"></app-youtube>
 
   <div *ngIf="links && links.length != 0" class="row pt-3 justify-content-center">
-    <div class="link d-flex flex-nowrap">
-      <div *ngFor="let link of links" class="pr-2">
+    <div class="hlist d-flex flex-nowrap">
+      <div *ngFor="let link of links" class="linkbox pr-2">
         <a [routerLink]="['/docs/' + link.id]" class="link">
           <img class="link" src="{{link.cover}}">
           <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="linkvote">

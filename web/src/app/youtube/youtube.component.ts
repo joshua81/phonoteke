@@ -43,7 +43,7 @@ export class YoutubeComponent implements OnInit {
 
   onReady(event: any){
     this.player = event.target;
-    //this.player.playVideo();
+    this.player.playVideo();
   }
 
   onStateChange(event: any){
@@ -61,7 +61,6 @@ export class YoutubeComponent implements OnInit {
         break;
       case 5:
         console.log('video cued');
-        this.play(null);
         break;
     }
   }

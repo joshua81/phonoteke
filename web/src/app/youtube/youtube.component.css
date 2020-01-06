@@ -1,4 +1,12 @@
-div.track {
-    width: 100vw;
-    max-width: 600px;
+.trackbox {
+  width: 330px;
+}
+
+.track {
+    width: 322px;
+    height: 182px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: white;
+    object-fit:cover;
   }

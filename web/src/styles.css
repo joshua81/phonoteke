@@ -201,6 +201,11 @@ img.songkick {
     cursor: pointer;
 }
 
+.hlist {
+    cursor: pointer;
+    overflow-x: auto;
+  }
+
 .modal-box {
     width: 80vw;
     max-width: 600px;

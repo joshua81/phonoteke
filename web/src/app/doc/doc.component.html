@@ -68,12 +68,12 @@
     </p>
   </div>
 
-  <div class="row">
+  <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row">
     <h2>Tracks</h2>
   </div>
   <app-youtube [tracks]="doc.tracks"></app-youtube>
 
-  <div class="row pt-3">
+  <div *ngIf="links && links.length != 0" class="row pt-3">
     <h2>Links</h2>
   </div>
   <div *ngIf="links && links.length != 0" class="row justify-content-center">

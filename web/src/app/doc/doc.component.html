@@ -1,5 +1,5 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container pt-5">
+<div *ngIf="doc" class="container pt-5 pb-5 text-white">
   <div class="row pt-2">
     <div class="col-auto cover pl-0 pr-3">
       <div>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="col-auto text-white pl-0 pr-0 pt-3">
+    <div class="col-auto pl-0 pr-0 pt-3">
       <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
       <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
       <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>
@@ -63,14 +63,20 @@
   </div>
 
   <div class="row pt-3">
-    <p *ngIf="doc.review" class="text-justify text-white" 
+    <p *ngIf="doc.review" class="text-justify" 
       [innerHTML]="doc.review">
     </p>
   </div>
 
+  <div class="row">
+    <h2>Tracks</h2>
+  </div>
   <app-youtube [tracks]="doc.tracks"></app-youtube>
 
-  <div *ngIf="links && links.length != 0" class="row pt-3 justify-content-center">
+  <div class="row pt-3">
+    <h2>Links</h2>
+  </div>
+  <div *ngIf="links && links.length != 0" class="row justify-content-center">
     <div class="hlist d-flex flex-nowrap">
       <div *ngFor="let link of links" class="linkbox pr-2">
         <a [routerLink]="['/docs/' + link.id]" class="link">

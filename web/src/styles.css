@@ -53,9 +53,23 @@ img.ondarock {
     height: 30px;
 }
 
-img.musicalbox, img.inthemix, img.babylon {
+img.musicalbox {
     border-radius: 50%;
-    content: url("/images/radio2.jpg");
+    content: url("/images/musicalbox.jpg");
+    width: 30px;
+    height: 30px;
+}
+
+img.inthemix {
+    border-radius: 50%;
+    content: url("/images/inthemix.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.babylon {
+    border-radius: 50%;
+    content: url("/images/babylon.jpg");
     width: 30px;
     height: 30px;
 }

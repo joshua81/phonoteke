@@ -1,20 +1,22 @@
 <docs-menu></docs-menu>
-<div class="container pt-5 pb-5">
-  <div infinite-scroll class="row" (scrolled)="loadPageScroll()">
-    <div class="pt-2 col-lg-3 col-md-4 col-sm-6" *ngFor="let doc of docs">
-      <div class="cover card mx-auto">
-        <a [routerLink]="['/docs/' + doc.id]">
-          <img class="cover card-img-top" src="{{doc.cover}}"/>
-          <!--img *ngIf="doc.type != 'album' && doc.coverL !== undefined" class="cover card-img-top" src="{{doc.coverL}}"/-->
-        </a>
-        <div class="card-body p-2">
-          <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
-          <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
-          <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
-          <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
-          <footer *ngIf="doc.authors" class="blockquote-footer pt-2 float-right">di {{doc.authors}}</footer>
+<div class="container pt-5 pb-5 text-white">
+  <div *ngIf="docs && docs.length != 0" class="row text-white">
+    <h2>Album</h2>
+  </div>
+  <div infinite-scroll class="row hlist d-flex flex-nowrap" [horizontal]="true" [scrollWindow]="false" (scrolled)="loadPageScroll()">
+      <div *ngFor="let doc of docs" class="pr-2">
+        <div class="cover card mx-auto">
+          <a [routerLink]="['/docs/' + doc.id]">
+            <img class="cover card-img-top" src="{{doc.cover}}"/>
+          </a>
+          <div class="card-body p-2">
+            <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
+            <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
+            <!--footer *ngIf="doc.authors" class="blockquote-footer pt-2 float-right">di {{doc.authors}}</footer-->
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </div>

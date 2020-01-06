@@ -8,6 +8,17 @@ img.cover {
   object-fit:cover;
 }
 
+.card {
+  background: rgba(52, 58, 64, 0.75);
+  border-style: solid;
+  border-width: 1px;
+  border-color: white;
+}
+
+.card-body {
+  height: 200px;
+}
+
 .card-text {
   overflow: hidden;
   display: -webkit-box;

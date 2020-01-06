@@ -61,6 +61,7 @@ export class YoutubeComponent implements OnInit {
         break;
       case 5:
         console.log('video cued');
+        this.player.playVideo();
         break;
     }
   }

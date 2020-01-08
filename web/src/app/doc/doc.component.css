@@ -1,3 +1,16 @@
+div.cover {
+  position: relative;
+}
+
+img.cover {
+  width: 300px;
+  height: 300px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: white;
+  object-fit:cover;
+}
+
 div.vote {
   border-radius: 50%;
   width: 30px;
@@ -13,15 +26,6 @@ div.vote {
   left: 260px;
   top: 10px;
   z-index: 20;
-}
-
-img.cover {
-  width: 300px;
-  height: 300px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: white;
-  object-fit:cover;
 }
 
 .linkbox {

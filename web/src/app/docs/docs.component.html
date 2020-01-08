@@ -6,8 +6,12 @@
   <div infinite-scroll class="row hlist d-flex flex-nowrap" [horizontal]="true" [scrollWindow]="false" (scrolled)="loadPageScroll()">
       <div *ngFor="let doc of docs" class="pr-2">
         <div class="cover card mx-auto">
-          <a [routerLink]="['/docs/' + doc.id]">
+          <a class="cover" [routerLink]="['/docs/' + doc.id]">
             <img class="cover card-img-top" src="{{doc.cover}}"/>
+            <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+              <span class="star"></span>
+            </div>
+            <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
           </a>
           <div class="card-body p-2">
             <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>

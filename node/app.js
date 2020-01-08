@@ -17,6 +17,7 @@ db.connect(err => {
 
 app.use('/images', express.static('images'));
 app.use(express.static('web'));
+
 app.get('/api/docs', async(req, res)=>{
 	if(req.query.q)
 	{
@@ -36,6 +37,47 @@ app.get('/api/docs', async(req, res)=>{
 		res.send(result);
 	}
 });
+
+app.get('/api/tracks', async(req, res)=>{
+	if(req.query.q)
+	{
+		console.log('Tracks: page=' + req.query.p + ', query=' + req.query.q);
+		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
+		var query = req.query.q;
+		query = '.*' + query + '.*';
+		query = query.split(' ').join('.*');
+		var result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({tracks: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var tracks = [];
+		result.forEach(function(doc) 
+		{
+			doc.tracks.forEach(function(track)
+			{
+				if(track.title && track.youtube) {
+					tracks.push(track);
+				}
+			});
+		});
+		res.send(tracks);
+	}
+	else
+	{
+		console.log('Tracks: page=' + req.query.p);
+		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
+		var result = await docs.find().project({tracks: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var tracks = [];
+		result.forEach(function(doc) 
+		{
+			doc.tracks.forEach(function(track)
+			{
+				if(track.title && track.youtube) {
+					tracks.push(track);
+				}
+			});
+		});
+		res.send(tracks);
+	}
+});
+
 app.get('/api/docs/:id', async(req, res)=>{
 	console.log('Docs: id=' + req.params.id);
 	const result = await docs.find({'id': req.params.id}).toArray();
@@ -57,6 +99,7 @@ app.get('/api/docs/:id', async(req, res)=>{
 	}
 	res.send(result);
 });
+
 app.get('/api/docs/:id/links', async(req, res)=>{
   	console.log('Links: id=' + req.params.id);
 	const doc = await docs.find({'id': req.params.id}).toArray();
@@ -82,6 +125,7 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 		res.send(result);
 	}
 });
+
 app.get('/api/artists/:id/events', async(req, res)=>{
 	console.log('Events: id=' + req.params.id);
 	const result = await new Promise((resolve, reject) => {
@@ -98,6 +142,7 @@ app.get('/api/artists/:id/events', async(req, res)=>{
 	const json = JSON.parse(result);
 	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
+
 app.get('/*', (req,res)=>{
 	res.sendFile(__dirname + '/web/index.html');});
 

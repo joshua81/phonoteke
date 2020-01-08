@@ -1,5 +1,5 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container pt-5 pb-5 text-white">
+<div *ngIf="doc" class="container pt-5 pb-5 w-max text-white">
   <div class="row pt-2">
     <div class="col-auto cover pl-0 pr-3">
       <div>
@@ -8,19 +8,6 @@
           <span class="star"></span>
         </div>
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
-      </div>
-
-      <div *ngIf="service.audio" class="player d-flex flex-row align-items-center justify-content-center">
-        <div (click)="backward($event)">
-          <span class="backwardbtn"></span>
-        </div>
-        <div class="pl-2 pr-2" (click)="playPause($event)">
-          <span *ngIf="service.audio.paused" class="playbtn"></span>
-          <span *ngIf="!service.audio.paused" class="pausebtn"></span>
-        </div>
-        <div (click)="forward($event)">
-          <span class="forwardbtn"></span>
-        </div>
       </div>
     </div>
 
@@ -34,18 +21,27 @@
   </div>
 
   <div class="row pt-3">
-    <div>
-      <a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
-        <img class="musicbrainz">
-      </a>
-      <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
-        <img class="musicbrainz">
-      </a>
+    <a class="pr-2" href="{{doc.url}}" target="_blank">
+      <img class="{{doc.source}}">
+    </a>
+    <a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
+      <img class="musicbrainz">
+    </a>
+    <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+      <img class="musicbrainz">
+    </a>
+    <a *ngIf="doc.artistid != null" class="pr-2" (click)="loadEvents(doc.artistid)">
+      <img class="songkick">
+    </a>
+    <div *ngIf="service.audio" class="pr-2" (click)="backward($event)">
+      <span class="backwardbtn"></span>
     </div>
-    <div *ngIf="doc.artistid != null" class="pr-2">
-      <a (click)="loadEvents(doc.artistid)">
-        <img class="songkick">
-      </a>
+    <div *ngIf="service.audio" class="pr-2" (click)="playPause($event)">
+      <span *ngIf="service.audio.paused" class="playbtn"></span>
+      <span *ngIf="!service.audio.paused" class="pausebtn"></span>
+    </div>
+    <div *ngIf="service.audio" class="pr-2" (click)="forward($event)">
+      <span class="forwardbtn"></span>
     </div>
     <!--a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
       href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
@@ -55,17 +51,12 @@
       href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
       <img class="spotify">
     </a-->
-    <div>
-      <a href="{{doc.url}}" target="_blank">
-        <img class="{{doc.source}}">
-      </a>
-    </div>
   </div>
 
   <div class="row pt-3">
-    <p *ngIf="doc.review" class="text-justify" 
+    <div *ngIf="doc.review" class="text-justify" 
       [innerHTML]="doc.review">
-    </p>
+    </div>
   </div>
 
   <div *ngIf="doc.tracks && doc.tracks.length != 0" class="row">
@@ -77,7 +68,7 @@
     <h2>Links</h2>
   </div>
   <div *ngIf="links && links.length != 0" class="row justify-content-center">
-    <div class="hlist d-flex flex-nowrap">
+    <div class="hlist w-100 d-flex flex-nowrap">
       <div *ngFor="let link of links" class="linkbox pr-2">
         <a [routerLink]="['/docs/' + link.id]" class="link">
           <img class="link" src="{{link.cover}}">

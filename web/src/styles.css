@@ -34,10 +34,6 @@ nav {
     height: 50px;
 }
 
-div.container {
-    max-width: 1200px;
-}
-
 img.musicbrainz {
     border-radius: 50%;
     content: url("/images/musicbrainz.png");
@@ -215,11 +211,6 @@ img.songkick {
     cursor: pointer;
 }
 
-.hlist {
-    cursor: pointer;
-    overflow-x: auto;
-  }
-
 .modal-box {
     width: 80vw;
     max-width: 600px;
@@ -229,6 +220,16 @@ img.songkick {
     border-style: solid;
     border-width: 1px;
     border-color: white;
+}
+
+.hlist {
+    cursor: pointer;
+    overflow-x: auto;
+}
+
+.w-max {
+    width: 100%;
+    max-width: 1200px;
 }
 
 .container-fluid {

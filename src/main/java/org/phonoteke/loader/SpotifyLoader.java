@@ -55,8 +55,8 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public void load()
 	{
-		loadTracks("musicalbox");
-		loadTracks("babylon");
+//		loadTracks("musicalbox");
+//		loadTracks("babylon");
 		loadAlbums();
 		loadArtists();
 	}
@@ -106,9 +106,9 @@ public class SpotifyLoader extends PhonotekeLoader
 
 				page.append("spartistid", artistId).
 				append("spalbumid", albumId).
-				append("coverL", spotify.getString("coverL")).
-				append("coverM", spotify.getString("coverM")).
-				append("coverS", spotify.getString("coverS"));
+				append("spcover-l", spotify.getString("coverL")).
+				append("spcover-m", spotify.getString("coverM")).
+				append("spcover-s", spotify.getString("coverS"));
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
@@ -137,9 +137,9 @@ public class SpotifyLoader extends PhonotekeLoader
 					{
 						return new Document("spartistid", artistid).
 								append("spalbumid", albumId).
-								append("coverL", a.getImages()[0].getUrl()).
-								append("coverM", a.getImages()[1].getUrl()).
-								append("coverS", a.getImages()[2].getUrl());
+								append("spcover-l", a.getImages()[0].getUrl()).
+								append("spcover-m", a.getImages()[1].getUrl()).
+								append("spcover-s", a.getImages()[2].getUrl());
 					}
 				}
 			}
@@ -169,9 +169,9 @@ public class SpotifyLoader extends PhonotekeLoader
 				LOGGER.info("SPTF " + artist + ": " + artistId);
 
 				page.append("spartistid", artistId).
-				append("coverL", spotify.getString("coverL")).
-				append("coverM", spotify.getString("coverM")).
-				append("coverS", spotify.getString("coverS"));
+				append("spcover-l", spotify.getString("coverL")).
+				append("spcover-m", spotify.getString("coverM")).
+				append("spcover-s", spotify.getString("coverS"));
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
@@ -194,9 +194,9 @@ public class SpotifyLoader extends PhonotekeLoader
 				if(score > THRESHOLD)
 				{
 					return new Document("spartistid", artistid).
-							append("coverL", a.getImages()[0].getUrl()).
-							append("coverM", a.getImages()[1].getUrl()).
-							append("coverS", a.getImages()[2].getUrl());
+							append("spcover-l", a.getImages()[0].getUrl()).
+							append("spcover-m", a.getImages()[1].getUrl()).
+							append("spcover-s", a.getImages()[2].getUrl());
 				}
 			}
 		}
@@ -230,9 +230,9 @@ public class SpotifyLoader extends PhonotekeLoader
 						LOGGER.info("SPTF " + title + ": " + trackId);
 
 						track.append("sptrackid", trackId).
-						append("coverL", spotify.getString("coverL")).
-						append("coverM", spotify.getString("coverM")).
-						append("coverS", spotify.getString("coverS"));
+						append("spcover-l", spotify.getString("coverL")).
+						append("spcover-m", spotify.getString("coverM")).
+						append("spcover-s", spotify.getString("coverS"));
 					}
 				}
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
@@ -266,9 +266,9 @@ public class SpotifyLoader extends PhonotekeLoader
 						{
 							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
 							return new Document("sptrackid", trackid).
-									append("coverL", track.getAlbum().getImages()[0].getUrl()).
-									append("coverM", track.getAlbum().getImages()[1].getUrl()).
-									append("coverS", track.getAlbum().getImages()[2].getUrl());
+									append("spcover-l", track.getAlbum().getImages()[0].getUrl()).
+									append("spcover-m", track.getAlbum().getImages()[1].getUrl()).
+									append("spcover-s", track.getAlbum().getImages()[2].getUrl());
 						}
 					}
 
@@ -289,9 +289,9 @@ public class SpotifyLoader extends PhonotekeLoader
 						{
 							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
 							return new Document("sptrackid", trackid).
-									append("coverL", track.getAlbum().getImages()[0].getUrl()).
-									append("coverM", track.getAlbum().getImages()[1].getUrl()).
-									append("coverS", track.getAlbum().getImages()[2].getUrl());
+									append("spcover-l", track.getAlbum().getImages()[0].getUrl()).
+									append("spcover-m", track.getAlbum().getImages()[1].getUrl()).
+									append("spcover-s", track.getAlbum().getImages()[2].getUrl());
 						}
 					}
 				}

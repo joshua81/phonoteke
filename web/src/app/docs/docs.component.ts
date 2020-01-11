@@ -11,35 +11,53 @@ export class DocsComponent implements OnInit {
   error = null;
   page = 0;
   docs = [];
+  tracks = [];
 
   constructor(private http: HttpClient, private service: AppService) {}
 
   ngOnInit() {
-    this.service.onSearch.subscribe((searchText: string) => this.loadPageSearch(searchText));
-    this.loadPage(0);
+    this.service.onSearch.subscribe((searchText: string) => this.onSearch(searchText));
+    this.loadAlbums(0);
+    this.loadTracks(0);
   }
 
-  loadPageSearch(searchText: string) {
-    this.loadPage(0);
+  onSearch(searchText: string) {
+    this.loadAlbums(0);
   }
 
-  loadPageScroll() {
+  loadAlbumsScroll() {
     this.page++;
-    this.loadPage(this.page);
+    this.loadAlbums(this.page);
+    this.loadTracks(this.page);
   }
 
-  loadPage(page: number) {
+  loadAlbums(page: number) {
     this.page = page;
     if(this.page == 0) {
       this.docs.splice(0, this.docs.length);
     }
 
     this.http.get('/api/docs?p=' + this.page + '&q=' + this.service.searchText).subscribe(
-      (data: any) => this.pageLoaded(data),
+      (data: any) => this.albumsLoaded(data),
       error => this.error = error);
   }
 
-  pageLoaded(data: any) {
+  albumsLoaded(data: any) {
     this.docs.push.apply(this.docs, data);
+  }
+
+  loadTracks(page: number) {
+    this.page = page;
+    if(this.page == 0) {
+      this.tracks.splice(0, this.tracks.length);
+    }
+
+    this.http.get('/api/tracks?p=' + this.page).subscribe(
+      (data: any) => this.tracksLoaded(data),
+      error => this.error = error);
+  }
+
+  tracksLoaded(data: any) {
+    this.tracks.push.apply(this.tracks, data);
   }
 }

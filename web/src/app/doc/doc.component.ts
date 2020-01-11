@@ -13,8 +13,6 @@ export class DocComponent implements OnInit {
   error = null;
   docId = null;
   doc = null;
-  showEvents = false;
-  events = [];
   links = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private meta: Meta, public service: AppService) {}
@@ -28,17 +26,9 @@ export class DocComponent implements OnInit {
   }
 
   loadDoc(id: string) {
-    this.showEvents = false;
-    this.events = [];
+    this.service.resetEvents();
     this.http.get('/api/docs/' + id).subscribe(
       (data: any) => this.setDoc(data[0]),
-      error => this.error = error);
-  }
-
-  loadEvents(id: string) {
-    this.showEvents = true;
-    this.http.get('/api/artists/' + id + '/events').subscribe(
-      (data: any) => this.setEvents(data),
       error => this.error = error);
   }
 
@@ -74,19 +64,11 @@ export class DocComponent implements OnInit {
       this.service.audio.load();
     }
 
-    this.showEvents = false;
-    this.events.splice(0, this.events.length);
+    this.service.resetEvents();
     this.links.splice(0, this.links.length);
 
     if(this.doc.artistid) {
       this.loadLinks(this.doc.artistid);
-    }
-  }
-
-  setEvents(events: any) {
-    this.events.splice(0, this.events.length);
-    if(typeof(events) != 'undefined' && events != null){
-      this.events.push.apply(this.events, events);
     }
   }
 

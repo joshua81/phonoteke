@@ -67,12 +67,13 @@ app.get('/api/tracks', async(req, res)=>{
 		var tracks = [];
 		result.forEach(function(doc) 
 		{
-			doc.tracks.forEach(function(track)
-			{
-				if(track.title && track.youtube) {
-					tracks.push(track);
+			var i = 0;
+			for (i = 0; i < doc.tracks.length; i++) {
+				if(doc.tracks[i].title && doc.tracks[i].youtube) {
+					tracks.push(doc.tracks[i]);
+					break;
 				}
-			});
+			}
 		});
 		res.send(tracks);
 	}

@@ -1,23 +1,20 @@
 <docs-menu></docs-menu>
-<div class="container pt-5 pb-5 w-max text-white">
-  <div *ngIf="docs && docs.length != 0" class="row text-white">
-    <h2>Album</h2>
-  </div>
-  <div infinite-scroll class="row hlist d-flex flex-nowrap" [horizontal]="true" [scrollWindow]="false" (scrolled)="loadPageScroll()">
+<div class="container pt-5 pb-5 w-max">
+  <div infinite-scroll class="row d-flex justify-content-center pt-2 pl-2 pr-2" (scrolled)="loadAlbumsScroll()">
       <div *ngFor="let doc of docs" class="pr-2">
-        <div class="cover card mx-auto">
-          <a class="cover" [routerLink]="['/docs/' + doc.id]">
-            <img class="cover card-img-top" src="{{doc.cover}}"/>
+        <div class="cover-m card mx-auto">
+          <a class="cover-m" [routerLink]="['/docs/' + doc.id]">
+            <img class="cover-m card-img-top" src="{{doc.cover}}"/>
             <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
               <span class="star"></span>
             </div>
             <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
           </a>
-          <div class="card-body p-2">
+          <div class="card-body p-0">
             <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
             <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
             <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.description" class="card-text" [innerHTML]="doc.description"></div>
+            <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
           </div>
         </div>
       </div>

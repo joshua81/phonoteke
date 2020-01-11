@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {DocComponent} from '../doc/doc.component';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-youtube',
@@ -13,6 +13,8 @@ export class YoutubeComponent implements OnInit {
   videos = [];
   private _tracks = [];
 
+  constructor(public service: AppService) {}
+  
   get tracks(): any {
     return this._tracks;
   }
@@ -32,8 +34,6 @@ export class YoutubeComponent implements OnInit {
     }
     this.video = this.videos.length > 0 ? this.videos[0] : null;
   }
-
-  constructor(public component: DocComponent) {}
 
   ngOnInit() {
     const tag = document.createElement('script');

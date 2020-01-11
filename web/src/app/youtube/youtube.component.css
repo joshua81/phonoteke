@@ -1,12 +1,5 @@
-.trackbox {
-  width: 330px;
-}
-
-.track {
-    width: 322px;
-    height: 182px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
+img.track {
+    width: 320px;
+    height: 180px;
     object-fit:cover;
-  }
+}

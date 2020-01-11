@@ -1,5 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light fixed-top bg-dark justify-content-center">
-  <form class="w-max">
-    <input class="form-control" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
-  </form>
+<nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
+  <div class="d-flex align-items-center w-max pl-2 pr-2">
+    <div class="pr-2">
+      <img class="menubtn"/>
+    </div>
+    
+    <form class="w-100">
+      <input class="form-control" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+    </form>
+  </div>
 </nav>

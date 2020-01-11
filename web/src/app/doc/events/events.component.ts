@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {DocComponent} from '../doc.component';
+import { AppService } from '../../app.service';
 
 @Component({
     selector: 'app-events',
@@ -9,11 +9,11 @@ import {DocComponent} from '../doc.component';
 export class EventsComponent {
     @Input() events = [];
 
-    constructor(private component: DocComponent) { }
+    constructor(private service: AppService) { }
 
     ngOnInit() {}
 
     close() {
-        this.component.showEvents = false;
+        this.service.showEvents = false;
     }
 }

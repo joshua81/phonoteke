@@ -1,6 +1,6 @@
 <docs-menu></docs-menu>
 <div class="container pt-5 pb-5 w-max">
-  <div infinite-scroll class="row d-flex justify-content-center pt-2 pl-2 pr-2" (scrolled)="loadAlbumsScroll()">
+  <div infinite-scroll class="row d-flex justify-content-center pt-2" (scrolled)="loadAlbumsScroll()">
       <div *ngFor="let doc of docs" class="pr-2">
         <div class="cover-m card mx-auto">
           <a class="cover-m" [routerLink]="['/docs/' + doc.id]">

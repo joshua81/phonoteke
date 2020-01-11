@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
-  <div class="d-flex align-items-center w-max pl-2 pr-2">
+  <div class="d-flex align-items-center w-max">
     <div class="pr-2">
       <a [routerLink]="['/']">
         <img class="cover rounded" src="{{component.doc.cover}}"/>
       </a>
     </div>
 
-    <div class="text-truncate p-0 w-100">
+    <div class="text-truncate w-100">
       <div class="font-weight-bold" [innerHTML]="component.doc.title"></div>
       <div [innerHTML]="component.doc.artist"></div>
     </div>

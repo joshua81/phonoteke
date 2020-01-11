@@ -1,16 +1,15 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5 w-max">
-  <div class="p-2">
-    <div class="row">
-      <div class="cover-l col-auto pl-0 pr-3">
-        <img class="cover-l rounded" src="{{doc.cover}}"/>
+    <div class="row pt-2">
+      <div class="cover-m col-auto pl-0 pr-3">
+        <img class="cover-m rounded" src="{{doc.cover}}"/>
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
         </div>
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
       </div>
 
-      <div class="col-auto pt-3">
+      <div class="col-auto pl-0">
         <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
         <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
         <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>
@@ -32,6 +31,14 @@
       <a *ngIf="doc.artistid != null" class="pr-2" (click)="service.loadEvents(doc.artistid)">
         <img class="songkick">
       </a>
+      <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
+        href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+        <img class="spotify">
+      </a>
+      <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2"
+        href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+        <img class="spotify">
+      </a>
       <div *ngIf="service.audio" class="pr-2" (click)="backward($event)">
         <span class="backwardbtn"></span>
       </div>
@@ -42,14 +49,6 @@
       <div *ngIf="service.audio" class="pr-2" (click)="forward($event)">
         <span class="forwardbtn"></span>
       </div>
-      <!--a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
-        href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-        <img class="spotify">
-      </a>
-      <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2"
-        href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        <img class="spotify">
-      </a-->
     </div>
 
     <div class="row pt-3">
@@ -61,12 +60,14 @@
     <!--div *ngIf="doc.tracks && doc.tracks.length != 0" class="row">
       <h2>Video</h2>
     </div-->
-    <app-youtube [tracks]="doc.tracks"></app-youtube>
+    <div class="row pt-3 d-flex justify-content-center">
+      <app-youtube [tracks]="doc.tracks"></app-youtube>
+    </div>
 
     <!--div *ngIf="links && links.length != 0" class="row pt-3">
       <h2>Link</h2>
     </div-->
-    <div *ngIf="links && links.length != 0" class="row d-flex justify-content-center">
+    <div *ngIf="links && links.length != 0" class="row pt-3 d-flex justify-content-center">
       <div class="list-group w-md">
         <div *ngFor="let link of links" class="list-group-item d-flex justify-content-center p-1">
           <div class="w-100">
@@ -89,7 +90,6 @@
         </div>
       </div>
     </div>
-  </div>
 </div>
 
 <app-events *ngIf="service.showEvents == true" [events]="service.events"></app-events>

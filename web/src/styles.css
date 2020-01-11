@@ -246,7 +246,6 @@ img.songkick {
 
 .container-fluid {
     min-height: 100%;
-    background: #000000;
 }
 
 .list-group-item {
@@ -272,18 +271,18 @@ img.cover-l {
 }
 
 div.cover-m {
-    width: 200px;
+    width: 250px;
     position: relative;
 }
   
 a.cover-m {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
 }
 
 img.cover-m {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     object-fit:cover;
 }
 

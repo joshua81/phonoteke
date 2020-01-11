@@ -18,10 +18,6 @@ div.vote {
   border-style: none;
 }
 
-.card-body {
-  height: 160px;
-}
-
 .card-text {
   overflow: hidden;
   display: -webkit-box;

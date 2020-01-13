@@ -156,7 +156,15 @@ img.songkick {
     mask: url("/images/songkick.svg");
     width: 30px;
     height: 30px;
-    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.spotifybtn {
+    display: inline-block;
+    mask: url("/images/spotify.svg");
+    width: 30px;
+    height: 30px;
+    background: #8AC007;
     cursor: pointer;
 }
 

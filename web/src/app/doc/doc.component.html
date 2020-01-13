@@ -29,15 +29,18 @@
         <img class="musicbrainz">
       </a-->
       <a *ngIf="doc.artistid != null" class="pr-2" (click)="service.loadEvents(doc.artistid)">
-        <img class="songkick">
+        <!--img class="songkick"-->
+        <div><span class="songkickbtn"></span></div>
       </a>
       <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
         href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-        <img class="spotify">
+        <!--img class="spotify"-->
+        <div><span class="spotifybtn"></span></div>
       </a>
       <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2"
         href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        <img class="spotify">
+        <!--img class="spotify"-->
+        <div><span class="spotifybtn"></span></div>
       </a>
       <div *ngIf="service.audio" class="pr-2" (click)="backward($event)">
         <span class="backwardbtn"></span>

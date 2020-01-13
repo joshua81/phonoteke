@@ -29,8 +29,9 @@
         <img class="musicbrainz">
       </a-->
       <a *ngIf="doc.artistid != null" class="pr-2" (click)="service.loadEvents(doc.artistid)">
-        <!--img class="songkick"-->
-        <div><span class="songkickbtn"></span></div>
+        <div class="songkick">
+          <span class="songkickbtn"></span>
+        </div>
       </a>
       <a *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2"
         href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">

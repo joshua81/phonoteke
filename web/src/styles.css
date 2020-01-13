@@ -33,6 +33,10 @@ h3, p, li, a, div {
     font-size: 14px;
 }
 
+footer {
+    color: white !important;
+}
+
 nav {
     background: none;
     opacity: 0.8;
@@ -151,11 +155,22 @@ img.songkick {
     cursor: pointer;
 }
 
+div.songkick {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background: #FFFFFF;
+
+    text-align: center;
+    padding-top: 3px;
+}
+
 .songkickbtn {
     display: inline-block;
     mask: url("/images/songkick.svg");
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    background: #F80046;
     cursor: pointer;
 }
 
@@ -171,7 +186,7 @@ img.songkick {
 .menubtn {
     display: inline-block;
     mask: url("/images/menu.svg");
-    width: 30px;
+    width: 12px;
     height: 30px;
     background: #FFFFFF;
     cursor: pointer;

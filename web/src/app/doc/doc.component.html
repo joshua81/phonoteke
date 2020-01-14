@@ -1,15 +1,17 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 pb-5 w-max">
     <div class="row pt-2">
-      <div class="cover-m col-auto pl-0 pr-3">
-        <img class="cover-m rounded" src="{{doc.cover}}"/>
-        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
-          <span class="star"></span>
+      <div class="col-auto pl-0 pr-3">
+        <div class="cover-m">
+          <img class="cover-m rounded" src="{{doc.cover}}"/>
+          <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+            <span class="star"></span>
+          </div>
+          <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
         </div>
-        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
       </div>
 
-      <div class="col-auto pl-0">
+      <div class="col-auto pl-0 pt-2">
         <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
         <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
         <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>

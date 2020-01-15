@@ -1,8 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
-  <div class="d-flex align-items-center w-max">
-    <form class="w-100 pr-2">
-      <input class="form-control" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+  <div class="d-flex align-items-center w-max menu">
+    <form class="w-100">
+      <input class="form-control search" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
     </form>
-    <div class="h-100 align-middle"><span class="menubtn"></span></div>
+    <div><span class="closebtn search-reset"></span></div>
+    <div><span class="menubtn search-menu"></span></div>
   </div>
 </nav>

@@ -1,0 +1,19 @@
+.menu {
+    position: relative;
+}
+
+.search {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.search-reset {
+    position: absolute;
+    top: 9px;
+    right: 5px;
+}
+
+.search-menu {
+    position: absolute;
+    top: 9px;
+    left: 10px;
+}

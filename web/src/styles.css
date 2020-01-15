@@ -133,7 +133,7 @@ img.songkick {
     mask: url("/images/close.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: rgba(52, 58, 64, 1);
     cursor: pointer;
 }
 
@@ -186,9 +186,9 @@ div.songkick {
 .menubtn {
     display: inline-block;
     mask: url("/images/menu.svg");
-    width: 8px;
+    width: 10px;
     height: 20px;
-    background: #FFFFFF;
+    background: rgba(52, 58, 64, 1);
     cursor: pointer;
 }
 

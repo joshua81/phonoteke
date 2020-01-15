@@ -1,22 +1,22 @@
 <div *ngIf="tracks && tracks.length != 0" class="row d-flex justify-content-center">
     <div class="row d-flex justify-content-center pt-2">
-        <div *ngFor="let track of tracks" class="d-flex justify-content-center p-1" (click)="loadVideo(track)">
-            <div class="justify-content-center pt-2">
-                <img *ngIf="video != track" class="track" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}">
-                <youtube-player *ngIf="video == track" width="320px" height="180px" suggestedQuality="default" videoId="{{track.youtube}}"
-                    (stateChange)="onStateChange($event)"
-                    (ready)="onReady($event)">
-                    Loading...
-                </youtube-player>
-                <div class="d-flex align-items-center track pt-2">
-                    <div class="w-100" [innerHTML]="track.title"></div>
+        <div *ngFor="let track of tracks" class="d-flex justify-content-center pt-2 pr-2" (click)="loadVideo(track)">
+            <div class="justify-content-center">
+                <div class="track">
+                    <img *ngIf="video != track" class="track" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}">
+                    <youtube-player *ngIf="video == track" width="320px" height="180px" suggestedQuality="default" videoId="{{track.youtube}}"
+                        (stateChange)="onStateChange($event)"
+                        (ready)="onReady($event)">
+                        Loading...
+                    </youtube-player>
+                </div>
+                <div class="track-title d-flex align-items-center p-2 bg-black">
+                    <div class="bg-black w-100" [innerHTML]="track.title"></div>
                     <!--a *ngIf="track.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
                         <img class="musicbrainz">
                     </a-->
-                    <a *ngIf="track.artistid" (click)="service.loadEvents(track.artistid)">
-                        <div class="songkick">
-                            <span class="songkickbtn"></span>
-                        </div>
+                    <a *ngIf="track.artistid" class="bg-black pl-2" (click)="service.loadEvents(track.artistid)">
+                        <div class="songkick"><span class="songkickbtn"></span></div>
                     </a>
                 </div>
             </div>

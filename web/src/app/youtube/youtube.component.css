@@ -1,10 +1,15 @@
-div.track {
+div.track {  
     width: 320px;
-    height: 40px;
+    height: 180px;
 }
 
 img.track {
     width: 320px;
     height: 180px;
     object-fit:cover;
+}
+
+div.track-title {
+    width: 320px;
+    height: 60px;
 }

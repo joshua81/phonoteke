@@ -267,6 +267,10 @@ div.songkick {
     max-width: 600px;
 }
 
+.bg-black {
+    background: #000000;
+}
+
 .container-fluid {
     min-height: 100%;
 }

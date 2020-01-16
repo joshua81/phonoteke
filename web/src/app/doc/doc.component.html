@@ -63,16 +63,8 @@
       </div>
     </div>
 
-    <!--div *ngIf="doc.tracks && doc.tracks.length != 0" class="row">
-      <h2>Video</h2>
-    </div-->
-    <div class="row pt-3 d-flex justify-content-center">
-      <app-youtube [tracks]="doc.tracks"></app-youtube>
-    </div>
+    <app-youtube [tracks]="doc.tracks"></app-youtube>
 
-    <!--div *ngIf="links && links.length != 0" class="row pt-3">
-      <h2>Link</h2>
-    </div-->
     <div *ngIf="links && links.length != 0" class="row pt-3 d-flex justify-content-center">
       <div class="list-group w-md">
         <div *ngFor="let link of links" class="list-group-item d-flex justify-content-center p-1">

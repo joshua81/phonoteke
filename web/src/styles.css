@@ -186,7 +186,7 @@ div.songkick {
 .menubtn {
     display: inline-block;
     mask: url("/images/menu.svg");
-    width: 10px;
+    width: 16px;
     height: 20px;
     background: rgba(52, 58, 64, 1);
     cursor: pointer;

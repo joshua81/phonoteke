@@ -140,8 +140,35 @@ img.songkick {
 .podcastbtn {
     display: inline-block;
     mask: url("/images/podcast.svg");
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.interviewbtn {
+    display: inline-block;
+    mask: url("/images/interview.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.concertbtn {
+    display: inline-block;
+    mask: url("/images/concert.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.infobtn {
+    display: inline-block;
+    mask: url("/images/info.svg");
+    width: 20px;
+    height: 20px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -149,6 +176,32 @@ img.songkick {
 .youtubebtn {
     display: inline-block;
     mask: url("/images/youtube.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.allbtn {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: none;
+    cursor: pointer;
+}
+
+.albumbtn {
+    display: inline-block;
+    mask: url("/images/album.svg");
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.artistbtn {
+    display: inline-block;
+    mask: url("/images/artist.svg");
     width: 20px;
     height: 20px;
     background: #FFFFFF;
@@ -275,22 +328,6 @@ div.songkick {
     background-color: transparent;
     border-style: none;
     cursor: pointer;
-}
-
-div.cover-l {
-    width: 300px;
-    position: relative;
-}
-  
-a.cover-l {
-    width: 300px;
-    height: 300px;
-}
-
-img.cover-l {
-    width: 300px;
-    height: 300px;
-    object-fit:cover;
 }
 
 div.cover-m {

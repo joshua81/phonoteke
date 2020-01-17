@@ -49,16 +49,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		while(i.hasNext())
 		{
 			org.bson.Document page = i.next();
-			switch (TYPE.valueOf(page.getString("type").toUpperCase())) {
-			case ALBUM:
+			switch (TYPE.valueOf(page.getString("type"))) {
+			case album:
 				loadAlbumMBId(page);
 				loadTracksMBId(page);
 				break;
-			case ARTIST:
+			case artist:
 				loadArtistMBId(page);
 				break;
-			case CONCERT:
-			case INTERVIEW:
+			case concert:
+			case interview:
 				loadArtistMBId(page);
 			default:
 				break;
@@ -74,16 +74,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();
-				switch (TYPE.valueOf(page.getString("type").toUpperCase())) {
-				case ALBUM:
+				switch (TYPE.valueOf(page.getString("type"))) {
+				case album:
 					loadAlbumMBId(page);
 					loadTracksMBId(page);
 					break;
-				case ARTIST:
+				case artist:
 					loadArtistMBId(page);
 					break;
-				case CONCERT:
-				case INTERVIEW:
+				case concert:
+				case interview:
 					loadArtistMBId(page);
 				default:
 					break;

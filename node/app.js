@@ -21,19 +21,35 @@ app.use(express.static('web'));
 app.get('/api/docs', async(req, res)=>{
 	if(req.query.q)
 	{
-		console.log('Docs: page=' + req.query.p + ', query=' + req.query.q);
+		console.log('Docs: page=' + req.query.p + ', query=' + req.query.q + ', type=' + req.query.t);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
 		var query = req.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		var result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var result = null;
+		if(!req.query.t)
+		{
+			result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		}
+		else
+		{
+			result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		}
 		res.send(result);
 	}
 	else
 	{
-		console.log('Docs: page=' + req.query.p);
+		console.log('Docs: page=' + req.query.p + ', type=' + req.query.t);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var result = await docs.find().project({review: 0}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var result = null;
+		if(!req.query.t)
+		{
+			result = await docs.find().project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		}
+		else
+		{
+			result = await docs.find({'type': req.query.t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		}
 		res.send(result);
 	}
 });
@@ -46,13 +62,18 @@ app.get('/api/tracks', async(req, res)=>{
 		var query = req.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		var result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({tracks: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		var tracks = [];
 		result.forEach(function(doc) 
 		{
 			doc.tracks.forEach(function(track)
 			{
 				if(track.title && track.youtube) {
+					track.id = doc.id;
+					track.type = doc.type;
+					//track.artist = doc.artist;
+					//track.title = doc.title;
+					track.cover = doc.cover;
 					tracks.push(track);
 				}
 			});
@@ -63,13 +84,18 @@ app.get('/api/tracks', async(req, res)=>{
 	{
 		console.log('Tracks: page=' + req.query.p);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var result = await docs.find().project({tracks: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		var result = await docs.find().skip(page*12).limit(12).sort({"date":-1}).toArray();
 		var tracks = [];
 		result.forEach(function(doc) 
 		{
 			var i = 0;
 			for (i = 0; i < doc.tracks.length; i++) {
 				if(doc.tracks[i].title && doc.tracks[i].youtube) {
+					doc.tracks[i].id = doc.id;
+					doc.tracks[i].type = doc.type;
+					//doc.tracks[i].artist = doc.artist;
+					//doc.tracks[i].title = doc.title;
+					doc.tracks[i].cover = doc.cover;
 					tracks.push(doc.tracks[i]);
 					break;
 				}
@@ -85,7 +111,7 @@ app.get('/api/docs/:id', async(req, res)=>{
 	if(result.length == 1)
 	{
 		var doc = result[0];
-		if(doc.type == 'album')
+		if(doc.type == 'album' || doc.type == 'podcast')
 		{
 			doc.tracks.forEach(function(track) 
 			{
@@ -110,7 +136,7 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 		if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null) {
 			artists.push(doc[0].artistid);
 		}
-		if(doc[0].type == 'album')
+		if(doc[0].type == 'podcast')
 		{
 			doc[0].tracks.forEach(function(track) {
 				if(typeof(track.artistid) != 'undefined' && track.artistid != null) {
@@ -119,7 +145,7 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({review: 0, description: 0, links: 0}).sort({"artist":1, "year":-1}).toArray();
+		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, vote: 1}).sort({"artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

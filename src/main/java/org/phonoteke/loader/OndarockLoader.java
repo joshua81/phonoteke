@@ -152,14 +152,14 @@ public class OndarockLoader extends PhonotekeLoader
 		Element bandElement = null;
 		String band = null;
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			intestazioneElement = doc.select("div[id=intestazionerec]").first();
 			bandElement = intestazioneElement.select("h1").first();
 			band = bandElement.html().trim();
 			return band;
-		case ARTIST:
-		case CONCERT:
-		case INTERVIEW:
+		case artist:
+		case concert:
+		case interview:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
@@ -195,14 +195,14 @@ public class OndarockLoader extends PhonotekeLoader
 		Element titleElement = null;
 		String title = null;
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			intestazioneElement = doc.select("div[id=intestazionerec]").first();
 			titleElement = intestazioneElement.select("h2").first();
 			title = titleElement.html().trim();
 			return title;
-		case ARTIST:
-		case CONCERT:
-		case INTERVIEW:
+		case artist:
+		case concert:
+		case interview:
 			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
 			if(intestazioneElement == null)
 			{
@@ -226,11 +226,11 @@ public class OndarockLoader extends PhonotekeLoader
 		Element descriptionElement = null;
 		String description = null;
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			descriptionElement = doc.select("meta[property=og:description]").first();
 			description = descriptionElement.attr("content").trim();
 			return description;
-		case ARTIST:
+		case artist:
 			descriptionElement = doc.select("meta[property=og:description]").first();
 			description = descriptionElement.attr("content").trim();
 			return description;
@@ -246,7 +246,7 @@ public class OndarockLoader extends PhonotekeLoader
 		{
 			Date reviewDate = null;
 			switch (getType(url)) {
-			case ALBUM:
+			case album:
 				Element reviewElement = doc.select("div[id=maintext]").first();
 				Element reviewDateElement = reviewElement.select("p[style]").last();
 				if(reviewDateElement != null)
@@ -258,7 +258,7 @@ public class OndarockLoader extends PhonotekeLoader
 					reviewDate = getDate("01/01/" + getYear(url, doc));
 				}
 				return reviewDate;
-			case CONCERT:
+			case concert:
 				reviewElement = doc.select("div[id=intestazione_OR3]").first();
 				if(reviewElement == null)
 				{
@@ -290,22 +290,22 @@ public class OndarockLoader extends PhonotekeLoader
 			Element coverElement = null;
 			String cover = null;
 			switch (getType(url)) {
-			case ALBUM:
+			case album:
 				coverElement = doc.select("div[id=cover_rec]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
-			case ARTIST:
+			case artist:
 				coverElement = doc.select("div[id=col_right_mono]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
-			case CONCERT:
+			case concert:
 				coverElement = doc.select("div[class=fotolr]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
-			case INTERVIEW:
+			case interview:
 				coverElement = doc.select("div[class=article_foto_cont]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
@@ -326,7 +326,7 @@ public class OndarockLoader extends PhonotekeLoader
 	{
 		Element authorElement = null;
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			authorElement = doc.select("div[class=recensorerec]").first();
 			if(authorElement != null)
 			{
@@ -336,9 +336,9 @@ public class OndarockLoader extends PhonotekeLoader
 					return Lists.newArrayList(authorElement.html().trim().split(","));
 				}
 			}
-		case ARTIST:
-		case CONCERT:
-		case INTERVIEW:
+		case artist:
+		case concert:
+		case interview:
 			authorElement = doc.select("span[class=recensore]").first();
 			if(authorElement != null)
 			{
@@ -357,7 +357,7 @@ public class OndarockLoader extends PhonotekeLoader
 	protected List<String> getGenres(String url, Document doc) 
 	{
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			Element datiElement = doc.select("div[id=dati]").first();
 			String dati = datiElement.text();
 			return Lists.newArrayList(dati.split("\\|")[1].trim().split(","));
@@ -370,7 +370,7 @@ public class OndarockLoader extends PhonotekeLoader
 	protected Integer getYear(String url, Document doc) 
 	{
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			Element datiElement = doc.select("div[id=dati]").first();
 			if(datiElement != null)
 			{
@@ -387,7 +387,7 @@ public class OndarockLoader extends PhonotekeLoader
 	protected String getLabel(String url, Document doc) 
 	{
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			Element datiElement = doc.select("div[id=dati]").first();
 			String dati = datiElement.text();
 			dati = datiElement.text();
@@ -404,7 +404,7 @@ public class OndarockLoader extends PhonotekeLoader
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		switch (getType(url)) {
-		case ALBUM:
+		case album:
 			Elements elements = doc.select("iframe");
 			for(int i = 0; i < elements.size(); i++)
 			{
@@ -441,7 +441,7 @@ public class OndarockLoader extends PhonotekeLoader
 		try
 		{
 			switch (getType(url)) {
-			case ALBUM:
+			case album:
 				if(url.contains("pietremiliari"))
 				{
 					return 10F;
@@ -484,7 +484,7 @@ public class OndarockLoader extends PhonotekeLoader
 				getUrl(url).startsWith(URL + "recensioni") ||
 				getUrl(url).startsWith(URL + "jazz/recensioni"))
 		{
-			return TYPE.ALBUM;
+			return TYPE.album;
 		}
 		else if(getUrl(url).startsWith(URL + "songwriter") || 
 				getUrl(url).startsWith(URL + "popmuzik") || 
@@ -495,16 +495,16 @@ public class OndarockLoader extends PhonotekeLoader
 				getUrl(url).startsWith(URL + "jazz") ||
 				getUrl(url).startsWith(URL + "elettronica"))
 		{
-			return TYPE.ARTIST;
+			return TYPE.artist;
 		}
 		else if(getUrl(url).startsWith(URL + "livereport"))
 		{
-			return TYPE.CONCERT;
+			return TYPE.concert;
 		}
 		else if(getUrl(url).startsWith(URL + "interviste"))
 		{
-			return TYPE.INTERVIEW;
+			return TYPE.interview;
 		}
-		return TYPE.UNKNOWN;
+		return TYPE.unknown;
 	}
 }

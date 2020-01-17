@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AppService} from '../../app.service';
+import {DocsComponent} from '../docs.component';
 
 @Component({
   selector: 'docs-menu',
@@ -7,13 +7,48 @@ import {AppService} from '../../app.service';
   styleUrls: ['./menu.component.css']
 })
 export class DocsMenuComponent implements OnInit {
-  searchText = '';
+  showMenu = false;
 
-  constructor(private service: AppService) { }
+  constructor(public component: DocsComponent) { }
 
   ngOnInit() {}
 
   onSearch() {
-    this.service.searchHandler(this.searchText);
+    this.component.onSearch();
+  }
+
+  resetSearch() {
+    this.component.ngOnInit();
+  }
+
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
+  }
+
+  loadAll() {
+    this.component.ngOnInit();
+  }
+
+  loadAlbums() {
+    this.component.loadDocs(0, 'album');
+  }
+
+  loadArtists() {
+    this.component.loadDocs(0, 'artist');
+  }
+
+  loadPodcasts() {
+    this.component.loadDocs(0, 'podcast');
+  }
+
+  loadConcerts() {
+    this.component.loadDocs(0, 'concert');
+  }
+
+  loadInterviews() {
+    this.component.loadDocs(0, 'interview');
+  }
+
+  loadInfo() {
   }
 }

@@ -6,18 +6,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppService {
   error = null;
-  searchText = '';
-  onSearch = new EventEmitter();
   audio = null;
   showEvents = false;
   events = [];
 
   constructor(private http: HttpClient) {}
-
-  searchHandler(searchText: string) {
-    this.searchText = searchText;
-    this.onSearch.emit(searchText);
-  }
 
   resetEvents() {
     this.showEvents = false;

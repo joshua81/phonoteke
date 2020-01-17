@@ -1,9 +1,72 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
   <div class="d-flex align-items-center w-max menu">
     <form class="w-100">
-      <input class="form-control search" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+      <input class="form-control search" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="component.searchText"  (keydown.enter)="onSearch()">
     </form>
-    <div><span class="closebtn search-reset"></span></div>
-    <div><span class="menubtn search-menu"></span></div>
+    <div class="search-menu" (click)="toggleMenu()"><span class="menubtn"></span></div>
+    <div class="search-reset" (click)="resetSearch()"><span class="closebtn"></span></div>
   </div>
 </nav>
+
+<div *ngIf="showMenu" class="d-flex justify-content-center modal-bg" (click)="toggleMenu()">
+  <div class="align-self-center overflow-auto modal-box">
+    <div class="list-group">
+      <div class="p-2 list-group-item" (click)="loadAll()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="allbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Tutti</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadAlbums()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="albumbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Album</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadArtists()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="artistbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Artisti</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadPodcasts()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="podcastbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Podcast</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadInterviews()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="interviewbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Interviste</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadConcerts()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="concertbtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Concerti</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2 list-group-item" (click)="loadInfo()">
+        <div class="d-flex align-items-center">
+          <div class="pr-2"><span class="infobtn"></span></div>
+          <div class="w-100">
+            <div class="font-weight-bold">Info</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

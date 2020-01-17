@@ -237,7 +237,7 @@ public class Radio2Loader extends PhonotekeLoader
 	@Override
 	protected TYPE getType(String url) 
 	{
-		return TYPE.ALBUM;
+		return TYPE.podcast;
 	}
 
 	@Override

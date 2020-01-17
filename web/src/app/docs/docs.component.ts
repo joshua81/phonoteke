@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AppService} from '../app.service';
 
 @Component({
   selector: 'app-docs',
@@ -9,40 +8,40 @@ import {AppService} from '../app.service';
 })
 export class DocsComponent implements OnInit {
   error = null;
+  searchText = '';
+  docType = '';
   page = 0;
   docs = [];
   tracks = [];
 
-  constructor(private http: HttpClient, private service: AppService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.service.onSearch.subscribe((searchText: string) => this.onSearch(searchText));
-    this.loadAlbums(0);
-    this.loadTracks(0);
+    this.searchText = '';
+    this.loadDocs(0, '');
   }
 
-  onSearch(searchText: string) {
-    this.loadAlbums(0);
+  onSearch() {
+    this.loadDocs(0, this.docType);
   }
 
-  loadAlbumsScroll() {
-    this.page++;
-    this.loadAlbums(this.page);
-    this.loadTracks(this.page);
+  onScroll() {
+    this.loadDocs(this.page+1, this.docType);
   }
 
-  loadAlbums(page: number) {
+  loadDocs(page: number, docType: string) {
     this.page = page;
+    this.docType = docType;
     if(this.page == 0) {
       this.docs.splice(0, this.docs.length);
     }
 
-    this.http.get('/api/docs?p=' + this.page + '&q=' + this.service.searchText).subscribe(
-      (data: any) => this.albumsLoaded(data),
+    this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.docType).subscribe(
+      (data: any) => this.docsLoaded(data),
       error => this.error = error);
   }
 
-  albumsLoaded(data: any) {
+  docsLoaded(data: any) {
     this.docs.push.apply(this.docs, data);
   }
 

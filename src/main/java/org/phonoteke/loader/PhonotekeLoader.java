@@ -47,11 +47,12 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected MongoCollection<org.bson.Document> docs;
 
 	protected enum TYPE {
-		ARTIST,
-		ALBUM,
-		CONCERT,
-		INTERVIEW,
-		UNKNOWN
+		artist,
+		album,
+		concert,
+		interview,
+		podcast,
+		unknown
 	}
 
 	public PhonotekeLoader()
@@ -101,7 +102,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 			String source = getSource();
 			TYPE type = getType(url);
 
-			if(!url.endsWith(".htm") && !url.endsWith(".html") && !TYPE.UNKNOWN.equals(type))
+			if(!url.endsWith(".htm") && !url.endsWith(".html") && !TYPE.unknown.equals(type))
 			{
 				return;
 			}
@@ -120,15 +121,16 @@ public abstract class PhonotekeLoader extends WebCrawler
 				{
 					switch(type)
 					{
-					case ALBUM:
-						if(!source.equals(OndarockLoader.SOURCE) || !docs.find(Filters.and(Filters.eq("source", source),
-								Filters.eq("type", type.name().toLowerCase()),
+					case album:
+					case podcast:
+						if(type.equals(TYPE.podcast) || !docs.find(Filters.and(Filters.eq("source", source),
+								Filters.eq("type", type.name()),
 								Filters.eq("artist", artist),
 								Filters.eq("title", title))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
 									append("url", getUrl(url)).
-									append("type", type.name().toLowerCase()).
+									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
 									append("authors", getAuthors(url, doc)).
@@ -146,14 +148,14 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("audio", getAudio(url, doc));
 						}
 						break;
-					case ARTIST:
+					case artist:
 						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("type", type.name()),
 								Filters.eq("artist", artist))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
 									append("url", getUrl(url)).
-									append("type", type.name().toLowerCase()).
+									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
 									append("authors", getAuthors(url, doc)).
@@ -165,15 +167,15 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("source", getSource());
 						}
 						break;
-					case CONCERT:
+					case concert:
 						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("type", type.name()),
 								Filters.eq("artist", artist),
 								Filters.eq("title", title))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
 									append("url", getUrl(url)).
-									append("type", type.name().toLowerCase()).
+									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
 									append("authors", getAuthors(url, doc)).
@@ -185,15 +187,15 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("source", getSource());
 						}
 						break;
-					case INTERVIEW:
+					case interview:
 						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name().toLowerCase()),
+								Filters.eq("type", type.name()),
 								Filters.eq("artist", artist),
 								Filters.eq("title", title))).iterator().hasNext())
 						{
 							json = new org.bson.Document("id", id).
 									append("url", getUrl(url)).
-									append("type", type.name().toLowerCase()).
+									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
 									append("authors", getAuthors(url, doc)).
@@ -211,7 +213,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 					if(json != null)
 					{
 						docs.insertOne(json);
-						LOGGER.info(json.getString("type").toUpperCase() + " " + url + " added");
+						LOGGER.info(json.getString("type") + " " + url + " added");
 					}
 				}
 			}
@@ -279,7 +281,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected TYPE getType(String url) 
 	{
-		return TYPE.UNKNOWN;
+		return TYPE.unknown;
 	}
 
 	protected String getArtist(String url, Document doc) {

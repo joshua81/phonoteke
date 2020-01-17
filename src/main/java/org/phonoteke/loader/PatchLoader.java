@@ -4,48 +4,34 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
 public class PatchLoader extends Radio2Loader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
-	private static final String MONGO_HOST = "localhost";
-	private static final int MONGO_PORT = 27017;
-	private static final String MONGO_DB = "phonoteke";
-
-	private MongoCollection<Document> docsLocal;
-
 	public static void main(String[] args) 
 	{
-		new PatchLoader().missingDocs();
+		new PatchLoader().changeType();
 	}
 
 	public PatchLoader()
 	{
 		super();
-		MongoDatabase db = new MongoClient(MONGO_HOST, MONGO_PORT).getDatabase(MONGO_DB);
-		docsLocal = db.getCollection("docs");
 	}
 
-	private void missingDocs()
+	private void changeType()
 	{
-		MongoCursor<Document> i = docsLocal.find().noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.or(Filters.eq("source", "babylon"), Filters.eq("source", "musicalbox"), Filters.eq("source", "inthemix"))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
-			Document docLocal = i.next();
-			String id = docLocal.getString("id");
-			String url = docLocal.getString("url");
-			MongoCursor<Document> j = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
-			Document doc = j.tryNext();
-			if(doc == null)
-			{
-				LOGGER.info(url);
-			}
+			Document doc = i.next();
+			String id = doc.getString("id");
+			String source = doc.getString("source");
+			doc.append("type", TYPE.podcast.name());
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", doc));
+			LOGGER.info("Doc " + source + " updated");
 		}
 	}
 }

@@ -89,7 +89,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadAlbums()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
@@ -156,7 +156,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadArtists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.ALBUM.name().toLowerCase()), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();

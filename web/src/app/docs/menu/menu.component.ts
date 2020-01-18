@@ -49,6 +49,10 @@ export class DocsMenuComponent implements OnInit {
     this.component.loadDocs(0, 'interview');
   }
 
+  loadVideos() {
+    
+  }
+
   loadInfo() {
   }
 }

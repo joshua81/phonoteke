@@ -182,11 +182,12 @@ img.songkick {
     cursor: pointer;
 }
 
-.allbtn {
+.homebtn {
     display: inline-block;
+    mask: url("/images/home.svg");
     width: 20px;
     height: 20px;
-    background: none;
+    background: #FFFFFF;
     cursor: pointer;
 }
 

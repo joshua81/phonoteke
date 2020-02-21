@@ -12,6 +12,10 @@ html, body {
     background: rgba(233, 240, 242, 1);
 }
 
+.container-fluid {
+    min-height: 100%;
+}
+
 a {
     cursor: pointer;
     text-decoration: none !important;
@@ -34,9 +38,33 @@ h3 {
     font-size: 14px;
 }
 
-.bg-gray {
-    background: rgba(219, 219, 219, 1);
+.w-max {
+    width: 100%;
+    max-width: 1200px;
 }
+
+.w-md {
+    width: 100%;
+    max-width: 600px;
+}
+
+div.cover-m {
+    width: 250px;
+    position: relative;
+}
+  
+a.cover-m {
+    width: 250px;
+    height: 250px;
+}
+
+img.cover-m {
+    width: 250px;
+    height: 250px;
+    object-fit:cover;
+}
+
+/********** buttons **********/
 
 img.musicbrainz {
     border-radius: 50%;
@@ -92,8 +120,13 @@ img.songkick {
     mask: url("/images/play.svg");
     width: 30px;
     height: 30px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
+
+    border-radius: 50%;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .pausebtn {
@@ -101,8 +134,13 @@ img.songkick {
     mask: url("/images/pause.svg");
     width: 30px;
     height: 30px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
+
+    border-radius: 50%;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .forwardbtn {
@@ -110,8 +148,13 @@ img.songkick {
     mask: url("/images/forward.svg");
     width: 30px;
     height: 30px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
+
+    border-radius: 50%;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .backwardbtn {
@@ -119,8 +162,13 @@ img.songkick {
     mask: url("/images/backward.svg");
     width: 30px;
     height: 30px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
+
+    border-radius: 50%;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .closebtn {
@@ -217,10 +265,15 @@ div.songkick {
 .songkickbtn {
     display: inline-block;
     mask: url("/images/songkick.svg");
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     background: #F80046;
     cursor: pointer;
+
+    border-radius: 50%;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .spotifybtn {
@@ -283,77 +336,4 @@ div.songkick {
     height: 20px;
     background: #FFFFFF;
     cursor: pointer;
-}
-
-.modal-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 30;
-    background: rgba(52, 58, 64, 0.75);
-    cursor: pointer;
-}
-
-.modal-box {
-    width: 80vw;
-    max-width: 600px;
-    max-height: 80vh;
-    z-index: 40;
-    border-style: solid;
-    border-width: 1px;
-    border-color: white;
-}
-
-.w-max {
-    width: 100%;
-    max-width: 1200px;
-}
-
-.w-md {
-    width: 100%;
-    max-width: 600px;
-}
-
-.container-fluid {
-    min-height: 100%;
-}
-
-.list-group-item {
-    background-color: transparent;
-    border-style: none;
-    cursor: pointer;
-}
-
-div.cover-m {
-    width: 250px;
-    position: relative;
-}
-  
-a.cover-m {
-    width: 250px;
-    height: 250px;
-}
-
-img.cover-m {
-    width: 250px;
-    height: 250px;
-    object-fit:cover;
-}
-
-div.cover-s {
-    width: 60px;
-    position: relative;
-}
-  
-a.cover-s {
-    width: 60px;
-    height: 60px;
-}
-
-img.cover-s {
-    width: 60px;
-    height: 60px;
-    object-fit:cover;
 }

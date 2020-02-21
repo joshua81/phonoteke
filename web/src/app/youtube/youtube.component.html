@@ -1,21 +1,19 @@
 <div *ngIf="tracks && tracks.length != 0" class="row d-flex justify-content-center pt-3">
-    <div *ngFor="let track of tracks" class="p-2" (click)="loadVideo(track)">
-        <div class="track">
-            <img *ngIf="video != track" class="track" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}">
-            <youtube-player *ngIf="video == track" width="320px" height="180px" suggestedQuality="default" videoId="{{track.youtube}}"
-                (stateChange)="onStateChange($event)"
-                (ready)="onReady($event)">
-                Loading...
-            </youtube-player>
-        </div>
-        <div class="track-title d-flex align-items-start pt-1">
-            <div class="w-100" [innerHTML]="track.title"></div>
-            <!--a *ngIf="track.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + track.albumid}}" target="_blank">
-                <img class="musicbrainz">
-            </a-->
-            <a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
-                <div class="songkick"><span class="songkickbtn"></span></div>
+    <div *ngFor="let track of tracks" class="pb-2 pl-1 pr-1">
+        <div class="video-m card mx-auto">
+            <a *ngIf="video != track" class="video-m" (click)="loadVideo(track)">
+                <img class="video-m card-img-top" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}"/>
             </a>
+            <youtube-player *ngIf="video == track" width="250px" height="150px" suggestedQuality="default" videoId="{{track.youtube}}"
+                (stateChange)="onStateChange($event)" (ready)="onReady($event)">
+            </youtube-player>
+            <div class="card-body p-1">
+                <div class="font-weight-bold" [innerHTML]="track.title"></div>
+                <!--a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
+                    <div class="songkick"><span class="songkickbtn"></span></div>
+                </a-->
+                <div class="card-footer text-muted p-0">VIDEO</div>
+            </div>
         </div>
     </div>
 </div>

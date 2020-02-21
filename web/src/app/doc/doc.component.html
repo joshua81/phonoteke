@@ -1,94 +1,77 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 w-max">
-    <div class="row">
+    <div class="row d-flex justify-content-center pt-4">
       <img class="bg-image" [ngStyle]="{'background-image':'url('+doc.cover+')'}"/>
-      <div class="col-auto pt-4 pl-0 pr-3">
-        <div class="cover-m">
-          <img class="cover-m rounded" src="{{doc.cover}}"/>
-          <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
-            <span class="star"></span>
-          </div>
-          <h3 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h3>
+      <div class="cover-m">
+        <img class="cover-m" src="{{doc.cover}}"/>
+        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+          <span class="star"></span>
         </div>
+        <h3 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h3>
       </div>
+    </div>
 
-      <div class="col-auto pl-0 pt-2">
+    <div class="row d-flex justify-content-center bg-white">
+      <div class="text-center">
         <h1 *ngIf="doc.type != 'artist'" [innerHTML]="doc.title"></h1>
         <h2 *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></h2>
         <h1 *ngIf="doc.type == 'artist'" [innerHTML]="doc.artist"></h1>
         <h3 *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
-        <h3 *ngIf="doc.authors">di {{doc.authors}}</h3>
+        <h3 *ngIf="doc.authors" class="text-muted">di {{doc.authors}}</h3>
+      </div>
+    </div>
 
-        <div class="d-flex align-items-center pt-2">
-          <div class="pr-2">
-            <a href="{{doc.url}}" target="_blank">
-              <img class="{{doc.source}}">
-            </a>
-          </div>
-          <!--a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
-            <img class="musicbrainz">
-          </a>
-          <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
-            <img class="musicbrainz">
-          </a-->
-          <div *ngIf="doc.artistid != null" class="pr-2" (click)="service.loadEvents(doc.artistid)" >
-            <div class="songkick"><span class="songkickbtn"></span></div>
-          </div>
-          <div *ngIf="doc.type != 'album' && doc.spartistid" class="pr-2">
-            <a href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-              <div><span class="spotifybtn"></span></div>
-            </a>
-          </div>
-          <div *ngIf="doc.type == 'album' && doc.spalbumid" class="pr-2">
-            <a href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-              <div><span class="spotifybtn"></span></div>
-            </a>
-          </div>
-          <div *ngIf="service.audio" class="pr-2" (click)="backward($event)">
-            <span class="backwardbtn"></span>
-          </div>
-          <div *ngIf="service.audio" class="pr-2" (click)="playPause($event)">
-            <span *ngIf="service.audio.paused" class="playbtn"></span>
-            <span *ngIf="!service.audio.paused" class="pausebtn"></span>
-          </div>
-          <div *ngIf="service.audio" class="pr-2" (click)="forward($event)">
-            <span class="forwardbtn"></span>
-          </div>
-        </div>
+    <div class="row d-flex align-items-center justify-content-center bg-white">
+      <a class="pl-2 pr-2" href="{{doc.url}}" target="_blank">
+        <img class="{{doc.source}}">
+      </a>
+      <!--a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
+        <img class="musicbrainz">
+      </a>
+      <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
+        <img class="musicbrainz">
+      </a-->
+      <div *ngIf="doc.artistid != null" class="songkick pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
+        <span class="songkickbtn"></span>
+      </div>
+      <a *ngIf="doc.type != 'album' && doc.spartistid" class="pl-2 pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+        <div><span class="spotifybtn"></span></div>
+      </a>
+      <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pl-2 pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+        <div><span class="spotifybtn"></span></div>
+      </a>
+      <div *ngIf="service.audio" class="pl-2 pr-2" (click)="backward($event)">
+        <span class="backwardbtn"></span>
+      </div>
+      <div *ngIf="service.audio" class="pl-2 pr-2" (click)="playPause($event)">
+        <span *ngIf="service.audio.paused" class="playbtn"></span>
+        <span *ngIf="!service.audio.paused" class="pausebtn"></span>
+      </div>
+      <div *ngIf="service.audio" class="pl-2 pr-2" (click)="forward($event)">
+        <span class="forwardbtn"></span>
       </div>
     </div>
 
     <div class="row p-2 bg-white">
-      <div *ngIf="doc.review" class="text-justify" 
-        [innerHTML]="doc.review">
-      </div>
+      <div *ngIf="doc.review" class="text-justify" [innerHTML]="doc.review"></div>
     </div>
 
     <app-youtube [tracks]="doc.tracks"></app-youtube>
 
-    <div *ngIf="links && links.length != 0" class="row p-2 d-flex justify-content-center">
-      <div class="list-group w-md">
-        <div *ngFor="let link of links" class="list-group-item d-flex justify-content-center p-1">
-          <div class="w-100">
-            <a [routerLink]="['/docs/' + link.id]">
-              <div class="d-flex align-items-center">
-                <div class="pr-2">
-                  <img class="cover-s" src="{{link.cover}}">
-                </div>
-                <div class="w-100 pr-2">
-                  <div class="font-weight-bold" [innerHTML]="link.title"></div>
-                  <div [innerHTML]="link.artist"></div>
-                </div>
-                <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="vote-link">
-                  <span class="star"></span>
-                </div>
-                <h3 *ngIf="link.type == 'album' && link.vote && link.vote != 10" class="vote-link">{{link.vote}}</h3>
-              </div>
-            </a>
+    <div *ngIf="links && links.length != 0" class="row d-flex justify-content-center pt-3">
+      <div *ngFor="let link of links" class="pb-2 pl-1 pr-1">
+        <div class="cover-s card mx-auto">
+          <a class="cover-s" [routerLink]="['/docs/' + link.id]">
+            <img class="cover-s card-img-top" src="{{link.cover}}"/>
+          </a>
+          <div class="card-body p-1">
+            <div class="font-weight-bold" [innerHTML]="link.title"></div>
+            <div [innerHTML]="link.artist"></div>
+            <div class="card-footer text-muted p-0">{{link.type.toUpperCase()}}</div>
           </div>
         </div>
       </div>
-    </div>
+  </div>
 </div>
 
 <app-events *ngIf="service.showEvents == true" [events]="service.events"></app-events>

@@ -1,11 +1,32 @@
-.track {  
-    width: 100%;
-    max-width: 320px;
-    height: 100%;
-    max-height: 180px;
+.card {
+    border-style: none;
+}
+  
+.card-body {
+    position: relative;
+    width: 250px;
+    height: 80px;
 }
 
-div.track-title {
-    width: 100%;
-    max-width: 320px;
+.card-footer {
+    border-style: none;
+    background: none;
+    position: absolute;
+    bottom: 0px;
+  }
+
+div.video-m {
+    width: 250px;
+    position: relative;
+}
+  
+a.video-m {
+    width: 250px;
+    height: 150px;
+}
+
+img.video-m {
+    width: 250px;
+    height: 150px;
+    object-fit:cover;
 }

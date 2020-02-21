@@ -4,9 +4,9 @@
             <div *ngFor="let event of events" class="p-2 list-group-item">
                 <div class="d-flex align-items-center">
                     <div class="w-100">
-                        <div class="font-weight-bold">{{event.displayName}}</div>
-                        <div>{{event.start.date}} {{event.location.city}}</div>
-                        <div>{{event.venue.displayName}}</div>
+                        <div class="text-white font-weight-bold">{{event.displayName}}</div>
+                        <div class="text-white">{{event.start.date}} {{event.location.city}}</div>
+                        <div class="text-white">{{event.venue.displayName}}</div>
                     </div>
                     <a href="{{event.uri}}" target="_blank">
                         <div class="songkick"><span class="songkickbtn"></span></div>
@@ -17,7 +17,7 @@
     </div>
     <div *ngIf="events && events.length == 0" class="align-self-center overflow-auto modal-box">
         <div class="d-flex justify-content-center align-middle">
-            <p class="font-weight-bold pt-2">Nessun evento in programma</p>
+            <p class="text-white font-weight-bold pt-2">Nessun evento in programma</p>
         </div>
     </div>
 </div>

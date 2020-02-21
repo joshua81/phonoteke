@@ -27,7 +27,7 @@
 
   color: #FFFFFF;
   text-align: center;
-  padding-top: 5px;
+  padding-top: 8px;
 
   position: absolute;
   right: 10px;
@@ -35,14 +35,35 @@
   z-index: 20;
 }
 
-.vote-link {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  background: #8AC007;
+div.cover-s {
+  width: 120px;
+  position: relative;
+}
 
-  color: #FFFFFF;
-  text-align: center;
-  padding-top: 5px;
+a.cover-s {
+  width: 120px;
+  height: 120px;
+}
+
+img.cover-s {
+  width: 120px;
+  height: 120px;
+  object-fit:cover;
+}
+
+.card {
+  border-style: none;
+}
+
+.card-body {
+  position: relative;
+  width: 120px;
+  height: 100px;
+}
+
+.card-footer {
+  border-style: none;
+  background: none;
+  position: absolute;
+  bottom: 0px;
 }

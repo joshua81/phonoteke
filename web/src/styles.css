@@ -110,9 +110,10 @@ img.spotify {
 
 img.songkick {
     border-radius: 50%;
-    content: url("/images/songkick.jpg");
+    content: url("/images/songkick.png");
     width: 30px;
     height: 30px;
+    background-color: #FFFFFF;
 }
 
 .playbtn {

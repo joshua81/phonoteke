@@ -31,14 +31,17 @@
       <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
         <img class="musicbrainz">
       </a-->
-      <div *ngIf="doc.artistid != null" class="songkick pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
+      <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
+        <img class="songkick">
+      </a>
+      <!--div *ngIf="doc.artistid != null" class="songkick pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
         <span class="songkickbtn"></span>
-      </div>
+      </div-->
       <a *ngIf="doc.type != 'album' && doc.spartistid" class="pl-2 pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-        <div><span class="spotifybtn"></span></div>
+        <img class="spotify">
       </a>
       <a *ngIf="doc.type == 'album' && doc.spalbumid" class="pl-2 pr-2" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        <div><span class="spotifybtn"></span></div>
+        <img class="spotify">
       </a>
       <div *ngIf="service.audio" class="pl-2 pr-2" (click)="backward($event)">
         <span class="backwardbtn"></span>

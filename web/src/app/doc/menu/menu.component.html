@@ -2,10 +2,14 @@
   <div class="d-flex flex-row align-items-center w-max bg-info p-1">
     <div class="pr-2">
       <a [routerLink]="['/']">
+        <span class="backbtn"></span>
+      </a>
+    </div>
+    <div class="pr-2">
+      <a [routerLink]="['/']">
         <img class="cover" src="{{component.doc.cover}}"/>
       </a>
     </div>
-
     <div class="text-truncate w-100">
       <div class="text-white font-weight-bold" [innerHTML]="component.doc.title"></div>
       <div class="text-white" [innerHTML]="component.doc.artist"></div>

@@ -43,11 +43,6 @@ h3 {
     max-width: 1200px;
 }
 
-.w-md {
-    width: 100%;
-    max-width: 600px;
-}
-
 div.cover-m {
     width: 250px;
     position: relative;
@@ -106,6 +101,7 @@ img.spotify {
     content: url("/images/spotify.png");
     width: 30px;
     height: 30px;
+    background-color: #000000;
 }
 
 img.songkick {
@@ -123,11 +119,6 @@ img.songkick {
     height: 30px;
     background: #000000;
     cursor: pointer;
-
-    border-radius: 50%;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .pausebtn {
@@ -137,11 +128,6 @@ img.songkick {
     height: 30px;
     background: #000000;
     cursor: pointer;
-
-    border-radius: 50%;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .forwardbtn {
@@ -151,11 +137,6 @@ img.songkick {
     height: 30px;
     background: #000000;
     cursor: pointer;
-
-    border-radius: 50%;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .backwardbtn {
@@ -165,53 +146,12 @@ img.songkick {
     height: 30px;
     background: #000000;
     cursor: pointer;
-
-    border-radius: 50%;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 1px;
 }
 
-.closebtn {
+.backbtn {
     display: inline-block;
-    mask: url("/images/close.svg");
-    width: 20px;
-    height: 20px;
-    background: rgba(52, 58, 64, 1);
-    cursor: pointer;
-}
-
-.podcastbtn {
-    display: inline-block;
-    mask: url("/images/podcast.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-.interviewbtn {
-    display: inline-block;
-    mask: url("/images/interview.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-.concertbtn {
-    display: inline-block;
-    mask: url("/images/concert.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-.infobtn {
-    display: inline-block;
-    mask: url("/images/info.svg");
-    width: 20px;
+    mask: url("/images/back.svg");
+    width: 10px;
     height: 20px;
     background: #FFFFFF;
     cursor: pointer;
@@ -223,75 +163,6 @@ img.songkick {
     width: 20px;
     height: 20px;
     background: #FFFFFF;
-    cursor: pointer;
-}
-
-.homebtn {
-    display: inline-block;
-    mask: url("/images/home.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-.albumbtn {
-    display: inline-block;
-    mask: url("/images/album.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-.artistbtn {
-    display: inline-block;
-    mask: url("/images/artist.svg");
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
-div.songkick {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    background: #FFFFFF;
-
-    text-align: center;
-    padding-top: 3px;
-}
-
-.songkickbtn {
-    display: inline-block;
-    mask: url("/images/songkick.svg");
-    width: 30px;
-    height: 30px;
-    background: #F80046;
-    cursor: pointer;
-
-    border-radius: 50%;
-    border-color: #000000;
-    border-style: solid;
-    border-width: 1px;
-}
-
-.spotifybtn {
-    display: inline-block;
-    mask: url("/images/spotify.svg");
-    width: 30px;
-    height: 30px;
-    background: #8AC007;
-    cursor: pointer;
-}
-
-.menubtn {
-    display: inline-block;
-    mask: url("/images/menu.svg");
-    width: 16px;
-    height: 20px;
-    background: rgba(52, 58, 64, 1);
     cursor: pointer;
 }
 
@@ -308,7 +179,7 @@ div.songkick {
     mask: url("/images/cc.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
 }
 
@@ -317,7 +188,7 @@ div.songkick {
     mask: url("/images/mail.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
 }
 
@@ -326,7 +197,7 @@ div.songkick {
     mask: url("/images/linkedin.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
 }
 
@@ -335,6 +206,6 @@ div.songkick {
     mask: url("/images/github.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: #000000;
     cursor: pointer;
 }

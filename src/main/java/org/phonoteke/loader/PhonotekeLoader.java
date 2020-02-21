@@ -92,6 +92,12 @@ public abstract class PhonotekeLoader extends WebCrawler
 	}
 
 	@Override
+	public boolean shouldVisit(Page referringPage, WebURL url) 
+	{
+		return true;
+	}
+
+	@Override
 	public void visit(Page page) 
 	{
 		if(page.getParseData() instanceof HtmlParseData) 

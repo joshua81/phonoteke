@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
-  <div class="d-flex align-items-center w-max">
+  <div class="d-flex flex-row align-items-center w-max bg-info p-1">
     <div class="pr-2">
       <a [routerLink]="['/']">
         <img class="cover rounded" src="{{component.doc.cover}}"/>
@@ -7,8 +7,8 @@
     </div>
 
     <div class="text-truncate w-100">
-      <div class="font-weight-bold" [innerHTML]="component.doc.title"></div>
-      <div [innerHTML]="component.doc.artist"></div>
+      <div class="text-white font-weight-bold" [innerHTML]="component.doc.title"></div>
+      <div class="text-white" [innerHTML]="component.doc.artist"></div>
     </div>
   </div>
 </nav>

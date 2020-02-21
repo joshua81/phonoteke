@@ -1,24 +1,7 @@
-.menu {
-    position: relative;
+.menu-item {
+    cursor: pointer;
 }
 
 .search {
-    padding-left: 30px;
-    padding-right: 30px;
-}
-
-.search-reset {
-    position: absolute;
-    top: 9px;
-    right: 5px;
-    background: none;
-    z-index: 20;
-}
-
-.search-menu {
-    position: absolute;
-    top: 9px;
-    left: 10px;
-    background: none;
-    z-index: 20;
+    width: 250px;
 }

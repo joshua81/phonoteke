@@ -1,80 +1,31 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center">
-  <div class="d-flex align-items-center w-max menu">
-    <form class="w-100">
-      <input class="form-control search" name="search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="component.searchText"  (keydown.enter)="onSearch()">
+  <div class="d-flex flex-row align-items-center w-max bg-info p-1">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadAll()">
+      <h3 class="text-white font-weight-bold">tutti</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadAlbums()">
+      <h3 class="text-white font-weight-bold">album</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadArtists()">
+      <h3 class="text-white font-weight-bold">artisti</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadPodcasts()">
+      <h3 class="text-white font-weight-bold">podcast</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadInterviews()">
+      <h3 class="text-white font-weight-bold">interviste</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadConcerts()">
+      <h3 class="text-white font-weight-bold">concerti</h3>
+    </div>
+    <!--div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadVideos()">
+      <h3 class="text-white font-weight-bold">video</h3>
+    </div>
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadInfo()">
+      <h3 class="text-white font-weight-bold">info</h3>
+    </div-->
+    <form class="search ml-auto">
+      <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="component.searchText"  (keydown.enter)="onSearch()">
     </form>
-    <div class="search-menu" (click)="toggleMenu()"><span class="menubtn"></span></div>
-    <div class="search-reset" (click)="resetSearch()"><span class="closebtn"></span></div>
   </div>
 </nav>
-
-<div *ngIf="showMenu" class="d-flex justify-content-center modal-bg" (click)="toggleMenu()">
-  <div class="align-self-center overflow-auto modal-box">
-    <div class="list-group">
-      <div class="p-2 list-group-item" (click)="loadAll()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="allbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Tutti</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadAlbums()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="albumbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Album</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadArtists()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="artistbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Artisti</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadPodcasts()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="podcastbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Podcast</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadInterviews()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="interviewbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Interviste</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadConcerts()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="concertbtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Concerti</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadVideos()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="youtubebtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Video</div>
-          </div>
-        </div>
-      </div>
-      <div class="p-2 list-group-item" (click)="loadInfo()">
-        <div class="d-flex align-items-center">
-          <div class="pr-2"><span class="infobtn"></span></div>
-          <div class="w-100">
-            <div class="font-weight-bold">Info</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

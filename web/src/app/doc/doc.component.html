@@ -1,13 +1,14 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container pt-5 pb-5 w-max">
-    <div class="row pt-2">
-      <div class="col-auto pl-0 pr-3">
+<div *ngIf="doc" class="container pt-5 w-max">
+    <div class="row">
+      <img class="bg-image" [ngStyle]="{'background-image':'url('+doc.cover+')'}"/>
+      <div class="col-auto pt-4 pl-0 pr-3">
         <div class="cover-m">
           <img class="cover-m rounded" src="{{doc.cover}}"/>
           <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
             <span class="star"></span>
           </div>
-          <div *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</div>
+          <h3 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h3>
         </div>
       </div>
 
@@ -57,7 +58,7 @@
       </div>
     </div>
 
-    <div class="row pt-3">
+    <div class="row p-2 bg-white">
       <div *ngIf="doc.review" class="text-justify" 
         [innerHTML]="doc.review">
       </div>
@@ -65,7 +66,7 @@
 
     <app-youtube [tracks]="doc.tracks"></app-youtube>
 
-    <div *ngIf="links && links.length != 0" class="row pt-3 d-flex justify-content-center">
+    <div *ngIf="links && links.length != 0" class="row p-2 d-flex justify-content-center">
       <div class="list-group w-md">
         <div *ngFor="let link of links" class="list-group-item d-flex justify-content-center p-1">
           <div class="w-100">
@@ -81,7 +82,7 @@
                 <div *ngIf="link.type == 'album' && link.vote && link.vote == 10" class="vote-link">
                   <span class="star"></span>
                 </div>
-                <div *ngIf="link.type == 'album' && link.vote && link.vote != 10" class="vote-link">{{link.vote}}</div>
+                <h3 *ngIf="link.type == 'album' && link.vote && link.vote != 10" class="vote-link">{{link.vote}}</h3>
               </div>
             </a>
           </div>

@@ -1,6 +1,6 @@
 * {
-    background: rgba(52, 58, 64, 1);
-    color: white;
+    color: #000000;
+    font-size: 12px;
 }
 
 *::-webkit-scrollbar {
@@ -9,6 +9,7 @@
 
 html, body {
     height: 100%;
+    background: rgba(233, 240, 242, 1);
 }
 
 a {
@@ -29,18 +30,12 @@ h2 {
     font-size: 20px;
 }
   
-h3, p, li, a, div {
+h3 {
     font-size: 14px;
 }
 
-footer {
-    color: white !important;
-}
-
-nav {
-    background: none;
-    opacity: 0.8;
-    height: 50px;
+.bg-gray {
+    background: rgba(219, 219, 219, 1);
 }
 
 img.musicbrainz {

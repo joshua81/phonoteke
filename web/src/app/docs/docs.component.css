@@ -1,21 +1,11 @@
-div.vote {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  background: #8AC007;
-
-  text-align: center;
-  padding-top: 5px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
-}
-
 .card {
   border-style: none;
+}
+
+.card-body {
+  position: relative;
+  width: 250px;
+  height: 150px;
 }
 
 .card-text {
@@ -23,4 +13,11 @@ div.vote {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+.card-footer {
+  border-style: none;
+  background: none;
+  position: absolute;
+  bottom: 0px;
 }

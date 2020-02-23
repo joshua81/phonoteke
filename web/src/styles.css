@@ -16,6 +16,10 @@ html, body {
     min-height: 100%;
 }
 
+.navbar {
+    height: 40px;
+}
+
 a {
     cursor: pointer;
     text-decoration: none !important;

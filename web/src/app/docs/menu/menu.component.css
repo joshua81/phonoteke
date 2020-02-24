@@ -5,3 +5,8 @@
 .search {
     width: 250px;
 }
+
+.selected {
+    border-radius: 20px;
+    background-color: #000000;
+}

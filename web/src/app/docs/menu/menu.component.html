@@ -1,21 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center bg-info">
   <div class="d-flex flex-row align-items-center w-max">
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadAll()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == '' ? 'selected' : ''" (click)="loadAll()">
       <h3 class="text-white font-weight-bold">tutti</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadAlbums()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'album' ? 'selected' : ''" (click)="loadAlbums()">
       <h3 class="text-white font-weight-bold">album</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadArtists()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'artist' ? 'selected' : ''" (click)="loadArtists()">
       <h3 class="text-white font-weight-bold">artisti</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadPodcasts()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'podcast' ? 'selected' : ''" (click)="loadPodcasts()">
       <h3 class="text-white font-weight-bold">podcast</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadInterviews()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'interview' ? 'selected' : ''" (click)="loadInterviews()">
       <h3 class="text-white font-weight-bold">interviste</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadConcerts()">
+    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'concert' ? 'selected' : ''" (click)="loadConcerts()">
       <h3 class="text-white font-weight-bold">concerti</h3>
     </div>
     <!--div class="menu-item pt-1 pb-1 pl-3 pr-3" (click)="loadVideos()">

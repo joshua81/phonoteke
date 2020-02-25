@@ -21,7 +21,7 @@
     <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.docType == 'video' ? 'selected' : ''" (click)="loadVideos()">
       <h3 class="text-white font-weight-bold">video</h3>
     </div>
-    <form class="search ml-auto">
+    <form class="search ml-auto pl-3 pr-3">
       <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="component.searchText"  (keydown.enter)="onSearch()">
     </form>
   </div>

@@ -64,14 +64,14 @@ app.get('/api/tracks', async(req, res)=>{
 		var query = req.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		result = await docs.find({$and: [{'type': 'album'}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		result = await docs.find({$and: [{'type': {'$in': ['album','podcast']}}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		
 	}
 	else
 	{
 		console.log('Tracks: page=' + req.query.p);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		result = await docs.find({'type': 'album'}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		result = await docs.find({'type': {'$in': ['album','podcast']}}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 	}
 
 	result.forEach(function(doc) 

@@ -10,30 +10,9 @@ export class YoutubeComponent implements OnInit {
   player = null;
   status = null;
   video = null;
-  videos = [];
-  private _tracks = [];
+  @Input() tracks = null;
 
   constructor(public service: AppService) {}
-  
-  get tracks(): any {
-    return this._tracks;
-  }
-  
-  @Input()
-  set tracks(val: any) {
-    this._tracks = val;
-    this.videos = [];
-    if(this.tracks) {
-      this.tracks.forEach(function(track: any) 
-			{
-        if(track.youtube)
-        {
-          this.videos.push(track);
-        }
-      }, this);
-    }
-    this.video = this.videos.length > 0 ? this.videos[0] : null;
-  }
 
   ngOnInit() {
     const tag = document.createElement('script');
@@ -79,16 +58,16 @@ export class YoutubeComponent implements OnInit {
   }
 
   next(event: Event){
-    if(this.videos.indexOf(this.video) < this.videos.length-1)
+    if(this.tracks.indexOf(this.video) < this.tracks.length-1)
     {
-      this.video = this.videos[this.videos.indexOf(this.video)+1];
+      this.video = this.tracks[this.tracks.indexOf(this.video)+1];
     }
   }
 
   previous(event: Event){
-    if(this.videos.indexOf(this.video) > 0)
+    if(this.tracks.indexOf(this.video) > 0)
     {
-      this.video = this.videos[this.videos.indexOf(this.video)-1];
+      this.video = this.tracks[this.tracks.indexOf(this.video)-1];
     }
   }
 }

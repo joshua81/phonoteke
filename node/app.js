@@ -55,6 +55,8 @@ app.get('/api/docs', async(req, res)=>{
 });
 
 app.get('/api/tracks', async(req, res)=>{
+	var tracks = [];
+	var result = [];
 	if(req.query.q)
 	{
 		console.log('Tracks: page=' + req.query.p + ', query=' + req.query.q);
@@ -62,47 +64,31 @@ app.get('/api/tracks', async(req, res)=>{
 		var query = req.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		var result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		var tracks = [];
-		result.forEach(function(doc) 
-		{
-			doc.tracks.forEach(function(track)
-			{
-				if(track.title && track.youtube) {
-					track.id = doc.id;
-					track.type = doc.type;
-					//track.artist = doc.artist;
-					//track.title = doc.title;
-					track.cover = doc.cover;
-					tracks.push(track);
-				}
-			});
-		});
-		res.send(tracks);
+		result = await docs.find({$and: [{'type': 'album'}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		
 	}
 	else
 	{
 		console.log('Tracks: page=' + req.query.p);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var result = await docs.find().skip(page*12).limit(12).sort({"date":-1}).toArray();
-		var tracks = [];
-		result.forEach(function(doc) 
+		result = await docs.find({'type': 'album'}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	}
+
+	result.forEach(function(doc) 
+	{
+		doc.tracks.forEach(function(track)
 		{
-			var i = 0;
-			for (i = 0; i < doc.tracks.length; i++) {
-				if(doc.tracks[i].title && doc.tracks[i].youtube) {
-					doc.tracks[i].id = doc.id;
-					doc.tracks[i].type = doc.type;
-					//doc.tracks[i].artist = doc.artist;
-					//doc.tracks[i].title = doc.title;
-					doc.tracks[i].cover = doc.cover;
-					tracks.push(doc.tracks[i]);
-					break;
-				}
+			if(track.title && track.youtube) {
+				track.id = doc.id;
+				track.type = doc.type;
+				//track.artist = doc.artist;
+				//track.title = doc.title;
+				track.cover = doc.cover;
+				tracks.push(track);
 			}
 		});
-		res.send(tracks);
-	}
+	});
+	res.send(tracks);
 });
 
 app.get('/api/docs/:id', async(req, res)=>{

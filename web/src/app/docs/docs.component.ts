@@ -25,8 +25,12 @@ export class DocsComponent implements OnInit {
     this.loadDocs(0, this.docType);
   }
 
-  onScroll() {
+  scrollDocs() {
     this.loadDocs(this.page+1, this.docType);
+  }
+
+  scrollTracks() {
+    this.loadTracks(this.page+1);
   }
 
   loadDocs(page: number, docType: string) {
@@ -34,6 +38,7 @@ export class DocsComponent implements OnInit {
     this.docType = docType;
     if(this.page == 0) {
       this.docs.splice(0, this.docs.length);
+      this.tracks.splice(0, this.tracks.length);
     }
 
     this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.docType).subscribe(
@@ -47,7 +52,9 @@ export class DocsComponent implements OnInit {
 
   loadTracks(page: number) {
     this.page = page;
+    this.docType = 'video';
     if(this.page == 0) {
+      this.docs.splice(0, this.docs.length);
       this.tracks.splice(0, this.tracks.length);
     }
 

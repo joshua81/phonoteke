@@ -50,9 +50,6 @@ export class DocsMenuComponent implements OnInit {
   }
 
   loadVideos() {
-    
-  }
-
-  loadInfo() {
+    this.component.loadTracks(0);
   }
 }

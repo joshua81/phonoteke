@@ -18,7 +18,8 @@ html, body {
 
 .navbar {
     height: 40px;
-    /*overflow-x: auto;*/
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 a {

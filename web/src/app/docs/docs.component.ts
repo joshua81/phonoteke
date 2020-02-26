@@ -9,7 +9,7 @@ import {HttpClient} from '@angular/common/http';
 export class DocsComponent implements OnInit {
   error = null;
   searchText = '';
-  docType = '';
+  docType = 'album';
   page = 0;
   docs = [];
   tracks = [];
@@ -18,11 +18,18 @@ export class DocsComponent implements OnInit {
 
   ngOnInit() {
     this.searchText = '';
-    this.loadDocs(0, '');
+    this.loadDocs(0, 'album');
   }
 
   onSearch() {
-    this.loadDocs(0, this.docType);
+    if(this.docType == 'video')
+    {
+      this.loadTracks(0);
+    }
+    else
+    {
+      this.loadDocs(0, this.docType);
+    }
   }
 
   scrollDocs() {
@@ -58,7 +65,7 @@ export class DocsComponent implements OnInit {
       this.tracks.splice(0, this.tracks.length);
     }
 
-    this.http.get('/api/tracks?p=' + this.page).subscribe(
+    this.http.get('/api/tracks?p=' + this.page + '&q=' + this.searchText).subscribe(
       (data: any) => this.tracksLoaded(data),
       error => this.error = error);
   }

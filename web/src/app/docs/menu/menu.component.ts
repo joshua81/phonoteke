@@ -7,7 +7,6 @@ import {DocsComponent} from '../docs.component';
   styleUrls: ['./menu.component.css']
 })
 export class DocsMenuComponent implements OnInit {
-  showMenu = false;
 
   constructor(public component: DocsComponent) { }
 
@@ -18,14 +17,6 @@ export class DocsMenuComponent implements OnInit {
   }
 
   resetSearch() {
-    this.component.ngOnInit();
-  }
-
-  toggleMenu() {
-    this.showMenu = !this.showMenu;
-  }
-
-  loadAll() {
     this.component.ngOnInit();
   }
 

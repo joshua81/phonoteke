@@ -78,11 +78,11 @@ app.get('/api/tracks', async(req, res)=>{
 	{
 		doc.tracks.forEach(function(track)
 		{
-			if(track.title && track.youtube) {
+			if(track.youtube) {
 				track.id = doc.id;
 				track.type = doc.type;
-				//track.artist = doc.artist;
-				//track.title = doc.title;
+				track.artist = doc.artist;
+				track.title = doc.title;
 				track.cover = doc.cover;
 				tracks.push(track);
 			}

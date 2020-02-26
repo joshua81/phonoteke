@@ -82,7 +82,7 @@ app.get('/api/tracks', async(req, res)=>{
 				track.id = doc.id;
 				track.type = doc.type;
 				track.artist = doc.artist;
-				track.title = doc.title;
+				track.album = doc.title;
 				track.cover = doc.cover;
 				tracks.push(track);
 			}

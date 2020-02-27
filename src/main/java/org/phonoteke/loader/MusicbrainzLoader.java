@@ -43,29 +43,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		super();
 	}
 
-	public void loadMBIDs(String url)
-	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.eq("url", url)).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			org.bson.Document page = i.next();
-			switch (TYPE.valueOf(page.getString("type"))) {
-			case album:
-				loadAlbumMBId(page);
-				loadTracksMBId(page);
-				break;
-			case artist:
-				loadArtistMBId(page);
-				break;
-			case concert:
-			case interview:
-				loadArtistMBId(page);
-			default:
-				break;
-			};
-		}
-	}
-
 	public void loadMBIDs()
 	{
 		for(int p = 0; p < 20; p++)
@@ -80,11 +57,12 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					loadTracksMBId(page);
 					break;
 				case artist:
-					loadArtistMBId(page);
-					break;
 				case concert:
 				case interview:
 					loadArtistMBId(page);
+				case podcast:
+					loadTracksMBId(page);
+					break;
 				default:
 					break;
 				};

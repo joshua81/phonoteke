@@ -5,8 +5,15 @@
 .card-body {
     position: relative;
     width: 250px;
-    height: 80px;
+    height: 120px;
 }
+
+.card-text {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 
 .card-footer {
     border-style: none;
@@ -29,4 +36,8 @@ img.video-m {
     width: 250px;
     height: 150px;
     object-fit:cover;
+}
+
+.text-truncate {
+    max-width: 250px;
 }

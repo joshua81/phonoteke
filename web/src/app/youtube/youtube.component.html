@@ -8,11 +8,13 @@
                 (stateChange)="onStateChange($event)" (ready)="onReady($event)">
             </youtube-player>
             <div class="card-body p-1">
-                <div class="font-weight-bold" [innerHTML]="track.title"></div>
+                <div class="card-text font-weight-bold" [innerHTML]="track.title"></div>
+                <div *ngIf="track.album" class="text-truncate font-weight-bold pt-3"><a [innerHTML]="track.album"></a></div>
+                <div *ngIf="track.artist" class="text-truncate"><a [innerHTML]="track.artist"></a></div>
                 <!--a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
                     <div class="songkick"><span class="songkickbtn"></span></div>
                 </a-->
-                <div class="card-footer text-muted p-0">VIDEO</div>
+                <div class="card-footer text-muted p-1">VIDEO</div>
             </div>
         </div>
     </div>

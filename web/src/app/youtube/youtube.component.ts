@@ -30,7 +30,7 @@ export class YoutubeComponent implements OnInit {
     switch(this.status) {
       case 0:
         console.log('video ended');
-        this.next(null);
+        this.forward(null);
         break;
       case 1:
         console.log('video playing');
@@ -45,8 +45,8 @@ export class YoutubeComponent implements OnInit {
     }
   }
 
-  loadVideo(video: any){
-    this.video = video;
+  loadVideo(track: any){
+    this.video = track;
   }
 
   play(event: Event){
@@ -57,14 +57,14 @@ export class YoutubeComponent implements OnInit {
     this.player.pauseVideo();
   }
 
-  next(event: Event){
+  forward(event: Event){
     if(this.tracks.indexOf(this.video) < this.tracks.length-1)
     {
       this.video = this.tracks[this.tracks.indexOf(this.video)+1];
     }
   }
 
-  previous(event: Event){
+  backward(event: Event){
     if(this.tracks.indexOf(this.video) > 0)
     {
       this.video = this.tracks[this.tracks.indexOf(this.video)-1];

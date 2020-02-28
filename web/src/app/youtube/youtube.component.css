@@ -5,13 +5,13 @@
 .card-body {
     position: relative;
     width: 250px;
-    height: 120px;
+    height: 80px;
 }
 
 .card-text {
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 
@@ -38,6 +38,17 @@ img.video-m {
     object-fit:cover;
 }
 
-.text-truncate {
-    max-width: 250px;
+.player {
+    width: 300px;
+}
+
+a.cover-m {
+    width: 40px;
+    height: 40px;
+}
+
+img.cover-m {
+    width: 40px;
+    height: 40px;
+    object-fit:cover;
 }

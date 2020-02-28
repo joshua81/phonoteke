@@ -1,25 +1,42 @@
 <div *ngIf="tracks.length > 0" class="row d-flex justify-content-center">
     <div *ngFor="let track of tracks" class="pb-2 pl-1 pr-1">
         <div class="video-m card mx-auto">
-            <a *ngIf="video != track" class="video-m" (click)="loadVideo(track)">
+            <a class="video-m" (click)="loadVideo(track)">
                 <img class="video-m card-img-top" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}"/>
             </a>
-            <youtube-player *ngIf="video == track" width="250px" height="150px" suggestedQuality="default" videoId="{{track.youtube}}"
-                (stateChange)="onStateChange($event)" (ready)="onReady($event)">
-            </youtube-player>
             <div class="card-body p-1">
                 <div class="card-text font-weight-bold" [innerHTML]="track.title"></div>
-                <div *ngIf="track.album" class="pt-3">
-                    <a>
-                        <div class="text-truncate font-weight-bold" [innerHTML]="track.album"></div>
-                        <div class="text-truncate" [innerHTML]="track.artist"></div>
-                    </a>
-                </div>
-                <!--a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
-                    <div class="songkick"><span class="songkickbtn"></span></div>
-                </a-->
                 <div class="card-footer text-muted p-1">VIDEO</div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="video != null" class="player fixed-bottom bg-white">
+    <youtube-player width="300px" height="150px" suggestedQuality="default" videoId="{{video.youtube}}"
+    (stateChange)="onStateChange($event)" (ready)="onReady($event)">
+    </youtube-player>
+    <div class="p-1">
+        <div class="text-truncate font-weight-bold" [innerHTML]="video.title"></div>
+        <div *ngIf="video.album" class="row d-flex align-items-center m-0 pt-2">
+            <a class="cover-m">
+                <img class="cover-m" src="{{video.cover}}"/>
+            </a>
+            <div class="pl-2 pr-2 flex-grow-1">
+                <div class="text-truncate font-weight-bold" [innerHTML]="video.album"></div>
+                <div class="text-truncate" [innerHTML]="video.artist"></div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-center justify-content-center m-0 pt-2">
+            <div class="pr-2" (click)="backward($event)">
+                <span class="backwardbtn"></span>
+            </div>
+            <div class="pl-2" (click)="forward($event)">
+                <span class="forwardbtn"></span>
+            </div>
+            <!--a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
+            <div class="songkick"><span class="songkickbtn"></span></div>
+            </a-->
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div *ngIf="tracks.length > 0" class="row d-flex justify-content-center">
+<div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center">
     <div *ngFor="let track of tracks" class="pb-2 pl-1 pr-1">
         <div class="video-m card mx-auto">
             <a class="video-m" (click)="loadVideo(track)">

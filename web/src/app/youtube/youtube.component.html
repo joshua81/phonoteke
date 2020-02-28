@@ -13,6 +13,9 @@
 </div>
 
 <div *ngIf="video != null" class="player fixed-bottom bg-white">
+    <!--div class="d-flex justify-content-end pl-1 pr-1">
+        <div (click)=close($event)><span class="close"></span></div>
+    </div-->
     <youtube-player width="300px" height="150px" suggestedQuality="default" videoId="{{video.youtube}}"
     (stateChange)="onStateChange($event)" (ready)="onReady($event)">
     </youtube-player>
@@ -38,5 +41,8 @@
             <div class="songkick"><span class="songkickbtn"></span></div>
             </a-->
         </div>
+    </div>
+    <div class="close" (click)="close($event)">
+        <span class="close"></span>
     </div>
 </div>

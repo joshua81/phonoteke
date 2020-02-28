@@ -215,3 +215,12 @@ img.songkick {
     background: #000000;
     cursor: pointer;
 }
+
+.close {
+    display: inline-block;
+    mask: url("/images/close.svg");
+    width: 15px;
+    height: 15px;
+    background: #000000;
+    cursor: pointer;
+}

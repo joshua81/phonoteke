@@ -42,6 +42,12 @@ img.video-m {
     width: 300px;
 }
 
+.close {
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+}
+
 a.cover-m {
     width: 40px;
     height: 40px;

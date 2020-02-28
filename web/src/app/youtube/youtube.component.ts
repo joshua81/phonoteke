@@ -70,4 +70,8 @@ export class YoutubeComponent implements OnInit {
       this.video = this.tracks[this.tracks.indexOf(this.video)-1];
     }
   }
+
+  close(event: Event){
+    this.video = null;
+  }
 }

@@ -4,14 +4,16 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { CommonModule } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
+import { YoutubeComponent } from './youtube/youtube.component';
 import { EventsComponent } from './doc/events/events.component';
-import { YoutubeModule } from './youtube/youtube.module';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,7 @@ import { YoutubeModule } from './youtube/youtube.module';
     DocsComponent,
     DocMenuComponent,
     DocComponent,
+    YoutubeComponent,
     EventsComponent
   ],
   imports: [
@@ -31,7 +34,8 @@ import { YoutubeModule } from './youtube/youtube.module';
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,
-    YoutubeModule
+    YouTubePlayerModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

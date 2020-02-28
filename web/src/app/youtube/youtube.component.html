@@ -19,7 +19,7 @@
     <div class="p-1">
         <div class="text-truncate font-weight-bold" [innerHTML]="video.title"></div>
         <div *ngIf="video.album" class="row d-flex align-items-center m-0 pt-2">
-            <a class="cover-m">
+            <a class="cover-m" [routerLink]="['/docs/' + video.id]">
                 <img class="cover-m" src="{{video.cover}}"/>
             </a>
             <div class="pl-2 pr-2 flex-grow-1">

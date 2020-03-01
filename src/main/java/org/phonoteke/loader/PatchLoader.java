@@ -15,11 +15,11 @@ public class PatchLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
-	public static void main(String[] args) throws IOException 
+	public static void main(String[] args)
 	{
+		new PatchLoader().youtube();
 		new PatchLoader().musicbrainz();
 		new PatchLoader().spotify();
-		new PatchLoader().youtube();
 	}
 
 	public PatchLoader()
@@ -31,7 +31,7 @@ public class PatchLoader extends PhonotekeLoader
 	{
 		for(int p = 0; p < 20; p++)
 		{
-			MongoCursor<Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*000).limit(2000).noCursorTimeout(true).iterator();
+			MongoCursor<Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				Document page = i.next();
@@ -83,16 +83,23 @@ public class PatchLoader extends PhonotekeLoader
 		//			String id = page.getString("id"); 
 		//		}
 	}
-	
-	private void youtube() throws IOException
+
+	private void youtube()
 	{
-		MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		try
 		{
-			org.bson.Document page = i.next();
-			String id = (String)page.get("id");
-			youtube.loadTracks(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
+			while(i.hasNext())
+			{
+				org.bson.Document page = i.next();
+				String id = (String)page.get("id");
+				youtube.loadTracks(page);
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			}
+		}
+		catch(IOException e)
+		{
+			LOGGER.error("ERROR YoutubeLoader: " + e.getMessage(), e);
 		}
 	}
 }

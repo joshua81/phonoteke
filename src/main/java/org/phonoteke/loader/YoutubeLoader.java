@@ -14,29 +14,18 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
 
-public class YoutubeLoader extends PhonotekeLoader
+public class YoutubeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
 	private static final String API_KEY = "AIzaSyAYqrw65aNPioXzxuzlW4qW9j3GiKkqduo";
 	private static final String UNKNOWN = "UNKNOWN";
-	private YouTube youtube;
+	private YouTube youtube = null;
 
-
-	public static void main(String[] args)
-	{
-		new YoutubeLoader().loadTracks();
-	}
 
 	public YoutubeLoader()
 	{
-		super();
-
 		try 
 		{
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
@@ -49,39 +38,26 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 	}
 
-	public void loadTracks()
+	public void loadTracks(org.bson.Document page) throws IOException
 	{
-		try
+		LOGGER.info("Loading Youtube");
+		String id = (String)page.get("id");
+		for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 		{
-			LOGGER.info("Loading Youtube");
-			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
-			while(i.hasNext())
+			String youtube = track.getString("youtube");
+			String title = track.getString("title");
+			if(youtube == null && title != null)
 			{
-				org.bson.Document page = i.next();
-				String id = (String)page.get("id");
-				for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
-				{
-					String youtube = track.getString("youtube");
-					String title = track.getString("title");
-					if(youtube == null && title != null)
-					{
-						youtube = getYoutubeId(title);
-						track.put("youtube", youtube);
-						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
-					}
-					else if(title == null && youtube != null)
-					{
-						title = getYoutubeTitle(youtube);
-						track.put("title", title);
-						LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
-					}
-				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				youtube = getYoutubeId(title);
+				track.put("youtube", youtube);
+				LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
 			}
-		}
-		catch(Throwable t)
-		{
-			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage(), t);
+			else if(title == null && youtube != null)
+			{
+				title = getYoutubeTitle(youtube);
+				track.put("title", title);
+				LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
+			}
 		}
 	}
 

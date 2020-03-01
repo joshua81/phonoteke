@@ -15,14 +15,10 @@ import org.apache.logging.log4j.Logger;
 import com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class MusicbrainzLoader extends PhonotekeLoader
+public class MusicbrainzLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 
@@ -33,54 +29,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private static final int THRESHOLD = 90;
 
 
-	public static void main(String[] args)
-	{
-		new MusicbrainzLoader().loadMBIDs();
-	}
-
-	public MusicbrainzLoader()
-	{
-		super();
-	}
-
-	public void loadMBIDs()
-	{
-		for(int p = 0; p < 20; p++)
-		{
-			MongoCursor<org.bson.Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*1000).limit(1000).noCursorTimeout(true).iterator();
-			while(i.hasNext())
-			{
-				org.bson.Document page = i.next();
-				switch (TYPE.valueOf(page.getString("type"))) {
-				case album:
-					loadAlbumMBId(page);
-					loadTracksMBId(page);
-					break;
-				case artist:
-				case concert:
-				case interview:
-					loadArtistMBId(page);
-				case podcast:
-					loadTracksMBId(page);
-					break;
-				default:
-					break;
-				};
-			}
-		}
-	}
-
-	private org.bson.Document getAlbum(String artist, String title)
-	{
-		if(StringUtils.isBlank(artist) || StringUtils.isBlank(title))
-		{
-			return null;
-		}
-		String url = MUSICBRAINZ + "/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20release:" + title.trim().replace(" ", "%20") + "&fmt=json";
-		return callMusicbrainz(url);
-	}
-
-	private void loadAlbumMBId(org.bson.Document page)
+	public void loadAlbumMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
 		String artist = page.getString("artist");
@@ -103,22 +52,21 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				}
 			}
 			page.append("artistid", artistId).append("albumid", albumId);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info(artist + " - " + title + ": " + artistId + " - " + albumId);
 		}
 	}
 
-	private org.bson.Document getArtist(String artist)
+	private org.bson.Document getAlbum(String artist, String title)
 	{
-		if(StringUtils.isBlank(artist))
+		if(StringUtils.isBlank(artist) || StringUtils.isBlank(title))
 		{
 			return null;
 		}
-		String url = MUSICBRAINZ + "/artist/?query=artist:" + artist.trim().replace(" ", "%20") + "&fmt=json";
+		String url = MUSICBRAINZ + "/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20release:" + title.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
 	}
 
-	private void loadArtistMBId(org.bson.Document page)
+	public void loadArtistMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
 		String artist = page.getString("artist");
@@ -133,9 +81,18 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				artistId = getArtistId(artist, mbartist);
 			}
 			page.append("artistid", artistId);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.debug(artist + ": " + artistId);
 		}
+	}
+
+	private org.bson.Document getArtist(String artist)
+	{
+		if(StringUtils.isBlank(artist))
+		{
+			return null;
+		}
+		String url = MUSICBRAINZ + "/artist/?query=artist:" + artist.trim().replace(" ", "%20") + "&fmt=json";
+		return callMusicbrainz(url);
 	}
 
 	private org.bson.Document getRecording(String artist, String recording)
@@ -196,7 +153,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 	}
 
-	private void loadTracksMBId(org.bson.Document page)
+	public void loadTracksMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
 		String source = page.getString("source");
@@ -281,7 +238,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					}
 				}
 			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 		catch(Throwable t)
 		{

@@ -8,10 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.common.collect.Lists;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
@@ -27,7 +23,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader extends PhonotekeLoader
+public class SpotifyLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
@@ -44,24 +40,6 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private static ClientCredentials credentials;
 
-
-	public static void main(String[] args) 
-	{
-		new SpotifyLoader().load();
-	}
-
-	public SpotifyLoader()
-	{
-		super();
-	}
-
-	public void load()
-	{
-//		loadTracks("musicalbox");
-//		loadTracks("babylon");
-		loadAlbums();
-		loadArtists();
-	}
 
 	private void relogin()
 	{
@@ -87,32 +65,26 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 	}
 
-	private void loadAlbums()
+	public void loadAlbum(Document page)
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		String id = page.getString("id");
+		String artist = page.getString("artist");
+		String album = page.getString("title");
+
+		// check if the article was already crawled
+		LOGGER.info("SPTF Loading album " + artist + " - " + album);
+		Document spotify = getAlbum(artist, album);
+		if(spotify != null)
 		{
-			Document page = i.next();
-			String id = page.getString("id");
-			String artist = page.getString("artist");
-			String album = page.getString("title");
+			String artistId = spotify.getString("spartistid");
+			String albumId = spotify.getString("spalbumid");
+			LOGGER.info("SPTF " + artist + " - " + album + ": " + artistId + " - " + albumId);
 
-			// check if the article was already crawled
-			LOGGER.info("SPTF Loading album " + artist + " - " + album);
-			Document spotify = getAlbum(artist, album);
-			if(spotify != null)
-			{
-				String artistId = spotify.getString("spartistid");
-				String albumId = spotify.getString("spalbumid");
-				LOGGER.info("SPTF " + artist + " - " + album + ": " + artistId + " - " + albumId);
-
-				page.append("spartistid", artistId).
-				append("spalbumid", albumId).
-				append("spcover-l", spotify.getString("coverL")).
-				append("spcover-m", spotify.getString("coverM")).
-				append("spcover-s", spotify.getString("coverS"));
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			}
+			page.append("spartistid", artistId).
+			append("spalbumid", albumId).
+			append("spcover-l", spotify.getString("coverL")).
+			append("spcover-m", spotify.getString("coverM")).
+			append("spcover-s", spotify.getString("coverS"));
 		}
 	}
 
@@ -154,28 +126,22 @@ public class SpotifyLoader extends PhonotekeLoader
 		return null;
 	}
 
-	private void loadArtists()
+	public void loadArtist(Document page)
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		String id = page.getString("id");
+		String artist = page.getString("artist");
+
+		LOGGER.info("SPTF Loading artist " + artist);
+		Document spotify = getArtist(artist);
+		if(spotify != null)
 		{
-			Document page = i.next();
-			String id = page.getString("id");
-			String artist = page.getString("artist");
+			String artistId = spotify.getString("spartistid");
+			LOGGER.info("SPTF " + artist + ": " + artistId);
 
-			LOGGER.info("SPTF Loading artist " + artist);
-			Document spotify = getArtist(artist);
-			if(spotify != null)
-			{
-				String artistId = spotify.getString("spartistid");
-				LOGGER.info("SPTF " + artist + ": " + artistId);
-
-				page.append("spartistid", artistId).
-				append("spcover-l", spotify.getString("coverL")).
-				append("spcover-m", spotify.getString("coverM")).
-				append("spcover-s", spotify.getString("coverS"));
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			}
+			page.append("spartistid", artistId).
+			append("spcover-l", spotify.getString("coverL")).
+			append("spcover-m", spotify.getString("coverM")).
+			append("spcover-s", spotify.getString("coverS"));
 		}
 	}
 
@@ -210,34 +176,28 @@ public class SpotifyLoader extends PhonotekeLoader
 		return null;
 	}
 
-	private void loadTracks(String source)
+	public void loadTracks(Document page)
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("source", source), Filters.eq("tracks.sptrackid", null))).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+		String id = page.getString("id");
+
+		List<org.bson.Document> tracks = page.get("tracks", List.class);
+		if(CollectionUtils.isNotEmpty(tracks))
 		{
-			Document page = i.next();
-			String id = page.getString("id");
-
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
+			for(org.bson.Document track : tracks)
 			{
-				for(org.bson.Document track : tracks)
+				String title = track.getString("title");
+				LOGGER.info("SPTF Loading track " + title);
+				Document spotify = getTrack(title);
+				if(spotify != null)
 				{
-					String title = track.getString("title");
-					LOGGER.info("SPTF Loading track " + title);
-					Document spotify = getTrack(title);
-					if(spotify != null)
-					{
-						String trackId = spotify.getString("sptrackid");
-						LOGGER.info("SPTF " + title + ": " + trackId);
+					String trackId = spotify.getString("sptrackid");
+					LOGGER.info("SPTF " + title + ": " + trackId);
 
-						track.append("sptrackid", trackId).
-						append("spcover-l", spotify.getString("coverL")).
-						append("spcover-m", spotify.getString("coverM")).
-						append("spcover-s", spotify.getString("coverS"));
-					}
+					track.append("sptrackid", trackId).
+					append("spcover-l", spotify.getString("coverL")).
+					append("spcover-m", spotify.getString("coverM")).
+					append("spcover-s", spotify.getString("coverS"));
 				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 	}

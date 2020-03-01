@@ -45,6 +45,9 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\"].{1,100}[‘,’,',\\\"].{0,100}", ".{1,100}[-,–,_].{1,100}");
 
 	protected MongoCollection<org.bson.Document> docs;
+	protected MusicbrainzLoader mbrainz = new MusicbrainzLoader();
+	protected SpotifyLoader spotify = new SpotifyLoader();
+	protected YoutubeLoader youtube = new YoutubeLoader();
 
 	protected enum TYPE {
 		artist,
@@ -152,6 +155,10 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("year", getYear(url, doc)).
 									append("tracks", getTracks(url, doc)).
 									append("audio", getAudio(url, doc));
+							mbrainz.loadAlbumMBId(json);
+							mbrainz.loadTracksMBId(json);
+							spotify.loadAlbum(json);
+							youtube.loadTracks(json);
 						}
 						break;
 					case artist:
@@ -171,6 +178,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
+							mbrainz.loadArtistMBId(json);
+							spotify.loadArtist(json);
 						}
 						break;
 					case concert:
@@ -191,6 +200,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
+							mbrainz.loadArtistMBId(json);
+							spotify.loadArtist(json);
 						}
 						break;
 					case interview:
@@ -211,6 +222,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
+							mbrainz.loadArtistMBId(json);
+							spotify.loadArtist(json);
 						}
 						break;
 					default:

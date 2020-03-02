@@ -57,6 +57,17 @@ export class YoutubeComponent implements OnInit {
     this.player.pauseVideo();
   }
 
+  playPause(event: Event){
+    if(this.status == 1)
+    {
+      this.player.pauseVideo();
+    }
+    else
+    {
+      this.player.playVideo();
+    }
+  }
+
   forward(event: Event){
     if(this.tracks.indexOf(this.video) < this.tracks.length-1)
     {

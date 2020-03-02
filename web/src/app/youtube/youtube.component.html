@@ -1,21 +1,18 @@
-<div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center">
-    <div *ngFor="let track of tracks" class="pb-2 pl-1 pr-1">
-        <div class="video-m card mx-auto">
-            <a class="video-m" (click)="loadVideo(track)">
-                <img class="video-m card-img-top" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}"/>
-            </a>
-            <div class="card-body p-1">
-                <div class="card-text font-weight-bold" [innerHTML]="track.title"></div>
-                <div class="card-footer text-muted p-1">VIDEO</div>
+<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center">
+    <div class="list-group">
+        <a *ngFor="let track of tracks" (click)="loadVideo(track)">
+            <div class="video-m row d-flex align-items-center p-1">
+                <img class="video-m" src="{{'https://img.youtube.com/vi/' + track.youtube + '/mqdefault.jpg'}}"/>
+                <div class="flex-grow-1 text-truncate-2 pl-2 pr-2" [ngStyle]="{'max-width':'300px'}" [innerHTML]="track.title"></div>
+                <a *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
+                    <img class="songkick">
+                </a>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
 <div *ngIf="video != null" class="player fixed-bottom bg-white">
-    <!--div class="d-flex justify-content-end pl-1 pr-1">
-        <div (click)=close($event)><span class="close"></span></div>
-    </div-->
     <youtube-player width="300px" height="150px" suggestedQuality="default" videoId="{{video.youtube}}"
     (stateChange)="onStateChange($event)" (ready)="onReady($event)">
     </youtube-player>
@@ -34,12 +31,13 @@
             <div class="pr-2" (click)="backward($event)">
                 <span class="backwardbtn"></span>
             </div>
+            <div class="pl-2 pr-2" (click)="playPause($event)">
+                <span *ngIf="status != 1" class="playbtn"></span>
+                <span *ngIf="status == 1" class="pausebtn"></span>
+              </div>
             <div class="pl-2" (click)="forward($event)">
                 <span class="forwardbtn"></span>
             </div>
-            <!--a *ngIf="track.artistid" class="pl-2" (click)="service.loadEvents(track.artistid)">
-            <div class="songkick"><span class="songkickbtn"></span></div>
-            </a-->
         </div>
     </div>
     <div class="close" (click)="close($event)">

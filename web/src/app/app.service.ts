@@ -17,7 +17,8 @@ export class AppService {
     this.events.splice(0, this.events.length);
   }
 
-  loadEvents(id: string) {
+  loadEvents(id: string, event: any) {
+    event.stopPropagation();
     this.showEvents = true;
     this.http.get('/api/artists/' + id + '/events').subscribe(
       (data: any) => this.setEvents(data),

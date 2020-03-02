@@ -1,40 +1,17 @@
-.card {
-    border-style: none;
-}
-  
-.card-body {
-    position: relative;
-    width: 250px;
-    height: 80px;
-}
-
-.card-text {
+.text-truncate-2 {
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 
-.card-footer {
-    border-style: none;
-    background: none;
-    position: absolute;
-    bottom: 0px;
-  }
-
 div.video-m {
-    width: 250px;
-    position: relative;
-}
-  
-a.video-m {
-    width: 250px;
-    height: 150px;
+    max-width: 400px;
 }
 
 img.video-m {
-    width: 250px;
-    height: 150px;
+    width: 60px;
+    height: 40px;
     object-fit:cover;
 }
 

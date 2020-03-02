@@ -31,7 +31,7 @@
       <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
         <img class="musicbrainz">
       </a-->
-      <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
+      <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid, $event)">
         <img class="songkick">
       </a>
       <!--div *ngIf="doc.artistid != null" class="songkick pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">

@@ -7,10 +7,10 @@
             <img class="cover-m card-img-top" src="{{doc.cover}}"/>
           </a>
           <div class="card-body p-1">
-            <div *ngIf="doc.type != 'artist'" class="font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.description" class="pt-2 card-text" [innerHTML]="doc.description"></div>
+            <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
+            <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
             <div class="card-footer text-muted p-0">{{doc.type.toUpperCase()}}</div>
           </div>
         </div>

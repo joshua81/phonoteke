@@ -70,8 +70,8 @@
             <img class="cover-s card-img-top" src="{{link.cover}}"/>
           </a>
           <div class="card-body p-1">
-            <div class="font-weight-bold" [innerHTML]="link.title"></div>
-            <div [innerHTML]="link.artist"></div>
+            <div class="card-text font-weight-bold" [innerHTML]="link.title"></div>
+            <div class="card-text" [innerHTML]="link.artist"></div>
             <div class="card-footer text-muted p-0">{{link.type.toUpperCase()}}</div>
           </div>
         </div>

@@ -61,6 +61,13 @@ img.cover-s {
   height: 100px;
 }
 
+.card-text {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 .card-footer {
   border-style: none;
   background: none;

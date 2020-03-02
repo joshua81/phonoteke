@@ -123,7 +123,7 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, vote: 1}).sort({"artist":1, "year":-1}).toArray();
+		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

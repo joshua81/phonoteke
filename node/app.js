@@ -27,13 +27,9 @@ app.get('/api/docs', async(req, res)=>{
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
 		var result = null;
-		if(!req.query.t)
+		if(req.query.t)
 		{
-			result = await docs.find({$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		}
-		else
-		{
-			result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		res.send(result);
 	}
@@ -42,11 +38,7 @@ app.get('/api/docs', async(req, res)=>{
 		console.log('Docs: page=' + req.query.p + ', type=' + req.query.t);
 		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
 		var result = null;
-		if(!req.query.t)
-		{
-			result = await docs.find().project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		}
-		else
+		if(req.query.t)
 		{
 			result = await docs.find({'type': req.query.t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
@@ -64,7 +56,7 @@ app.get('/api/tracks', async(req, res)=>{
 		var query = req.query.q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		result = await docs.find({$and: [{'type': {'$in': ['album','podcast']}}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		result = await docs.find({$and: [{'type': {'$in': ['album','podcast']}}, {$or: [{'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		
 	}
 	else

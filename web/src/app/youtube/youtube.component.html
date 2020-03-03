@@ -1,9 +1,9 @@
 <div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white">
-    <div class="list-group">
-        <a *ngFor="let track of tracks" [ngStyle]="{'max-width':'400px'}" (click)="loadVideo(track)">
-            <div class="row d-flex align-items-center p-1">
+    <div class="list-group w-med">
+        <a *ngFor="let track of tracks" (click)="loadVideo(track)">
+            <div class="row d-flex align-items-center m-0 p-1">
                 <div><span class="youtube" [ngClass]="track == video ? 'selected' : ''"></span></div>
-                <div class="flex-grow-1 text-truncate-2 pl-2 pr-2" [ngStyle]="{'max-width':'350px'}" [innerHTML]="track.title"></div>
+                <div class="flex-grow-1 pl-2 pr-2" [ngStyle]="{'max-width':'300px'}" [innerHTML]="track.title"></div>
                 <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
                     <span class="songkickbtn"></span>
                 </div>
@@ -17,8 +17,8 @@
     (stateChange)="onStateChange($event)" (ready)="onReady($event)">
     </youtube-player>
     <div class="p-1">
-        <div class="text-truncate" [innerHTML]="video.title"></div>
-        <div *ngIf="video.album" class="row d-flex align-items-center m-0 pt-2">
+        <div class="text-truncate-2" [innerHTML]="video.title"></div>
+        <!--div *ngIf="video.album" class="row d-flex align-items-center m-0 pt-2">
             <a class="cover" [routerLink]="['/docs/' + video.id]">
                 <img class="cover" src="{{video.cover}}"/>
             </a>
@@ -26,7 +26,7 @@
                 <div class="text-truncate font-weight-bold" [innerHTML]="video.album"></div>
                 <div class="text-truncate" [innerHTML]="video.artist"></div>
             </div>
-        </div>
+        </div-->
         <div class="row d-flex align-items-center justify-content-center m-0 pt-2">
             <div class="pr-2" (click)="backward($event)">
                 <span class="backward"></span>

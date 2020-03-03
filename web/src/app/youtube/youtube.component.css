@@ -8,6 +8,10 @@
     position: absolute;
 }
 
+.selected {
+    background:#FF0000;
+}
+
 a.cover {
     width: 40px;
     height: 40px;

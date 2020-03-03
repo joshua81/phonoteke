@@ -1,8 +1,8 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center">
+<div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white">
     <div class="list-group">
         <a *ngFor="let track of tracks" [ngStyle]="{'max-width':'400px'}" (click)="loadVideo(track)">
             <div class="row d-flex align-items-center p-1">
-                <div><span class="youtube"></span></div>
+                <div><span class="youtube" [ngClass]="track == video ? 'selected' : ''"></span></div>
                 <div class="flex-grow-1 text-truncate-2 pl-2 pr-2" [ngStyle]="{'max-width':'350px'}" [innerHTML]="track.title"></div>
                 <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
                     <span class="songkickbtn"></span>

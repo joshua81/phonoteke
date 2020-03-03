@@ -17,6 +17,7 @@ html, body {
 }
 
 .navbar {
+    padding: 0px;
     height: 40px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -63,6 +64,20 @@ img.cover-m {
     width: 250px;
     height: 250px;
     object-fit:cover;
+}
+
+.text-truncate-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.text-truncate-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 /********** buttons **********/
@@ -118,7 +133,8 @@ img.songkick {
     background-color: #FFFFFF;
 }
 
-.playbtn {
+.play {
+    margin-top: 8px;
     display: inline-block;
     mask: url("/images/play.svg");
     width: 30px;
@@ -127,7 +143,8 @@ img.songkick {
     cursor: pointer;
 }
 
-.pausebtn {
+.pause {
+    margin-top: 8px;
     display: inline-block;
     mask: url("/images/pause.svg");
     width: 30px;
@@ -136,7 +153,8 @@ img.songkick {
     cursor: pointer;
 }
 
-.forwardbtn {
+.forward {
+    margin-top: 8px;
     display: inline-block;
     mask: url("/images/forward.svg");
     width: 30px;
@@ -145,7 +163,8 @@ img.songkick {
     cursor: pointer;
 }
 
-.backwardbtn {
+.backward {
+    margin-top: 8px;
     display: inline-block;
     mask: url("/images/backward.svg");
     width: 30px;
@@ -154,7 +173,7 @@ img.songkick {
     cursor: pointer;
 }
 
-.backbtn {
+.back {
     display: inline-block;
     mask: url("/images/back.svg");
     width: 10px;
@@ -163,12 +182,23 @@ img.songkick {
     cursor: pointer;
 }
 
-.youtubebtn {
+.youtube {
+    margin-top: 8px;
     display: inline-block;
     mask: url("/images/youtube.svg");
     width: 20px;
     height: 20px;
-    background: #FFFFFF;
+    background: #000000;
+    cursor: pointer;
+}
+
+.songkickbtn {
+    margin-top: 8px;
+    display: inline-block;
+    mask: url("/images/songkick.svg");
+    width: 20px;
+    height: 20px;
+    background: #000000;
     cursor: pointer;
 }
 

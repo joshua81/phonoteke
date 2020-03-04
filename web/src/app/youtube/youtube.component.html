@@ -1,11 +1,11 @@
 <div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white">
     <div class="list-group w-med">
-        <a *ngFor="let track of tracks" (click)="loadVideo(track)">
-            <div class="row d-flex align-items-center m-0 p-1">
-                <div><span class="youtube" [ngClass]="track == video ? 'selected' : ''"></span></div>
-                <div class="flex-grow-1 pl-2 pr-2" [ngStyle]="{'max-width':'300px'}" [innerHTML]="track.title"></div>
+        <a *ngFor="let track of tracks" class="pt-2" (click)="loadVideo(track)">
+            <div class="row d-flex align-items-center m-0">
+                <div><span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span></div>
+                <div class="flex-grow-1 pl-1 pr-1" [ngStyle]="{'max-width':'300px'}" [innerHTML]="track.title"></div>
                 <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
-                    <span class="songkickbtn"></span>
+                    <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
                 </div>
             </div>
         </a>
@@ -13,11 +13,11 @@
 </div>
 
 <div *ngIf="video != null" class="player fixed-bottom bg-white">
-    <youtube-player width="300px" height="150px" suggestedQuality="default" videoId="{{video.youtube}}"
+    <youtube-player width="350px" height="200px" suggestedQuality="default" videoId="{{video.youtube}}"
     (stateChange)="onStateChange($event)" (ready)="onReady($event)">
     </youtube-player>
     <div class="p-1">
-        <div class="text-truncate-2" [innerHTML]="video.title"></div>
+        <div [innerHTML]="video.title"></div>
         <!--div *ngIf="video.album" class="row d-flex align-items-center m-0 pt-2">
             <a class="cover" [routerLink]="['/docs/' + video.id]">
                 <img class="cover" src="{{video.cover}}"/>
@@ -27,7 +27,7 @@
                 <div class="text-truncate" [innerHTML]="video.artist"></div>
             </div>
         </div-->
-        <div class="row d-flex align-items-center justify-content-center m-0 pt-2">
+        <div class="row d-flex align-items-center justify-content-center m-0">
             <div class="pr-2" (click)="backward($event)">
                 <span class="backward"></span>
             </div>

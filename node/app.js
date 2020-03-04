@@ -29,7 +29,14 @@ app.get('/api/docs', async(req, res)=>{
 		var result = null;
 		if(req.query.t)
 		{
-			result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			if(req.query.t != 'podcast')
+			{
+				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			}
+			else
+			{
+				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			}
 		}
 		res.send(result);
 	}
@@ -57,7 +64,6 @@ app.get('/api/tracks', async(req, res)=>{
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
 		result = await docs.find({$and: [{'type': {'$in': ['album','podcast']}}, {$or: [{'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		
 	}
 	else
 	{

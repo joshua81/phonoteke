@@ -2,14 +2,16 @@
     <div class="list-group w-med">
         <a *ngFor="let track of tracks" class="pt-2" (click)="loadVideo(track)">
             <div class="row d-flex align-items-center m-0">
-                <div [ngStyle]="{'width':'300px'}">
+                <div [ngStyle]="{'width':'320px'}">
                     <div [innerHTML]="track.title"></div>
                     <div *ngIf="track.album != null" class="font-weight-bold" [innerHTML]="track.album"></div>
                     <div *ngIf="track.artist" [innerHTML]="track.artist"></div>
                 </div>
-                <div class="pl-1"><span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span></div>
-                <div class="pl-1" *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
-                    <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
+                <div class="pl-1">
+                    <div><span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span></div>
+                    <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
+                        <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
+                    </div>
                 </div>
             </div>
         </a>

@@ -200,7 +200,6 @@ img.songkick {
 }
 
 .songkickbtn {
-    margin-top: 8px;
     display: inline-block;
     mask: url("/images/songkick.svg");
     width: 20px;

@@ -1,9 +1,7 @@
 package org.phonoteke.loader;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -36,31 +34,33 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void patch()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()))).noCursorTimeout(true).iterator(); 
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
-			{
-				for(org.bson.Document track : tracks)
-				{
-					track.remove("artistid");
-					track.remove("albumid");
-					track.remove("sptrackid");
-					track.remove("spcover-l");
-					track.remove("spcover-m");
-					track.remove("spcover-s");
-				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-				LOGGER.info("Updated Album tracks " + id);
-			}
-		}
+		LOGGER.info("Loading patch...");
+//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()))).noCursorTimeout(true).iterator(); 
+//		while(i.hasNext()) 
+//		{ 
+//			Document page = i.next();
+//			String id = page.getString("id");
+//			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
+//			if(CollectionUtils.isNotEmpty(tracks))
+//			{
+//				for(org.bson.Document track : tracks)
+//				{
+//					track.remove("artistid");
+//					track.remove("albumid");
+//					track.remove("sptrackid");
+//					track.remove("spcover-l");
+//					track.remove("spcover-m");
+//					track.remove("spcover-s");
+//				}
+//				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+//				LOGGER.info("Updated Album tracks " + id);
+//			}
+//		}
 	}
 
 	private void musicbrainz()
 	{
+		LOGGER.info("Loading Musicbrainz...");
 		for(int p = 0; p < 20; p++)
 		{
 			MongoCursor<Document> i = docs.find().sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
@@ -89,6 +89,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void spotify()
 	{
+		LOGGER.info("Loading Spotify...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
@@ -117,6 +118,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void youtube()
 	{
+		LOGGER.info("Loading Youtube...");
 		try
 		{
 			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();

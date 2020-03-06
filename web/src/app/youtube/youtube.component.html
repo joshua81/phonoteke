@@ -1,10 +1,14 @@
-<div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white">
+<div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white pt-2 pb-2">
     <div class="list-group w-med">
         <a *ngFor="let track of tracks" class="pt-2" (click)="loadVideo(track)">
             <div class="row d-flex align-items-center m-0">
-                <div><span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span></div>
-                <div class="flex-grow-1 pl-1 pr-1" [ngStyle]="{'max-width':'300px'}" [innerHTML]="track.title"></div>
-                <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
+                <div [ngStyle]="{'width':'300px'}">
+                    <div [innerHTML]="track.title"></div>
+                    <div *ngIf="track.album != null" class="font-weight-bold" [innerHTML]="track.album"></div>
+                    <div *ngIf="track.artist" [innerHTML]="track.artist"></div>
+                </div>
+                <div class="pl-1"><span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span></div>
+                <div class="pl-1" *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
                     <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
                 </div>
             </div>
@@ -12,7 +16,7 @@
     </div>
 </div>
 
-<div *ngIf="video != null" class="player fixed-bottom bg-white">
+<div *ngIf="video != null" class="fixed-bottom bg-white" [ngStyle]="{'width':'350px'}">
     <youtube-player width="350px" height="200px" suggestedQuality="default" videoId="{{video.youtube}}"
     (stateChange)="onStateChange($event)" (ready)="onReady($event)">
     </youtube-player>

@@ -94,6 +94,26 @@ public class MusicbrainzLoader
 		String url = MUSICBRAINZ + "/artist/?query=artist:" + artist.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
 	}
+	
+	private org.bson.Document getArtistName(String id)
+	{
+		if(StringUtils.isBlank(id))
+		{
+			return null;
+		}
+		String url = MUSICBRAINZ + "/artist/" + id + "?fmt=json";
+		return callMusicbrainz(url);
+	}
+	
+	private org.bson.Document getAlbumName(String id)
+	{
+		if(StringUtils.isBlank(id))
+		{
+			return null;
+		}
+		String url = MUSICBRAINZ + "/release-group/" + id + "?fmt=json";
+		return callMusicbrainz(url);
+	}
 
 	private org.bson.Document getRecording(String artist, String recording)
 	{
@@ -179,7 +199,7 @@ public class MusicbrainzLoader
 						String talbumId = track.getString("albumid");
 						if(tartistId == null || talbumId == null)
 						{
-							LOGGER.debug("Loading Track: " + title);
+							LOGGER.debug("Loading Track ids: " + title);
 							// no Artist - Recording separator
 							if(!isChunkTitle(title))
 							{
@@ -228,6 +248,19 @@ public class MusicbrainzLoader
 							}
 							track.append("artistid", tartistId).append("albumid", talbumId);
 							LOGGER.info(title + " (" + tartistId + ", " + talbumId + ")");
+						}
+						
+						artist = track.getString("artist");
+						album = track.getString("album");
+						if(tartistId != null && talbumId != null && (artist == null || album == null))
+						{
+							LOGGER.debug("Loading Track names: " + title);
+							org.bson.Document martist = getArtistName(tartistId);
+							artist = martist.getString("name");
+							org.bson.Document malbum = getAlbumName(talbumId);
+							album = malbum.getString("title");
+							track.append("artist", artist).append("album", album);
+							LOGGER.info(title + " (" + artist + ", " + album + ")");
 						}
 					}
 				}

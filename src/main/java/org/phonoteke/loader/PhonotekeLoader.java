@@ -8,10 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.collect.Lists;
@@ -43,11 +46,11 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
 	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\"].{1,100}[‘,’,',\\\"].{0,100}", ".{1,100}[-,–,_].{1,100}");
+	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
+	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 
 	protected MongoCollection<org.bson.Document> docs;
-	protected MusicbrainzLoader mbrainz = new MusicbrainzLoader();
-	protected SpotifyLoader spotify = new SpotifyLoader();
-	protected YoutubeLoader youtube = new YoutubeLoader();
+
 
 	protected enum TYPE {
 		artist,
@@ -155,10 +158,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("year", getYear(url, doc)).
 									append("tracks", getTracks(url, doc)).
 									append("audio", getAudio(url, doc));
-							mbrainz.loadAlbumMBId(json);
-							mbrainz.loadTracksMBId(json);
-							spotify.loadAlbum(json);
-							youtube.loadTracks(json);
 						}
 						break;
 					case artist:
@@ -178,8 +177,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
-							mbrainz.loadArtistMBId(json);
-							spotify.loadArtist(json);
 						}
 						break;
 					case concert:
@@ -200,8 +197,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
-							mbrainz.loadArtistMBId(json);
-							spotify.loadArtist(json);
 						}
 						break;
 					case interview:
@@ -222,8 +217,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 									append("links", getLinks(url, doc)).
 									append("review", getReview(url, doc)).
 									append("source", getSource());
-							mbrainz.loadArtistMBId(json);
-							spotify.loadArtist(json);
 						}
 						break;
 					default:
@@ -283,6 +276,47 @@ public abstract class PhonotekeLoader extends WebCrawler
 	{
 		return new org.bson.Document("title", title).
 				append("youtube", youtube);
+	}
+
+	protected List<org.bson.Document> parseTracks(Element content) 
+	{
+		List<org.bson.Document> tracks = Lists.newArrayList();
+		if(content != null)
+		{
+			content.select("br").after(TRACKS_NEW_LINE);
+			content.select("p").after(TRACKS_NEW_LINE);
+			content.select("li").after(TRACKS_NEW_LINE);
+			content.select("h1").after(TRACKS_NEW_LINE);
+			content.select("h2").after(TRACKS_NEW_LINE);
+			content.select("h3").after(TRACKS_NEW_LINE);
+			content.select("div").after(TRACKS_NEW_LINE);
+			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String title = chunks[i].trim();
+				if(StringUtils.isNotBlank(title))
+				{
+					for(String p : TRACKS_TRIM)
+					{
+						if(title.toUpperCase().startsWith(p))
+						{
+							title = title.substring(p.length()).trim();
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(title) && isTrack(title))
+				{
+					String youtube = null;
+					tracks.add(newTrack(title, youtube));
+					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
+				}
+			}
+		}
+		if(CollectionUtils.isEmpty(tracks))
+		{
+			throw new IllegalArgumentException("Empty tracks!");
+		}
+		return tracks;
 	}
 
 	//---------------------------------

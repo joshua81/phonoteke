@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -26,9 +24,7 @@ public class Radio2Loader extends PhonotekeLoader
 	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
 	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
 	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, "https://www.raiplayradio.it/audio");
-	private static final String NEW_LINE = "_NEW_LINE_";
-	private static final List<String> TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
-
+	
 	private static String artist;
 	private static String source;
 
@@ -180,44 +176,8 @@ public class Radio2Loader extends PhonotekeLoader
 	@Override
 	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
 		Element content = doc.select("div.aodHtmlDescription").first();
-		if(content != null)
-		{
-			content.select("br").after(NEW_LINE);
-			content.select("p").after(NEW_LINE);
-			content.select("li").after(NEW_LINE);
-			content.select("h1").after(NEW_LINE);
-			content.select("h2").after(NEW_LINE);
-			content.select("h3").after(NEW_LINE);
-			content.select("div").after(NEW_LINE);
-			String[] chunks = content.text().replace("||", NEW_LINE).split(NEW_LINE);
-			for(int i = 0; i < chunks.length; i++)
-			{
-				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title))
-				{
-					for(String p : TRIM)
-					{
-						if(title.toUpperCase().startsWith(p))
-						{
-							title = title.substring(p.length()).trim();
-						}
-					}
-				}
-				if(StringUtils.isNotBlank(title) && isTrack(title))
-				{
-					String youtube = null;
-					tracks.add(newTrack(title, youtube));
-					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
-				}
-			}
-		}
-		if(CollectionUtils.isEmpty(tracks))
-		{
-			throw new IllegalArgumentException("Empty tracks!");
-		}
-		return tracks;
+		return parseTracks(content);
 	}
 
 	@Override

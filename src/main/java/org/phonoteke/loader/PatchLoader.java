@@ -1,7 +1,9 @@
 package org.phonoteke.loader;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -15,8 +17,13 @@ public class PatchLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
+	private MusicbrainzLoader mbrainz = new MusicbrainzLoader();
+	private SpotifyLoader spotify = new SpotifyLoader();
+	private YoutubeLoader youtube = new YoutubeLoader();
+
 	public static void main(String[] args)
 	{
+		new PatchLoader().patch();
 		new PatchLoader().youtube();
 		new PatchLoader().musicbrainz();
 		new PatchLoader().spotify();
@@ -25,6 +32,31 @@ public class PatchLoader extends PhonotekeLoader
 	public PatchLoader()
 	{
 		super();
+	}
+
+	private void patch()
+	{
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()))).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					track.remove("artistid");
+					track.remove("albumid");
+					track.remove("sptrackid");
+					track.remove("spcover-l");
+					track.remove("spcover-m");
+					track.remove("spcover-s");
+				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				LOGGER.info("Updated Album tracks " + id);
+			}
+		}
 	}
 
 	private void musicbrainz()
@@ -39,7 +71,6 @@ public class PatchLoader extends PhonotekeLoader
 				switch (TYPE.valueOf(page.getString("type"))) {
 				case album:
 					mbrainz.loadAlbumMBId(page);
-					mbrainz.loadTracksMBId(page);
 					break;
 				case artist:
 				case concert:

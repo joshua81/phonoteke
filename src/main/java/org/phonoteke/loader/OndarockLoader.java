@@ -28,13 +28,14 @@ public class OndarockLoader extends PhonotekeLoader
 	public static void main(String[] args) 
 	{
 		new OndarockLoader().crawl(OndarockLoader.URL);
+		//		new OndarockLoader().crawl("https://www.ondarock.it/speciali_archivio.php");
 	}
 
 	public OndarockLoader()
 	{
 		super();
 	}
-	
+
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
@@ -66,6 +67,7 @@ public class OndarockLoader extends PhonotekeLoader
 		removeScripts(content);
 		removeDivs(content);
 		removeLinks(content);
+		removeIFrames(content);
 
 		String review = content.html();
 		if(StringUtils.isBlank(review) || review.trim().length() < 100)
@@ -95,6 +97,15 @@ public class OndarockLoader extends PhonotekeLoader
 			elements.get(i).unwrap();
 		}
 		return Lists.newArrayList(links);
+	}
+
+	private void removeIFrames(Element node)
+	{
+		Elements elements = node.select("iframe");
+		for(int i = 0; i < elements.size(); i++)
+		{
+			elements.get(i).remove();
+		}
 	}
 
 	private void removeLinks(Element node)
@@ -172,6 +183,8 @@ public class OndarockLoader extends PhonotekeLoader
 			bandElement = intestazioneElement.select("h2").first();
 			band = bandElement.html().trim();
 			return band;
+		case podcast:
+			return "Onda Rock";
 		default:
 			return null;
 		}
@@ -215,6 +228,11 @@ public class OndarockLoader extends PhonotekeLoader
 			titleElement = intestazioneElement.select("h3").first();
 			title = titleElement.html().trim();
 			return title;
+		case podcast:
+			intestazioneElement = doc.select("div[id=intestazione_int]").first();
+			titleElement = intestazioneElement.select("h2").first();
+			title = titleElement.html().trim();
+			return title;
 		default:
 			return null;
 		}
@@ -233,6 +251,11 @@ public class OndarockLoader extends PhonotekeLoader
 		case artist:
 			descriptionElement = doc.select("meta[property=og:description]").first();
 			description = descriptionElement.attr("content").trim();
+			return description;
+		case podcast:
+			descriptionElement = doc.select("div[id=intestazione_int]").first();
+			descriptionElement = descriptionElement.select("h3").first();
+			description = descriptionElement.html().trim();
 			return description;
 		default:
 			return null;
@@ -310,6 +333,10 @@ public class OndarockLoader extends PhonotekeLoader
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
+			case podcast:
+				coverElement = doc.select("meta[property=og:image]").first();
+				cover = coverElement.attr("content").trim();
+				return getUrl(cover);
 			default:
 				return null;
 			}
@@ -339,6 +366,7 @@ public class OndarockLoader extends PhonotekeLoader
 		case artist:
 		case concert:
 		case interview:
+		case podcast:
 			authorElement = doc.select("span[class=recensore]").first();
 			if(authorElement != null)
 			{
@@ -405,6 +433,7 @@ public class OndarockLoader extends PhonotekeLoader
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		switch (getType(url)) {
 		case album:
+			// youtube
 			Elements elements = doc.select("iframe");
 			for(int i = 0; i < elements.size(); i++)
 			{
@@ -428,6 +457,35 @@ public class OndarockLoader extends PhonotekeLoader
 					}
 				}
 			}
+			break;
+		case podcast:
+			// youtube
+			elements = doc.select("iframe");
+			for(int i = 0; i < elements.size(); i++)
+			{
+				String src = elements.get(i).attr("src");
+				if(src != null && src.contains("youtube.com")) 
+				{
+					String youtube = null;
+					if(src.startsWith("https://www.youtube.com/embed/"))
+					{
+						int ix = "https://www.youtube.com/embed/".length();
+						youtube = src.substring(ix);
+						tracks.add(newTrack(null, youtube));
+						LOGGER.debug("tracks: youtube: " + youtube);
+					}
+					else if(src.startsWith("//www.youtube.com/embed/"))
+					{
+						int ix = "//www.youtube.com/embed/".length();
+						youtube = src.substring(ix);
+						tracks.add(newTrack(null, youtube));
+						LOGGER.debug("tracks: youtube: " + youtube);
+					}
+				}
+			}
+			// tracklist
+			Element content = doc.select("div[id=boxdiscografia_med]").first();
+			tracks.addAll(parseTracks(content));
 			break;
 		default:
 			break;
@@ -505,6 +563,10 @@ public class OndarockLoader extends PhonotekeLoader
 		{
 			return TYPE.interview;
 		}
+//		else if(getUrl(url).startsWith(URL + "speciali"))
+//		{
+//			return TYPE.podcast;
+//		}
 		return TYPE.unknown;
 	}
 }

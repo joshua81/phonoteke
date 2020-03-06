@@ -156,16 +156,10 @@ public class MusicbrainzLoader
 	public void loadTracksMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
-		String source = page.getString("source");
 		String artist = page.getString("artist");
 		String album = page.getString("title");
 		String artistId = page.getString("artistid");
 		String albumId = page.getString("albumid");
-
-		if(source.equals(OndarockLoader.SOURCE))
-		{
-			return;
-		}
 
 		try
 		{

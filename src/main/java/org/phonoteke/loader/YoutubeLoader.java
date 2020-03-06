@@ -40,7 +40,6 @@ public class YoutubeLoader
 
 	public void loadTracks(org.bson.Document page) throws IOException
 	{
-		LOGGER.info("Loading Youtube");
 		String id = (String)page.get("id");
 		for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 		{

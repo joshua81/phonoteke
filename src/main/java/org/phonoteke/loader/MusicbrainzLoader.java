@@ -223,7 +223,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 		try
 		{
-			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
 			if(CollectionUtils.isNotEmpty(tracks))
 			{
 				for(org.bson.Document track : tracks)

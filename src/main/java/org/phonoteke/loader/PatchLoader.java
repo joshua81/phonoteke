@@ -19,27 +19,19 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void patch()
 	{
-		LOGGER.info("Loading patch...");
-//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()))).noCursorTimeout(true).iterator(); 
-//		while(i.hasNext()) 
-//		{ 
-//			Document page = i.next();
-//			String id = page.getString("id");
-//			List<org.bson.Document> tracks = (List<org.bson.Document>)page.get("tracks", List.class);
-//			if(CollectionUtils.isNotEmpty(tracks))
-//			{
-//				for(org.bson.Document track : tracks)
-//				{
-//					track.remove("artistid");
-//					track.remove("albumid");
-//					track.remove("sptrackid");
-//					track.remove("spcover-l");
-//					track.remove("spcover-m");
-//					track.remove("spcover-s");
-//				}
-//				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-//				LOGGER.info("Updated Album tracks " + id);
-//			}
-//		}
+		//		LOGGER.info("Loading patch...");
+		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()))).noCursorTimeout(true).iterator(); 
+		//		while(i.hasNext()) 
+		//		{ 
+		//			Document page = i.next();
+		//			String id = page.getString("id");
+		//			page.append("spalbumid", null);
+		//			page.append("spartistid", null);
+		//			page.append("spcover-l", null);
+		//			page.append("spcover-m", null);
+		//			page.append("spcover-s", null);
+		//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+		//			LOGGER.info("Updated Podcast " + id);
+		//		}
 	}
 }

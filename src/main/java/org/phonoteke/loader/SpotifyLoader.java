@@ -8,6 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
@@ -23,7 +27,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader
+public class SpotifyLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
@@ -40,6 +44,40 @@ public class SpotifyLoader
 
 	private static ClientCredentials credentials;
 
+
+	public static void main(String[] args)
+	{
+		new SpotifyLoader().load();
+	}
+
+	private void load()
+	{
+		LOGGER.info("Loading Spotify...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id"); 
+			loadAlbum(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		}
+
+		i = docs.find(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id"); 
+			loadArtist(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		}
+
+		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("source", source), Filters.eq("tracks.sptrackid", null))).noCursorTimeout(true).iterator(); 
+		//		while(i.hasNext()) 
+		//		{ 
+		//			Document page = i.next(); 
+		//			String id = page.getString("id"); 
+		//		}
+	}
 
 	private void relogin()
 	{

@@ -14,8 +14,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 
-public class YoutubeLoader
+public class YoutubeLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
@@ -23,6 +27,11 @@ public class YoutubeLoader
 	private static final String UNKNOWN = "UNKNOWN";
 	private YouTube youtube = null;
 
+
+	public static void main(String[] args)
+	{
+		new YoutubeLoader().load();
+	}
 
 	public YoutubeLoader()
 	{
@@ -35,6 +44,26 @@ public class YoutubeLoader
 		catch (Throwable t) 
 		{
 			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage(), t);
+		}
+	}
+
+	private void load()
+	{
+		LOGGER.info("Loading Youtube...");
+		try
+		{
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
+			while(i.hasNext())
+			{
+				org.bson.Document page = i.next();
+				String id = (String)page.get("id");
+				loadTracks(page);
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			}
+		}
+		catch(IOException e)
+		{
+			LOGGER.error("ERROR YoutubeLoader: " + e.getMessage(), e);
 		}
 	}
 

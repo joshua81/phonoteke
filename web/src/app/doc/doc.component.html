@@ -58,8 +58,8 @@
       <div *ngFor="let link of links" class="pb-2 pl-1 pr-1">
         <div class="cover-s card mx-auto">
           <a class="cover-s" [routerLink]="['/docs/' + link.id]">
-            <img *ngIf="doc.coverM == null" class="cover-s card-img-top" src="{{link.cover}}"/>
-            <img *ngIf="doc.coverM == null" class="cover-s card-img-top" src="{{link.coverM}}"/>
+            <img *ngIf="link.coverM == null" class="cover-s card-img-top" src="{{link.cover}}"/>
+            <img *ngIf="link.coverM != null" class="cover-s card-img-top" src="{{link.coverM}}"/>
           </a>
           <div class="card-body p-1">
             <div class="card-text font-weight-bold" [innerHTML]="link.title"></div>

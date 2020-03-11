@@ -4,7 +4,8 @@
       <div *ngFor="let doc of docs" class="pb-2 pl-1 pr-1">
         <div class="cover-m card mx-auto">
           <a class="cover-m" [routerLink]="['/docs/' + doc.id]">
-            <img class="cover-m card-img-top" src="{{doc.cover}}"/>
+            <img *ngIf="doc.coverM == null" class="cover-m card-img-top" src="{{doc.cover}}"/>
+            <img *ngIf="doc.coverM != null" class="cover-m card-img-top" src="{{doc.coverM}}"/>
           </a>
           <div class="card-body p-1">
             <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
@@ -15,9 +16,5 @@
           </div>
         </div>
       </div>
-  </div>
-
-  <div infinite-scroll *ngIf="tracks.length > 0" class="row d-flex justify-content-center pt-2" (scrolled)="scrollTracks()">
-    <app-youtube [tracks]="tracks"></app-youtube>
   </div>
 </div>

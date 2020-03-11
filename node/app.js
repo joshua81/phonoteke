@@ -31,11 +31,11 @@ app.get('/api/docs', async(req, res)=>{
 		{
 			if(req.query.t != 'podcast')
 			{
-				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 			}
 			else
 			{
-				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 			}
 		}
 		res.send(result);
@@ -47,46 +47,10 @@ app.get('/api/docs', async(req, res)=>{
 		var result = null;
 		if(req.query.t)
 		{
-			result = await docs.find({'type': req.query.t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			result = await docs.find({'type': req.query.t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		res.send(result);
 	}
-});
-
-app.get('/api/tracks', async(req, res)=>{
-	var tracks = [];
-	var result = [];
-	if(req.query.q)
-	{
-		console.log('Tracks: page=' + req.query.p + ', query=' + req.query.q);
-		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var query = req.query.q;
-		query = '.*' + query + '.*';
-		query = query.split(' ').join('.*');
-		result = await docs.find({$and: [{'type': {'$in': ['album','podcast']}}, {$or: [{'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-	}
-	else
-	{
-		console.log('Tracks: page=' + req.query.p);
-		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		result = await docs.find({'type': {'$in': ['album','podcast']}}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-	}
-
-	result.forEach(function(doc) 
-	{
-		doc.tracks.forEach(function(track)
-		{
-			if(track.youtube) {
-				track.id = doc.id;
-				track.type = doc.type;
-				track.artist = doc.artist;
-				track.album = doc.title;
-				track.cover = doc.cover;
-				tracks.push(track);
-			}
-		});
-	});
-	res.send(tracks);
 });
 
 app.get('/api/docs/:id', async(req, res)=>{
@@ -129,7 +93,7 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
+		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

@@ -1,9 +1,11 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pt-5 w-max">
     <div class="row d-flex justify-content-center" [ngStyle]="{'top':'6px'}">
-      <img class="bg-image" [ngStyle]="{'background-image':'url('+doc.cover+')'}"/>
+      <img *ngIf="doc.coverM == null" class="bg-image" [ngStyle]="{'background-image':'url('+doc.cover+')'}"/>
+      <img *ngIf="doc.coverM != null" class="bg-image" [ngStyle]="{'background-image':'url('+doc.coverM+')'}"/>
       <div class="cover-m">
-        <img class="cover-m" src="{{doc.cover}}"/>
+        <img *ngIf="doc.coverM == null" class="cover-m" src="{{doc.cover}}"/>
+        <img *ngIf="doc.coverM != null" class="cover-m" src="{{doc.coverM}}"/>
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
         </div>
@@ -25,18 +27,9 @@
       <a class="pl-2 pr-2" href="{{doc.url}}" target="_blank">
         <img class="{{doc.source}}">
       </a>
-      <!--a *ngIf="doc.type != 'album' && doc.artistid" class="pr-2" href="{{'https://musicbrainz.org/artist/' + doc.artistid}}" target="_blank">
-        <img class="musicbrainz">
-      </a>
-      <a *ngIf="doc.type == 'album' && doc.albumid" class="pr-2" href="{{'https://musicbrainz.org/release-group/' + doc.albumid}}" target="_blank">
-        <img class="musicbrainz">
-      </a-->
       <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid, $event)">
         <img class="songkick">
       </a>
-      <!--div *ngIf="doc.artistid != null" class="songkick pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
-        <span class="songkick"></span>
-      </div-->
       <a *ngIf="doc.type != 'album' && doc.spartistid" class="pl-2 pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
         <img class="spotify">
       </a>
@@ -65,7 +58,8 @@
       <div *ngFor="let link of links" class="pb-2 pl-1 pr-1">
         <div class="cover-s card mx-auto">
           <a class="cover-s" [routerLink]="['/docs/' + link.id]">
-            <img class="cover-s card-img-top" src="{{link.cover}}"/>
+            <img *ngIf="doc.coverM == null" class="cover-s card-img-top" src="{{link.cover}}"/>
+            <img *ngIf="doc.coverM == null" class="cover-s card-img-top" src="{{link.coverM}}"/>
           </a>
           <div class="card-body p-1">
             <div class="card-text font-weight-bold" [innerHTML]="link.title"></div>

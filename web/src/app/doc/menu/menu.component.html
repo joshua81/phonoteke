@@ -1,13 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center bg-info">
   <div class="d-flex flex-row align-items-center w-max">
-    <!--div class="pr-2">
-      <a [routerLink]="['/']">
-        <span class="back"></span>
-      </a>
-    </div-->
     <div class="pr-2">
       <a [routerLink]="['/']">
-        <img class="cover" src="{{component.doc.cover}}"/>
+        <img *ngIf="component.doc.coverM == null" class="cover" src="{{component.doc.cover}}"/>
+        <img *ngIf="component.doc.coverM != null" class="cover" src="{{component.doc.coverM}}"/>
       </a>
     </div>
     <div class="text-truncate w-100">

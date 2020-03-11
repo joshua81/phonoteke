@@ -6,10 +6,10 @@
       <div class="cover-m">
         <img *ngIf="doc.coverM == null" class="cover-m" src="{{doc.cover}}"/>
         <img *ngIf="doc.coverM != null" class="cover-m" src="{{doc.coverM}}"/>
-        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+        <!--div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
-        </div>
-        <h3 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h3>
+        </div-->
+        <h3 *ngIf="doc.type == 'album' && doc.vote" class="vote">{{doc.vote}}</h3>
       </div>
     </div>
 

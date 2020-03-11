@@ -212,7 +212,7 @@ img.songkick {
     display: inline-block;
     mask: url("/images/star.svg");
     width: 20px;
-    height: 20px;
+    height: 18px;
     background: #FFFFFF;
 }
 
@@ -237,7 +237,7 @@ img.songkick {
 .linkedin {
     display: inline-block;
     mask: url("/images/linkedin.svg");
-    width: 20px;
+    width: 18px;
     height: 20px;
     background: #000000;
     cursor: pointer;

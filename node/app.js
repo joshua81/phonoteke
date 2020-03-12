@@ -18,44 +18,99 @@ db.connect(err => {
 app.use('/images', express.static('images'));
 app.use(express.static('web'));
 
-app.get('/api/docs', async(req, res)=>{
-	if(req.query.q)
-	{
-		console.log('Docs: page=' + req.query.p + ', query=' + req.query.q + ', type=' + req.query.t);
-		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var query = req.query.q;
-		query = '.*' + query + '.*';
-		query = query.split(' ').join('.*');
-		var result = null;
-		if(req.query.t)
-		{
-			if(req.query.t != 'podcast')
-			{
-				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-			}
-			else
-			{
-				result = await docs.find({$and: [{'type': req.query.t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-			}
-		}
-		res.send(result);
-	}
-	else
-	{
-		console.log('Docs: page=' + req.query.p + ', type=' + req.query.t);
-		var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-		var result = null;
-		if(req.query.t)
-		{
-			result = await docs.find({'type': req.query.t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
-		}
-		res.send(result);
-	}
+app.get('/api/albums', async(req, res)=>{
+	var result = await findDocs('album', req.query.p, req.query.q);
+	res.send(result);
 });
 
-app.get('/api/docs/:id', async(req, res)=>{
-	console.log('Docs: id=' + req.params.id);
-	const result = await docs.find({'id': req.params.id}).toArray();
+app.get('/api/albums/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/albums/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/artists', async(req, res)=>{
+	var result = await findDocs('artist', req.query.p, req.query.q);
+	res.send(result);
+});
+
+app.get('/api/artists/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/artists/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/artists/:id/events', async(req, res)=>{
+	const json = await findEvents(req.params.id);
+	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
+});
+
+app.get('/api/concerts', async(req, res)=>{
+	var result = await findDocs('concert', req.query.p, req.query.q);
+	res.send(result);
+});
+
+app.get('/api/concerts/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/concerts/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/interviews', async(req, res)=>{
+	var result = await findDocs('interview', req.query.p, req.query.q);
+	res.send(result);
+});
+
+app.get('/api/interviews/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/interviews/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/podcasts', async(req, res)=>{
+	var result = await findDocs('podcast', req.query.p, req.query.q);
+	res.send(result);
+});
+
+app.get('/api/podcasts/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/podcasts/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
+
+app.get('/*', (req,res)=>{
+	res.sendFile(__dirname + '/web/index.html');});
+
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+});
+module.exports = app;
+
+//-----------------------------------------------
+
+async function findDoc(id) {
+	console.log('Docs: id=' + id);
+	var result = await docs.find({'id': id}).toArray();
 	if(result.length == 1)
 	{
 		var doc = result[0];
@@ -72,12 +127,62 @@ app.get('/api/docs/:id', async(req, res)=>{
 			});
 		}
 	}
-	res.send(result);
-});
+	return result;
+}
 
-app.get('/api/docs/:id/links', async(req, res)=>{
-  	console.log('Links: id=' + req.params.id);
-	const doc = await docs.find({'id': req.params.id}).toArray();
+async function findDocs(t, p, q) {
+	var result = null;
+	if(q)
+	{
+		console.log('Docs: page=' + p + ', query=' + q + ', type=' + t);
+		var page = Number(p) > 0 ? Number(p) : 0;
+		var query = q;
+		query = '.*' + query + '.*';
+		query = query.split(' ').join('.*');
+		if(t)
+		{
+			if(t != 'podcast')
+			{
+				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			}
+			else
+			{
+				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			}
+		}
+	}
+	else
+	{
+		console.log('Docs: page=' + p + ', type=' + t);
+		var page = Number(p) > 0 ? Number(p) : 0;
+		if(t)
+		{
+			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+		}
+	}
+	return result;
+}
+
+async function findEvents(id) {
+	console.log('Events: id=' + id);
+	var result = await new Promise((resolve, reject) => {
+		const skreq = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (skres) => {
+			if (skres.statusCode < 200 || skres.statusCode > 299) {
+				reject(new Error('Failed to load page, status code: ' + skres.statusCode));
+			}
+			const body = [];
+			skres.on('data', (chunk) => body.push(chunk));
+			skres.on('end', () => resolve(body.join('')));
+		});
+		skreq.on('error', (err) => reject(err))
+	});
+	return JSON.parse(result);
+}
+
+async function findLinks(id) {
+	console.log('Links: id=' + id);
+	var result = null;
+	const doc = await docs.find({'id': id}).toArray();
 	if(doc && doc[0])
 	{
 		var artists = [];
@@ -97,31 +202,6 @@ app.get('/api/docs/:id/links', async(req, res)=>{
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
-		res.send(result);
 	}
-});
-
-app.get('/api/artists/:id/events', async(req, res)=>{
-	console.log('Events: id=' + req.params.id);
-	const result = await new Promise((resolve, reject) => {
-		const skreq = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + req.params.id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (skres) => {
-			if (skres.statusCode < 200 || skres.statusCode > 299) {
-				reject(new Error('Failed to load page, status code: ' + skres.statusCode));
-			}
-			const body = [];
-			skres.on('data', (chunk) => body.push(chunk));
-			skres.on('end', () => resolve(body.join('')));
-		});
-		skreq.on('error', (err) => reject(err))
-	});
-	const json = JSON.parse(result);
-	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
-});
-
-app.get('/*', (req,res)=>{
-	res.sendFile(__dirname + '/web/index.html');});
-
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
-module.exports = app;
+	return result;
+}

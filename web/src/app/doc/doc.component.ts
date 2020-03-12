@@ -11,7 +11,8 @@ import { AppService } from '../app.service';
 })
 export class DocComponent implements OnInit {
   error = null;
-  docId = null;
+  type = null;
+  id = null;
   doc = null;
   links = [];
 
@@ -19,22 +20,23 @@ export class DocComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      this.docId = params.get('docId');
-      this.loadDoc(this.docId);
-      this.loadLinks(this.docId);
+      this.type = params.get('type');
+      this.id = params.get('id');
+      this.loadDoc(this.id);
+      this.loadLinks(this.id);
     });
   }
 
   loadDoc(id: string) {
     this.service.resetEvents();
-    this.http.get('/api/docs/' + id).subscribe(
+    this.http.get('/api/' + this.type + '/' + id).subscribe(
       (data: any) => this.setDoc(data[0]),
       error => this.error = error);
   }
 
   loadLinks(id: string) {
     this.links = [];
-    this.http.get('/api/docs/' + id + '/links').subscribe(
+    this.http.get('/api/' + this.type + '/' + id + '/links').subscribe(
       (data: any) => this.setLinks(data),
       error => this.error = error);
   }

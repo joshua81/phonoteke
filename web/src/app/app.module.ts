@@ -29,8 +29,8 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: DocsComponent},
-      {path: 'docs', component: DocsComponent},
-      {path: 'docs/:docId', component: DocComponent}]),
+      {path: ':type', component: DocsComponent},
+      {path: ':type/:id', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

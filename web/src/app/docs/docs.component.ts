@@ -9,7 +9,7 @@ import {HttpClient} from '@angular/common/http';
 export class DocsComponent implements OnInit {
   error = null;
   searchText = '';
-  docType = 'album';
+  type = 'album';
   page = 0;
   docs = [];
 
@@ -21,21 +21,21 @@ export class DocsComponent implements OnInit {
   }
 
   onSearch() {
-      this.loadDocs(0, this.docType);
+      this.loadDocs(0, this.type);
   }
 
   scrollDocs() {
-    this.loadDocs(this.page+1, this.docType);
+    this.loadDocs(this.page+1, this.type);
   }
 
-  loadDocs(page: number, docType: string) {
+  loadDocs(page: number, type: string) {
     this.page = page;
-    this.docType = docType;
+    this.type = type;
     if(this.page == 0) {
       this.docs.splice(0, this.docs.length);
     }
 
-    this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.docType).subscribe(
+    this.http.get('/api/' + type + 's?p=' + this.page + '&q=' + this.searchText).subscribe(
       (data: any) => this.docsLoaded(data),
       error => this.error = error);
   }

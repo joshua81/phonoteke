@@ -12,6 +12,7 @@ import { DocsComponent } from './docs/docs.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { YoutubeComponent } from './youtube/youtube.component';
+import { SpotifyComponent } from './spotify/spotify.component';
 import { EventsComponent } from './doc/events/events.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
@@ -23,6 +24,7 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
     DocMenuComponent,
     DocComponent,
     YoutubeComponent,
+    SpotifyComponent,
     EventsComponent
   ],
   imports: [

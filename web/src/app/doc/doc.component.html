@@ -52,7 +52,8 @@
       <div *ngIf="doc.review" class="text-justify" [innerHTML]="doc.review"></div>
     </div>
 
-    <app-youtube [tracks]="doc.tracks"></app-youtube>
+    <app-youtube *ngIf="doc.type == 'album'" [tracks]="doc.tracks"></app-youtube>
+    <app-spotify *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-spotify>
 
     <div *ngIf="links && links.length != 0" class="row d-flex justify-content-center pt-3">
       <div *ngFor="let link of links" class="pb-2 pl-1 pr-1">

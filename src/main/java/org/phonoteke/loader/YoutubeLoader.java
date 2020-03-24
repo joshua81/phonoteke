@@ -52,7 +52,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		LOGGER.info("Loading Youtube...");
 		try
 		{
-			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();
@@ -67,7 +67,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 	}
 
-	public void loadTracks(org.bson.Document page) throws IOException
+	private void loadTracks(org.bson.Document page) throws IOException
 	{
 		String id = (String)page.get("id");
 		for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))

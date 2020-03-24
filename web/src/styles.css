@@ -208,6 +208,16 @@ img.songkick {
     cursor: pointer;
 }
 
+.spotifybtn {
+    margin-top: 8px;
+    display: inline-block;
+    mask: url("/images/spotify.svg");
+    width: 20px;
+    height: 20px;
+    background: #000000;
+    cursor: pointer;
+}
+
 .star {
     display: inline-block;
     mask: url("/images/star.svg");

@@ -1,6 +1,6 @@
 <div *ngIf="tracks && tracks.length > 0" class="row d-flex justify-content-center bg-white pt-2 pb-2">
     <div class="list-group w-med">
-        <a *ngFor="let track of tracks" class="pt-2" (click)="loadVideo(track)">
+        <a *ngFor="let track of tracks" class="pt-2" (click)="loadTrack(track)">
             <div class="row d-flex align-items-center m-0">
                 <div [ngStyle]="{'width':'320px'}">
                     <div [innerHTML]="track.title"></div>
@@ -8,11 +8,11 @@
                     <div *ngIf="track.artist" [innerHTML]="track.artist"></div>
                 </div>
                 <div class="pl-1">
-                    <div *ngIf="track.youtube">
-                        <span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span>
+                    <div *ngIf="track.spotify">
+                        <span class="spotifybtn" [ngClass]="track == song ? 'spotify-selected' : ''"></span>
                     </div>
                     <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
-                        <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
+                        <span class="songkickbtn" [ngClass]="track == song ? 'songkick-selected' : ''"></span>
                     </div>
                 </div>
             </div>
@@ -20,18 +20,14 @@
     </div>
 </div>
 
-<div *ngIf="video != null" class="fixed-bottom bg-white" [ngStyle]="{'width':'350px'}">
-    <youtube-player width="350px" height="200px" suggestedQuality="default" videoId="{{video.youtube}}"
-    (stateChange)="onStateChange($event)" (ready)="onReady($event)">
-    </youtube-player>
+
+<div *ngIf="song != null" class="fixed-bottom bg-white" [ngStyle]="{'width':'350px'}">
+    <iframe [src]='spotifyURL()' width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
+    </iframe>
     <div class="row d-flex align-items-center justify-content-center m-0">
         <div class="pr-2" (click)="backward($event)">
             <span class="backward"></span>
         </div>
-        <div class="pl-2 pr-2" (click)="playPause($event)">
-            <span *ngIf="status != 1" class="play"></span>
-            <span *ngIf="status == 1" class="pause"></span>
-            </div>
         <div class="pl-2" (click)="forward($event)">
             <span class="forward"></span>
         </div>

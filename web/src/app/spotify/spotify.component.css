@@ -1,0 +1,28 @@
+.close {
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+}
+
+.youtube-selected {
+    background:#FF0000;
+}
+
+.songkick-selected {
+    background:#F80046;
+}
+
+.spotify-selected {
+    background:#1DB954;
+}
+
+a.cover {
+    width: 40px;
+    height: 40px;
+}
+
+img.cover {
+    width: 40px;
+    height: 40px;
+    object-fit:cover;
+}

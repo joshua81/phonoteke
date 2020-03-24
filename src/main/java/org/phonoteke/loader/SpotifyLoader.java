@@ -52,7 +52,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void loadAlbums()
 	{
 		LOGGER.info("Loading Albums...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.or(Filters.exists("spalbumid", false),Filters.eq("spalbumid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -65,7 +65,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void loadArtitsts()
 	{
 		LOGGER.info("Loading Artists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.or(Filters.exists("spartistid", false), Filters.eq("spartistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -78,7 +78,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void loadTracks()
 	{
 		LOGGER.info("Loading Tracks...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.eq("tracks.spotify", null))).noCursorTimeout(true).iterator(); 
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next(); 
@@ -114,7 +114,6 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadAlbum(Document page)
 	{
-		String id = page.getString("id");
 		String artist = page.getString("artist");
 		String album = page.getString("title");
 
@@ -174,7 +173,6 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadArtist(Document page)
 	{
-		String id = page.getString("id");
 		String artist = page.getString("artist");
 
 		LOGGER.debug("Loading artist " + artist);
@@ -223,8 +221,6 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadTracks(Document page)
 	{
-		String id = page.getString("id");
-
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
 		if(CollectionUtils.isNotEmpty(tracks))
 		{

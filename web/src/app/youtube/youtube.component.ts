@@ -46,7 +46,7 @@ export class YoutubeComponent implements OnInit {
   }
 
   loadVideo(track: any){
-    this.video = track;
+    this.video = track.youtube ? track : null;
   }
 
   play(event: Event){
@@ -71,14 +71,28 @@ export class YoutubeComponent implements OnInit {
   forward(event: Event){
     if(this.tracks.indexOf(this.video) < this.tracks.length-1)
     {
-      this.video = this.tracks[this.tracks.indexOf(this.video)+1];
+      var i: number;
+      for (i = this.tracks.indexOf(this.video)+1; i < this.tracks.length; i++) {
+        if(this.tracks[i].youtube)
+        {
+          this.video = this.tracks[i];
+          break;
+        }
+      }
     }
   }
 
   backward(event: Event){
     if(this.tracks.indexOf(this.video) > 0)
     {
-      this.video = this.tracks[this.tracks.indexOf(this.video)-1];
+      var i: number;
+      for (i = this.tracks.indexOf(this.video)-1; i >= 0; i--) {
+        if(this.tracks[i].youtube)
+        {
+          this.video = this.tracks[i];
+          break;
+        }
+      }
     }
   }
 

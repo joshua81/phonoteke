@@ -54,7 +54,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		LOGGER.info("Loading Albums...");
 		for(int p = 0; p < 20; p++)
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("albumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
+			MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("artistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				Document page = i.next();
@@ -86,24 +86,18 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String artist = page.getString("artist");
 		String artistId = page.getString("artistid");
 		String title = page.getString("title");
-		String albumId = page.getString("albumid");
 		String source = page.getString("source");
 
-		if(OndarockLoader.SOURCE.equals(source) && (artistId == null || albumId == null))
+		if(OndarockLoader.SOURCE.equals(source) && artistId == null)
 		{
 			LOGGER.debug("Loading Album " + id);
 			org.bson.Document mbalbum = getAlbum(artist, title);
 			if(mbalbum != null && mbalbum.getInteger("count") > 0)
 			{
-				String[] ids = getAlbumId(artist + " - " + title, mbalbum);
-				if(ids != null)
-				{
-					artistId = ids[0];
-					albumId = ids[1];
-				}
+				artistId = getAlbumId(artist + " - " + title, mbalbum);
 			}
-			page.append("artistid", artistId).append("albumid", albumId);
-			LOGGER.info(artist + " - " + title + ": " + artistId + " - " + albumId);
+			page.append("artistid", artistId);
+			LOGGER.info(artist + " - " + title + ": " + artistId);
 		}
 	}
 
@@ -224,8 +218,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private void loadTracksMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
-		String artist = page.getString("artist");
-		String album = page.getString("title");
 		String artistId = page.getString("artistid");
 
 		if(artistId != null)
@@ -241,19 +233,16 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				for(org.bson.Document track : tracks)
 				{
 					String title = track.getString("title");
-					if(title != null)
+					artistId = track.getString("artistid");
+					if(title != null && artistId == null)
 					{
-						artistId = track.getString("artistid");
-						if(artistId == null)
+						LOGGER.debug("Loading Track ids: " + title);
+						org.bson.Document mbtrack = getTrack(title);
+						if(mbtrack != null)
 						{
-							LOGGER.debug("Loading Track ids: " + title);
-							org.bson.Document mbtrack = getTrack(title);
-							if(mbtrack != null)
-							{
-								track.append("artistid", mbtrack.getString("artistid")).
-								append("albumid", mbtrack.getString("albumid"));
-								LOGGER.info(title + " (" + artistId + ")");
-							}
+							artistId = mbtrack.getString("artistid");
+							track.append("artistid", artistId);
+							LOGGER.info(title + " (" + artistId + ")");
 						}
 					}
 				}
@@ -266,9 +255,9 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 	}
 
-	private String[] getAlbumId(String title, org.bson.Document album)
+	private String getAlbumId(String title, org.bson.Document album)
 	{
-		TreeMap<Integer, String[]> scores = Maps.newTreeMap();
+		TreeMap<Integer, String> scores = Maps.newTreeMap();
 		List<org.bson.Document> releases = album.get("releases", List.class);
 		if(CollectionUtils.isNotEmpty(releases))
 		{
@@ -282,8 +271,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				if(score > THRESHOLD && scoreTitle > THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
-					String recordingId = getReleaseId(release);
-					scores.put(scoreTitle, new String[] {artistId, recordingId});
+					scores.put(scoreTitle, artistId);
 					break;
 				}
 			}
@@ -313,11 +301,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private String getRecordingArtistId(org.bson.Document recording)
 	{
 		return CollectionUtils.isEmpty(recording.get("artist-credit", List.class)) ? null : ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
-	}
-
-	private String getReleaseId(org.bson.Document release)
-	{
-		return release.get("release-group", org.bson.Document.class).getString("id");
 	}
 
 	private Integer getRecordingScore(org.bson.Document recording) 

@@ -3,11 +3,11 @@ package org.phonoteke.loader;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -15,7 +15,6 @@ import com.mongodb.operation.OrderBy;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
-import com.wrapper.spotify.model_objects.specification.Album;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
@@ -23,8 +22,6 @@ import com.wrapper.spotify.model_objects.specification.Image;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import com.wrapper.spotify.requests.data.albums.GetAlbumRequest;
-import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
@@ -42,21 +39,19 @@ public class SpotifyLoader extends PhonotekeLoader
 			.build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 
-	private static final List<String> SEPARATOR = Lists.newArrayList("-", "–");
-	private static final int SLEEP_TIME = 2000;
-	private static final int THRESHOLD = 90;
-
 	private static ClientCredentials credentials;
 
 
 	public static void main(String[] args)
 	{
-		new SpotifyLoader().load();
+		new SpotifyLoader().loadTracks();
+		new SpotifyLoader().loadAlbums();
+		new SpotifyLoader().loadArtitsts();
 	}
 
-	private void load()
+	private void loadAlbums()
 	{
-		LOGGER.info("Loading Spotify...");
+		LOGGER.info("Loading Albums...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("spalbumid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
@@ -65,8 +60,12 @@ public class SpotifyLoader extends PhonotekeLoader
 			loadAlbum(page);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
+	}
 
-		i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
+	private void loadArtitsts()
+	{
+		LOGGER.info("Loading Artists...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.eq("spartistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -74,13 +73,19 @@ public class SpotifyLoader extends PhonotekeLoader
 			loadArtist(page);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
+	}
 
-		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("source", source), Filters.eq("tracks.sptrackid", null))).noCursorTimeout(true).iterator(); 
-		//		while(i.hasNext()) 
-		//		{ 
-		//			Document page = i.next(); 
-		//			String id = page.getString("id"); 
-		//		}
+	private void loadTracks()
+	{
+		LOGGER.info("Loading Tracks...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.eq("tracks.spotify", null))).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next(); 
+			String id = page.getString("id"); 
+			loadTracks(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		}
 	}
 
 	private void relogin()
@@ -98,7 +103,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			{
 				credentials = SPOTIFY_LOGIN.execute();
 				SPOTIFY_API.setAccessToken(credentials.getAccessToken());
-				LOGGER.info("SPTF Expires in: " + credentials.getExpiresIn() + " secs");
+				LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
 			}
 		} 
 		catch (Exception e) 
@@ -114,14 +119,12 @@ public class SpotifyLoader extends PhonotekeLoader
 		String album = page.getString("title");
 
 		// check if the article was already crawled
-		LOGGER.info("SPTF Loading album " + artist + " - " + album);
+		LOGGER.debug("Loading album " + artist + " - " + album);
 		Document spotify = loadAlbum(artist, album);
 		if(spotify != null)
 		{
 			String artistId = spotify.getString("spartistid");
 			String albumId = spotify.getString("spalbumid");
-			LOGGER.info("SPTF " + artist + " - " + album + ": " + artistId + " - " + albumId);
-
 			page.append("spartistid", artistId).
 			append("spalbumid", albumId).
 			append("coverL", spotify.getString("coverL")).
@@ -149,8 +152,10 @@ public class SpotifyLoader extends PhonotekeLoader
 					String spalbum = a.getName();
 					String albumId = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
+					LOGGER.info("album: " + artist + " " + album + ", spotify: " + spartist + " " + spalbum + " score " + score);
 					if(score > THRESHOLD)
 					{
+						LOGGER.info(artist + " " + album + ": " + spartist + " " + spalbum + " (" + albumId + ")");
 						Document page = new Document("spartistid", artistid).
 								append("spalbumid", albumId);
 						getImages(page, a.getImages());
@@ -172,13 +177,11 @@ public class SpotifyLoader extends PhonotekeLoader
 		String id = page.getString("id");
 		String artist = page.getString("artist");
 
-		LOGGER.info("SPTF Loading artist " + artist);
+		LOGGER.debug("Loading artist " + artist);
 		Document spotify = loadArtist(artist);
 		if(spotify != null)
 		{
 			String artistId = spotify.getString("spartistid");
-			LOGGER.info("SPTF " + artist + ": " + artistId);
-
 			page.append("spartistid", artistId).
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
@@ -200,8 +203,10 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spartist = a.getName();
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
+				LOGGER.info("artist: " + artist + ", spotify: " + spartist + " score; " + score);
 				if(score > THRESHOLD)
 				{
+					LOGGER.info(artist + ": " + spartist + " (" + artistid + ")");
 					Document page = new Document("spartistid", artistid);
 					getImages(page, a.getImages());
 					return page;
@@ -226,118 +231,69 @@ public class SpotifyLoader extends PhonotekeLoader
 			for(org.bson.Document track : tracks)
 			{
 				String title = track.getString("title");
-				LOGGER.info("SPTF Loading track " + title);
-				Document spotify = loadTrack(title);
-				if(spotify != null)
+				LOGGER.debug("Loading track " + title);
+				try
 				{
-					String trackId = spotify.getString("sptrackid");
-					LOGGER.info("SPTF " + title + ": " + trackId);
-
-					track.append("sptrackid", trackId).
-					append("coverL", spotify.getString("coverL")).
-					append("coverM", spotify.getString("coverM")).
-					append("coverS", spotify.getString("coverS"));
+					login();
+					Document spotify = getTrack(title);
+					if(spotify != null)
+					{
+						track.append("spotify", spotify.getString("spotify")).
+						append("artist", spotify.getString("artist")).
+						append("album", spotify.getString("album")).
+						append("track", spotify.getString("track")).
+						append("spartistid", spotify.getString("spartistid")).
+						append("spalbumid", spotify.getString("spalbumid")).
+						append("coverL", spotify.getString("coverL")).
+						append("coverM", spotify.getString("coverM")).
+						append("coverS", spotify.getString("coverS"));
+					}
+				}
+				catch (Exception e) 
+				{
+					LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
+					relogin();
 				}
 			}
 		}
 	}
 
-	private Document loadTrack(String title)
+	protected Document getTrack(String artist, String song) throws Exception
 	{
-		try
+		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
 		{
-			login();
-			for(String s : SEPARATOR)
+			String q = "artist:" + artist + " track: " + song;
+			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
+			Paging<Track> tracks = request.execute();
+			for(int i = 0; i < tracks.getItems().length; i++)
 			{
-				if(title.split(s).length == 2)
+				Track track = tracks.getItems()[i];
+				String spartist = track.getArtists()[0].getName();
+				String spartistid = track.getArtists()[0].getId();
+				String spalbum = track.getAlbum().getName();
+				String spalbumid = track.getAlbum().getId();
+				String spsong = track.getName();
+				String trackid = track.getId();
+				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+				LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (score: " + score + ")");
+				if(score > THRESHOLD)
 				{
-					// artist - song
-					String artist = title.split(s)[0];
-					String song = title.split(s)[1];
-					String q = "artist:" + artist + " track: " + song;
-					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
-					Paging<Track> tracks = request.execute();
-					for(int i = 0; i < tracks.getItems().length; i++)
-					{
-						Track track = tracks.getItems()[i];
-						String spartist = track.getArtists()[0].getName();
-						String spsong = track.getName();
-						String trackid = track.getId();
-						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
-						if(score > THRESHOLD)
-						{
-							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
-							Document page = new Document("sptrackid", trackid);
-							getImages(page, track.getAlbum().getImages());
-							return page;
-						}
-					}
-
-					// song - artist
-					artist = title.split(s)[1];
-					song = title.split(s)[0];
-					q = "artist:" + artist + " track: " + song;
-					request = SPOTIFY_API.searchTracks(q).build();
-					tracks = request.execute();
-					for(int i = 0; i < tracks.getItems().length; i++)
-					{
-						Track track = tracks.getItems()[i];
-						String spartist = track.getArtists()[0].getName();
-						String spsong = track.getName();
-						String trackid = track.getId();
-						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
-						if(score > THRESHOLD)
-						{
-							LOGGER.info(title + ": " + spartist + " - " + spsong + " (" + trackid + ")");
-							Document page = new Document("sptrackid", trackid);
-							getImages(page, track.getAlbum().getImages());
-							return page;
-						}
-					}
+					LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (" + trackid + ")");
+					Document page = new Document("spotify", trackid);
+					page.append("artist", spartist);
+					page.append("spartistid", spartistid);
+					page.append("album", spalbum);
+					page.append("spalbumid", spalbumid);
+					page.append("track", spsong);
+					getImages(page, track.getAlbum().getImages());
+					return page;
 				}
 			}
 		}
-		catch (Exception e) 
-		{
-			LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
-			relogin();
-		}
 		return null;
 	}
 
-	public Album getAlbum(String id)
-	{
-		try
-		{
-			login();
-			GetAlbumRequest request = SPOTIFY_API.getAlbum(id).build();
-			return request.execute();
-		}
-		catch (Exception e) 
-		{
-			LOGGER.error("Error loading album " + id + ": " + e.getMessage(), e);
-			relogin();
-		}
-		return null;
-	}
-	
-	public Artist getArtist(String id)
-	{
-		try
-		{
-			login();
-			GetArtistRequest request = SPOTIFY_API.getArtist(id).build();
-			return request.execute();
-		}
-		catch (Exception e) 
-		{
-			LOGGER.error("Error loading album " + id + ": " + e.getMessage(), e);
-			relogin();
-		}
-		return null;
-	}
-	
-	public void getImages(Document page, Image[] images)
+	private void getImages(Document page, Image[] images)
 	{
 		if(images != null)
 		{

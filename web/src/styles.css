@@ -55,6 +55,17 @@ h3 {
     max-width: 500px;
 }
 
+.ptext-truncate {
+    flex: 1;
+    min-width: 0;
+}
+
+.ctext-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 div.cover-m {
     width: 250px;
     position: relative;

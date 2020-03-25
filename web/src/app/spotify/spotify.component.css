@@ -2,10 +2,6 @@
     background:#F80046;
 }
 
-.spotify-selected {
-    background:#1DB954;
-}
-
 .cover {
     width: 60px;
     height: 60px;
@@ -15,3 +11,4 @@
     object-fit:cover;
     cursor: pointer;
 }
+

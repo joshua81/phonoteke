@@ -227,28 +227,32 @@ public class SpotifyLoader extends PhonotekeLoader
 			for(org.bson.Document track : tracks)
 			{
 				String title = track.getString("title");
-				LOGGER.debug("Loading track " + title);
-				try
+				String spotifyId = track.getString("spotify");
+				if(spotifyId == null)
 				{
-					login();
-					Document spotify = getTrack(title);
-					if(spotify != null)
+					LOGGER.debug("Loading track " + title);
+					try
 					{
-						track.append("spotify", spotify.getString("spotify")).
-						append("artist", spotify.getString("artist")).
-						append("album", spotify.getString("album")).
-						append("track", spotify.getString("track")).
-						append("spartistid", spotify.getString("spartistid")).
-						append("spalbumid", spotify.getString("spalbumid")).
-						append("coverL", spotify.getString("coverL")).
-						append("coverM", spotify.getString("coverM")).
-						append("coverS", spotify.getString("coverS"));
+						login();
+						Document spotify = getTrack(title);
+						if(spotify != null)
+						{
+							track.append("spotify", spotify.getString("spotify")).
+							append("artist", spotify.getString("artist")).
+							append("album", spotify.getString("album")).
+							append("track", spotify.getString("track")).
+							append("spartistid", spotify.getString("spartistid")).
+							append("spalbumid", spotify.getString("spalbumid")).
+							append("coverL", spotify.getString("coverL")).
+							append("coverM", spotify.getString("coverM")).
+							append("coverS", spotify.getString("coverS"));
+						}
 					}
-				}
-				catch (Exception e) 
-				{
-					LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
-					relogin();
+					catch (Exception e) 
+					{
+						LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
+						relogin();
+					}
 				}
 			}
 		}

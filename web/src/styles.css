@@ -52,7 +52,7 @@ h3 {
 
 .w-med {
     width: 100%;
-    max-width: 350px;
+    max-width: 500px;
 }
 
 div.cover-m {
@@ -209,7 +209,6 @@ img.songkick {
 }
 
 .spotifybtn {
-    margin-top: 8px;
     display: inline-block;
     mask: url("/images/spotify.svg");
     width: 20px;

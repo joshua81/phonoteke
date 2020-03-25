@@ -27,7 +27,7 @@
       <a class="pl-2 pr-2" href="{{doc.url}}" target="_blank">
         <img class="{{doc.source}}">
       </a>
-      <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid, $event)">
+      <a *ngIf="doc.artistid != null" class="pl-2 pr-2" (click)="service.loadEvents(doc.artistid)">
         <img class="songkick">
       </a>
       <a *ngIf="doc.type != 'album' && doc.spartistid" class="pl-2 pr-2" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">

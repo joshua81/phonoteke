@@ -11,7 +11,7 @@
                     <div *ngIf="track.youtube">
                         <span class="youtube" [ngClass]="track == video ? 'youtube-selected' : ''"></span>
                     </div>
-                    <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid, $event)">
+                    <div *ngIf="track.artistid" (click)="service.loadEvents(track.artistid)">
                         <span class="songkickbtn" [ngClass]="track == video ? 'songkick-selected' : ''"></span>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
         <div class="pl-2 pr-2" (click)="playPause($event)">
             <span *ngIf="status != 1" class="play"></span>
             <span *ngIf="status == 1" class="pause"></span>
-            </div>
+        </div>
         <div class="pl-2" (click)="forward($event)">
             <span class="forward"></span>
         </div>

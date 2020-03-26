@@ -20,8 +20,11 @@ export class SpotifyComponent implements OnInit {
     this.song = track.spotify ? track : null;
   }
 
+  close(event: Event){
+    this.song = null;
+  }
+
   spotifyURL() {
-    console.log('https://open.spotify.com/embed/track/' + this.song.spotify);
     return this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.song.spotify);
   }
 }

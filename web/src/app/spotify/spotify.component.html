@@ -21,7 +21,10 @@
     </div>
 </div>
 
-<div *ngIf="song != null" class="fixed-bottom">
+<div *ngIf="song != null" class="row d-flex fixed-bottom" [ngStyle]="{'width':'380px'}">
     <iframe [src]='spotifyURL()' width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
     </iframe>
+    <div class="close" (click)="close($event)">
+        <span class="close"></span>
+    </div>
 </div>

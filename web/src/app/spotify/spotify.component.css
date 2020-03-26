@@ -1,3 +1,9 @@
+.close {
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+}
+
 .songkick-selected {
     background:#F80046;
 }

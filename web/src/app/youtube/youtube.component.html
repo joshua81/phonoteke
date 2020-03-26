@@ -1,4 +1,4 @@
-<div *ngIf="tracks && tracks.length != 0" class="row d-flex justify-content-center pt-2 pb-2">
+<div *ngIf="tracks && tracks.length != 0" class="row d-flex justify-content-center bg-white pt-2 pb-2">
     <div *ngFor="let track of tracks" class="pb-2 pl-1 pr-1" (click)="loadVideo(track)">
       <div class="cover card mx-auto">
         <img class="cover card-img-top" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>

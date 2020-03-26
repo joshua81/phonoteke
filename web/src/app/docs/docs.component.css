@@ -14,10 +14,3 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
-
-.card-footer {
-  border-style: none;
-  background: none;
-  position: absolute;
-  bottom: 0px;
-}

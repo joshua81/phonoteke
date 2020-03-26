@@ -25,6 +25,6 @@ export class YoutubeComponent implements OnInit {
   }
 
   youtubeURL(){
-    return this.sanitizer.bypassSecurityTrustResourceUrl('http://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
+    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
   }
 }

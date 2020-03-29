@@ -30,53 +30,44 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new MusicbrainzLoader().loadTracks();
 		new MusicbrainzLoader().loadAlbums();
 		new MusicbrainzLoader().loadArtists();
+		new MusicbrainzLoader().loadTracks();
 	}
 
 	private void loadTracks() {
 		LOGGER.info("Loading Tracks...");
-		for(int p = 0; p < 20; p++)
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
+		while(i.hasNext())
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.eq("tracks.artistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
-			while(i.hasNext())
-			{
-				Document page = i.next();
-				String id = page.getString("id"); 
-				loadTracksMBId(page);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			}
+			Document page = i.next();
+			String id = page.getString("id"); 
+			loadTracksMBId(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
 	private void loadAlbums() {
 		LOGGER.info("Loading Albums...");
-		for(int p = 0; p < 20; p++)
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
+		while(i.hasNext())
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.eq("artistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
-			while(i.hasNext())
-			{
-				Document page = i.next();
-				String id = page.getString("id"); 
-				loadAlbumMBId(page);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			}
+			Document page = i.next();
+			String id = page.getString("id"); 
+			loadAlbumMBId(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
 	private void loadArtists() {
 		LOGGER.info("Loading Artists...");
-		for(int p = 0; p < 20; p++)
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
+		while(i.hasNext())
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.eq("artistid", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(p*2000).limit(2000).noCursorTimeout(true).iterator();
-			while(i.hasNext())
-			{
-				Document page = i.next();
-				String id = page.getString("id"); 
-				loadArtistMBId(page);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			}
+			Document page = i.next();
+			String id = page.getString("id"); 
+			loadArtistMBId(page);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -163,7 +154,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						String mbartist = getReleaseArtist(recording);
 						score = FuzzySearch.tokenSetRatio(artist, mbartist);
 						String artistId =  getRecordingArtistId(recording);
-						if(score > THRESHOLD && artistId != null)
+						if(score >= THRESHOLD && artistId != null)
 						{
 							LOGGER.info(artist + ", " + mbartist + " " + artistId + " (score: " + score + ")");
 							Document page = new Document("artistid", artistId);
@@ -268,7 +259,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 
-				if(score > THRESHOLD && scoreTitle > THRESHOLD)
+				if(score >= THRESHOLD && scoreTitle >= THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
@@ -289,7 +280,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score > THRESHOLD && scoreArtist > THRESHOLD)
+				if(score >= THRESHOLD && scoreArtist >= THRESHOLD)
 				{
 					return mbartist.getString("id");
 				}

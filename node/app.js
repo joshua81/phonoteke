@@ -186,19 +186,19 @@ async function findLinks(id) {
 	if(doc && doc[0])
 	{
 		var artists = [];
-		if(typeof(doc[0].artistid) != 'undefined' && doc[0].artistid != null) {
-			artists.push(doc[0].artistid);
+		if(typeof(doc[0].spartistid) != 'undefined' && doc[0].spartistid != null) {
+			artists.push(doc[0].spartistid);
 		}
 		if(doc[0].type == 'podcast')
 		{
 			doc[0].tracks.forEach(function(track) {
-				if(typeof(track.artistid) != 'undefined' && track.artistid != null) {
-					artists.push(track.artistid);
+				if(typeof(track.spartistid) != 'undefined' && track.spartistid != null) {
+					artists.push(track.spartistid);
 				}
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var result = await docs.find({$or: [{'id': {'$in': links}}, {'artistid': {'$in': artists}}, {'tracks.artistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
+		var result = await docs.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

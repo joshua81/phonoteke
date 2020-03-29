@@ -5,6 +5,7 @@
 }
 
 div.cover {
+    position: relative;
     width: 120px;
 }
   
@@ -13,7 +14,18 @@ img.cover {
     object-fit:cover;
     cursor: pointer;
 }
-  
-.card {
-    border-style: none;
+
+.youtube {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/youtube.svg");
+    width: 30px;
+    height: 30px;
+    margin: 0px;
+    padding: 0px;
+    left: 45px;
+    top: 30px;
+    background: #FFFFFF;
+    opacity: 0.6;
+    cursor: pointer;
 }

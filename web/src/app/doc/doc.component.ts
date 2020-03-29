@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {DomSanitizer} from '@angular/platform-browser';
 import { AppService } from '../app.service';
 
 @Component({
@@ -14,8 +15,9 @@ export class DocComponent implements OnInit {
   id = null;
   doc = null;
   links = [];
+  spotify = null;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -62,24 +64,15 @@ export class DocComponent implements OnInit {
 		});
   }
 
-  playPause(event: Event){
-    if(this.service.audio.paused){
-      this.service.audio.play();
-    }
-    else{
-      this.service.audio.pause();
-    }
+  spotifyURL() {
+    return this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify);
   }
 
-  forward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime += 60.0;
-    }
+  loadAlbum() {
+    this.spotify = this.doc.spalbumid;
   }
 
-  backward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime -= 60.0;
-    }
+  close(event: Event){
+    this.spotify = null;
   }
 }

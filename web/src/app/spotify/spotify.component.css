@@ -8,13 +8,34 @@
     background:#F80046;
 }
 
-.cover {
-    width: 60px;
-    height: 60px;
+div.cover {
+    position: relative;
+    width: 62px;
+    height: 62px;
     border-width: 1px;
     border-color: #9c9c9c;
     border-style: solid;
     object-fit:cover;
+    cursor: pointer;
+}
+
+img.cover {
+    width: 60px;
+    height: 60px;
+}
+
+.play {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/play.svg");
+    width: 30px;
+    height: 30px;
+    margin: 0px;
+    padding: 0px;
+    left: 15px;
+    top: 15px;
+    background: #FFFFFF;
+    opacity: 0.6;
     cursor: pointer;
 }
 

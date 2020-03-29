@@ -1,3 +1,9 @@
+.close {
+  bottom: 5px;
+  right: 5px;
+  position: absolute;
+}
+
 .vote {
   border-radius: 50%;
   width: 30px;
@@ -13,6 +19,40 @@
   right: 10px;
   top: 10px;
   z-index: 20;
+}
+
+div.cover {
+  width: 250px;
+  position: relative;
+  cursor: pointer;
+}
+
+a.cover {
+  width: 250px;
+  height: 250px;
+  cursor: pointer;
+}
+
+img.cover {
+  width: 250px;
+  height: 250px;
+  object-fit:cover;
+  cursor: pointer;
+}
+
+.play {
+  position: absolute;
+  display: inline-block;
+  mask: url("/images/play.svg");
+  width: 60px;
+  height: 60px;
+  margin: 0px;
+  padding: 0px;
+  left: 95px;
+  top: 95px;
+  background: #FFFFFF;
+  opacity: 0.6;
+  cursor: pointer;
 }
 
 div.cover-s {

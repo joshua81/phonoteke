@@ -44,9 +44,9 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new SpotifyLoader().loadTracks();
 		new SpotifyLoader().loadAlbums();
 		new SpotifyLoader().loadArtitsts();
+		new SpotifyLoader().loadTracks();
 	}
 
 	private void loadAlbums()
@@ -152,11 +152,10 @@ public class SpotifyLoader extends PhonotekeLoader
 					String albumId = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
 					LOGGER.info("album: " + artist + " " + album + ", spotify: " + spartist + " " + spalbum + " score " + score);
-					if(score > THRESHOLD)
+					if(score >= THRESHOLD)
 					{
 						LOGGER.info(artist + " " + album + ": " + spartist + " " + spalbum + " (" + albumId + ")");
-						Document page = new Document("spartistid", artistid).
-								append("spalbumid", albumId);
+						Document page = new Document("spartistid", artistid).append("spalbumid", albumId);
 						getImages(page, a.getImages());
 						return page;
 					}
@@ -202,7 +201,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
 				LOGGER.info("artist: " + artist + ", spotify: " + spartist + " score; " + score);
-				if(score > THRESHOLD)
+				if(score >= THRESHOLD)
 				{
 					LOGGER.info(artist + ": " + spartist + " (" + artistid + ")");
 					Document page = new Document("spartistid", artistid);
@@ -276,7 +275,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				String trackid = track.getId();
 				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
 				LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (score: " + score + ")");
-				if(score > THRESHOLD)
+				if(score >= THRESHOLD)
 				{
 					LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (" + trackid + ")");
 					Document page = new Document("spotify", trackid);

@@ -151,71 +151,14 @@ img.songkick {
     background-color: #FFFFFF;
 }
 
-.play {
-    margin-top: 8px;
-    display: inline-block;
-    mask: url("/images/play.svg");
-    width: 30px;
-    height: 30px;
-    background: #000000;
-    cursor: pointer;
-}
-
-.pause {
-    margin-top: 8px;
-    display: inline-block;
-    mask: url("/images/pause.svg");
-    width: 30px;
-    height: 30px;
-    background: #000000;
-    cursor: pointer;
-}
-
-.forward {
-    margin-top: 8px;
-    display: inline-block;
-    mask: url("/images/forward.svg");
-    width: 30px;
-    height: 30px;
-    background: #000000;
-    cursor: pointer;
-}
-
-.backward {
-    margin-top: 8px;
-    display: inline-block;
-    mask: url("/images/backward.svg");
-    width: 30px;
-    height: 30px;
-    background: #000000;
-    cursor: pointer;
-}
-
 .back {
     display: inline-block;
     mask: url("/images/back.svg");
     width: 10px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #FFFFFF;
-    cursor: pointer;
-}
-
-.youtube {
-    margin-top: 8px;
-    display: inline-block;
-    mask: url("/images/youtube.svg");
-    width: 20px;
-    height: 20px;
-    background: #000000;
-    cursor: pointer;
-}
-
-.songkickbtn {
-    display: inline-block;
-    mask: url("/images/songkick.svg");
-    width: 20px;
-    height: 20px;
-    background: #000000;
     cursor: pointer;
 }
 
@@ -224,6 +167,8 @@ img.songkick {
     mask: url("/images/spotify.svg");
     width: 20px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }
@@ -233,6 +178,8 @@ img.songkick {
     mask: url("/images/star.svg");
     width: 20px;
     height: 18px;
+    margin: 0px;
+    padding: 0px;
     background: #FFFFFF;
 }
 
@@ -241,6 +188,8 @@ img.songkick {
     mask: url("/images/cc.svg");
     width: 20px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }
@@ -250,6 +199,8 @@ img.songkick {
     mask: url("/images/mail.svg");
     width: 20px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }
@@ -259,6 +210,8 @@ img.songkick {
     mask: url("/images/linkedin.svg");
     width: 18px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }
@@ -268,6 +221,8 @@ img.songkick {
     mask: url("/images/github.svg");
     width: 20px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }
@@ -277,6 +232,8 @@ img.songkick {
     mask: url("/images/close.svg");
     width: 20px;
     height: 20px;
+    margin: 0px;
+    padding: 0px;
     background: #000000;
     cursor: pointer;
 }

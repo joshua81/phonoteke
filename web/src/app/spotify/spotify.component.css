@@ -4,8 +4,15 @@
     position: absolute;
 }
 
-.songkick-selected {
-    background:#F80046;
+.songkick {
+    display: inline-block;
+    mask: url("/images/songkick.svg");
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #F80046;
+    cursor: pointer;
 }
 
 div.cover {

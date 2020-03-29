@@ -1,26 +1,26 @@
-<div class="d-flex flex-column align-items-start h-100 p-2 bg-white">
-  <div class="d-flex flex-row">
+<div class="d-flex flex-column align-items-start h-100 p-2 bg-white" [ngStyle]="{'width':'130px'}">
+  <!--div class="d-flex flex-row mb-2">
     <a href="{{doc.url}}" class="mr-2" target="_blank"><img class="{{doc.source}}"></a>
     <a *ngIf="doc.artistid" (click)="service.loadEvents(doc.artistid)"><img class="songkick"></a>
-      <!--a class="text-capitalize mt-2 mb-2" href="{{doc.url}}" [innerHTML]="doc.source" target="_blank"></a-->
-      <!--a *ngIf="doc.artistid" class="text-capitalize mb-2" (click)="service.loadEvents(doc.artistid)">Concerti</a-->
+  </div-->
+  <div *ngFor="let track of doc.tracks" class="cover" (click)="loadVideo(track)">
+    <img *ngIf="track.youtube" class="cover mb-2" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
+    <span *ngIf="track.youtube" class="youtube mb-2"></span>
   </div>
-  <div class="d-flex flex-row mb-2">
-    <div *ngIf="service.audio" (click)="backward($event)">
+  <div *ngIf="service.audio" class="d-flex flex-row mb-2">
+    <div (click)="backward($event)">
       <span class="backward"></span>
     </div>
-    <div *ngIf="service.audio" class="ml-2 mr-2" (click)="playPause($event)">
+    <div class="ml-2 mr-2" (click)="playPause($event)">
       <span *ngIf="service.audio.paused" class="play"></span>
       <span *ngIf="!service.audio.paused" class="pause"></span>
     </div>
-    <div *ngIf="service.audio" (click)="forward($event)">
+    <div (click)="forward($event)">
       <span class="forward"></span>
     </div>
   </div>
-  <div *ngFor="let track of doc.tracks" class="cover mb-2" (click)="loadVideo(track)">
-    <img *ngIf="track.youtube" class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
-    <span *ngIf="track.youtube" class="youtube"></span>
-  </div>
+  <a class="text-capitalize" href="{{doc.url}}" [innerHTML]="doc.source" target="_blank"></a>
+  <a *ngIf="doc.artistid" class="text-capitalize" (click)="service.loadEvents(doc.artistid)">Concerti</a>
 </div>
 
 <div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">

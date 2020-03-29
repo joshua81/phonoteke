@@ -65,11 +65,13 @@ export class DocComponent implements OnInit {
   }
 
   spotifyURL() {
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify);
+    return this.doc.spalbumid != null ? 
+    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify) :
+    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/artist/' + this.spotify);
   }
 
   loadAlbum() {
-    this.spotify = this.doc.spalbumid;
+    this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
   }
 
   close(event: Event){

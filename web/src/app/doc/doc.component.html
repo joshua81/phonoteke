@@ -1,5 +1,5 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container w-max mt-5 pt-2">
+<div *ngIf="doc" class="container w-max mt-5 pt-2 pl-0 pr-0">
   <div class="d-flex bg-white">
     <div class="w-100">
       <div class="d-flex flex-row">
@@ -7,10 +7,10 @@
           <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
           <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
           <h3 *ngIf="doc.type == 'album' && doc.vote" class="vote">{{doc.vote}}</h3>
-          <span *ngIf="doc.spalbumid" class="play"></span>
+          <span *ngIf="doc.spalbumid || doc.spartistid" class="play"></span>
         </div>
 
-        <div class="pl-2 pt-2">
+        <div class="pl-2 pt-2" [ngStyle]="{'min-width':'200px'}">
           <div>
             <a *ngIf="doc.spalbumid" class="font-weight-bold" [innerHTML]="doc.title" 
               href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank"></a>
@@ -31,7 +31,7 @@
       <div *ngIf="doc.review" class="text-justify p-2" [innerHTML]="doc.review"></div>
       <app-spotify *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-spotify>
     </div>
-    <app-youtube class="flex-shrink-1" [doc]="doc"></app-youtube>
+    <app-youtube [doc]="doc"></app-youtube>
   </div>
 
   <div *ngIf="links && links.length != 0" class="d-flex row justify-content-center mt-2">

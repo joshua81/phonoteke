@@ -1,4 +1,4 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center bg-white">
+<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center p-2 bg-white">
     <div class="list-group w-med">
         <div *ngFor="let track of tracks" class="pt-2">
             <div class="d-flex flex-row align-items-center m-0">
@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div *ngIf="track.artistid" class="pl-1" (click)="service.loadEvents(track.artistid)">
-                    <span class="songkickbtn songkick-selected"></span>
+                    <span class="songkick"></span>
                 </div>
             </div>
         </div>

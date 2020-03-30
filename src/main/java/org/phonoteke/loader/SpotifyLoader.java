@@ -44,47 +44,37 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new SpotifyLoader().loadAlbums();
-		new SpotifyLoader().loadArtitsts();
-		new SpotifyLoader().loadTracks();
+		new SpotifyLoader().load();
 	}
 
-	private void loadAlbums()
+	private void load()
 	{
-		LOGGER.info("Loading Albums...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.or(Filters.exists("spalbumid", false),Filters.eq("spalbumid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id"); 
-			loadAlbum(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		}
-	}
-
-	private void loadArtitsts()
-	{
-		LOGGER.info("Loading Artists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.or(Filters.exists("spartistid", false), Filters.eq("spartistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id"); 
-			loadArtist(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		}
-	}
-
-	private void loadTracks()
-	{
-		LOGGER.info("Loading Tracks...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator(); 
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next(); 
-			String id = page.getString("id"); 
-			loadTracks(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		LOGGER.info("Loading Spotify...");
+		for(int j = 0; j < 20; j++)
+		{
+			MongoCursor<Document> i = docs.find(Filters.and(Filters.or(Filters.exists("spalbumid", false),Filters.eq("spalbumid", null)), 
+					Filters.or(Filters.exists("spartistid", false),Filters.eq("spartistid", null)), 
+					Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null)))).
+					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(j*1000).limit(1000).noCursorTimeout(true).iterator(); 
+			while(i.hasNext()) 
+			{ 
+				Document page = i.next();
+				String id = page.getString("id"); 
+				String type = page.getString("type");
+				if("album".equals(type))
+				{
+					loadAlbum(page);
+				}
+				else if("podcast".equals(type))
+				{
+					loadTracks(page);
+				}
+				else
+				{
+					loadArtist(page);
+				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+			}
 		}
 	}
 

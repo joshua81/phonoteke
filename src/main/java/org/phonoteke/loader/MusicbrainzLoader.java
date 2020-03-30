@@ -30,44 +30,36 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new MusicbrainzLoader().loadAlbums();
-		new MusicbrainzLoader().loadArtists();
-		new MusicbrainzLoader().loadTracks();
+		new MusicbrainzLoader().load();
 	}
 
-	private void loadTracks() {
-		LOGGER.info("Loading Tracks...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
-		while(i.hasNext())
+	private void load() 
+	{
+		LOGGER.info("Loading Musicbrainz...");
+		for(int j = 0; j < 20; j++)
 		{
-			Document page = i.next();
-			String id = page.getString("id"); 
-			loadTracksMBId(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-		}
-	}
-
-	private void loadAlbums() {
-		LOGGER.info("Loading Albums...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			Document page = i.next();
-			String id = page.getString("id"); 
-			loadAlbumMBId(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-		}
-	}
-
-	private void loadArtists() {
-		LOGGER.info("Loading Artists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.and(Filters.ne("type", TYPE.album.name()), Filters.ne("type", TYPE.podcast.name())), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(2000).noCursorTimeout(true).iterator();
-		while(i.hasNext())
-		{
-			Document page = i.next();
-			String id = page.getString("id"); 
-			loadArtistMBId(page);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			MongoCursor<Document> i = docs.find(Filters.and(Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)), 
+					Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null)))).
+					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(j*1000).limit(1000).noCursorTimeout(true).iterator();
+			while(i.hasNext())
+			{
+				Document page = i.next();
+				String id = page.getString("id"); 
+				String type = page.getString("type");
+				if("album".equals(type))
+				{
+					loadAlbumMBId(page);
+				}
+				else if("podcast".equals(type))
+				{
+					loadTracksMBId(page);
+				}
+				else
+				{
+					loadArtistMBId(page);
+				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			}
 		}
 	}
 

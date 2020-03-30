@@ -19,6 +19,8 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 public class YoutubeLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
@@ -52,13 +54,13 @@ public class YoutubeLoader extends PhonotekeLoader
 		LOGGER.info("Loading Youtube...");
 		try
 		{
-			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.album.name()), Filters.ne("tracks", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
+			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), 
+					Filters.or(Filters.exists("tracks.youtube", false),Filters.eq("tracks.youtube", null)))).
+					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();
-				String id = (String)page.get("id");
 				loadTracks(page);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 		catch(IOException e)
@@ -69,30 +71,21 @@ public class YoutubeLoader extends PhonotekeLoader
 
 	private void loadTracks(org.bson.Document page) throws IOException
 	{
-		String id = (String)page.get("id");
+		String id = page.getString("id");
 		for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 		{
-			String youtube = track.getString("youtube");
 			String title = track.getString("title");
-			if(youtube == null && title != null)
-			{
-				youtube = getYoutubeId(title);
-				track.put("youtube", youtube);
-				LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
-			}
-			else if(title == null && youtube != null)
-			{
-				title = getYoutubeTitle(youtube);
-				track.put("title", title);
-				LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
-			}
+			String youtube = getYoutubeId(title);
+			track.put("youtube", youtube);
+			LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
 	private String getYoutubeId(String track) throws IOException
 	{
 		// Define the API request for retrieving search results.
-		YouTube.Search.List search = youtube.search().list("id");
+		YouTube.Search.List search = youtube.search().list("id,snippet");
 
 		// Set your developer key
 		search.setKey(API_KEY);
@@ -104,46 +97,26 @@ public class YoutubeLoader extends PhonotekeLoader
 
 		// To increase efficiency, only retrieve the fields that the
 		// application uses.
-		search.setFields("items(id/videoId)");
+		search.setFields("items(id/videoId,snippet/title)");
 		search.setMaxResults(1L);
 
 		// Call the API and print results.
-		String youtubeId = UNKNOWN;
 		SearchListResponse searchResponse = search.execute();
 		List<SearchResult> searchResults = searchResponse.getItems();
 		if(CollectionUtils.isNotEmpty(searchResults))
 		{
-			youtubeId = searchResults.get(0).getId().getVideoId();
+			for(SearchResult searchResult : searchResults)
+			{
+				String id = searchResult.getId().getVideoId();
+				String title = searchResult.getSnippet().getTitle();
+				int score = FuzzySearch.tokenSetRatio(track, title);
+				LOGGER.info(track + ", " + title + " (score: " + score + ")");
+				if(score >= THRESHOLD)
+				{
+					return id;
+				}
+			}
 		}
-		return youtubeId;
-	}
-
-	private String getYoutubeTitle(String id) throws IOException
-	{
-		// Define the API request for retrieving search results.
-		YouTube.Search.List search = youtube.search().list("snippet");
-
-		// Set your developer key
-		search.setKey(API_KEY);
-		search.setQ(id);
-
-		// Restrict the search results to only include videos. See:
-		// https://developers.google.com/youtube/v3/docs/search/list#type
-		search.setType("video");
-
-		// To increase efficiency, only retrieve the fields that the
-		// application uses.
-		search.setFields("items(snippet/title)");
-		search.setMaxResults(1L);
-
-		// Call the API and print results.
-		String youtubeTitle = UNKNOWN;
-		SearchListResponse searchResponse = search.execute();
-		List<SearchResult> searchResults = searchResponse.getItems();
-		if(CollectionUtils.isNotEmpty(searchResults))
-		{
-			youtubeTitle = searchResults.get(0).getSnippet().getTitle();
-		}
-		return youtubeTitle;
+		return null;
 	}
 }

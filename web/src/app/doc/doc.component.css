@@ -44,12 +44,12 @@ img.cover {
   position: absolute;
   display: inline-block;
   mask: url("/images/play.svg");
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
   margin: 0px;
   padding: 0px;
-  left: 95px;
-  top: 95px;
+  left: 110px;
+  top: 110px;
   background: #FFFFFF;
   opacity: 0.6;
   cursor: pointer;

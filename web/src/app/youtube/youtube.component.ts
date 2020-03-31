@@ -27,25 +27,4 @@ export class YoutubeComponent implements OnInit {
   youtubeURL(){
     return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
   }
-
-  playPause(event: Event){
-    if(this.service.audio.paused){
-      this.service.audio.play();
-    }
-    else{
-      this.service.audio.pause();
-    }
-  }
-
-  forward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime += 60.0;
-    }
-  }
-
-  backward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime -= 60.0;
-    }
-  }
 }

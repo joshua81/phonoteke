@@ -36,10 +36,10 @@
 
   <div *ngIf="links && links.length != 0" class="d-flex row justify-content-center mt-2">
     <div *ngFor="let link of links" class="mb-2 ml-1 mr-1">
-      <div class="cover-s card mx-auto">
-        <a class="cover-s" [routerLink]="['/' + link.type + 's/' + link.id]">
-          <img *ngIf="link.coverM == null" class="cover-s card-img-top" src="{{link.cover}}"/>
-          <img *ngIf="link.coverM != null" class="cover-s card-img-top" src="{{link.coverM}}"/>
+      <div class="cover-link card mx-auto">
+        <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
+          <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
+          <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
         </a>
         <div class="card-body p-1">
           <div class="card-text font-weight-bold" [innerHTML]="link.title"></div>
@@ -51,11 +51,37 @@
   </div>
 </div>
 
-<div *ngIf="spotify != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+<div *ngIf="spotify" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
   <iframe [src]='spotifyURL()' width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
   </iframe>
   <div class="close" (click)="close($event)">
       <span class="close"></span>
+  </div>
+</div>
+
+<div *ngIf="service.audio" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+  <div class="player d-flex flex-row">
+    <img *ngIf="doc.coverM == null" class="cover-player" src="{{doc.cover}}"/>
+    <img *ngIf="doc.coverM != null" class="cover-player" src="{{doc.coverM}}"/>
+    <div class="ml-2 w-100">
+      <div class="font-weight-bold text-white" [innerHTML]="doc.title"></div>
+      <div class="text-white mb-2" [innerHTML]="doc.artist"></div>
+      <div class="d-flex flex-row justify-content-center w-100">
+        <div (click)="backward($event)">
+          <span class="player-backward"></span>
+        </div>
+        <div class="ml-2 mr-2" (click)="playPause($event)">
+          <span *ngIf="service.audio.paused" class="player-play"></span>
+          <span *ngIf="!service.audio.paused" class="player-pause"></span>
+        </div>
+        <div (click)="forward($event)">
+          <span class="player-forward"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="close" (click)="close($event)">
+    <span class="close"></span>
   </div>
 </div>
 

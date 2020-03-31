@@ -7,18 +7,6 @@
     <img *ngIf="track.youtube" class="cover mb-2" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
     <span *ngIf="track.youtube" class="youtube mb-2"></span>
   </div>
-  <div *ngIf="service.audio" class="d-flex flex-row w-100 justify-content-center mb-2">
-    <div (click)="backward($event)">
-      <span class="backward"></span>
-    </div>
-    <div class="ml-2 mr-2" (click)="playPause($event)">
-      <span *ngIf="service.audio.paused" class="play"></span>
-      <span *ngIf="!service.audio.paused" class="pause"></span>
-    </div>
-    <div (click)="forward($event)">
-      <span class="forward"></span>
-    </div>
-  </div>
   <!--a class="text-capitalize" href="{{doc.url}}" [innerHTML]="doc.source" target="_blank"></a-->
   <a *ngIf="doc.artistid" class="text-capitalize" (click)="service.loadEvents(doc.artistid)">Concerti</a>
 </div>

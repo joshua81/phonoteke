@@ -37,14 +37,10 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
+    this.links = null;
+    this.spotify = null;
     if(this.service.audio){
-      this.service.audio.pause();
       this.service.audio = null;
-    }
-    if(this.doc.audio) {
-      this.service.audio = new Audio();
-      this.service.audio.src = this.doc.audio;
-      this.service.audio.load();
     }
   }
 
@@ -71,10 +67,43 @@ export class DocComponent implements OnInit {
   }
 
   loadAlbum() {
-    this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
+    if(this.doc.spartistid || this.doc.spalbumid) {
+      this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
+    }
+    if(this.doc.audio != null && this.service.audio == null) {
+      this.service.audio = new Audio();
+      this.service.audio.src = this.doc.audio;
+      this.service.audio.load();
+      this.service.audio.play();
+    }
   }
 
   close(event: Event){
     this.spotify = null;
+    if(this.service.audio) {
+      this.service.audio.pause();
+      this.service.audio = null;
+    }
+  }
+
+  playPause(event: Event){
+    if(this.service.audio.paused){
+      this.service.audio.play();
+    }
+    else{
+      this.service.audio.pause();
+    }
+  }
+
+  forward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime += 60.0;
+    }
+  }
+
+  backward(event: Event){
+    if(!this.service.audio.paused){
+      this.service.audio.currentTime -= 60.0;
+    }
   }
 }

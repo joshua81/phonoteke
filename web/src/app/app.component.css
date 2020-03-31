@@ -1,0 +1,47 @@
+.footer-copyright {
+    height: 80px;
+}
+
+.cc {
+    display: inline-block;
+    mask: url("/images/cc.svg");
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.mail {
+    display: inline-block;
+    mask: url("/images/mail.svg");
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.linkedin {
+    display: inline-block;
+    mask: url("/images/linkedin.svg");
+    width: 18px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.github {
+    display: inline-block;
+    mask: url("/images/github.svg");
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #FFFFFF;
+    cursor: pointer;
+}

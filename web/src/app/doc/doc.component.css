@@ -55,17 +55,17 @@ img.cover {
   cursor: pointer;
 }
 
-div.cover-s {
+div.cover-link {
   width: 120px;
   position: relative;
 }
 
-a.cover-s {
+a.ccover-link {
   width: 120px;
   height: 120px;
 }
 
-img.cover-s {
+img.cover-link {
   width: 120px;
   height: 120px;
   object-fit:cover;
@@ -93,4 +93,60 @@ img.cover-s {
   background: none;
   position: absolute;
   bottom: 0px;
+}
+
+.player {
+  width: 350px;
+  height: 80px;
+  background: #193541;
+}
+
+img.cover-player {
+  width: 80px;
+  height: 80px;
+  object-fit:cover;
+}
+
+.player-play {
+  display: inline-block;
+  mask: url("/images/play.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.player-pause {
+  display: inline-block;
+  mask: url("/images/pause.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.player-forward {
+  display: inline-block;
+  mask: url("/images/forward.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.player-backward {
+  display: inline-block;
+  mask: url("/images/backward.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #FFFFFF;
+  cursor: pointer;
 }

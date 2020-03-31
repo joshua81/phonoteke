@@ -120,6 +120,11 @@ public class SpotifyLoader extends PhonotekeLoader
 			append("coverM", spotify.getString("coverM")).
 			append("coverS", spotify.getString("coverS"));
 		}
+		else
+		{
+			page.append("spartistid", NA).
+			append("spalbumid", NA);
+		}
 	}
 
 	private Document loadAlbum(String artist, String album)
@@ -173,6 +178,10 @@ public class SpotifyLoader extends PhonotekeLoader
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
 			append("coverS", spotify.getString("coverS"));
+		}
+		else
+		{
+			page.append("spartistid", NA);
 		}
 	}
 
@@ -235,6 +244,10 @@ public class SpotifyLoader extends PhonotekeLoader
 							append("coverL", spotify.getString("coverL")).
 							append("coverM", spotify.getString("coverM")).
 							append("coverS", spotify.getString("coverS"));
+						}
+						else
+						{
+							track.append("spotify", NA);
 						}
 					}
 					catch (Exception e) 

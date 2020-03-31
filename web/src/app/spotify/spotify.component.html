@@ -4,7 +4,7 @@
             <div class="d-flex flex-row align-items-center m-0">
                 <div class="cover" (click)="loadTrack(track)">
                     <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
-                    <span *ngIf="service.audio.paused" class="play"></span>
+                    <span class="play"></span>
                 </div>
                 <div class="pl-2 mr-auto ptext-truncate">
                     <div class="ctext-truncate" [innerHTML]="track.title"></div>

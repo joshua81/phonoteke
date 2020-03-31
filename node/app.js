@@ -111,22 +111,6 @@ module.exports = app;
 async function findDoc(id) {
 	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).toArray();
-	if(result.length == 1)
-	{
-		var doc = result[0];
-		if(doc.type == 'album' || doc.type == 'podcast')
-		{
-			doc.tracks.forEach(function(track) 
-			{
-				if(track.title == null) {
-					track.title = 'Unknown title';
-				}
-				if(track.youtube && track.youtube == 'UNKNOWN') {
-					track.youtube = null;
-				}
-			});
-		}
-	}
 	return result;
 }
 

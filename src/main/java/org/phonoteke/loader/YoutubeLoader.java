@@ -26,7 +26,6 @@ public class YoutubeLoader extends PhonotekeLoader
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
 	private static final String API_KEY = "AIzaSyAYqrw65aNPioXzxuzlW4qW9j3GiKkqduo";
-	private static final String UNKNOWN = "UNKNOWN";
 	private YouTube youtube = null;
 
 

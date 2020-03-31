@@ -7,7 +7,7 @@
           <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
           <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
           <h3 *ngIf="doc.type == 'album' && doc.vote" class="vote">{{doc.vote}}</h3>
-          <span *ngIf="doc.spalbumid || doc.spartistid" class="play"></span>
+          <span *ngIf="doc.spalbumid || doc.spartistid || doc.audio" class="play"></span>
         </div>
 
         <div class="pl-2 pt-2" [ngStyle]="{'min-width':'200px'}">

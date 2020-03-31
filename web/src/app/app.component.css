@@ -2,14 +2,22 @@
     height: 80px;
 }
 
+.icon {
+    border-radius: 50%;
+    background: #FFFFFF;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
 .cc {
     display: inline-block;
     mask: url("/images/cc.svg");
     width: 20px;
     height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
+    margin-top: 5px;
+    margin-left: 5px;
+    background: #18A2B8;
     cursor: pointer;
 }
 
@@ -18,20 +26,20 @@
     mask: url("/images/mail.svg");
     width: 20px;
     height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
+    margin-top: 5px;
+    margin-left: 5px;
+    background: #18A2B8;
     cursor: pointer;
 }
 
 .linkedin {
     display: inline-block;
     mask: url("/images/linkedin.svg");
-    width: 18px;
+    width: 17px;
     height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
+    margin-top: 5px;
+    margin-left: 6px;
+    background: #18A2B8;
     cursor: pointer;
 }
 
@@ -40,8 +48,8 @@
     mask: url("/images/github.svg");
     width: 20px;
     height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
+    margin-top: 5px;
+    margin-left: 5px;
+    background: #18A2B8;
     cursor: pointer;
 }

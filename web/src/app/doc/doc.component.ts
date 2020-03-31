@@ -37,9 +37,9 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
-    this.links = null;
     this.spotify = null;
     if(this.service.audio){
+      this.service.audio.pause();
       this.service.audio = null;
     }
   }

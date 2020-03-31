@@ -63,9 +63,9 @@
   <div class="player d-flex flex-row">
     <img *ngIf="doc.coverM == null" class="cover-player" src="{{doc.cover}}"/>
     <img *ngIf="doc.coverM != null" class="cover-player" src="{{doc.coverM}}"/>
-    <div class="ml-2 w-100">
-      <div class="font-weight-bold text-white" [innerHTML]="doc.title"></div>
-      <div class="text-white mb-2" [innerHTML]="doc.artist"></div>
+    <div class="ptext-truncate ml-2 w-100">
+      <div class="ctext-truncate text-white font-weight-bold" [innerHTML]="doc.title"></div>
+      <div class="ctext-truncate text-white mb-2" [innerHTML]="doc.artist"></div>
       <div class="d-flex flex-row justify-content-center w-100">
         <div (click)="backward($event)">
           <span class="player-backward"></span>

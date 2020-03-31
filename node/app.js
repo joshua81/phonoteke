@@ -111,6 +111,37 @@ module.exports = app;
 async function findDoc(id) {
 	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).toArray();
+	if(result && result[0])
+	{
+		// reset 'na' values
+		const doc = result[0];
+		if(doc.artistid == 'na')
+		{
+			doc.artistid = null;
+		}
+		if(doc.albumid == 'na')
+		{
+			doc.albumid = null;
+		}
+		if(doc.spartistid == 'na')
+		{
+			doc.spartistid = null;
+		}
+		if(doc.spalbumid == 'na')
+		{
+			doc.spalbumid = null;
+		}
+		if(doc.tracks)
+		{
+			doc.tracks.forEach(function(track) {
+				if(track.spotify == 'na') {
+					track.spotify = null;
+					track.spartistid = null;
+					track.spalbumid = null;
+				}
+			});
+		}
+	}
 	return result;
 }
 
@@ -149,17 +180,21 @@ async function findDocs(t, p, q) {
 
 async function findEvents(id) {
 	console.log('Events: id=' + id);
-	var result = await new Promise((resolve, reject) => {
-		const skreq = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (skres) => {
-			if (skres.statusCode < 200 || skres.statusCode > 299) {
-				reject(new Error('Failed to load page, status code: ' + skres.statusCode));
-			}
-			const body = [];
-			skres.on('data', (chunk) => body.push(chunk));
-			skres.on('end', () => resolve(body.join('')));
+	var result = null;
+	if(id && id != 'na')
+	{
+		result = await new Promise((resolve, reject) => {
+			const skreq = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (skres) => {
+				if (skres.statusCode < 200 || skres.statusCode > 299) {
+					reject(new Error('Failed to load page, status code: ' + skres.statusCode));
+				}
+				const body = [];
+				skres.on('data', (chunk) => body.push(chunk));
+				skres.on('end', () => resolve(body.join('')));
+			});
+			skreq.on('error', (err) => reject(err))
 		});
-		skreq.on('error', (err) => reject(err))
-	});
+	}
 	return JSON.parse(result);
 }
 
@@ -170,19 +205,19 @@ async function findLinks(id) {
 	if(doc && doc[0])
 	{
 		var artists = [];
-		if(typeof(doc[0].spartistid) != 'undefined' && doc[0].spartistid != null) {
+		if(typeof(doc[0].spartistid) != 'undefined' && doc[0].spartistid != null && doc[0].spartistid != 'na') {
 			artists.push(doc[0].spartistid);
 		}
 		if(doc[0].type == 'podcast')
 		{
 			doc[0].tracks.forEach(function(track) {
-				if(typeof(track.spartistid) != 'undefined' && track.spartistid != null) {
+				if(typeof(track.spartistid) != 'undefined' && track.spartistid != null && track.spartistid != 'na') {
 					artists.push(track.spartistid);
 				}
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var result = await docs.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
+		result = await docs.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

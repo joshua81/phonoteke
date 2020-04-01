@@ -55,17 +55,6 @@ h3 {
     max-width: 500px;
 }
 
-.ptext-truncate {
-    flex: 1;
-    min-width: 0;
-}
-
-.ctext-truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 div.cover-m {
     width: 250px;
     position: relative;
@@ -80,6 +69,14 @@ img.cover-m {
     width: 250px;
     height: 250px;
     object-fit:cover;
+}
+
+.text-truncate-1 {
+    overflow: hidden;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
 }
 
 .text-truncate-2 {

@@ -1,3 +1,7 @@
+.track {
+    cursor: pointer;
+}
+
 .close {
     bottom: 5px;
     right: 5px;
@@ -18,7 +22,9 @@
 div.cover {
     position: relative;
     width: 62px;
+    min-width: 62px;
     height: 62px;
+    min-height: 62px;
     border-width: 1px;
     border-color: #9c9c9c;
     border-style: solid;

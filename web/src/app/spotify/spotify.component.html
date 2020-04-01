@@ -1,23 +1,23 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center p-2 bg-white">
     <div class="list-group w-med">
-        <div *ngFor="let track of tracks" class="pt-2">
-            <div class="d-flex flex-row align-items-center m-0">
+        <div *ngFor="let track of tracks" class="mb-2">
+            <div class="track d-flex flex-row align-items-center m-0" (click)="selectTrack(track)">
                 <div class="cover" (click)="loadTrack(track)">
                     <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
                     <span class="play"></span>
                 </div>
-                <div class="pl-2 mr-auto ptext-truncate">
-                    <div class="ctext-truncate" [innerHTML]="track.title"></div>
-                    <div *ngIf="track.spotify" class="ctext-truncate">
+                <div class="ml-2 mr-auto">
+                    <div class="text-truncate-1" [innerHTML]="track.title"></div>
+                    <div *ngIf="track.spotify" class="text-truncate-1">
                         <a class="font-weight-bold" [innerHTML]="track.album" href="{{'https://open.spotify.com/album/' + track.spalbumid}}" target="_blank"></a>
                     </div>
-                    <div *ngIf="track.spotify" class="ctext-truncate">
+                    <div *ngIf="track.spotify" class="text-truncate-1">
                         <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
                     </div>
                 </div>
-                <div *ngIf="track.artistid" class="pl-1" (click)="service.loadEvents(track.artistid)">
+                <!--div *ngIf="track.artistid" class="ml-1" (click)="service.loadEvents(track.artistid)">
                     <span class="songkick"></span>
-                </div>
+                </div-->
             </div>
         </div>
     </div>

@@ -7,10 +7,3 @@
   width: 250px;
   height: 150px;
 }
-
-.card-text {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}

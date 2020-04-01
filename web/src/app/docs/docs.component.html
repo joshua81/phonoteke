@@ -8,10 +8,10 @@
             <img *ngIf="doc.coverM != null" class="cover-m card-img-top" src="{{doc.coverM}}"/>
           </a>
           <div class="card-body p-1">
-            <div *ngIf="doc.type != 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" class="card-text" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="card-text font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.description" class="card-text pt-2" [innerHTML]="doc.description"></div>
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.title"></div>
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-3" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.type == 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.description" class="text-truncate-3 pt-2" [innerHTML]="doc.description"></div>
           </div>
         </div>
       </div>

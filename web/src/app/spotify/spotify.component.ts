@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import { AppService } from '../app.service';
+import { DocComponent } from '../doc/doc.component';
 
 @Component({
   selector: 'app-spotify',
@@ -11,9 +11,13 @@ export class SpotifyComponent implements OnInit {
   song = null;
   @Input() tracks = null;
 
-  constructor(public service: AppService, public sanitizer: DomSanitizer) {}
+  constructor(public doc: DocComponent, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
+  }
+
+  selectTrack(track: any){
+    this.doc.track = track;
   }
 
   loadTrack(track: any){

@@ -15,6 +15,7 @@ export class DocComponent implements OnInit {
   id = null;
   doc = null;
   links = [];
+  track = null;
   spotify = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
@@ -24,7 +25,6 @@ export class DocComponent implements OnInit {
       this.type = params.get('type');
       this.id = params.get('id');
       this.loadDoc();
-      this.loadLinks();
     });
   }
 
@@ -37,27 +37,24 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
+    this.links = [];
+    this.track = null;
     this.spotify = null;
     if(this.service.audio){
       this.service.audio.pause();
       this.service.audio = null;
     }
+    this.loadLinks();
   }
 
   loadLinks() {
-    this.links = [];
     this.http.get('/api/' + this.type + '/' + this.id + '/links').subscribe(
       (data: any) => this.setLinks(data),
       error => this.error = error);
   }
 
   setLinks(links: any) {
-    this.links.splice(0, this.links.length);
     this.links.push.apply(this.links, links);
-    var id = this.doc.id;
-    this.links = this.links.filter(function(value, index, arr){
-		  return value.id != id;
-		});
   }
 
   spotifyURL() {

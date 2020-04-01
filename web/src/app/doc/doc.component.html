@@ -1,7 +1,7 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container w-max mt-5 pt-2 pl-0 pr-0">
   <div class="d-flex bg-white">
-    <div class="w-100">
+    <div class="w-100 mr-2">
       <div class="d-flex flex-row">
         <div class="cover" (click)="loadAlbum()">
           <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
@@ -10,7 +10,7 @@
           <span *ngIf="doc.spalbumid || doc.spartistid || doc.audio" class="play"></span>
         </div>
 
-        <div class="pl-2 pt-2" [ngStyle]="{'min-width':'200px'}">
+        <div class="p-2 w-100">
           <div>
             <a *ngIf="doc.spalbumid" class="font-weight-bold" [innerHTML]="doc.title" 
               href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank"></a>
@@ -31,20 +31,20 @@
       <div *ngIf="doc.review" class="text-justify p-2" [innerHTML]="doc.review"></div>
       <app-spotify *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-spotify>
     </div>
-    <app-youtube [doc]="doc"></app-youtube>
+    <app-youtube [doc]="doc" [links]="links" [track]="track"></app-youtube>
   </div>
 
   <div *ngIf="links && links.length != 0" class="d-flex row justify-content-center mt-2">
-    <div *ngFor="let link of links" class="mb-2 ml-1 mr-1">
-      <div class="cover-link card mx-auto">
+    <div *ngFor="let link of links">
+      <div *ngIf="doc.spartistid == null || doc.spartistid != link.spartistid" class="cover-link card mb-2 ml-1 mr-1">
         <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
           <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
           <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
         </a>
         <div class="card-body p-1">
-          <div class="card-text font-weight-bold" [innerHTML]="link.title"></div>
-          <div class="card-text" [innerHTML]="link.artist"></div>
-          <div class="card-footer text-muted p-0">{{link.type.toUpperCase()}}</div>
+          <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
+          <div class="text-truncate-2" [innerHTML]="link.artist"></div>
+          <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
         </div>
       </div>
     </div>
@@ -63,9 +63,9 @@
   <div class="player d-flex flex-row">
     <img *ngIf="doc.coverM == null" class="cover-player" src="{{doc.cover}}"/>
     <img *ngIf="doc.coverM != null" class="cover-player" src="{{doc.coverM}}"/>
-    <div class="ptext-truncate ml-2 w-100">
-      <div class="ctext-truncate text-white font-weight-bold" [innerHTML]="doc.title"></div>
-      <div class="ctext-truncate text-white mb-2" [innerHTML]="doc.artist"></div>
+    <div class="ml-2 w-100">
+      <div class="text-truncate-1 text-white font-weight-bold" [innerHTML]="doc.title"></div>
+      <div class="text-truncate-1 text-white mb-2" [innerHTML]="doc.artist"></div>
       <div class="d-flex flex-row justify-content-center w-100">
         <div (click)="backward($event)">
           <span class="player-backward"></span>

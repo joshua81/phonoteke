@@ -60,7 +60,7 @@ div.cover-link {
   position: relative;
 }
 
-a.ccover-link {
+a.cover-link {
   width: 120px;
   height: 120px;
 }
@@ -79,13 +79,6 @@ img.cover-link {
   position: relative;
   width: 120px;
   height: 100px;
-}
-
-.card-text {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 
 .card-footer {

@@ -1,17 +1,7 @@
 <div class="d-flex flex-column align-items-start h-100 p-2 bg-white" [ngStyle]="{'width':'130px'}">
-  <!--div class="d-flex flex-row w-100 justify-content-end mb-2">
-    <a href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"></a>
-    <a *ngIf="doc.artistid" (click)="service.loadEvents(doc.artistid)"><img class="songkick"></a>
-  </div-->
-  <div *ngIf="doc.type == 'podcast' && track != null" class="cover" (click)="loadVideo(track)">
+  <div *ngFor="let track of doc.tracks" class="cover" (click)="loadVideo(track)">
     <img *ngIf="track.youtube" class="cover mb-2" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
     <span *ngIf="track.youtube" class="youtube"></span>
-  </div>
-  <div *ngIf="doc.type != 'podcast'">
-    <div *ngFor="let track of doc.tracks" class="cover" (click)="loadVideo(track)">
-      <img *ngIf="track.youtube" class="cover mb-2" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
-      <span *ngIf="track.youtube" class="youtube"></span>
-    </div>
   </div>
   <div *ngIf="links && links.length != 0">
     <div *ngFor="let link of links">
@@ -21,15 +11,12 @@
           <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
         </a>
         <div class="card-body p-0">
-          <div class="text-truncate-1" [innerHTML]="link.title"></div>
+          <!--div class="text-truncate-1" [innerHTML]="link.title"></div-->
           <div class="text-truncate-1 text-muted text-uppercase">{{link.type}}</div>
         </div>
       </div>
     </div>
   </div>
-  <a *ngIf="doc.type == 'podcast' && track.artistid" class="text-capitalize mb-2" (click)="service.loadEvents(track.artistid)">Eventi</a>
-  <a *ngIf="doc.type != 'podcast' && doc.artistid" class="text-capitalize mb-2" (click)="service.loadEvents(doc.artistid)">Eventi</a>
-  <a class="text-capitalize" href="{{doc.url}}" [innerHTML]="doc.source" target="_blank"></a>
 </div>
 
 <div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">

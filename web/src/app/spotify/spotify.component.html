@@ -1,10 +1,11 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center p-2 bg-white">
     <div class="list-group w-med">
         <div *ngFor="let track of tracks" class="mb-2">
-            <div class="track d-flex flex-row align-items-center m-0" (click)="selectTrack(track)">
+            <div class="d-flex flex-row align-items-center m-0">
                 <div class="cover" (click)="loadTrack(track)">
                     <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
-                    <span class="play"></span>
+                    <span *ngIf="track.spotify" class="play"></span>
+                    <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
                 </div>
                 <div class="ml-2 mr-auto">
                     <div class="text-truncate-1" [innerHTML]="track.title"></div>
@@ -15,9 +16,12 @@
                         <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
                     </div>
                 </div>
-                <!--div *ngIf="track.artistid" class="ml-1" (click)="service.loadEvents(track.artistid)">
+                <div *ngIf="track.artistid" class="icon ml-1" (click)="service.loadEvents(track.artistid)">
                     <span class="songkick"></span>
-                </div-->
+                </div>
+                <div *ngIf="track.youtube" class="icon ml-1" (click)="loadVideo(track)">
+                    <span class="youtube"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -30,3 +34,11 @@
         <span class="close"></span>
     </div>
 </div>
+
+<div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+    <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
+    </iframe>
+    <div class="close" (click)="close($event)">
+      <span class="close"></span>
+    </div>
+  </div>

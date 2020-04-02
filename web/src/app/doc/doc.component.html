@@ -22,16 +22,23 @@
               href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank"></a>
             <div *ngIf="!doc.spartistid" [innerHTML]="doc.artist"></div>
           </div>
-
+          
           <div *ngIf="doc.type == 'album' && doc.label">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</div>
-          <div *ngIf="doc.authors" class="text-muted">di {{doc.authors}}</div>
+          <div *ngIf="doc.authors" class="text-muted mb-2">di {{doc.authors}}</div>
+
+          <div class="d-flex flex-row align-items-center">
+            <a href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"></a>
+            <div *ngIf="doc.artistid" class="icon ml-1" (click)="service.loadEvents(doc.artistid)">
+              <span class="songkick"></span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div *ngIf="doc.review" class="text-justify p-2" [innerHTML]="doc.review"></div>
       <app-spotify *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-spotify>
     </div>
-    <app-youtube [doc]="doc" [links]="links" [track]="track"></app-youtube>
+    <app-youtube *ngIf="doc.type != 'podcast'" [doc]="doc" [links]="links"></app-youtube>
   </div>
 
   <div *ngIf="links && links.length != 0" class="d-flex row justify-content-center mt-2">

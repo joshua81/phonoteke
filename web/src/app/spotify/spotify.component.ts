@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import { DocComponent } from '../doc/doc.component';
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-spotify',
@@ -9,26 +9,32 @@ import { DocComponent } from '../doc/doc.component';
 })
 export class SpotifyComponent implements OnInit {
   song = null;
+  video = null;
   @Input() tracks = null;
 
-  constructor(public doc: DocComponent, public sanitizer: DomSanitizer) {}
+  constructor(public service: AppService, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
   }
 
-  selectTrack(track: any){
-    this.doc.track = track;
-  }
-
-  loadTrack(track: any){
+  loadTrack(track: any) {
     this.song = track.spotify ? track : null;
   }
 
-  close(event: Event){
+  loadVideo(track: any){
+    this.video = track.youtube ? track : null;
+  }
+
+  close(event: Event) {
     this.song = null;
+    this.video = null;
   }
 
   spotifyURL() {
     return this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.song.spotify);
+  }
+
+  youtubeURL(){
+    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
   }
 }

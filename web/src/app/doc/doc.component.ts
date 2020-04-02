@@ -15,7 +15,6 @@ export class DocComponent implements OnInit {
   id = null;
   doc = null;
   links = [];
-  track = null;
   spotify = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
@@ -38,7 +37,6 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
     this.links = [];
-    this.track = null;
     this.spotify = null;
     if(this.service.audio){
       this.service.audio.pause();

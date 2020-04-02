@@ -11,7 +11,6 @@ export class YoutubeComponent implements OnInit {
   video = null;
   @Input() doc = null;
   @Input() links = [];
-  @Input() track = null;
 
   constructor(public service: AppService, public sanitizer: DomSanitizer) {}
 

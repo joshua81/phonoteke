@@ -1,11 +1,17 @@
-.track {
-    cursor: pointer;
-}
-
 .close {
     bottom: 5px;
     right: 5px;
     position: absolute;
+}
+
+.icon {
+    border-radius: 50%;
+    background: #FF0000;
+    width: 26px;
+    min-width: 26px;
+    height: 26px;
+    min-height: 26px;
+    cursor: pointer;
 }
 
 .songkick {
@@ -13,9 +19,21 @@
     mask: url("/images/songkick.svg");
     width: 20px;
     height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #F80046;
+    margin-top: 3px;
+    margin-left: 3px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.youtube {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/youtube.svg");
+    width: 20px;
+    height: 20px;
+    margin-top: 4px;
+    margin-left: 3px;
+    background: #FFFFFF;
     cursor: pointer;
 }
 
@@ -25,6 +43,7 @@ div.cover {
     min-width: 62px;
     height: 62px;
     min-height: 62px;
+    background: #18A2B8;
     border-width: 1px;
     border-color: #9c9c9c;
     border-style: solid;
@@ -37,14 +56,19 @@ img.cover {
     height: 60px;
 }
 
+h1.cover {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    margin-top: 15px;
+}
+
 .play {
     position: absolute;
     display: inline-block;
     mask: url("/images/play.svg");
     width: 30px;
     height: 30px;
-    margin: 0px;
-    padding: 0px;
     left: 15px;
     top: 15px;
     background: #FFFFFF;

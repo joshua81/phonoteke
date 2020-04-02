@@ -1,3 +1,19 @@
+div.cover {
+  width: 250px;
+  position: relative;
+}
+
+a.cover {
+  width: 250px;
+  height: 250px;
+}
+
+img.cover {
+  width: 250px;
+  height: 250px;
+  object-fit:cover;
+}
+
 .card {
   border-style: none;
 }

@@ -2,10 +2,10 @@
 <div class="container pt-5 w-max">
   <div infinite-scroll *ngIf="docs.length > 0" class="row d-flex justify-content-center pt-2" (scrolled)="scrollDocs()">
       <div *ngFor="let doc of docs" class="pb-2 pl-1 pr-1">
-        <div class="cover-m card mx-auto">
-          <a class="cover-m" [routerLink]="['/' + type + 's/' + doc.id]">
-            <img *ngIf="doc.coverM == null" class="cover-m card-img-top" src="{{doc.cover}}"/>
-            <img *ngIf="doc.coverM != null" class="cover-m card-img-top" src="{{doc.coverM}}"/>
+        <div class="cover card mx-auto">
+          <a class="cover" [routerLink]="['/' + type + 's/' + doc.id]">
+            <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
+            <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
           </a>
           <div class="card-body p-1">
             <div *ngIf="doc.type != 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.title"></div>

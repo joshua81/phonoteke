@@ -1,4 +1,6 @@
 .menu-item {
+    height: 40px;
+    padding-top: 8px;
     cursor: pointer;
 }
 
@@ -7,7 +9,10 @@
     min-width: 250px;
 }
 
+.unselected {
+    border-bottom: 4px solid #18A2B8;
+}
+
 .selected {
-    border-radius: 20px;
-    background-color: #000000;
+    border-bottom: 4px solid #000000;
 }

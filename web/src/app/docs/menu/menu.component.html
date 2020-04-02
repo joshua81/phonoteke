@@ -1,21 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center bg-info">
   <div class="d-flex flex-row align-items-center w-100">
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.type == 'album' ? 'selected' : ''" (click)="loadAlbums()">
+    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'album' ? 'selected' : 'unselected'" (click)="loadAlbums()">
       <h3 class="text-white font-weight-bold mt-1">album</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.type == 'artist' ? 'selected' : ''" (click)="loadArtists()">
+    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'artist' ? 'selected' : 'unselected'" (click)="loadArtists()">
       <h3 class="text-white font-weight-bold mt-1">artisti</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.type == 'interview' ? 'selected' : ''" (click)="loadInterviews()">
+    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'interview' ? 'selected' : 'unselected'" (click)="loadInterviews()">
       <h3 class="text-white font-weight-bold mt-1">interviste</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.type == 'concert' ? 'selected' : ''" (click)="loadConcerts()">
+    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'concert' ? 'selected' : 'unselected'" (click)="loadConcerts()">
       <h3 class="text-white font-weight-bold mt-1">concerti</h3>
     </div>
-    <div class="menu-item pt-1 pb-1 pl-3 pr-3" [ngClass]="component.type == 'podcast' ? 'selected' : ''" (click)="loadPodcasts()">
+    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'podcast' ? 'selected' : 'unselected'" (click)="loadPodcasts()">
       <h3 class="text-white font-weight-bold mt-1">podcast</h3>
     </div>
-    <form class="search ml-auto pl-3 pr-3">
+    <form class="search ml-auto ml-3 mr-3">
       <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="component.searchText"  (keydown.enter)="onSearch()">
     </form>
   </div>

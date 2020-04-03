@@ -53,3 +53,14 @@
     background: #18A2B8;
     cursor: pointer;
 }
+
+.spotify {
+    display: inline-block;
+    mask: url("/images/spotify.svg");
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+    background: #18A2B8;
+    cursor: pointer;
+}

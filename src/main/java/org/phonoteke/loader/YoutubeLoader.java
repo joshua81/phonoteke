@@ -74,10 +74,14 @@ public class YoutubeLoader extends PhonotekeLoader
 		for(org.bson.Document track : (List<org.bson.Document>)page.get("tracks"))
 		{
 			String title = track.getString("title");
-			String youtube = getYoutubeId(title);
-			track.put("youtube", youtube);
-			LOGGER.info("YOUTUBE id: " + id + ", title: " + title + ", youtube: " + youtube);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			String youtube = track.getString("youtube");
+			if(youtube == null)
+			{
+				youtube = getYoutubeId(title);
+				track.put("youtube", youtube);
+				LOGGER.info(id + ", title: " + title + ", youtube: " + youtube);
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			}
 		}
 	}
 

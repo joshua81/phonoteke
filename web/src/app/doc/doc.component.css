@@ -97,6 +97,32 @@ img.cover {
   cursor: pointer;
 }
 
+div.cover-youtube {
+  position: relative;
+  width: 120px;
+}
+
+img.cover-youtube {
+  width: 120px;
+  object-fit:cover;
+  cursor: pointer;
+}
+
+.youtube {
+  position: absolute;
+  display: inline-block;
+  mask: url("/images/youtube.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  left: 45px;
+  top: 30px;
+  background: #FFFFFF;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
 div.cover-link {
   width: 120px;
   position: relative;

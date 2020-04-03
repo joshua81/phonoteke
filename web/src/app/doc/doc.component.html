@@ -1,7 +1,7 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container w-max mt-5 pt-2 pl-0 pr-0">
-  <div class="d-flex flex-row bg-white">
-    <div class="mr-auto">
+  <div class="d-flex bg-white">
+    <div class="w-100 mr-2">
       <div class="d-flex flex-row">
         <div class="cover" (click)="loadAlbum()">
           <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>

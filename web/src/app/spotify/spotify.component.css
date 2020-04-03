@@ -6,11 +6,11 @@
 
 .icon {
     border-radius: 50%;
-    background: #FF0000;
-    width: 26px;
-    min-width: 26px;
-    height: 26px;
-    min-height: 26px;
+    background: #FFFFFF;
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    min-height: 20px;
     cursor: pointer;
 }
 
@@ -19,21 +19,16 @@
     mask: url("/images/songkick.svg");
     width: 20px;
     height: 20px;
-    margin-top: 3px;
-    margin-left: 3px;
-    background: #FFFFFF;
+    background: #F80046;
     cursor: pointer;
 }
 
 .youtube {
-    position: absolute;
     display: inline-block;
     mask: url("/images/youtube.svg");
     width: 20px;
     height: 20px;
-    margin-top: 4px;
-    margin-left: 3px;
-    background: #FFFFFF;
+    background: #FF0000;
     cursor: pointer;
 }
 

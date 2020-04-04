@@ -52,9 +52,9 @@ public class SpotifyLoader extends PhonotekeLoader
 		LOGGER.info("Loading Spotify...");
 		for(int j = 0; j < 20; j++)
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.or(Filters.exists("spalbumid", false),Filters.eq("spalbumid", null)), 
-					Filters.or(Filters.exists("spartistid", false),Filters.eq("spartistid", null)), 
-					Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null)))).
+			MongoCursor<Document> i = docs.find(Filters.or(
+					Filters.and(Filters.ne("type", "podcast"), Filters.or(Filters.exists("spartistid", false),Filters.eq("spartistid", null))), 
+					Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null))))).
 					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(j*1000).limit(1000).noCursorTimeout(true).iterator(); 
 			while(i.hasNext()) 
 			{ 

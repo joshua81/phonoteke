@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Primary Meta Tags -->
+    <title>Human Beats API</title>
+    <meta name="title" content="Human Beats API">
+    <meta name="description" content="Free JSON REST API to access Human Beats data">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://humanbeats.appspot.com/">
+    <meta property="og:title" content="Human Beats API">
+    <meta property="og:description" content="Free JSON REST API to access Human Beats data">
+    <meta property="og:image" content="https://humanbeats.appspot.com/images/logo.png">
+
+    <title>Human Beats API</title>
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/one-page-wonder.css?version=19" rel="stylesheet">
+    <link href="/css/prism.css?version=1" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/prism.js"></script>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand navbar-dark navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Human Beats API</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#albums">Albums</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#artists">Artists</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#interviews">Interviews</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#concerts">Concerts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#podcasts">Podcasts</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+<header class="masthead text-center text-white">
+    <div class="masthead-content">
+        <div class="container">
+            <h1 class="masthead-heading mb-0">Human Beats API</h1>
+            <p class="masthead-subheading">Free JSON REST API to access Human Beats data</p>
+        </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>
+
+<section id="albums" class="page-section">
+    <div class="container">
+      <h2 class="display-5">Albums</h2>
+      <p class="mt-3">Retrieve the 12 most recent albums snippets.</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums</code></pre>
+      <code></code>
+      <pre><code class="language-json">
+[{
+  "id": "274788d189feca4cd7306312fee81c1d288f6d4e954389e784c008120aa6ac28",
+  "type": "album",
+  "artist": "Caribou",
+  "title": "Suddenly",
+  "authors": ["Gianfranco Marmoro"],
+  "description": "Terzo album in dieci anni per il progetto pi&ugrave; ambizioso di Dan Snaith",
+  "vote": 7.5,
+  "cover": "https://www.ondarock.it/images/cover/caribou-suddenly_1583602374.jpg",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b27365fb6bba1aad6b27bf300072",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e0265fb6bba1aad6b27bf300072",
+  "coverS": "https://i.scdn.co/image/ab67616d0000485165fb6bba1aad6b27bf300072"
+}]
+      </code></pre>
+
+      <p class="mt-3">Retrieve 12 albums snippets at the specified page, starting from 0 (es. p=5).</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums?p={page}</code></pre>
+
+      <p class="mt-3">Retrieve the 12 most recent albums snippets matching the given search param (es. q=caribou).</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums?q={query}</code></pre>
+                  
+      <p class="mt-3">Retrieve 12 albums snippets at the specified page, matching the given search param (es. p=5, q=caribou).</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums?p={page}&q={query}</code></pre>
+
+      <p class="mt-3">Retrieve the full detail for the given album.</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums/{id}</code></pre>
+      <code></code>
+      <pre><code class="language-json">
+{
+  "id": "274788d189feca4cd7306312fee81c1d288f6d4e954389e784c008120aa6ac28",
+  "url": "https://www.ondarock.it/recensioni/2020-caribou-suddenly.htm",
+  "type": "album",
+  "artist": "Caribou",
+  "title": "Suddenly",
+  "authors": ["Gianfranco Marmoro"],
+  "date": "2020-03-08T08:24:11.773Z",
+  "description": "Terzo album in dieci anni per il progetto pi&ugrave; ambizioso di Dan Snaith",
+  "genres": ["electro", "alt-pop"],
+  "label": "City Slnag",
+  "links": [
+    "ebc6540e914d276f2000ef118c0688ef747960ae3005ed7e59438cf30041faa0",
+    "d3d2880e2c5dfd246c87579f9f8948adde76a14aa5df01704749fc65ff1a9491",
+    "35be6ab99ef04e40cb474695227743eb2b60bd5d462d669ab41b0a58b6af9002",
+    "e61e75f88f72141fbe25a34c6a5b3aad70d6d61786f3cd881df0e2fcc3da81da"
+  ],
+  "review": "Sono passati dieci anni da \" Swim\", uno degli album più significativi ...",
+  "source": "ondarock",
+  "vote": 7.5,
+  "year": 2020,
+  "tracks": [
+  {
+    "title": "CARIBOU - Never Come Back",
+    "youtube": "I3hDvOL7E7Y"
+  },
+  {
+    "title": "CARIBOU - You and I",
+    "youtube": "Uazlt4CCr7o"
+  }],
+  "audio": null,
+  "mbartistid": "735e3514-a8ae-401f-af3b-6300df1b8d2c",
+  "spalbumid": "4wSb7OhVUzw3u76lta9fJw",
+  "spartistid": "4aEnNH9PuU1HF3TsZTru54",
+  "cover": "https://www.ondarock.it/images/cover/caribou-suddenly_1583602374.jpg",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b27365fb6bba1aad6b27bf300072",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e0265fb6bba1aad6b27bf300072",
+  "coverS": "https://i.scdn.co/image/ab67616d0000485165fb6bba1aad6b27bf300072"
+}
+      </code></pre>
+
+      <p class="mt-3">Retrieve the list of links for the given album.</p>
+      <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums/{id}/links</code></pre>
+      <pre><code class="language-json">
+[{
+  "id": "d3d2880e2c5dfd246c87579f9f8948adde76a14aa5df01704749fc65ff1a9491",
+  "type": "album",
+  "artist": "Caribou",
+  "title": "Our Love",
+  "cover": "https://www.ondarock.it/images/cover/ourlo_1412698913.jpg",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b2738889c83a372c9198e9096a68",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e028889c83a372c9198e9096a68",
+  "coverS": "https://i.scdn.co/image/ab67616d000048518889c83a372c9198e9096a68"
+}]
+      </code></pre>
+    </div>
+</section>
+
+<section id="artists" class="page-section">
+  <div class="container">
+    <h2 class="display-5">Artists</h2>
+    <p class="mt-3">Retrieve the 12 most recent artists snippets.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+[{
+  "id": "c3ded473f496558c3ee882abecc1d9e4e84cf1978a0c387245b314bfa3d45b4e",
+  "type": "artist",
+  "artist": "Lauryn Hill - Fugees",
+  "title": "Hip-hop tra sacro e profano",
+  "authors": ["Francesco Serini"],
+  "cover": "https://www.ondarock.it/images/monografie/lauryn-hill-1_1542998717.jpg",
+  "description": "Dall'esordio con i Fugees alla carriera solista, Lauryn Hill si è rivelata interprete raffinata..."
+}]
+    </code></pre>
+
+    <p class="mt-3">Retrieve 12 artists snippets at the specified page, starting from 0 (es. p=5).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists?p={page}</code></pre>
+
+    <p class="mt-3">Retrieve the 12 most recent artists snippets matching the given search param (es. q=lauryn).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists?q={query}</code></pre>
+                
+    <p class="mt-3">Retrieve 12 artists snippets at the specified page, matching the given search param (es. p=5, q=lauryn).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists?p={page}&q={query}</code></pre>
+
+    <p class="mt-3">Retrieve the full detail for the given artist.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists/{id}</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+{
+  "id": "c3ded473f496558c3ee882abecc1d9e4e84cf1978a0c387245b314bfa3d45b4e",
+  "url": "https://www.ondarock.it/songwriter/fugees.htm",
+  "type": "artist",
+  "artist": "Lauryn Hill - Fugees",
+  "title": "Hip-hop tra sacro e profano",
+  "authors": ["Francesco Serini"],
+  "cover": "https://www.ondarock.it/images/monografie/lauryn-hill-1_1542998717.jpg",
+  "date": null,
+  "description": "Dall'esordio con i Fugees alla carriera solista, Lauryn Hill si è rivelata interprete raffinata...",
+  "links": [
+    "e0dd8cb1d990a00ebd7dc36c8471871bcdf0c57b9f1a7e67c5e203bce0ec6dca",
+    "c304ea1526c7aea00f75b96806c5499240337eddca2b909b07e66cec2f6d3668"
+  ],
+  "review": "Una vita caratterizzata da elementi opposti: da sola e con i Fugees, famosa ma infelice...",
+  "source": "ondarock",
+  "mbartistid": "ea321799-9b1d-4e74-a074-a5facf597d82",
+  "spartistid": null
+}
+    </code></pre>
+
+    <p class="mt-3">Retrieve the list of links for the given artist.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/albums/{id}/links</code></pre>
+    <pre><code class="language-json">
+[{
+  "id": "e0dd8cb1d990a00ebd7dc36c8471871bcdf0c57b9f1a7e67c5e203bce0ec6dca",
+  "type": "artist",
+  "artist": "Aretha Franklin",
+  "title": "I segreti di Lady Soul",
+  "cover": "https://www.ondarock.it/images/monografie/arethafranklin_1_1492968121.jpg",
+  "spartistid": "7nwUJBm0HE4ZxD3f5cy5ok",
+  "coverL": "https://i.scdn.co/image/c5662abce23781f86275ea6540c6e299845f8d82",
+  "coverM": "https://i.scdn.co/image/ee047138122e6e4092b9fbc8e7ff499edb124873",
+  "coverS": "https://i.scdn.co/image/b16c5e04333d96852aed4a4122032c8488e4f93d"
+}]
+    </code></pre>
+
+    <p class="mt-3">Retrieve the list of upcoming events for the given artist (note: the id is the artist MusicBrainz id).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/artists/{mbid}/events</code></pre>
+    <pre><code class="language-json">
+[{
+  "id": 39331990,
+  "displayName": "Shabaka and the Ancestors at Bimhuis (April 29, 2020) (CANCELLED) ",
+  "type": "Concert",
+  "uri": "http://www.songkick.com/concerts/39331990-shabaka-and-the-ancestors-at-bimhuis?utm_source=34697&utm_medium=partner",
+  "status": "cancelled",
+  "popularity": 0.000887,
+  "start": 
+  {
+    "date": "2020-04-29",
+    "datetime": "2020-04-29T20:30:00+0200",
+    "time": "20:30:00"
+  },
+  "performance": 
+  [{
+    "id": 74426293,
+    "displayName": "Shabaka and the Ancestors",
+    "billing": "headline",
+    "billingIndex": 1,
+    "artist": 
+    {
+      "id": 8945324,
+      "displayName": "Shabaka and the Ancestors",
+      "uri": "http://www.songkick.com/artists/8945324-shabaka-and-the-ancestors?utm_source=34697&utm_medium=partner",
+      "identifier": 
+      [{
+        "mbid": "2bf68df0-da0d-40db-a669-e070203aaf56",
+        "href": "http://api.songkick.com/api/3.0/artists/mbid:2bf68df0-da0d-40db-a669-e070203aaf56.json"
+      }]
+    }
+  }],
+  "ageRestriction": null,
+  "flaggedAsEnded": false,
+  "venue": 
+  {
+    "id": 49349,
+    "displayName": "Bimhuis",
+    "uri": "http://www.songkick.com/venues/49349-bimhuis?utm_source=34697&utm_medium=partner",
+    "metroArea": 
+    {
+      "displayName": "Amsterdam",
+      "country": 
+      {
+        "displayName": "Netherlands"
+      },
+      "id": 31366,
+      "uri": "http://www.songkick.com/metro-areas/31366-netherlands-amsterdam?utm_source=34697&utm_medium=partner"
+    },
+    "lat": 52.37815,
+    "lng": 4.91283
+  },
+  "location": 
+  {
+    "city": "Amsterdam, Netherlands",
+    "lat": 52.37815,
+    "lng": 4.91283
+  }
+}]
+    </code></pre>
+  </div>
+</section>
+
+<section id="interviews" class="page-section">
+  <div class="container">
+    <h2 class="display-5">Interviews</h2>
+    <p class="mt-3">Retrieve the 12 most recent interviews snippets.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+[{
+  "id": "f5da0fc4e476e0a3b96bdc56127427d3f12dddcb58aaf7282d87b73a917ad295",
+  "type": "interview",
+  "artist": "Alessandro Cortini",
+  "title": "Estatiche evasioni",
+  "authors": ["Giuliano Delli Paoli"],
+  "cover": "https://www.ondarock.it/images/monografie/673_1570796406.jpg",
+  "coverL": "https://i.scdn.co/image/00637647275ed987be694e4d684b8dd5f2ac5fe7",
+  "coverM": "https://i.scdn.co/image/a733a6cab68d4202d36842ef81fd2d9c71607878",
+  "coverS": "https://i.scdn.co/image/bad7fa38eb530eb4e517a848975ee1a5b8c83c54"
+}]
+    </code></pre>
+
+    <p class="mt-3">Retrieve 12 interviews snippets at the specified page, starting from 0 (es. p=5).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews?p={page}</code></pre>
+
+    <p class="mt-3">Retrieve the 12 most recent interviews snippets matching the given search param (es. q=cortini).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews?q={query}</code></pre>
+                
+    <p class="mt-3">Retrieve 12 interviews snippets at the specified page, matching the given search param (es. p=5, q=cortini).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews?p={page}&q={query}</code></pre>
+
+    <p class="mt-3">Retrieve the full detail for the given interview.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews/{id}</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+{
+  "id": "f5da0fc4e476e0a3b96bdc56127427d3f12dddcb58aaf7282d87b73a917ad295",
+  "url": "https://www.ondarock.it/interviste/alessandrocortini.htm",
+  "type": "interview",
+  "artist": "Alessandro Cortini",
+  "title": "Estatiche evasioni",
+  "authors": ["Giuliano Delli Paoli"],
+  "cover": "https://www.ondarock.it/images/monografie/673_1570796406.jpg",
+  "links": [
+    "2c4c66f19a952ee2ebc9786f4b1bd62bdd4cc29a373cce3ee011b573bdce1ae8",
+    "672017aff63141af70116960ce7cdf23f35eeb1eb41d59129891e6f821e81ead",
+    "1b591bc937ecf8e560bc74b03f10088dfdce5e5bc466481dc7112643b501438d",
+    "de2c6e68a816ef87bd036abb0593fc60bef45bf6fae4f0d79a88f4a0d43100e7",
+    "3bea22827c0573c24d283c6075512089993d1cc1df2ab6767cb1e8409053d749",
+    "f19044264da191d6899781c30d3604235a2039fe9c1076500ee34703b9996a90",
+    "05b69909c773962b97f7ae62e37ae68aea6949dfd83a158146c6de1301d26c56"
+  ],
+  "review": "Raggiungiamo Alessandro Cortini a ridosso dell’uscita del suo nuovo album, \"Volume Massimo\"...",
+  "source": "ondarock",
+  "mbartistid": "7b88250d-891d-4186-9b16-b94c930be1b2",
+  "spartistid": "6cGVZq9WhCCRkTnn4cJYOg",
+  "coverL": "https://i.scdn.co/image/00637647275ed987be694e4d684b8dd5f2ac5fe7",
+  "coverM": "https://i.scdn.co/image/a733a6cab68d4202d36842ef81fd2d9c71607878",
+  "coverS": "https://i.scdn.co/image/bad7fa38eb530eb4e517a848975ee1a5b8c83c54"
+}
+    </code></pre>
+
+    <p class="mt-3">Retrieve the list of links for the given interview.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/interviews/{id}/links</code></pre>
+    <pre><code class="language-json">
+[{
+  "id": "672017aff63141af70116960ce7cdf23f35eeb1eb41d59129891e6f821e81ead",
+  "type": "album",
+  "artist": "Alessandro Cortini",
+  "title": "Volume Massimo",
+  "cover": "https://www.ondarock.it/images/cover/vma_1570716702.jpg",
+  "spartistid": "6cGVZq9WhCCRkTnn4cJYOg",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b273e188b6578593695efbd0f807",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e02e188b6578593695efbd0f807",
+  "coverS": "https://i.scdn.co/image/ab67616d00004851e188b6578593695efbd0f807"
+}]
+    </code></pre>
+  </div>
+</section>
+
+<section id="concerts" class="page-section">
+  <div class="container">
+    <h2 class="display-5">Concerts</h2>
+    <p class="mt-3">Retrieve the 12 most recent concerts snippets.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+[{
+  "id": "635f6ab21ef43c581d59e0b99ed0f8a37fcba74c2e642a200746048e0557ec76",
+  "type": "concert",
+  "artist": "Benjamin Clementine",
+  "title": "Teatro Celebrazioni, Bologna",
+  "authors": ["Michele Palozzo"],
+  "cover": "https://www.ondarock.it/images/livereport/clementine350OR_1558133329.jpg",
+  "coverL": "https://i.scdn.co/image/a054eba6cc1e768a0473d0934ec91cb0761011d7",
+  "coverM": "https://i.scdn.co/image/875d1ec34aa723b468a795d2bf0e76bafbe15970",
+  "coverS": "https://i.scdn.co/image/2f87ec8618a090a4a3d29b051349a42d7b9f047a"
+}]
+    </code></pre>
+
+    <p class="mt-3">Retrieve 12 concerts snippets at the specified page, starting from 0 (es. p=5).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts?p={page}</code></pre>
+
+    <p class="mt-3">Retrieve the 12 most recent concerts snippets matching the given search param (es. q=clementine).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts?q={query}</code></pre>
+                
+    <p class="mt-3">Retrieve 12 concerts snippets at the specified page, matching the given search param (es. p=5, q=clementine).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts?p={page}&q={query}</code></pre>
+
+    <p class="mt-3">Retrieve the full detail for the given concert.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts/{id}</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+{
+  "id": "635f6ab21ef43c581d59e0b99ed0f8a37fcba74c2e642a200746048e0557ec76",
+  "url": "https://www.ondarock.it/livereport/2019-benjaminclementine.htm",
+  "type": "concert",
+  "artist": "Benjamin Clementine",
+  "title": "Teatro Celebrazioni, Bologna",
+  "authors": ["Michele Palozzo"],
+  "cover": "https://www.ondarock.it/images/livereport/clementine350OR_1558133329.jpg",
+  "date": "2019-05-16T10:28:27.234Z",
+  "links": [
+    "a5a466320c1c16407e74e5fbb4f5dfd4cc4ddac91e4a8758bb7421c39def4c61",
+    "574660b378d28a2a2476601e58e998f3f25d805968a6d536fe9c3c43078aa109",
+    "b104211d6d47a5c7338ec32ef5934326c27fc43223c454d3ec4e0eaba293dfb9",
+    "db060e71e618fc2c23165fc8901aee49c16b15b4a301c71ab6f54b201c98d8f2"
+  ],
+  "review": "Rivedendo oggi Benjamin Clementine sul palco è impossibile non pensare alla buona sorte e allo straordinario...</p>",
+  "source": "ondarock",
+  "mbartistid": "578e5d1c-be21-4158-b147-30aad67f207d",
+  "spartistid": "7zHIrsSBL7A0gEJfzv1m7z",
+  "coverL": "https://i.scdn.co/image/a054eba6cc1e768a0473d0934ec91cb0761011d7",
+  "coverM": "https://i.scdn.co/image/875d1ec34aa723b468a795d2bf0e76bafbe15970",
+  "coverS": "https://i.scdn.co/image/2f87ec8618a090a4a3d29b051349a42d7b9f047a"
+}
+    </code></pre>
+
+    <p class="mt-3">Retrieve the list of links for the given concert.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/concerts/{id}/links</code></pre>
+    <pre><code class="language-json">
+[{
+  "id": "db060e71e618fc2c23165fc8901aee49c16b15b4a301c71ab6f54b201c98d8f2",
+  "type": "album",
+  "artist": "Benjamin Clementine",
+  "title": "I Tell A Fly",
+  "cover": "https://www.ondarock.it/images/cover/bccover_1507395099.jpg",
+  "spartistid": "7zHIrsSBL7A0gEJfzv1m7z",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b2732ac071ed1f6d460ad67f5f4e",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e022ac071ed1f6d460ad67f5f4e",
+  "coverS": "https://i.scdn.co/image/ab67616d000048512ac071ed1f6d460ad67f5f4e"
+}]
+    </code></pre>
+  </div>
+</section>
+
+<section id="podcasts" class="page-section">
+  <div class="container">
+    <h2 class="display-5">Podcasts</h2>
+    <p class="mt-3">Retrieve the 12 most recent podcasts snippets.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+[{
+  "id": "fedb287d09f97b8a58d824ada18ac501e480547b4599dd91bf77eafe1c74dcb2",
+  "type": "podcast",
+  "artist": "Musicalbox",
+  "title": "Musicalbox della domenica",
+  "authors": ["Raffaele Costantino"],
+  "cover": "https://www.raiplayradio.it/cropgd/252x252/dl/img/2020/04/05/1586115307282_MUSICAL-2.png",
+  "description": "La buona musica ci aiuta a resistere",
+}]
+    </code></pre>
+
+    <p class="mt-3">Retrieve 12 podcasts snippets at the specified page, starting from 0 (es. p=5).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts?p={page}</code></pre>
+
+    <p class="mt-3">Retrieve the 12 most recent podcasts snippets matching the given search param (es. q=musical).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts?q={query}</code></pre>
+                
+    <p class="mt-3">Retrieve 12 podcasts snippets at the specified page, matching the given search param (es. p=5, q=musical).</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts?p={page}&q={query}</code></pre>
+
+    <p class="mt-3">Retrieve the full detail for the given podcast.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts/{id}</code></pre>
+    <code></code>
+    <pre><code class="language-json">
+{
+  "id": "fedb287d09f97b8a58d824ada18ac501e480547b4599dd91bf77eafe1c74dcb2",
+  "url": "https://www.raiplayradio.it/audio/2020/03/MUSICAL-BOX-93586c44-b598-4250-9d8d-5143ad162e7b.html",
+  "type": "podcast",
+  "artist": "Musicalbox",
+  "title": "Musicalbox della domenica",
+  "authors": ["Raffaele Costantino"],
+  "cover": "https://www.raiplayradio.it/cropgd/252x252/dl/img/2020/04/05/1586115307282_MUSICAL-2.png",
+  "date": "2020-04-05T22:00:00.000Z",
+  "description": "La buona musica ci aiuta a resistere",
+  "genres": null,
+  "label": null,
+  "links": null,
+  "review": null,
+  "source": "musicalbox",
+  "vote": null,
+  "year": 2020,
+  "tracks": [{
+    "title": "Home - Gloria Barnes",
+    "youtube": "2bRy6oyihVc",
+    "spotify": "5VN2dZer45WzuaorRa242v",
+    "artist": "Gloria Barnes",
+    "album": "Uptown (Digitally Remastered)",
+    "track": "Home",
+    "spartistid": "4YC8d6LulqAmlZcNKw7c5L",
+    "spalbumid": "67SleiSz64OZip0649tBp6",
+    "coverL": "https://i.scdn.co/image/ab67616d0000b2732a99cbf71ebb9b9f43a87f71",
+    "coverM": "https://i.scdn.co/image/ab67616d00001e022a99cbf71ebb9b9f43a87f71",
+    "coverS": "https://i.scdn.co/image/ab67616d000048512a99cbf71ebb9b9f43a87f71",
+    "mbartistid": "aea43bdd-0a7d-4d3e-af5b-f991906b807b"
+  },
+  {
+    "title": "Home - Caribou",
+    "youtube": "LX30jRKcmbw",
+    "spotify": "28zoejp0PJ4dpp9xOPQPiO",
+    "artist": "Caribou",
+    "album": "Suddenly",
+    "track": "Home",
+    "spartistid": "4aEnNH9PuU1HF3TsZTru54",
+    "spalbumid": "4wSb7OhVUzw3u76lta9fJw",
+    "coverL": "https://i.scdn.co/image/ab67616d0000b27365fb6bba1aad6b27bf300072",
+    "coverM": "https://i.scdn.co/image/ab67616d00001e0265fb6bba1aad6b27bf300072",
+    "coverS": "https://i.scdn.co/image/ab67616d0000485165fb6bba1aad6b27bf300072",
+    "mbartistid": "735e3514-a8ae-401f-af3b-6300df1b8d2c"
+  }],
+  "audio": "http://creativemedia4-rai-it.akamaized.net/podcastcdn/NewsVod/Omnibus/12208747.mp3"
+}
+    </code></pre>
+
+    <p class="mt-3">Retrieve the list of links for the given podcast.</p>
+    <pre><code class="language-bash">curl -G https://humanbeats.appspot.com/api/podcasts/{id}/links</code></pre>
+    <pre><code class="language-json">
+[{
+  "id": "274788d189feca4cd7306312fee81c1d288f6d4e954389e784c008120aa6ac28",
+  "type": "album",
+  "artist": "Caribou",
+  "title": "Suddenly",
+  "cover": "https://www.ondarock.it/images/cover/caribou-suddenly_1583602374.jpg",
+  "spartistid": "4aEnNH9PuU1HF3TsZTru54",
+  "coverL": "https://i.scdn.co/image/ab67616d0000b27365fb6bba1aad6b27bf300072",
+  "coverM": "https://i.scdn.co/image/ab67616d00001e0265fb6bba1aad6b27bf300072",
+  "coverS": "https://i.scdn.co/image/ab67616d0000485165fb6bba1aad6b27bf300072"
+}]
+    </code></pre>
+  </div>
+</section>
+
+</body>
+</html>

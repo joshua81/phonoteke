@@ -54,13 +54,16 @@
     cursor: pointer;
 }
 
-.spotify {
-    display: inline-block;
-    mask: url("/images/spotify.svg");
-    width: 20px;
-    height: 20px;
-    margin-top: 5px;
-    margin-left: 5px;
+.api {
+    border-radius: 50%;
     background: #18A2B8;
+    width: 24px;
+    height: 24px;
+    padding-top: 7px;
+    margin-top: 3px;
+    margin-left: 3px;
+
+    text-align: center;
+    font-size: 9px;
     cursor: pointer;
 }

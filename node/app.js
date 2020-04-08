@@ -16,6 +16,9 @@ db.connect(err => {
 });
 
 app.use('/images', express.static('images'));
+app.use('/css', express.static('css'));
+app.use('/js', express.static('js'));
+app.use('/html', express.static('html'));
 app.use(express.static('web'));
 
 app.get('/api/albums', async(req, res)=>{

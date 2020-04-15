@@ -35,7 +35,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId("a6c3686d32cb48d4854d88915d3925be")
 			.setClientSecret("46004c8b1a2b4c778cb9761ace300b6c")
-			.setRedirectUri(SpotifyHttpManager.makeUri("https://phonoteke.org/spotify-redirect"))
+			.setRedirectUri(SpotifyHttpManager.makeUri("https://humanbeats.appspot.com/"))
 			.build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 

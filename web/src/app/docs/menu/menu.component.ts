@@ -39,4 +39,12 @@ export class DocsMenuComponent implements OnInit {
   loadInterviews() {
     this.component.loadDocs(0, 'interview');
   }
+
+  loadStarred() {
+    this.component.loadStarred();
+  }
+
+  login() {
+    this.component.login();
+  }
 }

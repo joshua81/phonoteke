@@ -1,7 +1,9 @@
 'use strict';
 
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
+const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
 const Https = require('https');
 const PORT = process.env.PORT || 8080;
@@ -15,11 +17,17 @@ db.connect(err => {
   console.log("Successfully Connected to MongoDB");
 });
 
+const client_id = 'a6c3686d32cb48d4854d88915d3925be';
+const client_secret = '46004c8b1a2b4c778cb9761ace300b6c';
+const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
+const spotify_token = 'spotify-token';
+
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
 app.use('/html', express.static('html'));
 app.use(express.static('web'));
+app.use(cookieParser());
 
 app.get('/api/albums', async(req, res)=>{
 	var result = await findDocs('album', req.query.p, req.query.q);
@@ -101,8 +109,61 @@ app.get('/api/podcasts/:id/links', async(req, res)=>{
 	res.send(result);
 });
 
+app.get('/api/login/spotify', async(req,res)=>{
+	if(req.query.error) {
+		console.log('Login to Spotify failed: ' + req.query.error);
+		res.send(req.query.error);
+	}
+	else if(req.query.code) {
+		console.log('Login to Spotify done: ' + req.query.code);
+		var options = {
+			url: 'https://accounts.spotify.com/api/token',
+			form: {
+				code: req.query.code,
+				redirect_uri: redirect_uri,
+				grant_type: 'authorization_code'
+			},
+			headers: {
+				'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
+			},
+			json: true
+		};
+	  
+		request.post(options, function(error, response, body) {
+			if (!error && response.statusCode === 200) {
+				var access_token = body.access_token;
+				var refresh_token = body.refresh_token;
+				res.cookie(spotify_token, access_token);
+			}
+			res.redirect('/');
+		});
+	}
+});
+
+app.get('/api/login', async(req, res)=>{
+	console.log('Login to Spotify');
+	res.redirect('https://accounts.spotify.com/authorize?' +
+	'response_type=code&' + 
+	'scope=user-read-private%20user-top-read&' + 
+    'client_id=' + client_id + '&' + 
+	'redirect_uri=' + redirect_uri);
+});
+
+app.get('/api/user', async(req, res)=>{
+	var access_token = req.cookies ? req.cookies[spotify_token] : null;
+	var user = await findUser(access_token);
+	res.send(user);
+});
+
+app.get('/api/user/starred', async(req, res)=>{
+	var access_token = req.cookies ? req.cookies[spotify_token] : null;
+	var starred = await findStarred(access_token);
+	res.send(starred);
+});
+
 app.get('/*', (req,res)=>{
-	res.sendFile(__dirname + '/web/index.html');});
+	res.sendFile(__dirname + '/web/index.html');
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
@@ -224,6 +285,62 @@ async function findLinks(id) {
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
+	}
+	return result;
+}
+
+async function findUser(access_token) {
+	console.log('User: token=' + access_token);
+	var result = null;
+	if(access_token != null)
+	{
+		result = await new Promise((resolve, reject) => {
+			var options = {
+				url: 'https://api.spotify.com/v1/me',
+				headers: { 'Authorization': 'Bearer ' + access_token },
+				json: true
+			};
+			request.get(options, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					resolve(body);
+				}
+				else {
+					reject(error);
+				}
+			});
+		});
+	}
+	return result;
+}
+
+async function findStarred(access_token) {
+	console.log('Starred: token=' + access_token);
+	var result = null;
+	if(access_token != null)
+	{
+		result = await new Promise((resolve, reject) => {
+			var options = {
+				url: 'https://api.spotify.com/v1/me/top/artists?limit=50&offset=0',
+				headers: { 'Authorization': 'Bearer ' + access_token },
+				json: true
+			};
+			request.get(options, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					resolve(body);
+				}
+				else {
+					reject(error);
+				}
+			});
+		});
+		if(result && result.items && result.items.length > 0)
+		{
+			var artists = [];
+			result.items.forEach(function(artist) {
+				artists.push(artist.id);
+			});
+			result = await docs.find({$or: [{'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
+		}
 	}
 	return result;
 }

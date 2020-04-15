@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-docs',
@@ -12,11 +13,13 @@ export class DocsComponent implements OnInit {
   type = 'album';
   page = 0;
   docs = [];
+  user = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.searchText = '';
+    this.loadUser();
     this.loadDocs(0, 'album');
   }
 
@@ -40,7 +43,35 @@ export class DocsComponent implements OnInit {
       error => this.error = error);
   }
 
+  loadStarred() {
+    this.page = 0;
+    this.type = 'starred';
+    this.docs.splice(0, this.docs.length);
+
+    this.http.get('/api/user/starred').subscribe(
+      (data: any) => this.docsLoaded(data),
+      error => this.error = error);
+  }
+
   docsLoaded(data: any) {
     this.docs.push.apply(this.docs, data);
+  }
+
+  login() {
+    this.http.get('/api/login').subscribe(
+      (data: any) => console.log(data),
+      error => this.error = error);
+  }
+
+  loadUser() {
+    this.user = null;
+
+    this.http.get('/api/user').subscribe(
+      (data: any) => this.userLoaded(data),
+      error => this.error = error);
+  }
+
+  userLoaded(data: any) {
+    this.user = data.images[0].url;
   }
 }

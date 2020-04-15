@@ -23,6 +23,8 @@ export class DocComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
+      window.scrollTo(0, 0);
+      this.service.resetEvents();
       this.type = params.get('type');
       this.id = params.get('id');
       this.loadDoc();
@@ -30,7 +32,6 @@ export class DocComponent implements OnInit {
   }
 
   loadDoc() {
-    this.service.resetEvents();
     this.http.get('/api/' + this.type + '/' + this.id).subscribe(
       (data: any) => this.setDoc(data[0]),
       error => this.error = error);

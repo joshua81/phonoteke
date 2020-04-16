@@ -160,38 +160,35 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private void loadTracksMBId(org.bson.Document page)
 	{
 		String id = page.getString("id");
-		String artistId = page.getString("artistid");
 
-		if(artistId == null)
+		try
 		{
-			try
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
 			{
-				List<org.bson.Document> tracks = page.get("tracks", List.class);
-				if(CollectionUtils.isNotEmpty(tracks))
+				for(org.bson.Document track : tracks)
 				{
-					for(org.bson.Document track : tracks)
+					String artistId = track.getString("artistid");
+					String album = track.getString("album");
+					String artist = track.getString("artist");
+					if(artistId == null && album != null && artist != null)
 					{
-						String album = track.getString("album");
-						String artist = track.getString("artist");
-						if(album != null && artist != null)
+						LOGGER.debug("Loading Album " + artist + " - " + album);
+						org.bson.Document mbalbum = getAlbum(artist, album);
+						if(mbalbum != null && mbalbum.getInteger("count") > 0)
 						{
-							LOGGER.debug("Loading Album " + artist + " - " + album);
-							org.bson.Document mbalbum = getAlbum(artist, album);
-							if(mbalbum != null && mbalbum.getInteger("count") > 0)
-							{
-								artistId = getAlbumId(artist + " - " + album, mbalbum);
-							}
-							track.append("artistid", artistId == null ? NA : artistId);
-							LOGGER.info(artist + " - " + album + ": " + artistId);
+							artistId = getAlbumId(artist + " - " + album, mbalbum);
 						}
+						track.append("artistid", artistId == null ? NA : artistId);
+						LOGGER.info(artist + " - " + album + ": " + artistId);
 					}
 				}
 			}
-			catch(Throwable t)
-			{
-				t.printStackTrace();
-				LOGGER.error("Track Musicbrainz: " + id, t);
-			}
+		}
+		catch(Throwable t)
+		{
+			t.printStackTrace();
+			LOGGER.error("Track Musicbrainz: " + id, t);
 		}
 	}
 

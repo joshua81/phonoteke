@@ -46,10 +46,10 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\"].{1,100}[‘,’,',\\\"].{0,100}", ".{1,100}[-,–,_].{1,100}");
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(".{1,100}[‘,’,',\\\",“,”].{1,100}[‘,’,',\\\",“,”].{0,100}", ".{1,100}[-,–,_].{1,100}");
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
-	protected static final List<String> SEPARATOR = Lists.newArrayList("-", "–", "_", "‘", "’", "'", "\"");
+	protected static final List<String> SEPARATOR = Lists.newArrayList("-", "–", "_", "‘", "’", "'", "\"","“","”");
 	protected static final int SLEEP_TIME = 2000;
 	protected static final int THRESHOLD = 90;
 

@@ -92,7 +92,7 @@ img.ondarock {
 
 img.musicalbox {
     border-radius: 50%;
-    content: url("/images/musicalbox.jpg");
+    content: url("/images/musicalbox.png");
     width: 30px;
     height: 30px;
 }
@@ -106,7 +106,14 @@ img.inthemix {
 
 img.babylon {
     border-radius: 50%;
-    content: url("/images/babylon.jpg");
+    content: url("/images/babylon.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.battiti {
+    border-radius: 50%;
+    content: url("/images/battiti.png");
     width: 30px;
     height: 30px;
 }

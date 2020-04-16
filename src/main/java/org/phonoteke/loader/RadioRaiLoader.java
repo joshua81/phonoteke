@@ -17,14 +17,16 @@ import com.google.common.collect.Lists;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class Radio2Loader extends PhonotekeLoader
+public class RadioRaiLoader extends PhonotekeLoader
 {
 	private static final String URL = "https://www.raiplayradio.it/";
+	private static final String URL_AUDIO = "https://www.raiplayradio.it/audio";
 	private static final String BABYLON = "https://www.raiplayradio.it/programmi/babylon/";
 	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
 	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
-	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, "https://www.raiplayradio.it/audio");
-	
+	private static final String BATTITI = "https://www.raiplayradio.it/programmi/battiti/";
+	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, URL_AUDIO);
+
 	private static String artist;
 	private static String source;
 
@@ -35,33 +37,37 @@ public class Radio2Loader extends PhonotekeLoader
 		{
 			if("babylon".equals(args[0]))
 			{
-				new Radio2Loader("Babylon", "babylon").crawl(BABYLON);
+				new RadioRaiLoader("Babylon", "babylon").crawl(BABYLON);
 			}
 			else if("musicalbox".equals(args[0]))
 			{
-				new Radio2Loader("Musicalbox", "musicalbox").crawl(MUSICALBOX);
+				new RadioRaiLoader("Musicalbox", "musicalbox").crawl(MUSICALBOX);
 			}
 			else if("inthemix".equals(args[0]))
 			{
-				new Radio2Loader("Inthemix", "inthemix").crawl(INTHEMIX);
+				new RadioRaiLoader("Inthemix", "inthemix").crawl(INTHEMIX);
 			}
-			else if("test".equals(args[0]))
+			else if("battiti".equals(args[0]))
 			{
-				new Radio2Loader("Musicalbox", "musicalbox").crawl("https://www.raiplayradio.it/audio/2018/03/MUSICAL-BOX-996c7a54-e845-4f4f-a9e1-3dd18379f956.html");
+				new RadioRaiLoader("Battiti", "battiti").crawl(BATTITI);
 			}
+		}
+		else
+		{
+			new RadioRaiLoader("Battiti", "battiti").crawl("https://www.raiplayradio.it/audio/2020/04/BATTITI---Chants-aeeb5aaa-db91-4325-b528-39edfa765b6d.html");
 		}
 	}
 
-	public Radio2Loader()
+	public RadioRaiLoader()
 	{
 		// default constructor
 	}
 
-	public Radio2Loader(String artist, String source)
+	public RadioRaiLoader(String artist, String source)
 	{
 		super();
-		Radio2Loader.artist = artist;
-		Radio2Loader.source = source;
+		RadioRaiLoader.artist = artist;
+		RadioRaiLoader.source = source;
 	}
 
 	@Override
@@ -228,8 +234,9 @@ public class Radio2Loader extends PhonotekeLoader
 	@Override
 	protected List<String> getAuthors(String url, Document doc) 
 	{
-		return Radio2Loader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : 
-			Radio2Loader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
-				Radio2Loader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : null;
+		return RadioRaiLoader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : 
+			RadioRaiLoader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
+				RadioRaiLoader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : 
+					RadioRaiLoader.source.equals("battiti") ? Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore") : null;
 	}
 }

@@ -35,8 +35,8 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	{
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(
-				Filters.and(Filters.ne("type", "podcast"), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null))),
-				Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null))))).noCursorTimeout(true).iterator();
+				Filters.and(Filters.ne("type", "podcast"), Filters.eq("artistid", null)),
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();
@@ -173,7 +173,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 					{
 						String album = track.getString("album");
 						String artist = track.getString("artist");
-						if(album != null && artist == null)
+						if(album != null && artist != null)
 						{
 							LOGGER.debug("Loading Album " + artist + " - " + album);
 							org.bson.Document mbalbum = getAlbum(artist, album);

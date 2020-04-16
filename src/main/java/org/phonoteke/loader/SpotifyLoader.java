@@ -274,11 +274,8 @@ public class SpotifyLoader extends PhonotekeLoader
 				}
 			}
 		}
-		return getTrackDefault(title);
-	}
-
-	private org.bson.Document getTrackDefault(String title) throws Exception
-	{
+		
+		// find artist and song
 		for(String s : SEPARATOR)
 		{
 			title = title.replaceAll(s, "-");

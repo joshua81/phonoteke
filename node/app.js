@@ -5,22 +5,22 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
-const Https = require('https');
 const PORT = process.env.PORT || 8080;
 
 var docs = null;
 //const uri = "mongodb://localhost:27017/";
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const client_id = 'a6c3686d32cb48d4854d88915d3925be';
+const client_secret = '46004c8b1a2b4c778cb9761ace300b6c';
+const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
+const spotify_token = 'spotify-token';
+const songkick_id = '1hOiIfT9pFTkyVkg';
+
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 db.connect(err => {
   docs = db.db("mbeats").collection("docs");
   console.log("Successfully Connected to MongoDB");
 });
-
-const client_id = 'a6c3686d32cb48d4854d88915d3925be';
-const client_secret = '46004c8b1a2b4c778cb9761ace300b6c';
-const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
-const spotify_token = 'spotify-token';
 
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
@@ -109,6 +109,15 @@ app.get('/api/podcasts/:id/links', async(req, res)=>{
 	res.send(result);
 });
 
+app.get('/api/login', async(req, res)=>{
+	console.log('Login to Spotify');
+	res.redirect('https://accounts.spotify.com/authorize?' +
+	'response_type=code&' + 
+	'scope=user-read-private%20user-top-read&' + 
+    'client_id=' + client_id + '&' + 
+	'redirect_uri=' + redirect_uri);
+});
+
 app.get('/api/login/spotify', async(req,res)=>{
 	if(req.query.error) {
 		console.log('Login to Spotify failed: ' + req.query.error);
@@ -138,15 +147,6 @@ app.get('/api/login/spotify', async(req,res)=>{
 			res.redirect('/');
 		});
 	}
-});
-
-app.get('/api/login', async(req, res)=>{
-	console.log('Login to Spotify');
-	res.redirect('https://accounts.spotify.com/authorize?' +
-	'response_type=code&' + 
-	'scope=user-read-private%20user-top-read&' + 
-    'client_id=' + client_id + '&' + 
-	'redirect_uri=' + redirect_uri);
 });
 
 app.get('/api/user', async(req, res)=>{
@@ -248,18 +248,22 @@ async function findEvents(id) {
 	if(id && id != 'na')
 	{
 		result = await new Promise((resolve, reject) => {
-			const skreq = Https.get('https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=1hOiIfT9pFTkyVkg', (skres) => {
-				if (skres.statusCode < 200 || skres.statusCode > 299) {
-					reject(new Error('Failed to load page, status code: ' + skres.statusCode));
+			var options = {
+				url: 'https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=' + songkick_id,
+				json: true
+			};
+			request.get(options, function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					resolve(body);
 				}
-				const body = [];
-				skres.on('data', (chunk) => body.push(chunk));
-				skres.on('end', () => resolve(body.join('')));
+				else {
+					console.log("Error while executing findEvents()");
+					return null;
+				}
 			});
-			skreq.on('error', (err) => reject(err))
 		});
 	}
-	return JSON.parse(result);
+	return result;
 }
 
 async function findLinks(id) {
@@ -305,7 +309,8 @@ async function findUser(access_token) {
 					resolve(body);
 				}
 				else {
-					reject(error);
+					console.log("Error while executing findUser()");
+					return null;
 				}
 			});
 		});
@@ -329,7 +334,8 @@ async function findStarred(access_token) {
 					resolve(body);
 				}
 				else {
-					reject(error);
+					console.log("Error while executing findStarred()");
+					return null;
 				}
 			});
 		});
@@ -339,7 +345,7 @@ async function findStarred(access_token) {
 			result.items.forEach(function(artist) {
 				artists.push(artist.id);
 			});
-			result = await docs.find({$or: [{'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).sort({"type":1, "artist":1, "year":-1}).toArray();
+			result = await docs.find({$or: [{'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).sort({"type":1, "date":-1, "year":-1}).toArray();
 		}
 	}
 	return result;

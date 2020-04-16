@@ -183,10 +183,6 @@ async function findDoc(id) {
 		{
 			doc.artistid = null;
 		}
-		if(doc.albumid == 'na')
-		{
-			doc.albumid = null;
-		}
 		if(doc.spartistid == 'na')
 		{
 			doc.spartistid = null;
@@ -202,6 +198,9 @@ async function findDoc(id) {
 					track.spotify = null;
 					track.spartistid = null;
 					track.spalbumid = null;
+				}
+				if(track.artistid == 'na') {
+					track.artistid = null;
 				}
 			});
 		}
@@ -245,7 +244,7 @@ async function findDocs(t, p, q) {
 async function findEvents(id) {
 	console.log('Events: id=' + id);
 	var result = null;
-	if(id && id != 'na')
+	if(id != null && id != 'na')
 	{
 		result = await new Promise((resolve, reject) => {
 			var options = {

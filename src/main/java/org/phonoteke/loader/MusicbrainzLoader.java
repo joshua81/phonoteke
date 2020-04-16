@@ -79,7 +79,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				artistId = getAlbumId(artist + " - " + title, mbalbum);
 			}
-			page.append("artistid", artistId);
+			page.append("artistid", artistId == null ? NA : artistId);
 			LOGGER.info(artist + " - " + title + ": " + artistId);
 		}
 	}
@@ -108,7 +108,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				artistId = getArtistId(artist, mbartist);
 			}
-			page.append("artistid", artistId);
+			page.append("artistid", artistId == null ? NA : artistId);
 			LOGGER.debug(artist + ": " + artistId);
 		}
 	}
@@ -121,42 +121,6 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 		String url = MUSICBRAINZ + "/artist/?query=artist:" + artist.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
-	}
-
-	protected org.bson.Document getTrack(String artist, String song)
-	{
-		if(StringUtils.isBlank(artist) || StringUtils.isBlank(song))
-		{
-			return null;
-		}
-		String url = MUSICBRAINZ + "/recording/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20recording:" + song.trim().replace(" ", "%20") + "&fmt=json";
-		org.bson.Document album = callMusicbrainz(url);
-
-		TreeMap<Integer, org.bson.Document> scores = Maps.newTreeMap();
-		if(album != null)
-		{
-			List<org.bson.Document> recordings = album.get("recordings", List.class);
-			if(CollectionUtils.isNotEmpty(recordings))
-			{
-				for(org.bson.Document recording : recordings)
-				{
-					int score = getRecordingScore(recording);
-					if(score == 100)
-					{
-						String mbartist = getReleaseArtist(recording);
-						score = FuzzySearch.tokenSetRatio(artist, mbartist);
-						String artistId =  getRecordingArtistId(recording);
-						if(score >= THRESHOLD && artistId != null)
-						{
-							LOGGER.info(artist + ", " + mbartist + " " + artistId + " (score: " + score + ")");
-							Document page = new Document("artistid", artistId);
-							scores.put(score, page);
-						}
-					}
-				}
-			}
-		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? null : scores.get(scores.lastEntry().getKey());
 	}
 
 	private org.bson.Document callMusicbrainz(String url)
@@ -203,38 +167,36 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		String id = page.getString("id");
 		String artistId = page.getString("artistid");
 
-		if(artistId != null)
+		if(artistId == null)
 		{
-			return;
-		}
-
-		try
-		{
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
+			try
 			{
-				for(org.bson.Document track : tracks)
+				List<org.bson.Document> tracks = page.get("tracks", List.class);
+				if(CollectionUtils.isNotEmpty(tracks))
 				{
-					String title = track.getString("title");
-					artistId = track.getString("artistid");
-					if(title != null && artistId == null)
+					for(org.bson.Document track : tracks)
 					{
-						LOGGER.debug("Loading Track ids: " + title);
-						org.bson.Document mbtrack = getTrack(title);
-						if(mbtrack != null)
+						String album = track.getString("album");
+						String artist = track.getString("artist");
+						if(album != null && artist == null)
 						{
-							artistId = mbtrack.getString("artistid");
-							track.append("artistid", artistId);
-							LOGGER.info(title + " (" + artistId + ")");
+							LOGGER.debug("Loading Album " + artist + " - " + album);
+							org.bson.Document mbalbum = getAlbum(artist, album);
+							if(mbalbum != null && mbalbum.getInteger("count") > 0)
+							{
+								artistId = getAlbumId(artist + " - " + album, mbalbum);
+							}
+							track.append("artistid", artistId == null ? NA : artistId);
+							LOGGER.info(artist + " - " + album + ": " + artistId);
 						}
 					}
 				}
 			}
-		}
-		catch(Throwable t)
-		{
-			t.printStackTrace();
-			LOGGER.error("Track Musicbrainz: " + id, t);
+			catch(Throwable t)
+			{
+				t.printStackTrace();
+				LOGGER.error("Track Musicbrainz: " + id, t);
+			}
 		}
 	}
 
@@ -255,15 +217,15 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
-					break;
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? null : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getArtistId(String name, org.bson.Document artist)
 	{
+		TreeMap<Integer, String> scores = Maps.newTreeMap();
 		List<org.bson.Document> mbartists = artist.get("artists", List.class);
 		if(CollectionUtils.isNotEmpty(mbartists))
 		{
@@ -274,11 +236,12 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
 				if(score >= THRESHOLD && scoreArtist >= THRESHOLD)
 				{
-					return mbartist.getString("id");
+					String artistId = mbartist.getString("id");
+					scores.put(score, artistId);
 				}
 			}
 		}
-		return null;
+		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getRecordingArtistId(org.bson.Document recording)
@@ -320,30 +283,5 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			title = recording.getString("title");
 		}
 		return title;
-	}
-
-	private String getReleaseArtist(org.bson.Document recording)
-	{
-		String artist = "";
-		if(recording != null)
-		{
-			if(CollectionUtils.isEmpty(recording.get("releases", List.class)))
-			{
-				artist = getRecordingArtist(recording);
-			}
-			else
-			{
-				org.bson.Document release = ((List<org.bson.Document>)recording.get("releases", List.class)).get(0);
-				if(CollectionUtils.isEmpty(release.get("artist-credit", List.class)))
-				{
-					artist = getRecordingArtist(recording);
-				}
-				else
-				{
-					artist = ((org.bson.Document)release.get("artist-credit", List.class).get(0)).getString("name");
-				}
-			}
-		}
-		return artist;
 	}
 }

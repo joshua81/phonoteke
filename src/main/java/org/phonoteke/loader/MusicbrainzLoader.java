@@ -14,10 +14,8 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
@@ -36,30 +34,27 @@ public class MusicbrainzLoader extends PhonotekeLoader
 	private void load() 
 	{
 		LOGGER.info("Loading Musicbrainz...");
-		for(int j = 0; j < 20; j++)
+		MongoCursor<Document> i = docs.find(Filters.or(
+				Filters.and(Filters.ne("type", "podcast"), Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null))),
+				Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null))))).noCursorTimeout(true).iterator();
+		while(i.hasNext())
 		{
-			MongoCursor<Document> i = docs.find(Filters.and(Filters.or(Filters.exists("artistid", false),Filters.eq("artistid", null)), 
-					Filters.or(Filters.exists("tracks.artistid", false),Filters.eq("tracks.artistid", null)))).
-					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(j*1000).limit(1000).noCursorTimeout(true).iterator();
-			while(i.hasNext())
+			Document page = i.next();
+			String id = page.getString("id"); 
+			String type = page.getString("type");
+			if("album".equals(type))
 			{
-				Document page = i.next();
-				String id = page.getString("id"); 
-				String type = page.getString("type");
-				if("album".equals(type))
-				{
-					loadAlbumMBId(page);
-				}
-				else if("podcast".equals(type))
-				{
-					loadTracksMBId(page);
-				}
-				else
-				{
-					loadArtistMBId(page);
-				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				loadAlbumMBId(page);
 			}
+			else if("podcast".equals(type))
+			{
+				loadTracksMBId(page);
+			}
+			else
+			{
+				loadArtistMBId(page);
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 

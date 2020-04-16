@@ -8,10 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
@@ -35,8 +33,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId("a6c3686d32cb48d4854d88915d3925be")
 			.setClientSecret("46004c8b1a2b4c778cb9761ace300b6c")
-			.setRedirectUri(SpotifyHttpManager.makeUri("https://humanbeats.appspot.com/"))
-			.build();
+			.setRedirectUri(SpotifyHttpManager.makeUri("https://humanbeats.appspot.com/")).build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 
 	private static ClientCredentials credentials;
@@ -50,31 +47,27 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void load()
 	{
 		LOGGER.info("Loading Spotify...");
-		for(int j = 0; j < 20; j++)
-		{
-			MongoCursor<Document> i = docs.find(Filters.or(
-					Filters.and(Filters.ne("type", "podcast"), Filters.or(Filters.exists("spartistid", false),Filters.eq("spartistid", null))), 
-					Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null))))).
-					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).skip(j*1000).limit(1000).noCursorTimeout(true).iterator(); 
-			while(i.hasNext()) 
-			{ 
-				Document page = i.next();
-				String id = page.getString("id"); 
-				String type = page.getString("type");
-				if("album".equals(type))
-				{
-					loadAlbum(page);
-				}
-				else if("podcast".equals(type))
-				{
-					loadTracks(page);
-				}
-				else
-				{
-					loadArtist(page);
-				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		MongoCursor<Document> i = docs.find(Filters.or(
+				Filters.and(Filters.ne("type", "podcast"), Filters.or(Filters.exists("spartistid", false),Filters.eq("spartistid", null))), 
+				Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.exists("tracks.spotify", false), Filters.eq("tracks.spotify", null))))).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id"); 
+			String type = page.getString("type");
+			if("album".equals(type))
+			{
+				loadAlbum(page);
 			}
+			else if("podcast".equals(type))
+			{
+				loadTracks(page);
+			}
+			else
+			{
+				loadArtist(page);
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 	}
 

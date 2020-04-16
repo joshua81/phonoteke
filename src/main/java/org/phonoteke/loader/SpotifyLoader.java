@@ -212,6 +212,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadTracks(Document page)
 	{
+		String source = page.getString("source");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
 		if(CollectionUtils.isNotEmpty(tracks))
 		{
@@ -225,7 +226,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					try
 					{
 						login();
-						Document spotify = getTrack(title);
+						Document spotify = getTrack(title, source);
 						if(spotify != null)
 						{
 							track.append("spotify", spotify.getString("spotify")).
@@ -253,7 +254,80 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 	}
 
-	protected Document getTrack(String artist, String song) throws Exception
+	private org.bson.Document getTrack(String title, String source) throws Exception
+	{
+		if("battiti".equals(source))
+		{
+			// artist, title, da "album" - other info
+			String[] chunks = title.split(",");
+			title = "";
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String chunk = chunks[i];
+				if(i >= 2 && chunk.trim().startsWith("da "))
+				{
+					break;
+				}
+				else
+				{
+					title += chunk + " - ";
+				}
+			}
+		}
+		return getTrackDefault(title);
+	}
+
+	private org.bson.Document getTrackDefault(String title) throws Exception
+	{
+		for(String s : SEPARATOR)
+		{
+			title = title.replaceAll(s, "-");
+		}
+
+		String[] chunks = title.split("-");
+		for(int i = 0; i < chunks.length; i++)
+		{
+			String artist = "";
+			for(int j = 0; j <= i; j++)
+			{
+				artist += chunks[j] + " ";
+			}
+			String song = "";
+			for(int j = i+1; j < chunks.length; j++)
+			{
+				song += chunks[j] + " ";
+			}
+
+			org.bson.Document track = loadTrack(artist, song);
+			if(track != null)
+			{
+				return track;
+			}
+		}
+
+		for(int i = 0; i < chunks.length; i++)
+		{
+			String song = "";
+			for(int j = 0; j <= i; j++)
+			{
+				song += chunks[j] + " ";
+			}
+			String artist = "";
+			for(int j = i+1; j < chunks.length; j++)
+			{
+				artist += chunks[j] + " ";
+			}
+
+			org.bson.Document track = loadTrack(artist, song);
+			if(track != null)
+			{
+				return track;
+			}
+		}
+		return null;
+	}
+
+	private Document loadTrack(String artist, String song) throws Exception
 	{
 		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
 		{

@@ -323,56 +323,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 		return tracks;
 	}
 
-	protected org.bson.Document getTrack(String title) throws Exception
-	{
-		for(String s : SEPARATOR)
-		{
-			title = title.replaceAll(s, "-");
-		}
-
-		String[] chunks = title.split("-");
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String artist = "";
-			for(int j = 0; j <= i; j++)
-			{
-				artist += chunks[j] + " ";
-			}
-			String song = "";
-			for(int j = i+1; j < chunks.length; j++)
-			{
-				song += chunks[j] + " ";
-			}
-
-			org.bson.Document track = getTrack(artist, song);
-			if(track != null)
-			{
-				return track;
-			}
-		}
-
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String song = "";
-			for(int j = 0; j <= i; j++)
-			{
-				song += chunks[j] + " ";
-			}
-			String artist = "";
-			for(int j = i+1; j < chunks.length; j++)
-			{
-				artist += chunks[j] + " ";
-			}
-
-			org.bson.Document track = getTrack(artist, song);
-			if(track != null)
-			{
-				return track;
-			}
-		}
-		return null;
-	}
-
 	//---------------------------------
 	// Methods to be overridden
 	//---------------------------------
@@ -432,10 +382,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 	}
 
 	protected List<org.bson.Document> getTracks(String url, Document doc) {
-		return null;
-	}
-
-	protected org.bson.Document getTrack(String artist, String song) throws Exception {
 		return null;
 	}
 

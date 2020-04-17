@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
@@ -10,17 +11,32 @@ import {DomSanitizer} from '@angular/platform-browser';
 export class DocsComponent implements OnInit {
   error = null;
   searchText = '';
-  type = 'album';
+  type = 'albums';
   page = 0;
   docs = [];
   user = null;
 
-  constructor(private http: HttpClient, public sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
-    this.searchText = '';
-    this.loadUser();
-    this.loadDocs(0, 'album');
+    this.route.paramMap.subscribe(params => {
+      window.scrollTo(0, 0);
+      this.type = params.get('type');
+      if(this.type == null || this.type == '')
+      {
+        this.type = 'albums';
+      }
+      this.searchText = '';
+      this.loadUser();
+      if(this.type == 'starred')
+      {
+        this.loadStarred();
+      }
+      else
+      {
+        this.loadDocs(0, this.type);
+      }
+    });
   }
 
   onSearch() {
@@ -38,14 +54,13 @@ export class DocsComponent implements OnInit {
       this.docs.splice(0, this.docs.length);
     }
 
-    this.http.get('/api/' + type + 's?p=' + this.page + '&q=' + this.searchText).subscribe(
+    this.http.get('/api/' + type + '?p=' + this.page + '&q=' + this.searchText).subscribe(
       (data: any) => this.docsLoaded(data),
       error => this.error = error);
   }
 
   loadStarred() {
     this.page = 0;
-    this.type = 'starred';
     this.docs.splice(0, this.docs.length);
 
     this.http.get('/api/user/starred').subscribe(
@@ -72,6 +87,8 @@ export class DocsComponent implements OnInit {
   }
 
   userLoaded(data: any) {
-    this.user = data.images[0].url;
+    if(data) {
+      this.user = data.images[0].url;
+    }
   }
 }

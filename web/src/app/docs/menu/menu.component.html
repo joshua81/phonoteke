@@ -1,21 +1,27 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center bg-info">
   <div class="d-flex flex-row align-items-center w-100">
-    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'album' ? 'selected' : 'unselected'" (click)="loadAlbums()">
+    <div class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'albums' ? 'selected' : 'unselected'" [routerLink]="['/albums']">
       <h3 class="text-white font-weight-bold mt-1">album</h3>
     </div>
-    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'artist' ? 'selected' : 'unselected'" (click)="loadArtists()">
+    <div class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'artists' ? 'selected' : 'unselected'" [routerLink]="['/artists']">
       <h3 class="text-white font-weight-bold mt-1">artisti</h3>
     </div>
-    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'interview' ? 'selected' : 'unselected'" (click)="loadInterviews()">
+    <div class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'interviews' ? 'selected' : 'unselected'" [routerLink]="['/interviews']">
       <h3 class="text-white font-weight-bold mt-1">interviste</h3>
     </div>
-    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'concert' ? 'selected' : 'unselected'" (click)="loadConcerts()">
+    <div class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'concerts' ? 'selected' : 'unselected'" [routerLink]="['/concerts']">
       <h3 class="text-white font-weight-bold mt-1">concerti</h3>
     </div>
-    <div class="menu-item ml-3 mr-3" [ngClass]="component.type == 'podcast' ? 'selected' : 'unselected'" (click)="loadPodcasts()">
+    <div class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'podcasts' ? 'selected' : 'unselected'" [routerLink]="['/podcasts']">
       <h3 class="text-white font-weight-bold mt-1">podcast</h3>
     </div>
-    <div *ngIf="component.user != null" class="menu-item ml-3 mr-3" [ngClass]="component.type == 'starred' ? 'selected' : 'unselected'" (click)="loadStarred()">
+    <div *ngIf="component.user != null" class="menu-item ml-3 mr-3" 
+    [ngClass]="component.type == 'starred' ? 'selected' : 'unselected'" [routerLink]="['/starred']">
       <h3 class="text-white font-weight-bold mt-1">preferiti</h3>
     </div>
     <form class="search ml-auto ml-3 mr-3">

@@ -20,30 +20,6 @@ export class DocsMenuComponent implements OnInit {
     this.component.ngOnInit();
   }
 
-  loadAlbums() {
-    this.component.loadDocs(0, 'album');
-  }
-
-  loadArtists() {
-    this.component.loadDocs(0, 'artist');
-  }
-
-  loadPodcasts() {
-    this.component.loadDocs(0, 'podcast');
-  }
-
-  loadConcerts() {
-    this.component.loadDocs(0, 'concert');
-  }
-
-  loadInterviews() {
-    this.component.loadDocs(0, 'interview');
-  }
-
-  loadStarred() {
-    this.component.loadStarred();
-  }
-
   login() {
     this.component.login();
   }

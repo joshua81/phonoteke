@@ -15,7 +15,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().removeKeys();
+		new PatchLoader().clearPodcasts();
 	}
 
 	public PatchLoader()
@@ -25,7 +25,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void removeKeys()
 	{
-		LOGGER.info("Loading patch...");
+		LOGGER.info("Removing keys...");
 		MongoCursor<Document> i = docs.find().noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
@@ -44,14 +44,14 @@ public class PatchLoader extends PhonotekeLoader
 				track.remove("spcover-s");
 			}
 			//docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Documenti " + id + " updated");
+			LOGGER.info("Document " + id + " updated");
 		}
 	}
 
 	private void replaceSpecialChars()
 	{
 		// TODO: rimuovere anche &gt;&lt;
-		LOGGER.info("Loading patch...");
+		LOGGER.info("Replacing special chars...");
 		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&amp;.*"), Filters.regex("artist", ".*&amp;.*"))).
 				noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
@@ -64,8 +64,30 @@ public class PatchLoader extends PhonotekeLoader
 			page.append("artist", artist.replaceAll("&amp;", "&"));
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
+			//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
+		}
+	}
+
+	private void clearPodcasts()
+	{
+		LOGGER.info("Clearing podcasts...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "inthemix"))).
+				noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			for(org.bson.Document track : tracks)
+			{
+				if(NA.equals(track.getString("spotify")))
+				{
+					track.append("spotify", null);
+				}
+			}
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Documenti " + id + " updated");
+			LOGGER.info("Document " + id + " updated");
 		}
 	}
 }

@@ -49,7 +49,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		LOGGER.info("Loading Spotify...");
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator(); 
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "acee0d01d10f487e77c081ee2c88226f8d7346f77138d26b6275bc730a230528")).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -274,13 +275,25 @@ public class SpotifyLoader extends PhonotekeLoader
 				}
 			}
 		}
-		
+		else if("inthemix".equals(source))
+		{
+			// artist ‘title’ other info
+			String[] chunks = title.split("‘");
+			title = "";
+			if(chunks.length >= 2)
+			{
+				title += chunks[0] + " - ";
+				title += chunks[1].split("’")[0];
+			}
+		}
+
 		// find artist and song
 		for(String s : SEPARATOR)
 		{
 			title = title.replaceAll(s, "-");
 		}
 
+		// artist - song
 		String[] chunks = title.split("-");
 		for(int i = 0; i < chunks.length; i++)
 		{
@@ -302,6 +315,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			}
 		}
 
+		// song - artist
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String song = "";

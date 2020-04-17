@@ -73,17 +73,19 @@ export class DocsComponent implements OnInit {
   }
 
   login() {
-    this.http.get('/api/login').subscribe(
-      (data: any) => console.log(data),
-      error => this.error = error);
+    if(this.user == null) {
+      this.http.get('/api/login').subscribe(
+        (data: any) => console.log(data),
+        error => this.error = error);
+    }
   }
 
   loadUser() {
-    this.user = null;
-
-    this.http.get('/api/user').subscribe(
-      (data: any) => this.userLoaded(data),
-      error => this.error = error);
+    if(this.user == null) {
+      this.http.get('/api/user').subscribe(
+        (data: any) => this.userLoaded(data),
+        error => this.error = error);
+    }
   }
 
   userLoaded(data: any) {

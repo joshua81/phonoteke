@@ -2,6 +2,7 @@ package org.phonoteke.loader;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -15,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().clearPodcasts();
+		new PatchLoader().resetTracks();
 	}
 
 	public PatchLoader()
@@ -23,27 +24,27 @@ public class PatchLoader extends PhonotekeLoader
 		super();
 	}
 
-	private void removeKeys()
+	private void resetTracks()
 	{
-		LOGGER.info("Removing keys...");
-		MongoCursor<Document> i = docs.find().noCursorTimeout(true).iterator();
+		LOGGER.info("Resetting tracks...");
+		MongoCursor<Document> i = docs.find(Filters.eq("type", "podcast")).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
-			page.remove("albumid");
-			page.remove("spcover-l");
-			page.remove("spcover-m");
-			page.remove("spcover-s");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			for(org.bson.Document track : tracks)
+			if(CollectionUtils.isNotEmpty(tracks))
 			{
-				track.remove("albumid");
-				track.remove("spcover-l");
-				track.remove("spcover-m");
-				track.remove("spcover-s");
+				for(org.bson.Document track : tracks)
+				{
+					if(NA.equals(track.getString("spotify")))
+					{
+						track.append("spotify", null);
+						track.append("artistid", null);
+					}
+				}
 			}
-			//docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("Document " + id + " updated");
 		}
 	}

@@ -7,17 +7,19 @@ import {DocsComponent} from '../docs.component';
   styleUrls: ['./menu.component.css']
 })
 export class DocsMenuComponent implements OnInit {
+  searchText = '';
 
   constructor(public component: DocsComponent) { }
 
   ngOnInit() {}
 
   onSearch() {
-    this.component.onSearch();
+    this.component.onSearch(this.searchText);
   }
 
   resetSearch() {
-    this.component.ngOnInit();
+    this.searchText = '';
+    this.component.onSearch(this.searchText);
   }
 
   login() {

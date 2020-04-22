@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { CommonModule } from '@angular/common';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 
 import { AppComponent } from './app.component';
 import { DocsMenuComponent } from './docs/menu/menu.component';
@@ -13,7 +14,7 @@ import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { SpotifyComponent } from './spotify/spotify.component';
 import { EventsComponent } from './doc/events/events.component';
-import { YouTubePlayerModule } from '@angular/youtube-player';
+import { SectionComponent } from './section/section.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
     DocMenuComponent,
     DocComponent,
     SpotifyComponent,
+    SectionComponent,
     EventsComponent
   ],
   imports: [

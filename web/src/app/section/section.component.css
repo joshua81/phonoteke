@@ -1,0 +1,85 @@
+h3 {
+  color: #18A2B8;
+  font-weight: 500;
+}
+
+.hscroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+}
+
+.backward {
+  width: 40px;
+  height: 20px;
+  background: none;
+  border-color: #18A2B8;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.previous {
+  display: inline-block;
+  mask: url("/images/previous.svg");
+  width: 10px;
+  height: 15px;
+  margin-top: 2px;
+  margin-left: 15px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.forward {
+  width: 40px;
+  height: 20px;
+  background: none;
+  border-color: #18A2B8;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.next {
+  display: inline-block;
+  mask: url("/images/next.svg");
+  width: 10px;
+  height: 15px;
+  margin-top: 2px;
+  margin-left: 15px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+div.cover {
+  width: 250px;
+  position: relative;
+}
+
+a.cover {
+  width: 250px;
+  height: 250px;
+}
+
+img.cover {
+  width: 250px;
+  height: 250px;
+  object-fit:cover;
+}
+
+.card {
+  border-style: none;
+}
+
+.card-body {
+  position: relative;
+  width: 250px;
+  height: 150px;
+}
+
+.card-footer {
+  border-style: none;
+  background: none;
+  position: absolute;
+  bottom: 0px;
+}

@@ -221,11 +221,11 @@ async function findDocs(t, p, q) {
 		{
 			if(t != 'podcast')
 			{
-				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
 			}
 			else
 			{
-				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
 			}
 		}
 	}
@@ -235,7 +235,7 @@ async function findDocs(t, p, q) {
 		var page = Number(p) > 0 ? Number(p) : 0;
 		if(t)
 		{
-			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, authors: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, vote: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
 		}
 	}
 	return result;

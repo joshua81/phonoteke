@@ -1,20 +1,6 @@
 <docs-menu></docs-menu>
-<div class="container pt-5 w-max">
-  <div infinite-scroll *ngIf="docs.length > 0" class="row d-flex justify-content-center pt-2" (scrolled)="scrollDocs()">
-      <div *ngFor="let doc of docs" class="pb-2 pl-1 pr-1">
-        <div class="cover card mx-auto">
-          <a class="cover" [routerLink]="['/' + doc.type + 's/' + doc.id]">
-            <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
-            <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
-          </a>
-          <div class="card-body p-1">
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-3" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.description" class="text-truncate-3 pt-2" [innerHTML]="doc.description"></div>
-            <div *ngIf="type == 'starred'" class="card-footer text-muted p-0">{{doc.type.toUpperCase()}}</div>
-          </div>
-        </div>
-      </div>
-  </div>
-</div>
+<app-section [searchText]="searchText" section="albums"></app-section>
+<app-section [searchText]="searchText" section="podcasts"></app-section>
+<app-section [searchText]="searchText" section="interviews"></app-section>
+<app-section [searchText]="searchText" section="concerts"></app-section>
+<app-section [searchText]="searchText" section="artists"></app-section>

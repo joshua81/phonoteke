@@ -47,11 +47,6 @@ h3 {
     font-size: 14px;
 }
 
-.w-max {
-    width: 100%;
-    max-width: 1040px;
-}
-
 .w-med {
     width: 100%;
     max-width: 500px;
@@ -116,17 +111,6 @@ img.battiti {
     content: url("/images/battiti.png");
     width: 30px;
     height: 30px;
-}
-
-.back {
-    display: inline-block;
-    mask: url("/images/back.svg");
-    width: 10px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
-    cursor: pointer;
 }
 
 .close {

@@ -7,9 +7,9 @@
         <img *ngIf="component.doc.coverM != null" class="cover" src="{{component.doc.coverM}}"/>
       </a>
     </div-->
-    <div class="ml-2 mr-2">
-      <div class="font-weight-bold text-truncate-1" [innerHTML]="component.doc.title"></div>
-      <div class="text-truncate-1" [innerHTML]="component.doc.artist"></div>
+    <div class="title">
+      <div class="font-weight-bold text-center text-truncate-1" [innerHTML]="component.doc.title"></div>
+      <div class="text-center text-truncate-1" [innerHTML]="component.doc.artist"></div>
     </div>
   </div>
 </nav>

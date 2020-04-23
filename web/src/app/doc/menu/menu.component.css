@@ -3,3 +3,9 @@ img.cover {
     height: 40px;
     object-fit:cover;
 }
+
+.title {
+    width: 100%;
+    margin-right: 42px;
+    margin-left: 0px;
+}

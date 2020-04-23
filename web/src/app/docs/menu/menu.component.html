@@ -5,10 +5,10 @@
     [ngClass]="component.type == 'starred' ? 'selected' : 'unselected'" [routerLink]="['/starred']">
       <h3 class="text-white font-weight-bold mt-1">preferiti</h3>
     </div-->
-    <form class="search ml-auto mr-2">
+    <form class="search ml-2 mr-2">
       <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
     </form>
-    <div class="icon mr-2">
+    <div class="icon ml-2 mr-2">
       <a *ngIf="component.user == null" href="/api/login">
         <span class="spotify"></span>
       </a>

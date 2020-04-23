@@ -1,5 +1,5 @@
-<div *ngIf="docs.length > 0" class="container pl-0 pr-0 mt-5">
-  <div class="d-flex flex-row align-items-center pl-1 pr-1 pt-3">
+<div *ngIf="docs.length > 0" class="container pl-0 pr-0 mt-3">
+  <div class="d-flex flex-row align-items-center pl-0 pr-0">
     <h3 class="text-uppercase mt-0 mb-0 mr-auto">{{section}}</h3>
     <div *ngIf="showNextPrev()"
       class="backward mr-2" (click)="previous()"><span class="previous"></span></div>
@@ -8,7 +8,7 @@
   </div>
   <div id="{{section}}" infinite-scroll class="d-flex flex-row flex-nowrap hscroll pt-2" 
     [horizontal]="true" [scrollWindow]="false" (scrolled)="scrollDocs()">
-      <div *ngFor="let doc of docs" class="pl-1 pr-1">
+      <div *ngFor="let doc of docs" class="pr-2">
         <div class="cover card">
           <a class="cover" [routerLink]="['/' + doc.type + 's/' + doc.id]">
             <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>

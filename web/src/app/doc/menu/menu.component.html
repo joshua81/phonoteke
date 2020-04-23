@@ -1,14 +1,15 @@
-<nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll bg-info">
+<nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row align-items-center w-100">
-    <div class="pr-2">
-      <a (click)="back()">
+    <a class="ml-2 mr-2" (click)="back()"><img class="logo"></a>
+    <!--div class="ml-2 mr-2">
+      <a>
         <img *ngIf="component.doc.coverM == null" class="cover" src="{{component.doc.cover}}"/>
         <img *ngIf="component.doc.coverM != null" class="cover" src="{{component.doc.coverM}}"/>
       </a>
-    </div>
-    <div>
-      <div class="text-white font-weight-bold text-truncate-1" [innerHTML]="component.doc.title"></div>
-      <div class="text-white text-truncate-1" [innerHTML]="component.doc.artist"></div>
+    </div-->
+    <div class="ml-2 mr-2">
+      <div class="font-weight-bold text-truncate-1" [innerHTML]="component.doc.title"></div>
+      <div class="text-truncate-1" [innerHTML]="component.doc.artist"></div>
     </div>
   </div>
 </nav>

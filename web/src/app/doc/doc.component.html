@@ -1,6 +1,6 @@
 <doc-menu *ngIf="doc"></doc-menu>
-<div *ngIf="doc" class="container mt-5 pl-1 pr-1 pt-2">
-  <div class="bg-white w-100 mb-2">
+<div *ngIf="doc" class="container pl-0 pr-0 mt-3">
+  <div class="bg-white w-100 pl-0 pr-0 mb-2">
     <div class="d-flex flex-row">
       <div class="cover" (click)="loadAlbum()">
         <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
@@ -44,7 +44,7 @@
   <!-- YouTube -->
   <div *ngIf="doc.type != 'podcast' && doc.tracks && doc.tracks.length != 0" 
     class="d-flex flex-row flex-nowrap hscroll pt-2">
-    <div *ngFor="let track of doc.tracks" class="pl-1 pr-1">
+    <div *ngFor="let track of doc.tracks" class="pr-2">
       <div class="cover-youtube" (click)="loadVideo(track)">
         <img *ngIf="track.youtube" class="cover-youtube" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
         <span *ngIf="track.youtube" class="youtube"></span>
@@ -55,7 +55,7 @@
   <!-- Links -->
   <div *ngIf="links && links.length != 0" 
     class="d-flex flex-row flex-nowrap hscroll pt-2">
-    <div *ngFor="let link of links" class="pl-1 pr-1">
+    <div *ngFor="let link of links" class="pr-2">
       <div class="cover-link card">
         <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
           <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
@@ -73,7 +73,7 @@
   <!-- Other Links -->
   <div *ngIf="links && linksOther.length != 0" 
     class="d-flex flex-row flex-nowrap hscroll pt-2">
-    <div *ngFor="let link of linksOther" class="pl-1 pr-1">
+    <div *ngFor="let link of linksOther" class="pr-2">
       <div class="cover-link card">
         <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
           <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>

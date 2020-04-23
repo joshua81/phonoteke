@@ -14,13 +14,16 @@ html, body {
 
 .container-fluid {
     min-height: 100%;
-    padding: 0px;
+    padding-top: 40px;
+    padding-left: 0px;
+    padding-right: 0px;
     margin: 0px;
 }
 
 .navbar {
     padding: 0px;
     height: 40px;
+    background: #FFFFFF;
 }
 
 .hscroll {
@@ -121,6 +124,13 @@ img.babylon {
 img.battiti {
     border-radius: 50%;
     content: url("/images/battiti.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.logo {
+    border-radius: 50%;
+    content: url("/images/logo.png");
     width: 30px;
     height: 30px;
 }

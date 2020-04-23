@@ -5,8 +5,9 @@
 }
 
 .search {
-    width: 250px;
+    width: 100%;
     min-width: 250px;
+    max-width: 400px;
 }
 
 .unselected {

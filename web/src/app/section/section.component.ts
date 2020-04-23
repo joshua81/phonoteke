@@ -80,14 +80,21 @@ export class SectionComponent implements OnInit {
   next() {
     this.scroll++;
     var slider = document.querySelector('#'+this.section);
-    slider.scrollTo((256 * Math.floor(slider.clientWidth / 256) * this.scroll), 0);
+    slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
   }
 
   previous() {
     if(this.scroll > 0) {
       this.scroll--;
       var slider = document.querySelector('#'+this.section);
-      slider.scrollTo((256 * Math.floor(slider.clientWidth / 256) * this.scroll), 0);
+      slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
     }
+  }
+
+  showNextPrev() {
+    // s: 540px, m: 720px, l: 960px, xl: 1140px
+    // var ua = navigator.userAgent;
+    var slider = document.querySelector('#'+this.section);
+    return slider ? (window.innerWidth >= 960 && slider.scrollWidth > window.innerWidth) : window.innerWidth >= 960;
   }
 }

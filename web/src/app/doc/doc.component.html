@@ -42,39 +42,48 @@
   </div>
 
   <!-- YouTube -->
-  <div *ngIf="doc.type != 'podcast' && doc.tracks && doc.tracks.length != 0" class="d-flex row justify-content-center ml-0 mr-0 mt-1 mb-1">
-    <div *ngFor="let track of doc.tracks" class="cover-youtube mb-2 ml-1 mr-1" (click)="loadVideo(track)">
-      <img *ngIf="track.youtube" class="cover-youtube" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
-      <span *ngIf="track.youtube" class="youtube"></span>
+  <div *ngIf="doc.type != 'podcast' && doc.tracks && doc.tracks.length != 0" 
+    class="d-flex flex-row flex-nowrap hscroll pt-2">
+    <div *ngFor="let track of doc.tracks" class="pl-1 pr-1">
+      <div class="cover-youtube" (click)="loadVideo(track)">
+        <img *ngIf="track.youtube" class="cover-youtube" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
+        <span *ngIf="track.youtube" class="youtube"></span>
+      </div>
     </div>
   </div>
 
   <!-- Links -->
-  <div *ngIf="links && links.length != 0" class="d-flex row justify-content-center ml-0 mr-0 mt-1 mb-1">
-    <div *ngFor="let link of links" class="cover-link card mb-2 ml-1 mr-1">
-      <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
-        <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
-        <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
-      </a>
-      <div class="card-body p-1">
-        <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
-        <div class="text-truncate-2" [innerHTML]="link.artist"></div>
-        <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
+  <div *ngIf="links && links.length != 0" 
+    class="d-flex flex-row flex-nowrap hscroll pt-2">
+    <div *ngFor="let link of links" class="pl-1 pr-1">
+      <div class="cover-link card">
+        <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
+          <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
+          <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
+        </a>
+        <div class="card-body p-1">
+          <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
+          <div class="text-truncate-2" [innerHTML]="link.artist"></div>
+          <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Other Links -->
-  <div *ngIf="links && linksOther.length != 0" class="d-flex row justify-content-center ml-0 mr-0 mt-1 mb-1">
-    <div *ngFor="let link of linksOther" class="cover-link card mb-2 ml-1 mr-1">
-      <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
-        <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
-        <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
-      </a>
-      <div class="card-body p-1">
-        <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
-        <div class="text-truncate-2" [innerHTML]="link.artist"></div>
-        <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
+  <div *ngIf="links && linksOther.length != 0" 
+    class="d-flex flex-row flex-nowrap hscroll pt-2">
+    <div *ngFor="let link of linksOther" class="pl-1 pr-1">
+      <div class="cover-link card">
+        <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
+          <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
+          <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
+        </a>
+        <div class="card-body p-1">
+          <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
+          <div class="text-truncate-2" [innerHTML]="link.artist"></div>
+          <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
+        </div>
       </div>
     </div>
   </div>

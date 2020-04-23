@@ -1,8 +1,10 @@
 <div *ngIf="docs.length > 0" class="container pl-0 pr-0 mt-5">
   <div class="d-flex flex-row align-items-center pl-1 pr-1 pt-3">
     <h3 class="text-uppercase mt-0 mb-0 mr-auto">{{section}}</h3>
-    <div class="backward mr-2" (click)="previous()"><span class="previous"></span></div>
-    <div class="forward" (click)="next()"><span class="next"></span></div>
+    <div *ngIf="showNextPrev()"
+      class="backward mr-2" (click)="previous()"><span class="previous"></span></div>
+    <div *ngIf="showNextPrev()"
+      class="forward" (click)="next()"><span class="next"></span></div>
   </div>
   <div id="{{section}}" infinite-scroll class="d-flex flex-row flex-nowrap hscroll pt-2" 
     [horizontal]="true" [scrollWindow]="false" (scrolled)="scrollDocs()">
@@ -12,12 +14,16 @@
             <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
             <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
           </a>
-          <div class="card-body p-1">
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-3" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="text-truncate-3 font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.description" class="text-truncate-3 pt-2" [innerHTML]="doc.description"></div>
-            <!--div *ngIf="type == 'starred'" class="card-footer text-muted p-0">{{doc.type.toUpperCase()}}</div-->
+          <div *ngIf="doc.description != null" class="card-body p-1">
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.title"></div>
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.type == 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.artist"></div>
+            <div class="text-truncate-4 pt-2" [innerHTML]="doc.description"></div>
+          </div>
+          <div *ngIf="doc.description == null" class="card-body-sm p-1">
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.title"></div>
+            <div *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></div>
+            <div *ngIf="doc.type == 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.artist"></div>
           </div>
         </div>
       </div>

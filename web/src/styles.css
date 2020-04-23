@@ -21,9 +21,13 @@ html, body {
 .navbar {
     padding: 0px;
     height: 40px;
+}
+
+.hscroll {
     overflow-x: auto;
     overflow-y: hidden;
-}
+    scroll-behavior: smooth;
+  }
 
 a {
     cursor: pointer;
@@ -73,6 +77,14 @@ h3 {
     min-width: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.text-truncate-4 {
+    overflow: hidden;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
 }
 

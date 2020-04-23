@@ -3,12 +3,6 @@ h3 {
   font-weight: 500;
 }
 
-.hscroll {
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-}
-
 .backward {
   width: 40px;
   height: 20px;
@@ -52,18 +46,18 @@ h3 {
 }
 
 div.cover {
-  width: 250px;
+  width: 200px;
   position: relative;
 }
 
 a.cover {
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200px;
 }
 
 img.cover {
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 200px;
   object-fit:cover;
 }
 
@@ -73,13 +67,12 @@ img.cover {
 
 .card-body {
   position: relative;
-  width: 250px;
+  width: 200px;
   height: 150px;
 }
 
-.card-footer {
-  border-style: none;
-  background: none;
-  position: absolute;
-  bottom: 0px;
+.card-body-sm {
+  position: relative;
+  width: 200px;
+  height: 80px;
 }

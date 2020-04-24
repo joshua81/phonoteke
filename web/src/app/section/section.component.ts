@@ -91,9 +91,8 @@ export class SectionComponent implements OnInit {
     }
   }
 
-  showNextPrev() {
+  showScroll() {
     // s: 540px, m: 720px, l: 960px, xl: 1140px
-    // var ua = navigator.userAgent;
     var slider = document.querySelector('#'+this.section);
     return slider ? (window.innerWidth >= 960 && slider.scrollWidth > window.innerWidth) : window.innerWidth >= 960;
   }

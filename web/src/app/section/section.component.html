@@ -1,9 +1,9 @@
-<div *ngIf="docs.length > 0" class="container pl-1 pr-1 mt-3">
+<div *ngIf="docs && docs.length != 0" class="container pl-1 pr-1 mt-3">
   <div class="d-flex flex-row align-items-center pl-0 pr-0">
     <h3 class="text-uppercase mt-0 mb-0 mr-auto">{{section}}</h3>
-    <div *ngIf="showNextPrev()"
+    <div *ngIf="showScroll()"
       class="backward mr-2" (click)="previous()"><span class="previous"></span></div>
-    <div *ngIf="showNextPrev()"
+    <div *ngIf="showScroll()"
       class="forward" (click)="next()"><span class="next"></span></div>
   </div>
   <div id="{{section}}" infinite-scroll class="d-flex flex-row flex-nowrap hscroll pt-2" 

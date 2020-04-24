@@ -1,0 +1,24 @@
+<div class="d-flex flex-row align-items-center pl-0 pr-0 mt-3">
+  <h3 class="text-uppercase mt-0 mb-0 mr-auto">Video</h3>
+  <div *ngIf="showScroll()"
+    class="backward mr-2" (click)="previous()"><span class="previous"></span></div>
+  <div *ngIf="showScroll()"
+    class="forward" (click)="next()"><span class="next"></span></div>
+</div>
+<div id="videos" *ngIf="tracks && tracks.length != 0" class="d-flex flex-row flex-nowrap hscroll pt-2">
+  <div *ngFor="let track of tracks" class="pr-2">
+    <div class="cover" (click)="loadVideo(track)">
+      <img *ngIf="track.youtube" class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
+      <span *ngIf="track.youtube" class="youtube"></span>
+    </div>
+  </div>
+</div>
+
+<!-- player-->
+<div *ngIf="video" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+  <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
+  </iframe>
+  <div class="close" (click)="close($event)">
+    <span class="close"></span>
+  </div>
+</div>

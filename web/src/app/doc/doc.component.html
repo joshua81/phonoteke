@@ -13,7 +13,7 @@
     </div>
 
     <!-- album -->
-    <div class="d-flex flex-column bg-white mt-2">
+    <div class="d-flex flex-column bg-white mt-3">
       <div class="mx-auto">
         <a *ngIf="doc.spalbumid" class="font-weight-bold" [innerHTML]="doc.title" 
           href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank"></a>
@@ -45,15 +45,7 @@
     </div>
 
     <!-- video -->
-    <div *ngIf="doc.type != 'podcast' && doc.tracks && doc.tracks.length != 0" 
-      class="d-flex flex-row flex-nowrap hscroll pt-2">
-      <div *ngFor="let track of doc.tracks" class="pr-2">
-        <div class="cover-youtube" (click)="loadVideo(track)">
-          <img *ngIf="track.youtube" class="cover-youtube" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
-          <span *ngIf="track.youtube" class="youtube"></span>
-        </div>
-      </div>
-    </div>
+    <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video>
 
     <!-- links -->
     <div *ngIf="links && links.length != 0" 
@@ -90,15 +82,6 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- YouTube player-->
-<div *ngIf="video" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
-  <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
-  </iframe>
-  <div class="close" (click)="close($event)">
-    <span class="close"></span>
   </div>
 </div>
 

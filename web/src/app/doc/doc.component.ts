@@ -17,7 +17,6 @@ export class DocComponent implements OnInit {
   links = [];
   linksOther = [];
   spotify = null;
-  video = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
 
@@ -42,7 +41,6 @@ export class DocComponent implements OnInit {
     this.links = [];
     this.linksOther = [];
     this.spotify = null;
-    this.video = null;
     if(this.service.audio){
       this.service.audio.pause();
       this.service.audio = null;
@@ -72,10 +70,6 @@ export class DocComponent implements OnInit {
     this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/artist/' + this.spotify);
   }
 
-  youtubeURL(){
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
-  }
-
   loadAlbum() {
     if(this.doc.spartistid || this.doc.spalbumid) {
       this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
@@ -88,13 +82,8 @@ export class DocComponent implements OnInit {
     }
   }
 
-  loadVideo(track: any){
-    this.video = track.youtube ? track : null;
-  }
-
   close(event: Event){
     this.spotify = null;
-    this.video = null;
     if(this.service.audio) {
       this.service.audio.pause();
       this.service.audio = null;

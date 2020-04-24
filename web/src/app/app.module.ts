@@ -15,6 +15,7 @@ import { DocComponent } from './doc/doc.component';
 import { SpotifyComponent } from './spotify/spotify.component';
 import { EventsComponent } from './doc/events/events.component';
 import { SectionComponent } from './section/section.component';
+import { VideoComponent } from './video/video.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { SectionComponent } from './section/section.component';
     DocComponent,
     SpotifyComponent,
     SectionComponent,
+    VideoComponent,
     EventsComponent
   ],
   imports: [

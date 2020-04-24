@@ -19,9 +19,6 @@
                 <div *ngIf="track.artistid" class="icon ml-1" (click)="service.loadEvents(track.artistid)">
                     <span class="songkick"></span>
                 </div>
-                <!--div *ngIf="track.youtube" class="icon ml-2" (click)="loadVideo(track)">
-                    <span class="youtube"></span>
-                </div-->
             </div>
         </div>
     </div>
@@ -34,11 +31,3 @@
         <span class="close"></span>
     </div>
 </div>
-
-<!--div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
-    <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
-    </iframe>
-    <div class="close" (click)="close($event)">
-      <span class="close"></span>
-    </div>
-</div-->

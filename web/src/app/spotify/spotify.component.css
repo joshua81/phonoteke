@@ -23,15 +23,6 @@
     cursor: pointer;
 }
 
-/*.youtube {
-    display: inline-block;
-    mask: url("/images/youtube.svg");
-    width: 20px;
-    height: 20px;
-    background: #FF0000;
-    cursor: pointer;
-}*/
-
 div.cover {
     position: relative;
     width: 62px;

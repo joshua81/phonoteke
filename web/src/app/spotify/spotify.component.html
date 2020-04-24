@@ -1,4 +1,4 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center p-2 bg-white">
+<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center mt-2 p-2 bg-white">
     <div class="list-group w-med">
         <div *ngFor="let track of tracks" class="mb-2">
             <div class="d-flex flex-row align-items-center m-0">
@@ -35,10 +35,10 @@
     </div>
 </div>
 
-<div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+<!--div *ngIf="video != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
     <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
     </iframe>
     <div class="close" (click)="close($event)">
       <span class="close"></span>
     </div>
-  </div>
+</div-->

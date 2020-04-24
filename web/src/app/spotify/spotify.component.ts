@@ -9,7 +9,7 @@ import { AppService } from '../app.service';
 })
 export class SpotifyComponent implements OnInit {
   song = null;
-  video = null;
+  //video = null;
   @Input() tracks = null;
 
   constructor(public service: AppService, public sanitizer: DomSanitizer) {}
@@ -21,20 +21,20 @@ export class SpotifyComponent implements OnInit {
     this.song = track.spotify ? track : null;
   }
 
-  loadVideo(track: any){
+  /*loadVideo(track: any){
     this.video = track.youtube ? track : null;
-  }
+  }*/
 
   close(event: Event) {
     this.song = null;
-    this.video = null;
+    //this.video = null;
   }
 
   spotifyURL() {
     return this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.song.spotify);
   }
 
-  youtubeURL(){
+  /*youtubeURL(){
     return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
-  }
+  }*/
 }

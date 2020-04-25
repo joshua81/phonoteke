@@ -1,5 +1,5 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center mt-2 p-2 bg-white">
-    <div class="list-group w-med">
+<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center mt-2 p-2">
+    <div class="list-group">
         <div *ngFor="let track of tracks" class="mb-2">
             <div class="d-flex flex-row align-items-center m-0">
                 <div class="cover" (click)="loadTrack(track)">

@@ -1,24 +1,22 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex justify-content-center mt-2 p-2">
-    <div class="list-group">
-        <div *ngFor="let track of tracks" class="mb-2">
-            <div class="d-flex flex-row align-items-center m-0">
-                <div class="cover" (click)="loadTrack(track)">
-                    <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
-                    <span *ngIf="track.spotify" class="play"></span>
-                    <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
+<div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 mt-2 p-2">
+    <div *ngFor="let track of tracks" class="mb-2">
+        <div class="d-flex flex-row align-items-center m-0">
+            <div class="cover" (click)="loadTrack(track)">
+                <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
+                <span *ngIf="track.spotify" class="play"></span>
+                <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
+            </div>
+            <div class="ml-2 mr-auto">
+                <div class="text-truncate-1" [innerHTML]="track.title"></div>
+                <div *ngIf="track.spotify" class="text-truncate-1">
+                    <a class="font-weight-bold" [innerHTML]="track.album" href="{{'https://open.spotify.com/album/' + track.spalbumid}}" target="_blank"></a>
                 </div>
-                <div class="ml-2 mr-auto">
-                    <div class="text-truncate-1" [innerHTML]="track.title"></div>
-                    <div *ngIf="track.spotify" class="text-truncate-1">
-                        <a class="font-weight-bold" [innerHTML]="track.album" href="{{'https://open.spotify.com/album/' + track.spalbumid}}" target="_blank"></a>
-                    </div>
-                    <div *ngIf="track.spotify" class="text-truncate-1">
-                        <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
-                    </div>
+                <div *ngIf="track.spotify" class="text-truncate-1">
+                    <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
                 </div>
-                <div *ngIf="track.artistid" class="icon ml-1" (click)="service.loadEvents(track.artistid)">
-                    <span class="songkick"></span>
-                </div>
+            </div>
+            <div *ngIf="track.artistid" class="icon ml-1" (click)="service.loadEvents(track.artistid)">
+                <span class="songkick"></span>
             </div>
         </div>
     </div>

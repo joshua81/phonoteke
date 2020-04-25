@@ -12,10 +12,12 @@ import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
-import { SpotifyComponent } from './spotify/spotify.component';
-import { EventsComponent } from './doc/events/events.component';
+import { TracksComponent } from './tracks/tracks.component';
+import { EventsComponent } from './events/events.component';
 import { SectionComponent } from './section/section.component';
 import { VideoComponent } from './video/video.component';
+import { LinkComponent } from './link/link.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -24,9 +26,11 @@ import { VideoComponent } from './video/video.component';
     DocsComponent,
     DocMenuComponent,
     DocComponent,
-    SpotifyComponent,
+    TracksComponent,
     SectionComponent,
     VideoComponent,
+    LinkComponent,
+    FooterComponent,
     EventsComponent
   ],
   imports: [

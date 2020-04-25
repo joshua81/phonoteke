@@ -3,11 +3,11 @@ import {DomSanitizer} from '@angular/platform-browser';
 import { AppService } from '../app.service';
 
 @Component({
-  selector: 'app-spotify',
-  templateUrl: './spotify.component.html',
-  styleUrls: ['./spotify.component.css']
+  selector: 'app-tracks',
+  templateUrl: './tracks.component.html',
+  styleUrls: ['./tracks.component.css']
 })
-export class SpotifyComponent implements OnInit {
+export class TracksComponent implements OnInit {
   song = null;
   @Input() tracks = null;
 

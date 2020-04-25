@@ -15,7 +15,7 @@ export class DocComponent implements OnInit {
   id = null;
   doc = null;
   links = [];
-  linksOther = [];
+  otherLinks = [];
   spotify = null;
 
   constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
@@ -39,7 +39,7 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
     this.links = [];
-    this.linksOther = [];
+    this.otherLinks = [];
     this.spotify = null;
     if(this.service.audio){
       this.service.audio.pause();
@@ -59,7 +59,7 @@ export class DocComponent implements OnInit {
     this.links = links.filter(function(link: any){
 		  return doc.spartistid != null && doc.spartistid == link.spartistid;
     });
-    this.linksOther = links.filter(function(link: any){
+    this.otherLinks = links.filter(function(link: any){
 		  return doc.spartistid == null || doc.spartistid != link.spartistid;
     });
   }

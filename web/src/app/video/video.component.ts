@@ -43,7 +43,6 @@ export class VideoComponent implements OnInit {
 
   showScroll() {
     // s: 540px, m: 720px, l: 960px, xl: 1140px
-    var slider = document.querySelector('#videos');
-    return slider ? (window.innerWidth >= 960 && slider.scrollWidth > window.innerWidth) : window.innerWidth >= 960;
+    return window.innerWidth >= 960;
   }
 }

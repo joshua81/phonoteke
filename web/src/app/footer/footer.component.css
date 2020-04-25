@@ -1,0 +1,69 @@
+.footer-copyright {
+  height: 80px;
+}
+
+.icon {
+  border-radius: 50%;
+  background: #FFFFFF;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.cc {
+  display: inline-block;
+  mask: url("/images/cc.svg");
+  width: 20px;
+  height: 20px;
+  margin-top: 5px;
+  margin-left: 5px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.mail {
+  display: inline-block;
+  mask: url("/images/mail.svg");
+  width: 20px;
+  height: 20px;
+  margin-top: 5px;
+  margin-left: 5px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.linkedin {
+  display: inline-block;
+  mask: url("/images/linkedin.svg");
+  width: 17px;
+  height: 20px;
+  margin-top: 5px;
+  margin-left: 6px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.github {
+  display: inline-block;
+  mask: url("/images/github.svg");
+  width: 20px;
+  height: 20px;
+  margin-top: 5px;
+  margin-left: 5px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.api {
+  border-radius: 50%;
+  background: #18A2B8;
+  width: 24px;
+  height: 24px;
+  padding-top: 7px;
+  margin-top: 3px;
+  margin-left: 3px;
+
+  text-align: center;
+  font-size: 9px;
+  cursor: pointer;
+}

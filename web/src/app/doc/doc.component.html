@@ -1,6 +1,6 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container pl-1 pr-1 mt-3">
-  <div class="d-flex flex-column pl-0 pr-0 mb-2">
+  <div class="d-flex flex-column pl-0 pr-0">
     <!-- cover -->
     <div class="cover mx-auto" (click)="loadAlbum()">
       <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
@@ -41,47 +41,13 @@
 
       <!-- content -->
       <div *ngIf="doc.review" class="text-justify mt-2 p-2" [innerHTML]="doc.review"></div>
-      <app-spotify *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-spotify>
+      <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
     </div>
 
-    <!-- video -->
+    <!-- videos + links -->
     <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video>
-
-    <!-- links -->
-    <div *ngIf="links && links.length != 0" 
-      class="d-flex flex-row flex-nowrap hscroll pt-2">
-      <div *ngFor="let link of links" class="pr-2">
-        <div class="cover-link card">
-          <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
-            <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
-            <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
-          </a>
-          <div class="card-body p-1">
-            <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
-            <div class="text-truncate-2" [innerHTML]="link.artist"></div>
-            <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- other links -->
-    <div *ngIf="linksOther && linksOther.length != 0" 
-      class="d-flex flex-row flex-nowrap hscroll pt-2">
-      <div *ngFor="let link of linksOther" class="pr-2">
-        <div class="cover-link card">
-          <a class="cover-link" [routerLink]="['/' + link.type + 's/' + link.id]">
-            <img *ngIf="link.coverM == null" class="cover-link card-img-top" src="{{link.cover}}"/>
-            <img *ngIf="link.coverM != null" class="cover-link card-img-top" src="{{link.coverM}}"/>
-          </a>
-          <div class="card-body p-1">
-            <div class="text-truncate-2 font-weight-bold" [innerHTML]="link.title"></div>
-            <div class="text-truncate-2" [innerHTML]="link.artist"></div>
-            <div class="card-footer text-muted text-uppercase p-0">{{link.type}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-link [links]="links" name="links"></app-link>
+    <app-link [links]="otherLinks" name="otherLinks"></app-link>
   </div>
 </div>
 

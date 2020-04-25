@@ -9,7 +9,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class SectionComponent implements OnInit {
   private _searchText: string = null;
-  @Input() section: string = null;
+  @Input() name: string = null;
   error = null;
   page: number = 0;
   scroll: number = 0;
@@ -18,7 +18,7 @@ export class SectionComponent implements OnInit {
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+      this.route.paramMap.subscribe(params => {
       this.searchText = '';
       if(params.get('type') == 'starred') {
         //this.loadStarred();
@@ -51,13 +51,13 @@ export class SectionComponent implements OnInit {
   }
 
   loadDocs(page: number) {
-    if(this.section) {
+    if(this.name) {
       this.page = page;
       if(this.page == 0) {
         this.docs.splice(0, this.docs.length);
       }
 
-      this.http.get('/api/' + this.section + '?p=' + this.page + '&q=' + this.searchText).subscribe(
+      this.http.get('/api/' + this.name + '?p=' + this.page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.error = error);
     }
@@ -79,21 +79,20 @@ export class SectionComponent implements OnInit {
 
   next() {
     this.scroll++;
-    var slider = document.querySelector('#'+this.section);
+    var slider = document.querySelector('#'+this.name);
     slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
   }
 
   previous() {
     if(this.scroll > 0) {
       this.scroll--;
-      var slider = document.querySelector('#'+this.section);
+      var slider = document.querySelector('#'+this.name);
       slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
     }
   }
 
   showScroll() {
     // s: 540px, m: 720px, l: 960px, xl: 1140px
-    var slider = document.querySelector('#'+this.section);
-    return slider ? (window.innerWidth >= 960 && slider.scrollWidth > window.innerWidth) : window.innerWidth >= 960;
+    return window.innerWidth >= 960;
   }
 }

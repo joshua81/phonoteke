@@ -4,7 +4,7 @@ h3 {
 }
 
 .backward {
-  width: 40px;
+  width: 50px;
   height: 20px;
   background: none;
   border-color: #18A2B8;
@@ -19,13 +19,13 @@ h3 {
   width: 10px;
   height: 15px;
   margin-top: 2px;
-  margin-left: 15px;
+  margin-left: 20px;
   background: #18A2B8;
   cursor: pointer;
 }
 
 .forward {
-  width: 40px;
+  width: 50px;
   height: 20px;
   background: none;
   border-color: #18A2B8;
@@ -40,7 +40,7 @@ h3 {
   width: 10px;
   height: 15px;
   margin-top: 2px;
-  margin-left: 15px;
+  margin-left: 20px;
   background: #18A2B8;
   cursor: pointer;
 }

@@ -45,9 +45,9 @@
     </div>
 
     <!-- videos + links -->
-    <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video>
-    <app-link [links]="links" name="links"></app-link>
-    <app-link [links]="otherLinks" name="otherLinks"></app-link>
+    <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks" type="videos" label="Video"></app-video>
+    <app-link [links]="links" type="links" label="Link"></app-link>
+    <app-link [links]="otherLinks" type="otherlinks" label="Altri Link"></app-link>
   </div>
 </div>
 

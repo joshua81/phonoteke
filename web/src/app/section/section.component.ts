@@ -1,6 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import { DocsComponent } from '../docs/docs.component';
 
 @Component({
   selector: 'app-section',
@@ -8,85 +7,33 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./section.component.css']
 })
 export class SectionComponent implements OnInit {
-  private _searchText: string = null;
-  @Input() name: string = null;
+  @Input() type: string = null;
+  @Input() label: string = null;
+  @Input() docs = [];
   error = null;
   page: number = 0;
   scroll: number = 0;
-  docs = [];
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(public component: DocsComponent) {}
 
   ngOnInit() {
-      this.route.paramMap.subscribe(params => {
-      this.searchText = '';
-      if(params.get('type') == 'starred') {
-        //this.loadStarred();
-        this.loadDocs(0);
-      }
-      else {
-        this.loadDocs(0);
-      }
-    });
-  }
-
-  @Input()
-  set searchText(val: string) {
-    this._searchText = val;
-    this.onSearch();
-  }
-  
-  get searchText() {
-    return this._searchText;
-  }
-
-  onSearch() {
-    if(this.searchText && this.searchText != '') {
-      this.loadDocs(0);
-    }
   }
 
   scrollDocs() {
-    this.loadDocs(this.page+1);
-  }
-
-  loadDocs(page: number) {
-    if(this.name) {
-      this.page = page;
-      if(this.page == 0) {
-        this.docs.splice(0, this.docs.length);
-      }
-
-      this.http.get('/api/' + this.name + '?p=' + this.page + '&q=' + this.searchText).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.error = error);
-    }
-  }
-
-  loadStarred() {
-    this.page = 0;
-    this.scroll = 0;
-    this.docs.splice(0, this.docs.length);
-
-    this.http.get('/api/user/starred').subscribe(
-      (data: any) => this.docsLoaded(data),
-      error => this.error = error);
-  }
-
-  docsLoaded(data: any) {
-    this.docs.push.apply(this.docs, data);
+    this.page++;
+    this.component.loadDocs(this.type, this.page);
   }
 
   next() {
     this.scroll++;
-    var slider = document.querySelector('#'+this.name);
+    var slider = document.querySelector('#'+this.type);
     slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
   }
 
   previous() {
     if(this.scroll > 0) {
       this.scroll--;
-      var slider = document.querySelector('#'+this.name);
+      var slider = document.querySelector('#'+this.type);
       slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
     }
   }

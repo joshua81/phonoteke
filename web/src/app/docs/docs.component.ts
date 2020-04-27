@@ -11,26 +11,126 @@ export class DocsComponent implements OnInit {
   error = null;
   searchText = '';
   user = null;
+  albums = [];
+  interviews = [];
+  podcasts = [];
+  artists = [];
+  concerts = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
+    this.loadUser();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.searchText = '';
-      this.loadUser();
+      if(params.get('type') == 'starred') {
+        this.loadStarred();
+      }
+      else {
+        this.loadDocsAll();
+      }
     });
   }
 
-  onSearch(searchText: string) {
-    this.searchText = searchText;
+  onSearch() {
+    this.loadDocsAll();
   }
 
-  login() {
-    if(this.user == null) {
-      this.http.get('/api/login').subscribe(
-        (data: any) => console.log(data),
-        error => this.error = error);
+  resetSearch() {
+    this.searchText = '';
+    this.loadDocsAll();
+  }
+
+  loadDocsAll() {
+    this.loadDocs('albums', 0);
+    this.loadDocs('interviews', 0);
+    this.loadDocs('podcasts', 0);
+    this.loadDocs('artists', 0);
+    this.loadDocs('concerts', 0);
+  }
+
+
+  loadDocs(type: string, page: number) {
+    if(page == 0) {
+      if(type == 'albums') {
+        this.albums = [];
+      }
+      else if(type == 'interviews') {
+        this.interviews = [];
+      }
+      else if(type == 'podcasts') {
+        this.podcasts = [];
+      }
+      else if(type == 'artists') {
+        this.artists = [];
+      }
+      else if(type == 'concerts') {
+        this.concerts = [];
+      }
+    }
+
+    this.http.get('/api/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
+      (data: any) => this.docsLoaded(type, data),
+      error => this.error = error);
+  }
+
+  loadStarred() {
+    this.albums = [];
+    this.interviews = [];
+    this.podcasts = [];
+    this.artists = [];
+    this.concerts = [];
+
+    this.http.get('/api/user/starred').subscribe(
+      (data: any) => this.docsLoaded('starred', data),
+      error => this.error = error);
+  }
+
+  docsLoaded(type: string, data: any) {
+    if(type == 'albums') {
+      this.albums.push.apply(this.albums, data);
+    }
+    else if(type == 'interviews') {
+      this.interviews.push.apply(this.interviews, data);
+    }
+    else if(type == 'podcasts') {
+      this.podcasts.push.apply(this.podcasts, data);
+    }
+    else if(type == 'artists') {
+      this.artists.push.apply(this.artists, data);
+    }
+    else if(type == 'concerts') {
+      this.concerts.push.apply(this.concerts, data);
+    }
+    else if(type == 'starred') {
+      var albums = [];
+      var interviews = [];
+      var podcasts = [];
+      var artists = [];
+      var concerts = [];
+      data.forEach(function(doc) {
+				if(doc.type  == 'album') {
+          albums.push(doc);
+        }
+        else if(doc.type  == 'interview') {
+          interviews.push(doc);
+        }
+        else if(doc.type  == 'podcast') {
+          podcasts.push(doc);
+        }
+        else if(doc.type  == 'artist') {
+          artists.push(doc);
+        }
+        else if(doc.type  == 'concert') {
+          concerts.push(doc);
+				}
+      });
+      this.albums.push.apply(this.albums, albums);
+      this.interviews.push.apply(this.interviews, interviews);
+      this.podcasts.push.apply(this.podcasts, podcasts);
+      this.artists.push.apply(this.artists, artists);
+      this.concerts.push.apply(this.concerts, concerts);
     }
   }
 

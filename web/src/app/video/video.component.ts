@@ -7,6 +7,8 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
+  @Input() type: string;
+  @Input() label: string;
   @Input() tracks = [];
   video = null;
   scroll: number = 0;

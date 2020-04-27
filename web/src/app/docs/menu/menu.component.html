@@ -6,13 +6,15 @@
       <h3 class="text-white font-weight-bold mt-1">preferiti</h3>
     </div-->
     <form class="search ml-2 mr-2">
-      <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText"  (keydown.enter)="onSearch()">
+      <input class="form-control" name="search" type="text" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="docs.searchText" (keydown.enter)="docs.onSearch()">
     </form>
     <div class="icon ml-2 mr-2">
-      <a *ngIf="component.user == null" href="/api/login">
+      <a *ngIf="docs.user == null" href="/api/login">
         <span class="spotify"></span>
       </a>
-      <img *ngIf="component.user != null" class="spotify" src="{{component.user}}">
+      <a *ngIf="docs.user != null" [routerLink]="['/starred']">
+        <img class="spotify" src="{{docs.user}}">
+      </a>
     </div>
   </div>
 </nav>

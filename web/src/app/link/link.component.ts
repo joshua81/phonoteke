@@ -7,7 +7,8 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./link.component.css']
 })
 export class LinkComponent implements OnInit {
-  @Input() name: string;
+  @Input() type: string;
+  @Input() label: string;
   @Input() links = [];
   scrollLinks: number = 0;
 
@@ -17,14 +18,14 @@ export class LinkComponent implements OnInit {
 
   next() {
     this.scrollLinks++;
-    var slider = document.querySelector('#' + this.name);
+    var slider = document.querySelector('#' + this.type);
     slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
   }
 
   previous() {
     if(this.scrollLinks > 0) {
       this.scrollLinks--;
-      var slider = document.querySelector('#' + this.name);
+      var slider = document.querySelector('#' + this.type);
       slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
     }
   }

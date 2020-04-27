@@ -1,6 +1,13 @@
 <docs-menu></docs-menu>
-<app-section type="albums" label="Album" [docs]="albums"></app-section>
-<app-section type="podcasts" label="Podcast" [docs]="podcasts"></app-section>
-<app-section type="interviews" label="Interviste" [docs]="interviews"></app-section>
-<app-section type="concerts" label="Concerti" [docs]="concerts"></app-section>
-<app-section type="artists" label="Artisti" [docs]="artists"></app-section>
+<div *ngIf="albums.length != 0 || podcasts.length != 0 || interviews.length != 0 || concerts.length != 0 || artists.length != 0" 
+    class="fill">
+    <app-section type="albums" label="Album" [docs]="albums"></app-section>
+    <app-section type="podcasts" label="Podcast" [docs]="podcasts"></app-section>
+    <app-section type="interviews" label="Interviste" [docs]="interviews"></app-section>
+    <app-section type="concerts" label="Concerti" [docs]="concerts"></app-section>
+    <app-section type="artists" label="Artisti" [docs]="artists"></app-section>
+</div>
+<div *ngIf="albums.length == 0 && podcasts.length == 0 && interviews.length == 0 && concerts.length == 0 && artists.length == 0" 
+    class="d-flex justify-content-center align-items-center fill">
+    <div class="font-weight-bold">Nessun risultato trovato</div>
+</div>

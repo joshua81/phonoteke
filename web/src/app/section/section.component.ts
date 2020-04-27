@@ -10,8 +10,6 @@ export class SectionComponent implements OnInit {
   @Input() type: string = null;
   @Input() label: string = null;
   @Input() docs = [];
-  error = null;
-  page: number = 0;
   scroll: number = 0;
 
   constructor(public component: DocsComponent) {}
@@ -20,8 +18,7 @@ export class SectionComponent implements OnInit {
   }
 
   scrollDocs() {
-    this.page++;
-    this.component.loadDocs(this.type, this.page);
+    this.component.scrollDocs(this.type);
   }
 
   next() {

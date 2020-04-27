@@ -11,11 +11,17 @@ export class DocsComponent implements OnInit {
   error = null;
   searchText = '';
   user = null;
+  isStarred: boolean = false;
   albums = [];
+  albumsPage: number = 0;
   interviews = [];
+  interviewsPage: number = 0;
   podcasts = [];
+  podcastsPage: number = 0;
   artists = [];
+  artistsPage: number = 0;
   concerts = [];
+  concertsPage: number = 0;
 
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
@@ -25,9 +31,11 @@ export class DocsComponent implements OnInit {
       window.scrollTo(0, 0);
       this.searchText = '';
       if(params.get('type') == 'starred') {
+        this.isStarred = true;
         this.loadStarred();
       }
       else {
+        this.isStarred = false;
         this.loadDocsAll();
       }
     });
@@ -43,31 +51,64 @@ export class DocsComponent implements OnInit {
   }
 
   loadDocsAll() {
-    this.loadDocs('albums', 0);
-    this.loadDocs('interviews', 0);
-    this.loadDocs('podcasts', 0);
-    this.loadDocs('artists', 0);
-    this.loadDocs('concerts', 0);
+    this.loadDocs('albums');
+    this.loadDocs('interviews');
+    this.loadDocs('podcasts');
+    this.loadDocs('artists');
+    this.loadDocs('concerts');
   }
 
-
-  loadDocs(type: string, page: number) {
-    if(page == 0) {
+  scrollDocs(type: string) {
+    if(!this.isStarred) {
+      var page: number = 0;
       if(type == 'albums') {
-        this.albums = [];
+        this.albumsPage++;
+        page = this.albumsPage;
       }
       else if(type == 'interviews') {
-        this.interviews = [];
+        this.interviewsPage++;
+        page = this.interviewsPage;
       }
       else if(type == 'podcasts') {
-        this.podcasts = [];
+        this.podcastsPage++;
+        page = this.podcastsPage;
       }
       else if(type == 'artists') {
-        this.artists = [];
+        this.artistsPage++;
+        page = this.artistsPage;
       }
       else if(type == 'concerts') {
-        this.concerts = [];
+        this.concertsPage++;
+        page = this.concertsPage;
       }
+  
+      this.http.get('/api/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
+        (data: any) => this.docsLoaded(type, data),
+        error => this.error = error);
+    }
+  }
+
+  loadDocs(type: string) {
+    var page: number = 0;
+    if(type == 'albums') {
+      this.albumsPage = 0;
+      this.albums = [];
+    }
+    else if(type == 'interviews') {
+      this.interviewsPage = 0;
+      this.interviews = [];
+    }
+    else if(type == 'podcasts') {
+      this.podcastsPage = 0;
+      this.podcasts = [];
+    }
+    else if(type == 'artists') {
+      this.artistsPage = 0;
+      this.artists = [];
+    }
+    else if(type == 'concerts') {
+      this.concertsPage = 0;
+      this.concerts = [];
     }
 
     this.http.get('/api/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(

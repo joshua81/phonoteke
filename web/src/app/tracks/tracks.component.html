@@ -1,13 +1,18 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 mt-2 p-1">
     <div *ngFor="let track of tracks" class="mb-2">
         <div class="d-flex flex-row align-items-center m-0">
-            <div class="cover" (click)="loadTrack(track)">
-                <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}"/>
-                <span *ngIf="track.spotify" class="play"></span>
+            <div class="cover">
+                <a *ngIf="track.spotify" href="{{'https://open.spotify.com/track/' + track.spotify}}" target="_blank">
+                    <img class="cover" src="{{track.coverM}}"/>
+                </a>
+                <!--span *ngIf="track.spotify" class="play"></span-->
                 <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
             </div>
             <div class="ml-2 mr-auto">
-                <div class="text-truncate-1" [innerHTML]="track.title"></div>
+                <div *ngIf="track.spotify == null" [innerHTML]="track.title"></div>
+                <div *ngIf="track.spotify" class="text-truncate-1">
+                    <a [innerHTML]="track.title" href="{{'https://open.spotify.com/track/' + track.spotify}}" target="_blank"></a>
+                </div>
                 <div *ngIf="track.spotify" class="text-truncate-1">
                     <a class="font-weight-bold" [innerHTML]="track.album" href="{{'https://open.spotify.com/album/' + track.spalbumid}}" target="_blank"></a>
                 </div>
@@ -19,13 +24,5 @@
                 <span class="songkick"></span>
             </div>
         </div>
-    </div>
-</div>
-
-<div *ngIf="song != null" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
-    <iframe [src]='spotifyURL()' width="350" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
-    </iframe>
-    <div class="close" (click)="close($event)">
-        <span class="close"></span>
     </div>
 </div>

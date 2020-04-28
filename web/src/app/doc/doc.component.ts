@@ -65,7 +65,9 @@ export class DocComponent implements OnInit {
   }
 
   spotifyURL() {
-    return this.doc.spalbumid != null ? 
+    return this.doc.type == 'podcast' ?
+    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.spotify) :
+    this.doc.spalbumid != null ?
     this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify) :
     this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/artist/' + this.spotify);
   }
@@ -80,6 +82,10 @@ export class DocComponent implements OnInit {
       this.service.audio.load();
       this.service.audio.play();
     }
+  }
+
+  loadTrack(track: any) {
+    this.spotify = track.spotify;
   }
 
   close(event: Event){

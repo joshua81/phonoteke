@@ -8,19 +8,21 @@
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll pt-2">
     <div *ngFor="let track of tracks" class="pr-2">
-      <div class="cover" (click)="loadVideo(track)">
-        <img *ngIf="track.youtube" class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
-        <span *ngIf="track.youtube" class="youtube"></span>
+      <div *ngIf="track.youtube" class="cover">
+        <a href="{{'https://www.youtube.com/watch?v=' + track.youtube}}" target="_blank">
+          <img class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
+          <span class="youtube"></span>
+        </a>
       </div>
     </div>
   </div>
 </div>
 
 <!-- player-->
-<div *ngIf="video" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
+<!--div *ngIf="video" class="d-flex flex-row fixed-bottom" [ngStyle]="{'width':'380px'}">
   <iframe [src]='youtubeURL()' type="text/html" width="350" height="200" frameborder="0">
   </iframe>
   <div class="close" (click)="close($event)">
     <span class="close"></span>
   </div>
-</div>
+</div-->

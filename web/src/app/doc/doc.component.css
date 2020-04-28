@@ -98,7 +98,7 @@ img.cover {
 }
 
 .player {
-  width: 350px;
+  width: 100%;
   height: 80px;
   background: #193541;
 }

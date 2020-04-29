@@ -116,4 +116,28 @@ export class DocComponent implements OnInit {
       this.service.audio.currentTime -= 60.0;
     }
   }
+
+  isDesktop() {
+    var hasTouchScreen = false;
+    if (window.navigator.maxTouchPoints > 0) { 
+      hasTouchScreen = true;
+    } 
+    else if (window.navigator.msMaxTouchPoints > 0) {
+      hasTouchScreen = true;
+    } 
+    else {
+      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+      if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouchScreen = !!mQ.matches;
+      }
+      else {
+        // Only as a last resort, fall back to user agent sniffing
+        var ua: string = window.navigator.userAgent;
+        hasTouchScreen = (
+          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
+          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
+      }
+    }
+    return !hasTouchScreen;
+  }
 }

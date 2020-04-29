@@ -41,15 +41,6 @@ export class DocsComponent implements OnInit {
     });
   }
 
-  onSearch() {
-    this.loadDocsAll();
-  }
-
-  resetSearch() {
-    this.searchText = '';
-    this.loadDocsAll();
-  }
-
   loadDocsAll() {
     this.loadDocs('albums');
     this.loadDocs('interviews');
@@ -187,5 +178,29 @@ export class DocsComponent implements OnInit {
     if(data) {
       this.user = data.images[0].url;
     }
+  }
+
+  isDesktop() {
+    var hasTouchScreen = false;
+    if (window.navigator.maxTouchPoints > 0) { 
+      hasTouchScreen = true;
+    } 
+    else if (window.navigator.msMaxTouchPoints > 0) {
+      hasTouchScreen = true;
+    } 
+    else {
+      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+      if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouchScreen = !!mQ.matches;
+      }
+      else {
+        // Only as a last resort, fall back to user agent sniffing
+        var ua = window.navigator.userAgent;
+        hasTouchScreen = (
+          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
+          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
+      }
+    }
+    return !hasTouchScreen;
   }
 }

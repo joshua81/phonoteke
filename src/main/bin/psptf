@@ -1,3 +1,4 @@
 pcompile
 cd $HOME/workspace/phonoteke/target
 java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.SpotifyLoader
+java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.SpotifyPlaylistLoader

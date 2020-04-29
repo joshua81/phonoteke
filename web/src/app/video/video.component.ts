@@ -1,5 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DocComponent } from '../doc/doc.component';
 
 @Component({
   selector: 'app-video',
@@ -13,7 +14,7 @@ export class VideoComponent implements OnInit {
   video = null;
   scroll: number = 0;
 
-  constructor(public sanitizer: DomSanitizer) {}
+  constructor(public component: DocComponent, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {}
 
@@ -41,10 +42,5 @@ export class VideoComponent implements OnInit {
       var slider = document.querySelector('#videos');
       slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scroll), 0);
     }
-  }
-
-  showScroll() {
-    // s: 540px, m: 720px, l: 960px, xl: 1140px
-    return window.innerWidth >= 960;
   }
 }

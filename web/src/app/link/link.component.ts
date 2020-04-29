@@ -1,5 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DocComponent } from '../doc/doc.component';
 
 @Component({
   selector: 'app-link',
@@ -12,7 +13,7 @@ export class LinkComponent implements OnInit {
   @Input() links = [];
   scrollLinks: number = 0;
 
-  constructor(public sanitizer: DomSanitizer) {}
+  constructor(public component: DocComponent, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {}
 
@@ -28,10 +29,5 @@ export class LinkComponent implements OnInit {
       var slider = document.querySelector('#' + this.type);
       slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
     }
-  }
-
-  showScroll() {
-    // s: 540px, m: 720px, l: 960px, xl: 1140px
-    return window.innerWidth >= 960;
   }
 }

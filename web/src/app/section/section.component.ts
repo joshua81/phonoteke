@@ -34,9 +34,4 @@ export class SectionComponent implements OnInit {
       slider.scrollTo((206 * Math.floor(slider.clientWidth / 206) * this.scroll), 0);
     }
   }
-
-  showScroll() {
-    // s: 540px, m: 720px, l: 960px, xl: 1140px
-    return window.innerWidth >= 960;
-  }
 }

@@ -36,12 +36,12 @@ public class SpotifyLoader extends PhonotekeLoader
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
-			.setClientId("a6c3686d32cb48d4854d88915d3925be")
-			.setClientSecret("46004c8b1a2b4c778cb9761ace300b6c")
-			.setRedirectUri(SpotifyHttpManager.makeUri("https://humanbeats.appspot.com/")).build();
+			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
+			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
+			.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 	private static final SpotifyApi PLAYLIST_API = new SpotifyApi.Builder().setAccessToken(System.getenv("SPOTIFY_TOKEN")).build();
-	private static final String SPOTIFY_USER = "andrea.ricci81";
+	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
 
 	private static ClientCredentials credentials;
 

@@ -68,8 +68,8 @@ public abstract class PhonotekeLoader extends WebCrawler
 	{
 		try
 		{
-			MongoClientURI uri = new MongoClientURI("mongodb://mbeats:PwlVOgNqv36lvVXb@hbeats-shard-00-00-31tc8.gcp.mongodb.net:27017,hbeats-shard-00-01-31tc8.gcp.mongodb.net:27017,hbeats-shard-00-02-31tc8.gcp.mongodb.net:27017/test?ssl=true&replicaSet=HBeats-shard-0&authSource=admin&retryWrites=true&w=majority");
-			MongoDatabase db = new MongoClient(uri).getDatabase("mbeats");
+			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
+			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
 		} 
 		catch (Throwable t) 

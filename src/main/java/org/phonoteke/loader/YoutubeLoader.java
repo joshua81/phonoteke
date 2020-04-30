@@ -25,7 +25,6 @@ public class YoutubeLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
-	private static final String API_KEY = "AIzaSyAYqrw65aNPioXzxuzlW4qW9j3GiKkqduo";
 	private YouTube youtube = null;
 
 
@@ -91,7 +90,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		YouTube.Search.List search = youtube.search().list("id,snippet");
 
 		// Set your developer key
-		search.setKey(API_KEY);
+		search.setKey(System.getenv("YOUTUBE_KEY"));
 		search.setQ(track);
 
 		// Restrict the search results to only include videos. See:

@@ -50,7 +50,7 @@
       <!-- source + events -->
       <div class="d-flex flex-row align-items-center mx-auto">
         <a href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"></a>
-        <div *ngIf="doc.artistid" class="icon ml-2" (click)="service.loadEvents(doc.artistid)">
+        <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
           <span class="songkick"></span>
         </div>
       </div>
@@ -77,23 +77,25 @@
 </div-->
 
 <!-- Podcast player-->
-<div *ngIf="service.audio" class="player d-flex flex-row fixed-bottom w-100">
+<div *ngIf="audio" class="player d-flex flex-row fixed-bottom w-100">
   <img *ngIf="doc.coverM == null" class="cover-player" src="{{doc.cover}}"/>
   <img *ngIf="doc.coverM != null" class="cover-player" src="{{doc.coverM}}"/>
   <div class="ml-2 w-100">
     <div class="text-truncate-1 text-white font-weight-bold" [innerHTML]="doc.title"></div>
     <div class="text-truncate-1 text-white mb-2" [innerHTML]="doc.artist"></div>
-    <div class="d-flex flex-row justify-content-center w-100">
+    <div class="d-flex flex-row justify-content-center align-items-center w-100">
+      <div class="player-time text-white text-left mr-2" [innerHTML]="audioCurrentTime"></div>
       <div (click)="backward($event)">
         <span class="player-backward"></span>
       </div>
       <div class="ml-2 mr-2" (click)="playPause($event)">
-        <span *ngIf="service.audio.paused" class="player-play"></span>
-        <span *ngIf="!service.audio.paused" class="player-pause"></span>
+        <span *ngIf="audio.paused" class="player-play"></span>
+        <span *ngIf="!audio.paused" class="player-pause"></span>
       </div>
       <div (click)="forward($event)">
         <span class="player-forward"></span>
       </div>
+      <div class="player-time text-white text-right ml-2" [innerHTML]="audioDuration"></div>
     </div>
   </div>
   <div class="close" (click)="close($event)">
@@ -102,4 +104,4 @@
 </div>
 
 <!-- Events -->
-<app-events *ngIf="service.showEvents == true" [events]="service.events"></app-events>
+<app-events [artist]="songkick"></app-events>

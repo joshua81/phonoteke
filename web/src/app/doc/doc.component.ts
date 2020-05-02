@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {DomSanitizer} from '@angular/platform-browser';
-import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-doc',
@@ -12,18 +11,22 @@ import { AppService } from '../app.service';
 export class DocComponent implements OnInit {
   error = null;
   type = null;
-  id = null;
+  id: string = null;
   doc = null;
   links = [];
   otherLinks = [];
-  spotify = null;
+  spotify: string = null;
+  songkick: string = null;
+  audio = null;
+  audioCurrentTime: string = null;
+  audioDuration: string = null;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, public service: AppService, public sanitizer: DomSanitizer) {}
+
+  constructor(private http: HttpClient, private route: ActivatedRoute, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
-      this.service.resetEvents();
       this.type = params.get('type');
       this.id = params.get('id');
       this.loadDoc();
@@ -41,9 +44,12 @@ export class DocComponent implements OnInit {
     this.links = [];
     this.otherLinks = [];
     this.spotify = null;
-    if(this.service.audio){
-      this.service.audio.pause();
-      this.service.audio = null;
+    this.songkick = null;
+    if(this.audio){
+      this.audio.pause();
+      this.audio = null;
+      this.audioCurrentTime = null;
+      this.audioDuration = null;
     }
     this.loadLinks();
   }
@@ -76,11 +82,15 @@ export class DocComponent implements OnInit {
     if(this.doc.spartistid || this.doc.spalbumid) {
       this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
     }
-    if(this.doc.audio != null && this.service.audio == null) {
-      this.service.audio = new Audio();
-      this.service.audio.src = this.doc.audio;
-      this.service.audio.load();
-      this.service.audio.play();
+    if(this.doc.audio != null && this.audio == null) {
+      this.audio = new Audio();
+      this.audio.src = this.doc.audio;
+      this.audio.ontimeupdate = () => {
+        this.audioDuration = this.formatTime(this.audio.duration);
+        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
+      }
+      this.audio.load();
+      this.audio.play();
     }
   }
 
@@ -90,30 +100,32 @@ export class DocComponent implements OnInit {
 
   close(event: Event){
     this.spotify = null;
-    if(this.service.audio) {
-      this.service.audio.pause();
-      this.service.audio = null;
+    if(this.audio) {
+      this.audio.pause();
+      this.audio = null;
+      this.audioCurrentTime = null;
+      this.audioDuration = null;
     }
   }
 
   playPause(event: Event){
-    if(this.service.audio.paused){
-      this.service.audio.play();
+    if(this.audio.paused){
+      this.audio.play();
     }
     else{
-      this.service.audio.pause();
+      this.audio.pause();
     }
   }
 
   forward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime += 60.0;
+    if(!this.audio.paused){
+      this.audio.currentTime += 60.0;
     }
   }
 
   backward(event: Event){
-    if(!this.service.audio.paused){
-      this.service.audio.currentTime -= 60.0;
+    if(!this.audio.paused){
+      this.audio.currentTime -= 60.0;
     }
   }
 
@@ -139,5 +151,19 @@ export class DocComponent implements OnInit {
       }
     }
     return !hasTouchScreen;
+  }
+
+  loadEvents(artistid: string) {
+    this.songkick = artistid;
+  }
+
+  formatTime(seconds: number) {
+    if(!isNaN(seconds)) {
+      var minutes: number = Math.floor(seconds / 60);
+      var mins = (minutes >= 10) ? minutes : "0" + minutes;
+      seconds = Math.floor(seconds % 60);
+      var secs = (seconds >= 10) ? seconds : "0" + seconds;
+      return mins + ":" + secs;
+    }
   }
 }

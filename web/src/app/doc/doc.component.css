@@ -152,3 +152,7 @@ img.cover-player {
   background: #FFFFFF;
   cursor: pointer;
 }
+
+.player-time {
+  width: 50px;
+}

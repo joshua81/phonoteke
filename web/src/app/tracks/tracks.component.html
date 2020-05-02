@@ -20,7 +20,7 @@
                     <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
                 </div>
             </div>
-            <div *ngIf="track.artistid" class="icon ml-2" (click)="service.loadEvents(track.artistid)">
+            <div *ngIf="track.artistid" class="icon ml-2" (click)="component.loadEvents(track.artistid)">
                 <span class="songkick"></span>
             </div>
         </div>

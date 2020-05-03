@@ -2,5 +2,6 @@ cd $HOME/workspace/phonoteke/web
 ng build --prod=false
 rm -rf $HOME/workspace/phonoteke/node/web
 cp -r dist/web $HOME/workspace/phonoteke/node/
-cd $HOME/workspace/phonoteke/node
+cd $HOME/workspace/phonoteke/node/
+mv web/index.html template/index.ntl
 node app.js

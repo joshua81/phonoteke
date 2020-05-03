@@ -3,6 +3,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+var fs = require('fs');
 const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 8080;
@@ -22,6 +23,21 @@ db.connect(err => {
   console.log("Successfully Connected to MongoDB");
 });
 
+app.engine('ntl', function (filePath, options, callback) {
+	fs.readFile(filePath, function (err, content) {
+		if (err) return callback(err);
+		var rendered = content.toString()
+			.replace('#title#', options.title)
+			.replace('#title#', options.title)
+			.replace('#type#', options.type)
+			.replace('#url#', options.url)
+			.replace('#cover#', options.cover)
+			.replace('#description#', options.description);
+		return callback(null, rendered);
+	});
+})
+app.set('views', './template')
+app.set('view engine', 'ntl')
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
@@ -161,9 +177,31 @@ app.get('/api/user/starred', async(req, res)=>{
 	res.send(starred);
 });
 
+app.get('/:type/:id', async(req,res)=>{
+	var docs = await findDoc(req.params.id);
+	if(docs && docs[0])
+	{
+		res.render('index', { 
+			title: docs[0].artist + ' - ' + docs[0].title,
+			type: 'music:' + docs[0].type,
+			url: 'https://humanbeats.appspot.com/' + req.params.type + '/' + req.params.id,
+			cover: docs[0].coverM == null ? docs[0].cover : docs[0].coverM,
+			description: docs[0].description });
+	}
+	else
+	{
+		res.render('index', { 
+			title: 'Human Beats',
+			type: '',
+			url: 'https://humanbeats.appspot.com/',
+			cover: 'https://humanbeats.appspot.com/images/logo.png',
+			description: 'Human Beats' });
+	}
+})
+
 app.get('/*', (req,res)=>{
-	res.sendFile(__dirname + '/web/index.html');
-});
+	res.render('index', { title: 'Human Beats' });
+})
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

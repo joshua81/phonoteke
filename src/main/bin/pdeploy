@@ -3,4 +3,5 @@ ng build --prod=true
 rm -rf $HOME/workspace/phonoteke/node/web
 cp -r dist/web $HOME/workspace/phonoteke/node/
 cd $HOME/workspace/phonoteke/node/
+mv web/index.html template/index.ntl
 gcloud app deploy

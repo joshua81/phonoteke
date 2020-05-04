@@ -9,7 +9,7 @@
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll pt-2">
     <div *ngFor="let link of links" class="pr-2">
       <div class="cover card">
-        <a class="cover" [routerLink]="['/' + link.type + 's/' + link.id]">
+        <a class="cover" [routerLink]="['/docs/' + link.id]">
           <img *ngIf="link.coverM == null" class="cover card-img-top" src="{{link.cover}}"/>
           <img *ngIf="link.coverM != null" class="cover card-img-top" src="{{link.coverM}}"/>
         </a>

@@ -10,7 +10,7 @@
     [horizontal]="true" [scrollWindow]="false" (scrolled)="scrollDocs()">
       <div *ngFor="let doc of docs" class="pr-2">
         <div class="cover card">
-          <a class="cover" [routerLink]="['/' + doc.type + 's/' + doc.id]">
+          <a class="cover" [routerLink]="['/docs/' + doc.id]">
             <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
             <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
           </a>

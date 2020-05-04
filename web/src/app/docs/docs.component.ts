@@ -73,7 +73,7 @@ export class DocsComponent implements OnInit {
         page = this.concertsPage;
       }
   
-      this.http.get('/api/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
+      this.http.get('/api/docs/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(type, data),
         error => this.error = error);
     }
@@ -102,7 +102,7 @@ export class DocsComponent implements OnInit {
       this.concerts = [];
     }
 
-    this.http.get('/api/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
+    this.http.get('/api/docs/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(
       (data: any) => this.docsLoaded(type, data),
       error => this.error = error);
   }
@@ -114,7 +114,7 @@ export class DocsComponent implements OnInit {
     this.artists = [];
     this.concerts = [];
 
-    this.http.get('/api/user/starred').subscribe(
+    this.http.get('/api/docs/starred').subscribe(
       (data: any) => this.docsLoaded('starred', data),
       error => this.error = error);
   }

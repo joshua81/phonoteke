@@ -8,7 +8,7 @@
       <a *ngIf="docs.user == null" href="/api/login">
         <span class="spotify"></span>
       </a>
-      <a *ngIf="docs.user != null" [routerLink]="['/docs/starred']">
+      <a *ngIf="docs.user != null" [routerLink]="['/starred']">
         <img class="spotify" src="{{docs.user}}">
       </a>
     </div>

@@ -31,9 +31,11 @@ export class EventsComponent {
     }
     
     loadEvents() {
-        this.http.get('/api/events/' + this.artist).subscribe(
-            (data: any) => this.setEvents(data),
-            error => this.error = error);
+        if(this.artist != null) {
+            this.http.get('/api/events/' + this.artist).subscribe(
+                (data: any) => this.setEvents(data),
+                error => this.error = error);
+        }
     }
     
     setEvents(events: any) {

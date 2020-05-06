@@ -16,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().resetTracks();
+		new PatchLoader().replaceSpecialChars();
 	}
 
 	public PatchLoader()
@@ -51,22 +51,27 @@ public class PatchLoader extends PhonotekeLoader
 
 	private void replaceSpecialChars()
 	{
-		// TODO: rimuovere anche &gt;&lt;
 		LOGGER.info("Replacing special chars...");
-		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&amp;.*"), Filters.regex("artist", ".*&amp;.*"))).
+		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).
 				noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
 			String title = page.getString("title");
-			page.append("title", title.replaceAll("&amp;", "&"));
+			title = title.replaceAll("&amp;", "&");
+			title = title.replaceAll("&gt;", ">");
+			title = title.replaceAll("&lt;", "<");
+			page.append("title", title);
 			String artist = page.getString("artist");
-			page.append("artist", artist.replaceAll("&amp;", "&"));
+			artist = artist.replaceAll("&amp;", "&");
+			artist = artist.replaceAll("&gt;", ">");
+			artist = artist.replaceAll("&lt;", "<");
+			page.append("artist", artist);
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
-			//			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + ": " + title + " - " + artist);
 		}
 	}
 

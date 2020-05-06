@@ -1,6 +1,6 @@
 <div *ngIf="docs && docs.length != 0" class="container pl-1 pr-1 mt-3">
   <div class="d-flex flex-row align-items-center pl-0 pr-0">
-    <h3 class="text-uppercase mt-0 mb-0 mr-auto">{{label}}</h3>
+    <h1 class="text-uppercase mt-0 mb-0 mr-auto">{{label}}</h1>
     <div *ngIf="component.isDesktop()"
       class="backward" (click)="previous()"><span class="previous"></span></div>
     <div *ngIf="component.isDesktop()"
@@ -15,15 +15,15 @@
             <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
           </a>
           <div *ngIf="doc.description != null" class="card-body p-1">
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.artist"></div>
-            <div class="text-truncate-4 pt-2" [innerHTML]="doc.description"></div>
+            <h2 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.title"></h2>
+            <h3 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+            <h2 *ngIf="doc.type == 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h2>
+            <p class="text-truncate-4 pt-2" [innerHTML]="doc.description"></p>
           </div>
           <div *ngIf="doc.description == null" class="card-body-sm p-1">
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.title"></div>
-            <div *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></div>
-            <div *ngIf="doc.type == 'artist'" class="text-truncate-2 font-weight-bold" [innerHTML]="doc.artist"></div>
+            <h2 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.title"></h2>
+            <h3 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+            <h2 *ngIf="doc.type == 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h2>
           </div>
         </div>
       </div>

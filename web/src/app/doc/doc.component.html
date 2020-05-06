@@ -20,7 +20,7 @@
         <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
         <span *ngIf="doc.audio" class="play"></span>
       </div>
-      <h3 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h3>
+      <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
       <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
         <span class="star"></span>
       </div>
@@ -29,23 +29,26 @@
     <!-- album -->
     <div class="d-flex flex-column bg-white mt-3">
       <div class="mx-auto">
-        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" class="font-weight-bold" [innerHTML]="doc.title" 
-          href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank"></a>
-        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" class="font-weight-bold" [innerHTML]="doc.title" 
-          href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}" target="_blank"></a>
-        <div *ngIf="!doc.spalbumid" class="font-weight-bold" [innerHTML]="doc.title"></div>
+        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" class="font-weight-bold"
+          [innerHTML]="doc.title" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+        </a>
+        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" class="font-weight-bold"
+          [innerHTML]="doc.title" href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}" target="_blank">
+        </a>
+        <h2 *ngIf="!doc.spalbumid" [innerHTML]="doc.title"></h2>
       </div>
 
       <!-- artist -->
       <div class="mx-auto">
-        <a *ngIf="doc.spartistid" [innerHTML]="doc.artist" 
-          href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank"></a>
-        <div *ngIf="!doc.spartistid" [innerHTML]="doc.artist"></div>
+        <a *ngIf="doc.spartistid"
+          [innerHTML]="doc.artist" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+        </a>
+        <h3 *ngIf="!doc.spartistid" [innerHTML]="doc.artist"></h3>
       </div>
       
       <!-- label + authors -->
-      <div *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</div>
-      <div *ngIf="doc.authors" class="text-muted mx-auto mb-2">di {{doc.authors}}</div>
+      <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
+      <h3 *ngIf="doc.authors" class="text-muted mx-auto mb-2">di {{doc.authors}}</h3>
 
       <!-- source + events -->
       <div class="d-flex flex-row align-items-center mx-auto">
@@ -56,7 +59,7 @@
       </div>
 
       <!-- content -->
-      <div *ngIf="doc.review" class="text-justify mt-2 p-2" [innerHTML]="doc.review"></div>
+      <p *ngIf="doc.review" class="text-justify mt-2 p-2" [innerHTML]="doc.review"></p>
       <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
     </div>
 

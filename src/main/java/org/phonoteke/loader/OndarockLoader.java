@@ -458,35 +458,35 @@ public class OndarockLoader extends PhonotekeLoader
 				}
 			}
 			break;
-		case podcast:
-			// youtube
-			elements = doc.select("iframe");
-			for(int i = 0; i < elements.size(); i++)
-			{
-				String src = elements.get(i).attr("src");
-				if(src != null && src.contains("youtube.com")) 
-				{
-					String youtube = null;
-					if(src.startsWith("https://www.youtube.com/embed/"))
-					{
-						int ix = "https://www.youtube.com/embed/".length();
-						youtube = src.substring(ix);
-						tracks.add(newTrack(null, youtube));
-						LOGGER.debug("tracks: youtube: " + youtube);
-					}
-					else if(src.startsWith("//www.youtube.com/embed/"))
-					{
-						int ix = "//www.youtube.com/embed/".length();
-						youtube = src.substring(ix);
-						tracks.add(newTrack(null, youtube));
-						LOGGER.debug("tracks: youtube: " + youtube);
-					}
-				}
-			}
-			// tracklist
-			Element content = doc.select("div[id=boxdiscografia_med]").first();
-			tracks.addAll(parseTracks(content));
-			break;
+//		case podcast:
+//			// youtube
+//			elements = doc.select("iframe");
+//			for(int i = 0; i < elements.size(); i++)
+//			{
+//				String src = elements.get(i).attr("src");
+//				if(src != null && src.contains("youtube.com")) 
+//				{
+//					String youtube = null;
+//					if(src.startsWith("https://www.youtube.com/embed/"))
+//					{
+//						int ix = "https://www.youtube.com/embed/".length();
+//						youtube = src.substring(ix);
+//						tracks.add(newTrack(null, youtube));
+//						LOGGER.debug("tracks: youtube: " + youtube);
+//					}
+//					else if(src.startsWith("//www.youtube.com/embed/"))
+//					{
+//						int ix = "//www.youtube.com/embed/".length();
+//						youtube = src.substring(ix);
+//						tracks.add(newTrack(null, youtube));
+//						LOGGER.debug("tracks: youtube: " + youtube);
+//					}
+//				}
+//			}
+//			// tracklist
+//			Element content = doc.select("div[id=boxdiscografia_med]").first();
+//			tracks.addAll(parseTracks(content));
+//			break;
 		default:
 			break;
 		}

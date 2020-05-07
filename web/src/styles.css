@@ -140,6 +140,13 @@ img.battiti {
     height: 30px;
 }
 
+img.seigradi {
+    border-radius: 50%;
+    content: url("/images/seigradi.png");
+    width: 30px;
+    height: 30px;
+}
+
 img.logo {
     border-radius: 50%;
     content: url("/images/logo.png");

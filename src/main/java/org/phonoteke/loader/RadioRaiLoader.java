@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
@@ -25,7 +27,8 @@ public class RadioRaiLoader extends PhonotekeLoader
 	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
 	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
 	private static final String BATTITI = "https://www.raiplayradio.it/programmi/battiti/";
-	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, URL_AUDIO);
+	private static final String SEIGRADI = "https://www.raiplayradio.it/programmi/seigradi/";
+	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, URL_AUDIO);
 
 	private static String artist;
 	private static String source;
@@ -33,6 +36,7 @@ public class RadioRaiLoader extends PhonotekeLoader
 
 	public static void main(String[] args) 
 	{
+		//		new RadioRaiLoader("Sei Gradi", "seigradi").crawl("https://www.raiplayradio.it/audio/2020/04/SEI-GRADI-07052020---Da-Ce204129sar-Franck-a-Barbra-Streisand-3076c42e-9a0e-440b-bb11-d7fc21eaa510.html");
 		if(args.length == 1)
 		{
 			if("babylon".equals(args[0]))
@@ -51,10 +55,10 @@ public class RadioRaiLoader extends PhonotekeLoader
 			{
 				new RadioRaiLoader("Battiti", "battiti").crawl(BATTITI);
 			}
-		}
-		else
-		{
-			new RadioRaiLoader("Battiti", "battiti").crawl("https://www.raiplayradio.it/audio/2020/04/BATTITI---Chants-aeeb5aaa-db91-4325-b528-39edfa765b6d.html");
+			else if("seigradi".equals(args[0]))
+			{
+				new RadioRaiLoader("Sei Gradi", "seigradi").crawl(SEIGRADI);
+			}
 		}
 	}
 
@@ -154,12 +158,15 @@ public class RadioRaiLoader extends PhonotekeLoader
 	@Override
 	protected String getDescription(String url, Document doc) 
 	{
+		if("seigradi".equals(source))
+		{
+			return getTitle(url, doc);
+		}
 		String desc = null;
 		Element content = doc.select("div.aodDescription").first();
 		if(content != null)
 		{
 			desc = content.text();
-
 		}
 		LOGGER.debug("description: " + desc);
 		return desc;
@@ -182,8 +189,51 @@ public class RadioRaiLoader extends PhonotekeLoader
 	@Override
 	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
+		List<org.bson.Document> tracks = Lists.newArrayList();
+
 		Element content = doc.select("div.aodHtmlDescription").first();
-		return parseTracks(content);
+		if(content != null)
+		{
+			content.select("br").after(TRACKS_NEW_LINE);
+			content.select("p").after(TRACKS_NEW_LINE);
+			content.select("li").after(TRACKS_NEW_LINE);
+			content.select("h1").after(TRACKS_NEW_LINE);
+			content.select("h2").after(TRACKS_NEW_LINE);
+			content.select("h3").after(TRACKS_NEW_LINE);
+			content.select("div").after(TRACKS_NEW_LINE);
+
+			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			if("seigradi".equals(source))
+			{
+				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
+				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			}
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String title = chunks[i].trim();
+				if(StringUtils.isNotBlank(title))
+				{
+					for(String p : TRACKS_TRIM)
+					{
+						if(title.toUpperCase().startsWith(p))
+						{
+							title = title.substring(p.length()).trim();
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(title) && isTrack(title))
+				{
+					String youtube = null;
+					tracks.add(newTrack(title, youtube));
+					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
+				}
+			}
+		}
+		if(CollectionUtils.isEmpty(tracks))
+		{
+			throw new IllegalArgumentException("Empty tracks!");
+		}
+		return tracks;
 	}
 
 	@Override
@@ -237,6 +287,7 @@ public class RadioRaiLoader extends PhonotekeLoader
 		return RadioRaiLoader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : 
 			RadioRaiLoader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
 				RadioRaiLoader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : 
-					RadioRaiLoader.source.equals("battiti") ? Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore") : null;
+					RadioRaiLoader.source.equals("battiti") ? Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore") : 
+						RadioRaiLoader.source.equals("seigradi") ? Lists.newArrayList("Luca Damiani") : null;
 	}
 }

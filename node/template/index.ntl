@@ -14,7 +14,7 @@
     <base href="/">
     <link type="image/x-icon" href="favicon.ico" rel="icon">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.845c09c880a6b1510f55.css"></head>
+  <link rel="stylesheet" href="styles.21104aa477d6a7b99e0d.css"></head>
   <body>
     <app-root>
       <div class="d-flex justify-content-center">

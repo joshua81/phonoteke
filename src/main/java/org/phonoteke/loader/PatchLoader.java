@@ -16,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().replaceSpecialChars();
+		new PatchLoader().updateDesc();
 	}
 
 	public PatchLoader()
@@ -52,8 +52,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void replaceSpecialChars()
 	{
 		LOGGER.info("Replacing special chars...");
-		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).
-				noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -78,8 +77,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void clearPodcasts()
 	{
 		LOGGER.info("Clearing podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "inthemix"))).
-				noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "seigradi"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -92,6 +90,21 @@ public class PatchLoader extends PhonotekeLoader
 					track.append("spotify", null);
 				}
 			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
+		}
+	}
+
+	private void updateDesc()
+	{
+		LOGGER.info("Updating description...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "seigradi"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			String title = page.getString("title");
+			page.append("description", title);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("Document " + id + " updated");
 		}

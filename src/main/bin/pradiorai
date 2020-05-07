@@ -1,5 +1,6 @@
 pcompile
 cd $HOME/workspace/phonoteke/target
+java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader seigradi
 java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader battiti
 java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader musicalbox
 #java -cp phonoteke-0.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader inthemix

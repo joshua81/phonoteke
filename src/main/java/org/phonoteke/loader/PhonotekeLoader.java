@@ -293,7 +293,13 @@ public abstract class PhonotekeLoader extends WebCrawler
 			content.select("h2").after(TRACKS_NEW_LINE);
 			content.select("h3").after(TRACKS_NEW_LINE);
 			content.select("div").after(TRACKS_NEW_LINE);
+
 			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			if(this instanceof RadioRaiLoader && "seigradi".equals(RadioRaiLoader.source))
+			{
+				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
+				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			}
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();

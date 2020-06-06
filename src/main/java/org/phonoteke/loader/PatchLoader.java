@@ -16,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().deleteBertallot();
+		new PatchLoader().updateBertallot();
 	}
 
 	public PatchLoader()
@@ -95,16 +95,17 @@ public class PatchLoader extends PhonotekeLoader
 		}
 	}
 
-	private void deleteBertallot()
+	private void updateBertallot()
 	{
-		LOGGER.info("Deleting Bertallot...");
+		LOGGER.info("Updating Bertallot...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "casabertallot"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info("Document " + id + " deleted");
+			page.append("artist", "Casa Bertallot");
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
 		}
 	}
 }

@@ -20,14 +20,16 @@ import com.mongodb.client.model.Filters;
 
 public class SpeakerLoader extends PhonotekeLoader
 {
-	private static final String URL = "https://api.spreaker.com/show/896299/episodes";
+	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
+	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";
 
 	public static void main(String[] args) 
 	{
-		new SpeakerLoader().crawl(URL);
+		new SpeakerLoader().crawl(URL1, "casabertallot", "Casa Bertallot");
+		new SpeakerLoader().crawl(URL2, "rolloverhangover", "Rollover Hangover");
 	}
 
-	protected void crawl(String baseurl)
+	protected void crawl(String baseurl, String source, String artist)
 	{
 		try
 		{
@@ -42,12 +44,10 @@ public class SpeakerLoader extends PhonotekeLoader
 				results.forEach(item -> {
 					JsonObject doc = (JsonObject)item;
 					String url = doc.get("site_url").getAsString();
-					String source = "casabertallot";
 					TYPE type = TYPE.podcast;
 
 					LOGGER.debug("Parsing page " + url);
 					String id = getId(url);
-					String artist = "Alessio Bertallot";
 					String title = doc.get("title").getAsString();
 
 					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 

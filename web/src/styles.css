@@ -154,6 +154,20 @@ img.logo {
     height: 30px;
 }
 
+img.casabertallot {
+    border-radius: 50%;
+    content: url("/images/casabertallot.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.rolloverhangover {
+    border-radius: 50%;
+    content: url("/images/rolloverhangover.png");
+    width: 30px;
+    height: 30px;
+}
+
 .close {
     display: inline-block;
     mask: url("/images/close.svg");

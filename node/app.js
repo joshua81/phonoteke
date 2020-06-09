@@ -9,6 +9,7 @@ const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 8080;
 
 var docs = null;
+var podcasts = null;
 //const uri = "mongodb://localhost:27017/";
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const client_id = 'a6c3686d32cb48d4854d88915d3925be';
@@ -20,6 +21,7 @@ const songkick_id = '1hOiIfT9pFTkyVkg';
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 db.connect(err => {
   docs = db.db("mbeats").collection("docs");
+  podcasts = db.db("mbeats").collection("podcasts");
   console.log("Successfully Connected to MongoDB");
 });
 
@@ -44,6 +46,11 @@ app.use('/js', express.static('js'));
 app.use('/html', express.static('html'));
 app.use(express.static('web'));
 app.use(cookieParser());
+
+app.get('/api/podcasts', async(req, res)=>{
+	var result = await podcasts.find().sort({"title":1}).toArray();
+	res.send(result);
+});
 
 app.get('/api/docs/albums', async(req, res)=>{
 	var result = await findDocs('album', req.query.p, req.query.q);

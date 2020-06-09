@@ -51,6 +51,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final int THRESHOLD = 90;
 
 	protected MongoCollection<org.bson.Document> docs;
+	protected MongoCollection<org.bson.Document> podcasts;
 
 	protected enum TYPE {
 		artist,
@@ -68,6 +69,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
 			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
+			podcasts = db.getCollection("podcasts");
 		} 
 		catch (Throwable t) 
 		{

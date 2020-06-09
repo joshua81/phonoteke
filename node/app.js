@@ -20,21 +20,21 @@ const songkick_id = '1hOiIfT9pFTkyVkg';
 
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 db.connect(err => {
-  docs = db.db("mbeats").collection("docs");
-  podcasts = db.db("mbeats").collection("podcasts");
-  console.log("Successfully Connected to MongoDB");
+	docs = db.db("mbeats").collection("docs");
+	podcasts = db.db("mbeats").collection("podcasts");
+	console.log("Successfully Connected to MongoDB");
 });
 
 app.engine('ntl', function (filePath, options, callback) {
 	fs.readFile(filePath, function (err, content) {
 		if (err) return callback(err);
 		var rendered = content.toString()
-			.replace('#title#', options.title)
-			.replace('#title#', options.title)
-			.replace('#type#', options.type)
-			.replace('#url#', options.url)
-			.replace('#cover#', options.cover)
-			.replace('#description#', options.description);
+		.replace('#title#', options.title)
+		.replace('#title#', options.title)
+		.replace('#type#', options.type)
+		.replace('#url#', options.url)
+		.replace('#cover#', options.cover)
+		.replace('#description#', options.description);
 		return callback(null, rendered);
 	});
 })
@@ -106,10 +106,10 @@ app.get('/api/events/:id', async(req, res)=>{
 app.get('/api/login', async(req, res)=>{
 	console.log('Login to Spotify');
 	res.redirect('https://accounts.spotify.com/authorize?' +
-	'response_type=code&' + 
-	'scope=user-read-private%20user-top-read&' + 
-    'client_id=' + client_id + '&' + 
-	'redirect_uri=' + redirect_uri);
+			'response_type=code&' + 
+			'scope=user-read-private%20user-top-read&' + 
+			'client_id=' + client_id + '&' + 
+			'redirect_uri=' + redirect_uri);
 });
 
 app.get('/api/login/spotify', async(req,res)=>{
@@ -120,18 +120,18 @@ app.get('/api/login/spotify', async(req,res)=>{
 	else if(req.query.code) {
 		console.log('Login to Spotify done: ' + req.query.code);
 		var options = {
-			url: 'https://accounts.spotify.com/api/token',
-			form: {
-				code: req.query.code,
-				redirect_uri: redirect_uri,
-				grant_type: 'authorization_code'
-			},
-			headers: {
-				'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
-			},
-			json: true
+				url: 'https://accounts.spotify.com/api/token',
+				form: {
+					code: req.query.code,
+					redirect_uri: redirect_uri,
+					grant_type: 'authorization_code'
+				},
+				headers: {
+					'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
+				},
+				json: true
 		};
-	  
+
 		request.post(options, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				var access_token = body.access_token;
@@ -157,7 +157,7 @@ app.get('/docs/:id', async(req,res)=>{
 			type: 'music:' + docs[0].type,
 			url: 'https://humanbeats.appspot.com/docs/' + req.params.id,
 			cover: docs[0].coverM == null ? docs[0].cover : docs[0].coverM,
-			description: docs[0].description });
+					description: docs[0].description });
 	}
 	else {
 		res.render('index', { 
@@ -174,7 +174,7 @@ app.get('/*', (req,res)=>{
 })
 
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+	console.log(`App listening on port ${PORT}`);
 });
 module.exports = app;
 
@@ -183,24 +183,19 @@ module.exports = app;
 async function findDocSnippet(id) {
 	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).toArray();
-	if(result && result[0])
-	{
+	if(result && result[0]) {
 		// reset 'na' values
 		const doc = result[0];
-		if(doc.artistid == 'na')
-		{
+		if(doc.artistid == 'na') {
 			doc.artistid = null;
 		}
-		if(doc.spartistid == 'na')
-		{
+		if(doc.spartistid == 'na') {
 			doc.spartistid = null;
 		}
-		if(doc.spalbumid == 'na')
-		{
+		if(doc.spalbumid == 'na') {
 			doc.spalbumid = null;
 		}
-		if(doc.tracks)
-		{
+		if(doc.tracks) {
 			doc.tracks.forEach(function(track) {
 				if(track.spotify == 'na') {
 					track.spotify = null;
@@ -219,24 +214,19 @@ async function findDocSnippet(id) {
 async function findDoc(id) {
 	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).toArray();
-	if(result && result[0])
-	{
+	if(result && result[0]) {
 		// reset 'na' values
 		const doc = result[0];
-		if(doc.artistid == 'na')
-		{
+		if(doc.artistid == 'na') {
 			doc.artistid = null;
 		}
-		if(doc.spartistid == 'na')
-		{
+		if(doc.spartistid == 'na') {
 			doc.spartistid = null;
 		}
-		if(doc.spalbumid == 'na')
-		{
+		if(doc.spalbumid == 'na') {
 			doc.spalbumid = null;
 		}
-		if(doc.tracks)
-		{
+		if(doc.tracks) {
 			doc.tracks.forEach(function(track) {
 				if(track.spotify == 'na') {
 					track.spotify = null;
@@ -254,32 +244,50 @@ async function findDoc(id) {
 
 async function findDocs(t, p, q) {
 	var result = null;
-	if(q)
-	{
+	if(q) {
 		console.log('Docs: page=' + p + ', query=' + q + ', type=' + t);
 		var page = Number(p) > 0 ? Number(p) : 0;
 		var query = q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		if(t)
-		{
-			if(t != 'podcast')
-			{
-				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
-			}
-			else
-			{
-				result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
-			}
+		if(t != 'podcast') {
+			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		}
+		else {
+			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
 		}
 	}
-	else
-	{
+	else {
 		console.log('Docs: page=' + p + ', type=' + t);
 		var page = Number(p) > 0 ? Number(p) : 0;
-		if(t)
-		{
-			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+	}
+	return result;
+}
+
+async function findPodcasts(s, p, q) {
+	var result = null;
+	if(q) {
+		console.log('Podcasts: page=' + p + ', query=' + q + ', source=' + s);
+		var page = Number(p) > 0 ? Number(p) : 0;
+		var query = q;
+		query = '.*' + query + '.*';
+		query = query.split(' ').join('.*');
+		if(s) {
+			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		}
+		else {
+			result = await docs.find({$and: [{'type': 'podcast'}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		}
+	}
+	else {
+		console.log('Podcasts: page=' + p + ', source=' + s);
+		var page = Number(p) > 0 ? Number(p) : 0;
+		if(s) {
+			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		}
+		else {
+			result = await docs.find({$and: [{'type': 'podcast'}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
 		}
 	}
 	return result;
@@ -288,12 +296,11 @@ async function findDocs(t, p, q) {
 async function findEvents(id) {
 	console.log('Events: id=' + id);
 	var result = null;
-	if(id != null && id != 'na')
-	{
+	if(id != null && id != 'na') {
 		result = await new Promise((resolve, reject) => {
 			var options = {
-				url: 'https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=' + songkick_id,
-				json: true
+					url: 'https://api.songkick.com/api/3.0/artists/mbid:' + id + '/calendar.json?apikey=' + songkick_id,
+					json: true
 			};
 			request.get(options, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -313,14 +320,12 @@ async function findLinks(id) {
 	console.log('Links: id=' + id);
 	var result = null;
 	const doc = await docs.find({'id': id}).toArray();
-	if(doc && doc[0])
-	{
+	if(doc && doc[0]) {
 		var artists = [];
 		if(typeof(doc[0].spartistid) != 'undefined' && doc[0].spartistid != null && doc[0].spartistid != 'na') {
 			artists.push(doc[0].spartistid);
 		}
-		if(doc[0].type == 'podcast')
-		{
+		if(doc[0].type == 'podcast') {
 			doc[0].tracks.forEach(function(track) {
 				if(typeof(track.spartistid) != 'undefined' && track.spartistid != null && track.spartistid != 'na') {
 					artists.push(track.spartistid);
@@ -339,13 +344,12 @@ async function findLinks(id) {
 async function findUser(access_token) {
 	console.log('User: token=' + access_token);
 	var result = null;
-	if(access_token != null)
-	{
+	if(access_token != null) {
 		result = await new Promise((resolve, reject) => {
 			var options = {
-				url: 'https://api.spotify.com/v1/me',
-				headers: { 'Authorization': 'Bearer ' + access_token },
-				json: true
+					url: 'https://api.spotify.com/v1/me',
+					headers: { 'Authorization': 'Bearer ' + access_token },
+					json: true
 			};
 			request.get(options, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -364,13 +368,12 @@ async function findUser(access_token) {
 async function findStarred(access_token) {
 	console.log('Starred: token=' + access_token);
 	var result = null;
-	if(access_token != null)
-	{
+	if(access_token != null) {
 		result = await new Promise((resolve, reject) => {
 			var options = {
-				url: 'https://api.spotify.com/v1/me/top/artists?limit=50&offset=0',
-				headers: { 'Authorization': 'Bearer ' + access_token },
-				json: true
+					url: 'https://api.spotify.com/v1/me/top/artists?limit=50&offset=0',
+					headers: { 'Authorization': 'Bearer ' + access_token },
+					json: true
 			};
 			request.get(options, function(error, response, body) {
 				if (!error && response.statusCode === 200) {
@@ -382,8 +385,7 @@ async function findStarred(access_token) {
 				}
 			});
 		});
-		if(result && result.items && result.items.length > 0)
-		{
+		if(result && result.items && result.items.length > 0) {
 			var artists = [];
 			result.items.forEach(function(artist) {
 				artists.push(artist.id);

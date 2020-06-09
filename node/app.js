@@ -52,6 +52,11 @@ app.get('/api/podcasts', async(req, res)=>{
 	res.send(result);
 });
 
+app.get('/api/podcasts/:source', async(req, res)=>{
+	var result = await podcasts.find({'source': req.params.source}).toArray();
+	res.send(result);
+});
+
 app.get('/api/docs/albums', async(req, res)=>{
 	var result = await findDocs('album', req.query.p, req.query.q);
 	res.send(result);

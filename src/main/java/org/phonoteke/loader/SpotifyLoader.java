@@ -1,5 +1,6 @@
 package org.phonoteke.loader;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.playlists.AddTracksToPlaylistRequest;
+import com.wrapper.spotify.requests.data.playlists.ChangePlaylistsDetailsRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
@@ -50,6 +52,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists();
+		//		new SpotifyLoader().renamePlaylists();
 	}
 
 	private void loadPlaylists()
@@ -62,6 +65,32 @@ public class SpotifyLoader extends PhonotekeLoader
 			String id = page.getString("id"); 
 			createPlaylist(page);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		}
+	}
+
+	private void renamePlaylists()
+	{
+		LOGGER.info("Loading Spotify Playlists...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("spalbumid");
+			if(id != null) {
+				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+				String name = page.getString("artist") + " del " + date;
+				String description = page.getString("title");
+				try
+				{
+					ChangePlaylistsDetailsRequest req = PLAYLIST_API.changePlaylistsDetails(SPOTIFY_USER, id).name(name).description(description).build();
+					String res = req.execute();
+					LOGGER.info("Playlist " + id + " renamed");
+				}
+				catch (Exception e) 
+				{
+					LOGGER.error("Error renaming playlist " + id + ": " + e.getMessage(), e);
+				}
+			}
 		}
 	}
 
@@ -82,10 +111,12 @@ public class SpotifyLoader extends PhonotekeLoader
 
 			if(CollectionUtils.isNotEmpty(uris))
 			{
-				String title = page.getString("artist") + " - " + page.getString("title");
+				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+				String title = page.getString("artist") + " del " + date;
+				String description = page.getString("title");
 				try
 				{
-					CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).public_(true).build();
+					CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 					Playlist playlist = playlistRequest.execute();
 					System.out.println("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
 					AddTracksToPlaylistRequest itemsRequest = PLAYLIST_API.addTracksToPlaylist(SPOTIFY_USER, playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();

@@ -16,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().updateBertallot();
+		new PatchLoader().resetTracks();
 	}
 
 	public PatchLoader()
@@ -27,7 +27,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		MongoCursor<Document> i = docs.find(Filters.eq("type", "podcast")).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -40,6 +40,17 @@ public class PatchLoader extends PhonotekeLoader
 					if(NA.equals(track.getString("spotify")))
 					{
 						track.append("spotify", null);
+						track.append("artistid", null);
+						track.append("youtube", null);
+						track.append("spotify", null);
+						track.append("artist", null);
+						track.append("album", null);
+						track.append("track", null);
+						track.append("spartistid", null);
+						track.append("spalbumid", null);
+						track.append("coverL", null);
+						track.append("coverM", null);
+						track.append("coverS", null);
 						track.append("artistid", null);
 					}
 				}

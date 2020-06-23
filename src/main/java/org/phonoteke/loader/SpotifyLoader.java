@@ -3,6 +3,8 @@ package org.phonoteke.loader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -343,84 +345,35 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private org.bson.Document getTrack(String title, String source) throws Exception
 	{
-		if("battiti".equals(source))
+		List<String> chunks = Lists.newArrayList();
+		for(String match : TRACKS_MATCH)
 		{
-			// artist, title, da "album" - other info
-			String[] chunks = title.split(",");
-			title = "";
-			for(int i = 0; i < chunks.length; i++)
-			{
-				String chunk = chunks[i];
-				if(i >= 2 && chunk.trim().startsWith("da "))
-				{
-					break;
+			Pattern p = Pattern.compile(match);
+			Matcher m = p.matcher(title);
+			if(m.matches()) {
+				for(int j=1; j<= m.groupCount(); j++){
+					chunks.add(m.group(j));
 				}
-				else
-				{
-					title += chunk + " - ";
-				}
+				break;
 			}
-		}
-		else if("inthemix".equals(source))
-		{
-			// artist ‘title’ other info
-			String[] chunks = title.split("‘");
-			title = "";
-			if(chunks.length >= 2)
-			{
-				title += chunks[0] + " - ";
-				title += chunks[1].split("’")[0];
-			}
-		}
-
-		// find artist and song
-		for(String s : SEPARATOR)
-		{
-			title = title.replaceAll(s, "-");
 		}
 
 		// artist - song
-		String[] chunks = title.split("-");
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String artist = "";
-			for(int j = 0; j <= i; j++)
+		if(chunks.size() >= 2) {
+			LOGGER.info(chunks.get(0) + " - " + chunks.get(1));
+			org.bson.Document track = loadTrack(chunks.get(0), chunks.get(1));
+			if(track != null)
 			{
-				artist += chunks[j] + " ";
+				return track;
 			}
-			String song = "";
-			for(int j = i+1; j < chunks.length; j++)
-			{
-				song += chunks[j] + " ";
-			}
-
-			org.bson.Document track = loadTrack(artist, song);
+			// song - artist
+			track = loadTrack(chunks.get(1), chunks.get(0));
 			if(track != null)
 			{
 				return track;
 			}
 		}
-
-		// song - artist
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String song = "";
-			for(int j = 0; j <= i; j++)
-			{
-				song += chunks[j] + " ";
-			}
-			String artist = "";
-			for(int j = i+1; j < chunks.length; j++)
-			{
-				artist += chunks[j] + " ";
-			}
-
-			org.bson.Document track = loadTrack(artist, song);
-			if(track != null)
-			{
-				return track;
-			}
-		}
+		LOGGER.info("NOT FOUND: " + title);
 		return null;
 	}
 
@@ -441,10 +394,9 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spsong = track.getName();
 				String trackid = track.getId();
 				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
-				LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (score: " + score + ")");
 				if(score >= THRESHOLD)
 				{
-					LOGGER.info(artist + " - " + song + ": " + spartist + " - " + spsong + " (" + trackid + ")");
+					LOGGER.info(trackid + ": " + artist + " - " + song);
 					Document page = new Document("spotify", trackid);
 					page.append("artist", spartist);
 					page.append("spartistid", spartistid);

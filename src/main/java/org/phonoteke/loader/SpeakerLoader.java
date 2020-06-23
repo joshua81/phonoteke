@@ -22,11 +22,17 @@ public class SpeakerLoader extends PhonotekeLoader
 {
 	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
 	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";
+	private static final String URL3 = "https://api.spreaker.com/show/2071330/episodes";
+	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
+	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
 
 	public static void main(String[] args) 
 	{
 		new SpeakerLoader().crawl(URL1, "casabertallot", "Casa Bertallot");
 		new SpeakerLoader().crawl(URL2, "rolloverhangover", "Rollover Hangover");
+		new SpeakerLoader().crawl(URL3, "blackalot", "Black A Lot");
+		new SpeakerLoader().crawl(URL4, "cassabertallot", "Cassa Bertallot");
+		new SpeakerLoader().crawl(URL5, "refreshrefresh", "Refresh Refresh");
 	}
 
 	protected void crawl(String baseurl, String source, String artist)
@@ -54,27 +60,32 @@ public class SpeakerLoader extends PhonotekeLoader
 							Filters.eq("url", url))).iterator().tryNext();
 					if(json == null)
 					{
-						json = new org.bson.Document("id", id).
-								append("url", getUrl(url)).
-								append("type", type.name()).
-								append("artist", artist).
-								append("title", title).
-								append("authors", Lists.newArrayList("Alessio Bertallot")).
-								append("cover", doc.get("image_original_url").getAsString()).
-								append("date", getDate(doc.get("published_at").getAsString())).
-								append("description", title).
-								append("genres", null).
-								append("label", null).
-								append("links", null).
-								append("review", null).
-								append("source", source).
-								append("vote", null).
-								append("year", getYear(doc.get("published_at").getAsString())).
-								append("tracks", getTracks(doc.get("description").getAsString())).
-								append("audio", doc.get("download_url").getAsString());
-						
-						docs.insertOne(json);
-						LOGGER.info(json.getString("type") + " " + url + " added");
+						try {
+							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
+									append("type", type.name()).
+									append("artist", artist).
+									append("title", title).
+									append("authors", Lists.newArrayList("Alessio Bertallot")).
+									append("cover", doc.get("image_original_url").getAsString()).
+									append("date", getDate(doc.get("published_at").getAsString())).
+									append("description", title).
+									append("genres", null).
+									append("label", null).
+									append("links", null).
+									append("review", null).
+									append("source", source).
+									append("vote", null).
+									append("year", getYear(doc.get("published_at").getAsString())).
+									append("tracks", getTracks(doc.get("description").getAsString())).
+									append("audio", doc.get("download_url").getAsString());
+
+							docs.insertOne(json);
+							LOGGER.info(json.getString("type") + " " + url + " added");
+						}
+						catch(Exception e) {
+							LOGGER.error(e.getMessage());
+						}
 					}
 				});
 			}
@@ -108,7 +119,7 @@ public class SpeakerLoader extends PhonotekeLoader
 
 	private List<org.bson.Document> getTracks(String content) {
 		List<org.bson.Document> tracks = Lists.newArrayList();
-		
+
 		String[] chunks = content.split("\n");
 		for(int i = 0; i < chunks.length; i++)
 		{

@@ -40,11 +40,11 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String BATTITI_MATCH = "[\\*\\-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[\\“\"\\'\\‘\\’](.{1,80})[\\“\"\\'\\‘\\’](.{1,80})";
-	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[\\_\\)\\-\\–][ ]{0,}(.{1,80})[\\-\\–](.{1,80})\\([0-9]{4}\\)";
-	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[\\_\\)\\-\\–][ ]{0,}(.{1,80})[\\-\\–](.{1,80})";
-	private static final String INTHEMIX_MATCH = "[\\*\\-]{0,1}(.{1,80})[\\“\"\\'\\‘\\’](.{1,80})[\\“\"\\'\\‘\\’](.{1,80})";
-	private static final String DEFAULT_MATCH = "[\\*\\-]{0,1}(.{1,80})[\\:\\-\\–](.{1,80})";
+	private static final String BATTITI_MATCH = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[ _)-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
+	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[ _)-–][ ]{0,}(.{1,80})[-–](.{1,80})";
+	private static final String INTHEMIX_MATCH = "[*-]{0,1}(.{1,80})[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String DEFAULT_MATCH = "[*-]{0,1}(.{1,80})[:-–](.{1,80})";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";

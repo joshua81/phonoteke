@@ -211,7 +211,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<nav class=\"navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll\">\n  <div class=\"d-flex flex-row align-items-center w-100\">\n    <a [routerLink]=\"['/']\" class=\"ml-2 mr-2\"><img class=\"logo\"></a>\n    <form class=\"search ml-2 mr-2\">\n      <input class=\"form-control\" name=\"search\" type=\"search\" placeholder=\"Cerca\" aria-label=\"Cerca\" [(ngModel)]=\"docs.searchText\" (search)=\"docs.loadDocsAll()\">\n    </form>\n    <div class=\"icon ml-2 mr-2\">\n      <a *ngIf=\"docs.user == null\" href=\"/api/login\">\n        <span class=\"spotify\"></span>\n      </a>\n      <a *ngIf=\"docs.user != null\" [routerLink]=\"['/starred']\">\n        <img class=\"spotify\" src=\"{{docs.user}}\">\n      </a>\n    </div>\n  </div>\n</nav>\n";
+    __webpack_exports__["default"] = "<nav class=\"navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll\">\n  <div class=\"d-flex flex-row align-items-center w-100\">\n    <a [routerLink]=\"['/']\" class=\"ml-2 mr-2\"><img class=\"logo\"></a>\n    <form class=\"search ml-2 mr-2\">\n      <input class=\"form-control\" name=\"search\" type=\"search\" placeholder=\"Cerca\" aria-label=\"Cerca\" [(ngModel)]=\"docs.searchText\" (search)=\"docs.loadDocs()\">\n    </form>\n    <!--div class=\"icon ml-2 mr-2\">\n      <a *ngIf=\"docs.user == null\" href=\"/api/login\">\n        <span class=\"spotify\"></span>\n      </a>\n      <a *ngIf=\"docs.user != null\" [routerLink]=\"['/starred']\">\n        <img class=\"spotify\" src=\"{{docs.user}}\">\n      </a>\n    </div-->\n  </div>\n</nav>\n";
     /***/
   },
 

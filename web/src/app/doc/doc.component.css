@@ -64,20 +64,20 @@ div.vote {
 }
 
 div.cover {
-  width: 250px;
+  width: 100px;
   position: relative;
   cursor: pointer;
 }
 
 a.cover {
-  width: 250px;
-  height: 250px;
+  width: 100px;
+  height: 100px;
   cursor: pointer;
 }
 
 img.cover {
-  width: 250px;
-  height: 250px;
+  width: 100px;
+  height: 100px;
   object-fit:cover;
   cursor: pointer;
 }

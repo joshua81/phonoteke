@@ -8,8 +8,6 @@ import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
 import { AppComponent } from './app.component';
-import { DocsMenuComponent } from './docs/menu/menu.component';
-import { DocsComponent } from './docs/docs.component';
 import { PodcastsMenuComponent } from './podcasts/menu/menu.component';
 import { PodcastsComponent } from './podcasts/podcasts.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
@@ -24,8 +22,6 @@ import { FooterComponent } from './footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
-    DocsMenuComponent,
-    DocsComponent,
     PodcastsMenuComponent,
     PodcastsComponent,
     DocMenuComponent,
@@ -41,7 +37,6 @@ import { FooterComponent } from './footer/footer.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: PodcastsComponent},
-      {path: ':type', component: DocsComponent},
       {path: 'docs/:id', component: DocComponent},]),
     FormsModule,
     HttpClientModule,

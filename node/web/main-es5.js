@@ -96,46 +96,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   },
 
   /***/
-  "./node_modules/raw-loader/dist/cjs.js!./src/app/docs/docs.component.html":
-  /*!********************************************************************************!*\
-    !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/docs/docs.component.html ***!
-    \********************************************************************************/
-
-  /*! exports provided: default */
-
-  /***/
-  function node_modulesRawLoaderDistCjsJsSrcAppDocsDocsComponentHtml(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony default export */
-
-
-    __webpack_exports__["default"] = "<docs-menu></docs-menu>\n<div *ngIf=\"albums.length != 0 || podcasts.length != 0 || interviews.length != 0 || concerts.length != 0 || artists.length != 0\" \n    class=\"fill\">\n    <app-section type=\"albums\" label=\"Album\" [docs]=\"albums\"></app-section>\n    <app-section type=\"podcasts\" label=\"Podcast\" [docs]=\"podcasts\"></app-section>\n    <app-section type=\"interviews\" label=\"Interviste\" [docs]=\"interviews\"></app-section>\n    <app-section type=\"concerts\" label=\"Concerti\" [docs]=\"concerts\"></app-section>\n    <app-section type=\"artists\" label=\"Artisti\" [docs]=\"artists\"></app-section>\n</div>\n<div *ngIf=\"albums.length == 0 && podcasts.length == 0 && interviews.length == 0 && concerts.length == 0 && artists.length == 0\" \n    class=\"d-flex justify-content-center align-items-center fill\">\n    <div class=\"font-weight-bold\">Nessun risultato trovato</div>\n</div>\n";
-    /***/
-  },
-
-  /***/
-  "./node_modules/raw-loader/dist/cjs.js!./src/app/docs/menu/menu.component.html":
-  /*!*************************************************************************************!*\
-    !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/docs/menu/menu.component.html ***!
-    \*************************************************************************************/
-
-  /*! exports provided: default */
-
-  /***/
-  function node_modulesRawLoaderDistCjsJsSrcAppDocsMenuMenuComponentHtml(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony default export */
-
-
-    __webpack_exports__["default"] = "<nav class=\"navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll\">\n  <div class=\"d-flex flex-row align-items-center w-100\">\n    <a [routerLink]=\"['/']\" class=\"ml-2 mr-2\"><img class=\"logo\"></a>\n    <form class=\"search ml-2 mr-2\">\n      <input class=\"form-control\" name=\"search\" type=\"search\" placeholder=\"Cerca\" aria-label=\"Cerca\" [(ngModel)]=\"docs.searchText\" (search)=\"docs.loadDocsAll()\">\n    </form>\n    <div class=\"icon ml-2 mr-2\">\n      <a *ngIf=\"docs.user == null\" href=\"/api/login\">\n        <span class=\"spotify\"></span>\n      </a>\n      <a *ngIf=\"docs.user != null\" [routerLink]=\"['/starred']\">\n        <img class=\"spotify\" src=\"{{docs.user}}\">\n      </a>\n    </div>\n  </div>\n</nav>\n";
-    /***/
-  },
-
-  /***/
   "./node_modules/raw-loader/dist/cjs.js!./src/app/events/events.component.html":
   /*!************************************************************************************!*\
     !*** ./node_modules/raw-loader/dist/cjs.js!./src/app/events/events.component.html ***!
@@ -211,7 +171,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<nav class=\"navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll\">\n  <div class=\"d-flex flex-row align-items-center w-100\">\n    <a [routerLink]=\"['/']\" class=\"ml-2 mr-2\"><img class=\"logo\"></a>\n    <form class=\"search ml-2 mr-2\">\n      <input class=\"form-control\" name=\"search\" type=\"search\" placeholder=\"Cerca\" aria-label=\"Cerca\" [(ngModel)]=\"docs.searchText\" (search)=\"docs.loadDocs()\">\n    </form>\n    <!--div class=\"icon ml-2 mr-2\">\n      <a *ngIf=\"docs.user == null\" href=\"/api/login\">\n        <span class=\"spotify\"></span>\n      </a>\n      <a *ngIf=\"docs.user != null\" [routerLink]=\"['/starred']\">\n        <img class=\"spotify\" src=\"{{docs.user}}\">\n      </a>\n    </div-->\n  </div>\n</nav>\n";
+    __webpack_exports__["default"] = "<nav class=\"navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll\">\n  <div class=\"d-flex flex-row align-items-center w-100\">\n    <a [routerLink]=\"['/']\" class=\"ml-2 mr-2\"><img class=\"logo\"></a>\n    <form class=\"search ml-2 mr-2\">\n      <input class=\"form-control\" name=\"search\" type=\"search\" placeholder=\"Cerca\" aria-label=\"Cerca\" [(ngModel)]=\"docs.searchText\" (search)=\"docs.loadDocs()\">\n    </form>\n  </div>\n</nav>\n";
     /***/
   },
 
@@ -251,7 +211,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony default export */
 
 
-    __webpack_exports__["default"] = "<div *ngIf=\"docs && docs.length != 0\" class=\"container mt-2\">\n  <div id=\"podcast\" infinite-scroll (scrolled)=\"scrollDocs()\">\n      <ul class=\"list-group\">\n        <li *ngFor=\"let doc of docs\" class=\"list-group-item p-2\">\n          <div class=\"card\">\n            <div class=\"row no-gutters\">\n              <a class=\"cover\" [routerLink]=\"['/docs/' + doc.id]\">\n                <img *ngIf=\"doc.coverM == null\" class=\"cover card-img-top\" src=\"{{doc.cover}}\"/>\n                <img *ngIf=\"doc.coverM != null\" class=\"cover card-img-top\" src=\"{{doc.coverM}}\"/>\n              </a>\n              <div class=\"col-8 ml-2\">\n                <div class=\"card-body p-0\">\n                  <h3 class=\"text-truncate-2\" [innerHTML]=\"doc.artist\"></h3>\n                  <h2 class=\"text-truncate-2\" [innerHTML]=\"doc.title\"></h2>\n                  <p *ngIf=\"doc.description != null\" class=\"text-truncate-3 mt-2 mb-0\" [innerHTML]=\"doc.description\"></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </li>\n      </ul>\n  </div>\n</div>\n";
+    __webpack_exports__["default"] = "<div *ngIf=\"docs && docs.length != 0\" class=\"container w-800 mt-2\">\n  <div id=\"podcast\" infinite-scroll (scrolled)=\"scrollDocs()\">\n      <ul class=\"list-group\">\n        <li *ngFor=\"let doc of docs\" class=\"list-group-item p-2\">\n          <div class=\"card\">\n            <div class=\"row no-gutters\">\n              <a class=\"cover\" [routerLink]=\"['/docs/' + doc.id]\">\n                <img *ngIf=\"doc.coverM == null\" class=\"cover card-img-top\" src=\"{{doc.cover}}\"/>\n                <img *ngIf=\"doc.coverM != null\" class=\"cover card-img-top\" src=\"{{doc.coverM}}\"/>\n              </a>\n              <div class=\"col-9 ml-2\">\n                <div class=\"card-body p-0\">\n                  <h3 class=\"text-truncate-2\" [innerHTML]=\"doc.artist\"></h3>\n                  <h2 class=\"text-truncate-2\" [innerHTML]=\"doc.title\"></h2>\n                  <p *ngIf=\"doc.description != null\" class=\"text-truncate-3 mt-2 mb-0\" [innerHTML]=\"doc.description\"></p>\n                </div>\n              </div>\n            </div>\n          </div>\n        </li>\n      </ul>\n  </div>\n</div>\n";
     /***/
   },
 
@@ -1018,73 +978,61 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /* harmony import */
 
 
-    var _docs_menu_menu_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
-    /*! ./docs/menu/menu.component */
-    "./src/app/docs/menu/menu.component.ts");
-    /* harmony import */
-
-
-    var _docs_docs_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
-    /*! ./docs/docs.component */
-    "./src/app/docs/docs.component.ts");
-    /* harmony import */
-
-
-    var _podcasts_menu_menu_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
+    var _podcasts_menu_menu_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(
     /*! ./podcasts/menu/menu.component */
     "./src/app/podcasts/menu/menu.component.ts");
     /* harmony import */
 
 
-    var _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
+    var _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(
     /*! ./podcasts/podcasts.component */
     "./src/app/podcasts/podcasts.component.ts");
     /* harmony import */
 
 
-    var _doc_menu_menu_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
+    var _doc_menu_menu_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(
     /*! ./doc/menu/menu.component */
     "./src/app/doc/menu/menu.component.ts");
     /* harmony import */
 
 
-    var _doc_doc_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
+    var _doc_doc_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(
     /*! ./doc/doc.component */
     "./src/app/doc/doc.component.ts");
     /* harmony import */
 
 
-    var _tracks_tracks_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(
+    var _tracks_tracks_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(
     /*! ./tracks/tracks.component */
     "./src/app/tracks/tracks.component.ts");
     /* harmony import */
 
 
-    var _events_events_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(
+    var _events_events_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(
     /*! ./events/events.component */
     "./src/app/events/events.component.ts");
     /* harmony import */
 
 
-    var _section_section_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(
+    var _section_section_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(
     /*! ./section/section.component */
     "./src/app/section/section.component.ts");
     /* harmony import */
 
 
-    var _video_video_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(
+    var _video_video_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(
     /*! ./video/video.component */
     "./src/app/video/video.component.ts");
     /* harmony import */
 
 
-    var _link_link_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(
+    var _link_link_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(
     /*! ./link/link.component */
     "./src/app/link/link.component.ts");
     /* harmony import */
 
 
-    var _footer_footer_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(
+    var _footer_footer_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(
     /*! ./footer/footer.component */
     "./src/app/footer/footer.component.ts");
 
@@ -1093,16 +1041,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
 
     AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
-      declarations: [_app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"], _docs_menu_menu_component__WEBPACK_IMPORTED_MODULE_10__["DocsMenuComponent"], _docs_docs_component__WEBPACK_IMPORTED_MODULE_11__["DocsComponent"], _podcasts_menu_menu_component__WEBPACK_IMPORTED_MODULE_12__["PodcastsMenuComponent"], _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_13__["PodcastsComponent"], _doc_menu_menu_component__WEBPACK_IMPORTED_MODULE_14__["DocMenuComponent"], _doc_doc_component__WEBPACK_IMPORTED_MODULE_15__["DocComponent"], _tracks_tracks_component__WEBPACK_IMPORTED_MODULE_16__["TracksComponent"], _section_section_component__WEBPACK_IMPORTED_MODULE_18__["SectionComponent"], _video_video_component__WEBPACK_IMPORTED_MODULE_19__["VideoComponent"], _link_link_component__WEBPACK_IMPORTED_MODULE_20__["LinkComponent"], _footer_footer_component__WEBPACK_IMPORTED_MODULE_21__["FooterComponent"], _events_events_component__WEBPACK_IMPORTED_MODULE_17__["EventsComponent"]],
+      declarations: [_app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"], _podcasts_menu_menu_component__WEBPACK_IMPORTED_MODULE_10__["PodcastsMenuComponent"], _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_11__["PodcastsComponent"], _doc_menu_menu_component__WEBPACK_IMPORTED_MODULE_12__["DocMenuComponent"], _doc_doc_component__WEBPACK_IMPORTED_MODULE_13__["DocComponent"], _tracks_tracks_component__WEBPACK_IMPORTED_MODULE_14__["TracksComponent"], _section_section_component__WEBPACK_IMPORTED_MODULE_16__["SectionComponent"], _video_video_component__WEBPACK_IMPORTED_MODULE_17__["VideoComponent"], _link_link_component__WEBPACK_IMPORTED_MODULE_18__["LinkComponent"], _footer_footer_component__WEBPACK_IMPORTED_MODULE_19__["FooterComponent"], _events_events_component__WEBPACK_IMPORTED_MODULE_15__["EventsComponent"]],
       imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"], _angular_router__WEBPACK_IMPORTED_MODULE_3__["RouterModule"].forRoot([{
         path: '',
-        component: _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_13__["PodcastsComponent"]
-      }, {
-        path: ':type',
-        component: _docs_docs_component__WEBPACK_IMPORTED_MODULE_11__["DocsComponent"]
+        component: _podcasts_podcasts_component__WEBPACK_IMPORTED_MODULE_11__["PodcastsComponent"]
       }, {
         path: 'docs/:id',
-        component: _doc_doc_component__WEBPACK_IMPORTED_MODULE_15__["DocComponent"]
+        component: _doc_doc_component__WEBPACK_IMPORTED_MODULE_13__["DocComponent"]
       }]), _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"], _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClientModule"], ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_6__["InfiniteScrollModule"], _angular_youtube_player__WEBPACK_IMPORTED_MODULE_8__["YouTubePlayerModule"], _angular_common__WEBPACK_IMPORTED_MODULE_7__["CommonModule"]],
       providers: [],
       bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_9__["AppComponent"]]
@@ -1547,402 +1492,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   },
 
   /***/
-  "./src/app/docs/docs.component.css":
-  /*!*****************************************!*\
-    !*** ./src/app/docs/docs.component.css ***!
-    \*****************************************/
-
-  /*! exports provided: default */
-
-  /***/
-  function srcAppDocsDocsComponentCss(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony default export */
-
-
-    __webpack_exports__["default"] = ".fill { \n    min-height: calc(100vh - 135px);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZG9jcy9kb2NzLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7SUFDSSwrQkFBK0I7QUFDbkMiLCJmaWxlIjoic3JjL2FwcC9kb2NzL2RvY3MuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5maWxsIHsgXG4gICAgbWluLWhlaWdodDogY2FsYygxMDB2aCAtIDEzNXB4KTtcbn0iXX0= */";
-    /***/
-  },
-
-  /***/
-  "./src/app/docs/docs.component.ts":
-  /*!****************************************!*\
-    !*** ./src/app/docs/docs.component.ts ***!
-    \****************************************/
-
-  /*! exports provided: DocsComponent */
-
-  /***/
-  function srcAppDocsDocsComponentTs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "DocsComponent", function () {
-      return DocsComponent;
-    });
-    /* harmony import */
-
-
-    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-    /*! tslib */
-    "./node_modules/tslib/tslib.es6.js");
-    /* harmony import */
-
-
-    var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-    /*! @angular/core */
-    "./node_modules/@angular/core/fesm2015/core.js");
-    /* harmony import */
-
-
-    var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! @angular/common/http */
-    "./node_modules/@angular/common/fesm2015/http.js");
-    /* harmony import */
-
-
-    var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
-    /*! @angular/router */
-    "./node_modules/@angular/router/fesm2015/router.js");
-
-    var DocsComponent =
-    /*#__PURE__*/
-    function () {
-      function DocsComponent(http, route) {
-        _classCallCheck(this, DocsComponent);
-
-        this.http = http;
-        this.route = route;
-        this.error = null;
-        this.searchText = '';
-        this.user = null;
-        this.isStarred = false;
-        this.albums = [];
-        this.albumsPage = 0;
-        this.interviews = [];
-        this.interviewsPage = 0;
-        this.podcasts = [];
-        this.podcastsPage = 0;
-        this.artists = [];
-        this.artistsPage = 0;
-        this.concerts = [];
-        this.concertsPage = 0;
-      }
-
-      _createClass(DocsComponent, [{
-        key: "ngOnInit",
-        value: function ngOnInit() {
-          var _this5 = this;
-
-          this.loadUser();
-          this.route.paramMap.subscribe(function (params) {
-            window.scrollTo(0, 0);
-            _this5.searchText = '';
-
-            if (params.get('type') == 'starred') {
-              _this5.isStarred = true;
-
-              _this5.loadStarred();
-            } else {
-              _this5.isStarred = false;
-
-              _this5.loadDocsAll();
-            }
-          });
-        }
-      }, {
-        key: "loadDocsAll",
-        value: function loadDocsAll() {
-          this.loadDocs('albums');
-          this.loadDocs('interviews');
-          this.loadDocs('podcasts');
-          this.loadDocs('artists');
-          this.loadDocs('concerts');
-        }
-      }, {
-        key: "scrollDocs",
-        value: function scrollDocs(type) {
-          var _this6 = this;
-
-          if (!this.isStarred) {
-            var page = 0;
-
-            if (type == 'albums') {
-              this.albumsPage++;
-              page = this.albumsPage;
-            } else if (type == 'interviews') {
-              this.interviewsPage++;
-              page = this.interviewsPage;
-            } else if (type == 'podcasts') {
-              this.podcastsPage++;
-              page = this.podcastsPage;
-            } else if (type == 'artists') {
-              this.artistsPage++;
-              page = this.artistsPage;
-            } else if (type == 'concerts') {
-              this.concertsPage++;
-              page = this.concertsPage;
-            }
-
-            this.http.get('/api/docs/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(function (data) {
-              return _this6.docsLoaded(type, data);
-            }, function (error) {
-              return _this6.error = error;
-            });
-          }
-        }
-      }, {
-        key: "loadDocs",
-        value: function loadDocs(type) {
-          var _this7 = this;
-
-          var page = 0;
-
-          if (type == 'albums') {
-            this.albumsPage = 0;
-            this.albums = [];
-          } else if (type == 'interviews') {
-            this.interviewsPage = 0;
-            this.interviews = [];
-          } else if (type == 'podcasts') {
-            this.podcastsPage = 0;
-            this.podcasts = [];
-          } else if (type == 'artists') {
-            this.artistsPage = 0;
-            this.artists = [];
-          } else if (type == 'concerts') {
-            this.concertsPage = 0;
-            this.concerts = [];
-          }
-
-          this.http.get('/api/docs/' + type + '?p=' + page + '&q=' + this.searchText).subscribe(function (data) {
-            return _this7.docsLoaded(type, data);
-          }, function (error) {
-            return _this7.error = error;
-          });
-        }
-      }, {
-        key: "loadStarred",
-        value: function loadStarred() {
-          var _this8 = this;
-
-          this.albums = [];
-          this.interviews = [];
-          this.podcasts = [];
-          this.artists = [];
-          this.concerts = [];
-          this.http.get('/api/docs/starred').subscribe(function (data) {
-            return _this8.docsLoaded('starred', data);
-          }, function (error) {
-            return _this8.error = error;
-          });
-        }
-      }, {
-        key: "docsLoaded",
-        value: function docsLoaded(type, data) {
-          if (type == 'albums') {
-            this.albums.push.apply(this.albums, data);
-          } else if (type == 'interviews') {
-            this.interviews.push.apply(this.interviews, data);
-          } else if (type == 'podcasts') {
-            this.podcasts.push.apply(this.podcasts, data);
-          } else if (type == 'artists') {
-            this.artists.push.apply(this.artists, data);
-          } else if (type == 'concerts') {
-            this.concerts.push.apply(this.concerts, data);
-          } else if (type == 'starred') {
-            var albums = [];
-            var interviews = [];
-            var podcasts = [];
-            var artists = [];
-            var concerts = [];
-            data.forEach(function (doc) {
-              if (doc.type == 'album') {
-                albums.push(doc);
-              } else if (doc.type == 'interview') {
-                interviews.push(doc);
-              } else if (doc.type == 'podcast') {
-                podcasts.push(doc);
-              } else if (doc.type == 'artist') {
-                artists.push(doc);
-              } else if (doc.type == 'concert') {
-                concerts.push(doc);
-              }
-            });
-            this.albums.push.apply(this.albums, albums);
-            this.interviews.push.apply(this.interviews, interviews);
-            this.podcasts.push.apply(this.podcasts, podcasts);
-            this.artists.push.apply(this.artists, artists);
-            this.concerts.push.apply(this.concerts, concerts);
-          }
-        }
-      }, {
-        key: "loadUser",
-        value: function loadUser() {
-          var _this9 = this;
-
-          if (this.user == null) {
-            this.http.get('/api/user').subscribe(function (data) {
-              return _this9.userLoaded(data);
-            }, function (error) {
-              return _this9.error = error;
-            });
-          }
-        }
-      }, {
-        key: "userLoaded",
-        value: function userLoaded(data) {
-          if (data) {
-            this.user = data.images[0].url;
-          }
-        }
-      }, {
-        key: "isDesktop",
-        value: function isDesktop() {
-          var hasTouchScreen = false;
-
-          if (window.navigator.maxTouchPoints > 0) {
-            hasTouchScreen = true;
-          } else if (window.navigator.msMaxTouchPoints > 0) {
-            hasTouchScreen = true;
-          } else {
-            var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
-
-            if (mQ && mQ.media === "(pointer:coarse)") {
-              hasTouchScreen = !!mQ.matches;
-            } else {
-              // Only as a last resort, fall back to user agent sniffing
-              var ua = window.navigator.userAgent;
-              hasTouchScreen = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua);
-            }
-          }
-
-          return !hasTouchScreen;
-        }
-      }]);
-
-      return DocsComponent;
-    }();
-
-    DocsComponent.ctorParameters = function () {
-      return [{
-        type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]
-      }, {
-        type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["ActivatedRoute"]
-      }];
-    };
-
-    DocsComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
-      selector: 'app-docs',
-      template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
-      /*! raw-loader!./docs.component.html */
-      "./node_modules/raw-loader/dist/cjs.js!./src/app/docs/docs.component.html")).default,
-      styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
-      /*! ./docs.component.css */
-      "./src/app/docs/docs.component.css")).default]
-    })], DocsComponent);
-    /***/
-  },
-
-  /***/
-  "./src/app/docs/menu/menu.component.css":
-  /*!**********************************************!*\
-    !*** ./src/app/docs/menu/menu.component.css ***!
-    \**********************************************/
-
-  /*! exports provided: default */
-
-  /***/
-  function srcAppDocsMenuMenuComponentCss(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony default export */
-
-
-    __webpack_exports__["default"] = ".menu-item {\n    height: 40px;\n    padding-top: 8px;\n    cursor: pointer;\n}\n\n.search {\n    width: 100%;\n}\n\n.unselected {\n    border-bottom: 4px solid #18A2B8;\n}\n\n.selected {\n    border-bottom: 4px solid #000000;\n}\n\n.icon {\n    border-radius: 50%;\n    background: #FFFFFF;\n    width: 30px;\n    height: 30px;\n    cursor: pointer;\n}\n\nspan.spotify {\n    display: inline-block;\n    -webkit-mask: url(\"/images/spotify.svg\");\n            mask: url(\"/images/spotify.svg\");\n    width: 30px;\n    height: 30px;\n    background: #18A2B8;\n    cursor: pointer;\n}\n\nimg.spotify {\n    -o-object-fit: cover;\n       object-fit: cover;\n    border-radius: 50%;\n    width: 30px;\n    height: 30px;\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvZG9jcy9tZW51L21lbnUuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtJQUNJLFlBQVk7SUFDWixnQkFBZ0I7SUFDaEIsZUFBZTtBQUNuQjs7QUFFQTtJQUNJLFdBQVc7QUFDZjs7QUFFQTtJQUNJLGdDQUFnQztBQUNwQzs7QUFFQTtJQUNJLGdDQUFnQztBQUNwQzs7QUFFQTtJQUNJLGtCQUFrQjtJQUNsQixtQkFBbUI7SUFDbkIsV0FBVztJQUNYLFlBQVk7SUFDWixlQUFlO0FBQ25COztBQUVBO0lBQ0kscUJBQXFCO0lBQ3JCLHdDQUFnQztZQUFoQyxnQ0FBZ0M7SUFDaEMsV0FBVztJQUNYLFlBQVk7SUFDWixtQkFBbUI7SUFDbkIsZUFBZTtBQUNuQjs7QUFFQTtJQUNJLG9CQUFpQjtPQUFqQixpQkFBaUI7SUFDakIsa0JBQWtCO0lBQ2xCLFdBQVc7SUFDWCxZQUFZO0FBQ2hCIiwiZmlsZSI6InNyYy9hcHAvZG9jcy9tZW51L21lbnUuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5tZW51LWl0ZW0ge1xuICAgIGhlaWdodDogNDBweDtcbiAgICBwYWRkaW5nLXRvcDogOHB4O1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbn1cblxuLnNlYXJjaCB7XG4gICAgd2lkdGg6IDEwMCU7XG59XG5cbi51bnNlbGVjdGVkIHtcbiAgICBib3JkZXItYm90dG9tOiA0cHggc29saWQgIzE4QTJCODtcbn1cblxuLnNlbGVjdGVkIHtcbiAgICBib3JkZXItYm90dG9tOiA0cHggc29saWQgIzAwMDAwMDtcbn1cblxuLmljb24ge1xuICAgIGJvcmRlci1yYWRpdXM6IDUwJTtcbiAgICBiYWNrZ3JvdW5kOiAjRkZGRkZGO1xuICAgIHdpZHRoOiAzMHB4O1xuICAgIGhlaWdodDogMzBweDtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG59XG5cbnNwYW4uc3BvdGlmeSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICAgIG1hc2s6IHVybChcIi9pbWFnZXMvc3BvdGlmeS5zdmdcIik7XG4gICAgd2lkdGg6IDMwcHg7XG4gICAgaGVpZ2h0OiAzMHB4O1xuICAgIGJhY2tncm91bmQ6ICMxOEEyQjg7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xufVxuXG5pbWcuc3BvdGlmeSB7XG4gICAgb2JqZWN0LWZpdDogY292ZXI7XG4gICAgYm9yZGVyLXJhZGl1czogNTAlO1xuICAgIHdpZHRoOiAzMHB4O1xuICAgIGhlaWdodDogMzBweDtcbn1cbiJdfQ== */";
-    /***/
-  },
-
-  /***/
-  "./src/app/docs/menu/menu.component.ts":
-  /*!*********************************************!*\
-    !*** ./src/app/docs/menu/menu.component.ts ***!
-    \*********************************************/
-
-  /*! exports provided: DocsMenuComponent */
-
-  /***/
-  function srcAppDocsMenuMenuComponentTs(module, __webpack_exports__, __webpack_require__) {
-    "use strict";
-
-    __webpack_require__.r(__webpack_exports__);
-    /* harmony export (binding) */
-
-
-    __webpack_require__.d(__webpack_exports__, "DocsMenuComponent", function () {
-      return DocsMenuComponent;
-    });
-    /* harmony import */
-
-
-    var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
-    /*! tslib */
-    "./node_modules/tslib/tslib.es6.js");
-    /* harmony import */
-
-
-    var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
-    /*! @angular/core */
-    "./node_modules/@angular/core/fesm2015/core.js");
-    /* harmony import */
-
-
-    var _docs_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
-    /*! ../docs.component */
-    "./src/app/docs/docs.component.ts");
-
-    var DocsMenuComponent =
-    /*#__PURE__*/
-    function () {
-      function DocsMenuComponent(docs) {
-        _classCallCheck(this, DocsMenuComponent);
-
-        this.docs = docs;
-      }
-
-      _createClass(DocsMenuComponent, [{
-        key: "ngOnInit",
-        value: function ngOnInit() {}
-      }]);
-
-      return DocsMenuComponent;
-    }();
-
-    DocsMenuComponent.ctorParameters = function () {
-      return [{
-        type: _docs_component__WEBPACK_IMPORTED_MODULE_2__["DocsComponent"]
-      }];
-    };
-
-    DocsMenuComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
-      selector: 'docs-menu',
-      template: tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
-      /*! raw-loader!./menu.component.html */
-      "./node_modules/raw-loader/dist/cjs.js!./src/app/docs/menu/menu.component.html")).default,
-      styles: [tslib__WEBPACK_IMPORTED_MODULE_0__["__importDefault"](__webpack_require__(
-      /*! ./menu.component.css */
-      "./src/app/docs/menu/menu.component.css")).default]
-    })], DocsMenuComponent);
-    /***/
-  },
-
-  /***/
   "./src/app/events/events.component.css":
   /*!*********************************************!*\
     !*** ./src/app/events/events.component.css ***!
@@ -2024,13 +1573,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "loadEvents",
         value: function loadEvents() {
-          var _this10 = this;
+          var _this5 = this;
 
           if (this.artist != null) {
             this.http.get('/api/events/' + this.artist).subscribe(function (data) {
-              return _this10.setEvents(data);
+              return _this5.setEvents(data);
             }, function (error) {
-              return _this10.error = error;
+              return _this5.error = error;
             });
           }
         }
@@ -2452,64 +2001,64 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(PodcastsComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this11 = this;
+          var _this6 = this;
 
           this.loadUser();
           this.route.paramMap.subscribe(function (params) {
             window.scrollTo(0, 0);
-            _this11.searchText = '';
+            _this6.searchText = '';
 
             if (params.get('type') == 'starred') {
-              _this11.isStarred = true;
+              _this6.isStarred = true;
 
-              _this11.loadStarred();
+              _this6.loadStarred();
             } else {
-              _this11.isStarred = false;
+              _this6.isStarred = false;
 
-              _this11.loadDocs();
+              _this6.loadDocs();
             }
           });
         }
       }, {
         key: "scrollDocs",
         value: function scrollDocs(type) {
-          var _this12 = this;
+          var _this7 = this;
 
           if (!this.isStarred) {
             var page = 0;
             this.podcastsPage++;
             page = this.podcastsPage;
             this.http.get('/api/docs/podcasts?p=' + page + '&q=' + this.searchText).subscribe(function (data) {
-              return _this12.docsLoaded('podcasts', data);
+              return _this7.docsLoaded('podcasts', data);
             }, function (error) {
-              return _this12.error = error;
+              return _this7.error = error;
             });
           }
         }
       }, {
         key: "loadDocs",
         value: function loadDocs() {
-          var _this13 = this;
+          var _this8 = this;
 
           var page = 0;
           this.podcastsPage = 0;
           this.podcasts = [];
           this.http.get('/api/docs/podcasts?p=' + page + '&q=' + this.searchText).subscribe(function (data) {
-            return _this13.docsLoaded('podcasts', data);
+            return _this8.docsLoaded('podcasts', data);
           }, function (error) {
-            return _this13.error = error;
+            return _this8.error = error;
           });
         }
       }, {
         key: "loadStarred",
         value: function loadStarred() {
-          var _this14 = this;
+          var _this9 = this;
 
           this.podcasts = [];
           this.http.get('/api/docs/starred').subscribe(function (data) {
-            return _this14.docsLoaded('starred', data);
+            return _this9.docsLoaded('starred', data);
           }, function (error) {
-            return _this14.error = error;
+            return _this9.error = error;
           });
         }
       }, {
@@ -2530,13 +2079,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "loadUser",
         value: function loadUser() {
-          var _this15 = this;
+          var _this10 = this;
 
           if (this.user == null) {
             this.http.get('/api/user').subscribe(function (data) {
-              return _this15.userLoaded(data);
+              return _this10.userLoaded(data);
             }, function (error) {
-              return _this15.error = error;
+              return _this10.error = error;
             });
           }
         }

@@ -28,15 +28,19 @@ public class RadioRaiLoader extends PhonotekeLoader
 	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
 	private static final String BATTITI = "https://www.raiplayradio.it/programmi/battiti/";
 	private static final String SEIGRADI = "https://www.raiplayradio.it/programmi/seigradi/";
-	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, URL_AUDIO);
+	private static final String STEREONOTTE = "https://www.raiplayradio.it/programmi/stereonotte/";
+	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, STEREONOTTE, URL_AUDIO);
 
 	private static String artist;
 	private static String source;
 
 
+	public static void mainTest(String[] args) {
+		new RadioRaiLoader("Stereonotte", "stereonotte").crawl("https://www.raiplayradio.it/programmi/stereonotte/");
+	}
+
 	public static void main(String[] args) 
 	{
-		//		new RadioRaiLoader("Sei Gradi", "seigradi").crawl("https://www.raiplayradio.it/audio/2020/04/SEI-GRADI-07052020---Da-Ce204129sar-Franck-a-Barbra-Streisand-3076c42e-9a0e-440b-bb11-d7fc21eaa510.html");
 		if(args.length == 1)
 		{
 			if("babylon".equals(args[0]))
@@ -58,6 +62,10 @@ public class RadioRaiLoader extends PhonotekeLoader
 			else if("seigradi".equals(args[0]))
 			{
 				new RadioRaiLoader("Sei Gradi", "seigradi").crawl(SEIGRADI);
+			}
+			else if("stereonotte".equals(args[0]))
+			{
+				new RadioRaiLoader("Stereonotte", "stereonotte").crawl(STEREONOTTE);
 			}
 		}
 	}
@@ -288,6 +296,7 @@ public class RadioRaiLoader extends PhonotekeLoader
 			RadioRaiLoader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
 				RadioRaiLoader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : 
 					RadioRaiLoader.source.equals("battiti") ? Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore") : 
-						RadioRaiLoader.source.equals("seigradi") ? Lists.newArrayList("Luca Damiani") : null;
+						RadioRaiLoader.source.equals("seigradi") ? Lists.newArrayList("Luca Damiani") :
+							RadioRaiLoader.source.equals("stereonotte") ? Lists.newArrayList("Francesco Adinolfi", "Max De Tomassi", "Lele Sacchi", "Luca Sapio", "Mauro Zanda") : null;
 	}
 }

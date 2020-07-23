@@ -40,16 +40,16 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String BATTITI_MATCH = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
-	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[ _)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
-	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[ _)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})";
-	private static final String INTHEMIX_MATCH = "[*-]{0,1}(.{1,80})[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String RAI_MATCH = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
+	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})";
+	private static final String RAI2_MATCH = "[*-]{0,1}(.{1,80})[“”\"'‘’](.{1,80})[“”\"'‘’](.{0,80})";
 	private static final String DEFAULT_MATCH = "[*-]{0,1}(.{1,80})[:\\-–](.{1,80})";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(BATTITI_MATCH, BERTALLOT_MATCH, BERTALLOT2_MATCH, INTHEMIX_MATCH, DEFAULT_MATCH);
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(RAI_MATCH, BERTALLOT_MATCH, BERTALLOT2_MATCH, RAI2_MATCH, DEFAULT_MATCH);
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	protected static final int SLEEP_TIME = 2000;
@@ -269,6 +269,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected static boolean isTrack(String title)
 	{
+		title = title.trim();
 		for(String match : TRACKS_MATCH)
 		{
 			if(title.matches(match))

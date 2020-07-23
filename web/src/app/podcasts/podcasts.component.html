@@ -1,0 +1,8 @@
+<podcasts-menu></podcasts-menu>
+<div *ngIf="podcasts.length != 0" class="fill">
+    <app-section type="podcasts" label="Podcast" [docs]="podcasts"></app-section>
+</div>
+<div *ngIf="podcasts.length == 0" 
+    class="d-flex justify-content-center align-items-center fill">
+    <div class="font-weight-bold">Nessun risultato trovato</div>
+</div>

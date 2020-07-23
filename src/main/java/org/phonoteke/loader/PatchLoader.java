@@ -16,7 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().resetTracks();
+		new PatchLoader().deletePodcasts();
 	}
 
 	public PatchLoader()
@@ -29,7 +29,8 @@ public class PatchLoader extends PhonotekeLoader
 		LOGGER.info("Resetting tracks...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
-		{ 
+		{
+			boolean update = false;
 			Document page = i.next();
 			String id = page.getString("id");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
@@ -52,11 +53,14 @@ public class PatchLoader extends PhonotekeLoader
 						track.append("coverM", null);
 						track.append("coverS", null);
 						track.append("artistid", null);
+						update = true;
 					}
 				}
 			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			if(update) {
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				LOGGER.info("Document " + id + " updated");
+			}
 		}
 	}
 
@@ -85,10 +89,23 @@ public class PatchLoader extends PhonotekeLoader
 		}
 	}
 
+	private void deletePodcasts()
+	{
+		LOGGER.info("Deleting podcasts...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			docs.deleteOne(Filters.eq("id", id));
+			LOGGER.info("Document " + id + " deleted");
+		}
+	}
+
 	private void clearPodcasts()
 	{
 		LOGGER.info("Clearing podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "seigradi"))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();

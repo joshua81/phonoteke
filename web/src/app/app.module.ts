@@ -10,6 +10,8 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
 import { AppComponent } from './app.component';
 import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
+import { PodcastsMenuComponent } from './podcasts/menu/menu.component';
+import { PodcastsComponent } from './podcasts/podcasts.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { TracksComponent } from './tracks/tracks.component';
@@ -24,6 +26,8 @@ import { FooterComponent } from './footer/footer.component';
     AppComponent,
     DocsMenuComponent,
     DocsComponent,
+    PodcastsMenuComponent,
+    PodcastsComponent,
     DocMenuComponent,
     DocComponent,
     TracksComponent,
@@ -36,9 +40,10 @@ import { FooterComponent } from './footer/footer.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: DocsComponent},
+      //{path: '', component: DocsComponent},
+      {path: '', component: PodcastsComponent},
       {path: ':type', component: DocsComponent},
-      {path: 'docs/:id', component: DocComponent}]),
+      {path: 'docs/:id', component: DocComponent},]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

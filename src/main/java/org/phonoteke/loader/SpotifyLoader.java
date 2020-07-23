@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Lists;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
@@ -138,7 +139,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		LOGGER.info("Loading Spotify...");
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).sort(new BasicDBObject("date",-1)).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -228,7 +229,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					String spalbum = a.getName();
 					String albumId = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
-					LOGGER.info("album: " + artist + " " + album + ", spotify: " + spartist + " " + spalbum + " score " + score);
+					//LOGGER.info("album: " + artist + " " + album + ", spotify: " + spartist + " " + spalbum + " score " + score);
 					if(score >= THRESHOLD)
 					{
 						LOGGER.info(artist + " " + album + ": " + spartist + " " + spalbum + " (" + albumId + ")");
@@ -381,6 +382,8 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
 		{
+			artist = artist.trim();
+			song = song.trim();
 			String q = "artist:" + artist + " track: " + song;
 			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
 			Paging<Track> tracks = request.execute();

@@ -40,7 +40,6 @@ import { FooterComponent } from './footer/footer.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      //{path: '', component: DocsComponent},
       {path: '', component: PodcastsComponent},
       {path: ':type', component: DocsComponent},
       {path: 'docs/:id', component: DocComponent},]),

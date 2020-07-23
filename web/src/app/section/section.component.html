@@ -1,31 +1,23 @@
-<div *ngIf="docs && docs.length != 0" class="container pl-1 pr-1 mt-3">
-  <div class="d-flex flex-row align-items-center pl-0 pr-0">
-    <h1 class="text-uppercase mt-0 mb-0 mr-auto">{{label}}</h1>
-    <div *ngIf="component.isDesktop()"
-      class="backward" (click)="previous()"><span class="previous"></span></div>
-    <div *ngIf="component.isDesktop()"
-      class="forward" (click)="next()"><span class="next"></span></div>
-  </div>
-  <div id="{{type}}" infinite-scroll class="d-flex flex-row flex-nowrap hscroll pt-2" 
-    [horizontal]="true" [scrollWindow]="false" (scrolled)="scrollDocs()">
-      <div *ngFor="let doc of docs" class="pr-2">
-        <div class="cover card">
-          <a class="cover" [routerLink]="['/docs/' + doc.id]">
-            <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
-            <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
-          </a>
-          <div *ngIf="doc.description != null" class="card-body p-1">
-            <h2 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.title"></h2>
-            <h3 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-            <h2 *ngIf="doc.type == 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h2>
-            <p class="text-truncate-4 pt-2" [innerHTML]="doc.description"></p>
+<div *ngIf="docs && docs.length != 0" class="container mt-2">
+  <div id="podcast" infinite-scroll (scrolled)="scrollDocs()">
+      <ul class="list-group">
+        <li *ngFor="let doc of docs" class="list-group-item p-2">
+          <div class="card">
+            <div class="row no-gutters">
+              <a class="cover" [routerLink]="['/docs/' + doc.id]">
+                <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
+                <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
+              </a>
+              <div class="col-8 ml-2">
+                <div class="card-body p-0">
+                  <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+                  <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+                  <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div *ngIf="doc.description == null" class="card-body-sm p-1">
-            <h2 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.title"></h2>
-            <h3 *ngIf="doc.type != 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-            <h2 *ngIf="doc.type == 'artist'" class="text-truncate-2" [innerHTML]="doc.artist"></h2>
-          </div>
-        </div>
-      </div>
+        </li>
+      </ul>
   </div>
 </div>

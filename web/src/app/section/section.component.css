@@ -34,29 +34,23 @@
 }
 
 div.cover {
-  width: 200px;
+  width: 100px;
   position: relative;
 }
 
 a.cover {
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
 }
 
 img.cover {
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
   object-fit:cover;
 }
 
 .card {
   border-style: none;
-}
-
-.card-body {
-  position: relative;
-  width: 200px;
-  height: 150px;
 }
 
 .card-body-sm {

@@ -19,7 +19,7 @@
   mask: url("/images/songkick.svg");
   width: 30px;
   height: 30px;
-  background: #F80046; 
+  background: #18A2B8;
   cursor: pointer;
 }
 
@@ -28,7 +28,7 @@
   mask: url("/images/spotify.svg");
   width: 30px;
   height: 30px;
-  background: #1DB954; 
+  background: #18A2B8; 
   cursor: pointer;
 }
 

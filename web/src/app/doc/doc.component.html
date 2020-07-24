@@ -27,11 +27,11 @@
         <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
           <span class="songkick"></span>
         </div>
-        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" target="_blank" class="ml-2"
+        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" target="_blank" class="icon ml-2"
           href="{{'https://open.spotify.com/album/' + doc.spalbumid}}">
           <span class="spotify"></span>
         </a>
-        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" target="_blank" class="ml-2"
+        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" target="_blank" class="icon ml-2"
           href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}">
           <span class="spotify"></span>
         </a>

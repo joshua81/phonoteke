@@ -23,6 +23,15 @@
   cursor: pointer;
 }
 
+.spotify {
+  display: inline-block;
+  mask: url("/images/spotify.svg");
+  width: 30px;
+  height: 30px;
+  background: #1DB954; 
+  cursor: pointer;
+}
+
 h2.vote {
   border-radius: 50%;
   width: 30px;
@@ -32,11 +41,7 @@ h2.vote {
   color: #FFFFFF;
   text-align: center;
   padding-top: 8px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
+  margin: 0px;
 }
 
 div.vote {
@@ -48,11 +53,7 @@ div.vote {
   color: #FFFFFF;
   text-align: center;
   padding-top: 6px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
+  margin: 0px;
 }
 
 .star {
@@ -64,20 +65,20 @@ div.vote {
 }
 
 div.cover {
-  width: 100px;
+  width: 120px;
   position: relative;
   cursor: pointer;
 }
 
 a.cover {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   cursor: pointer;
 }
 
 img.cover {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   object-fit:cover;
   cursor: pointer;
 }

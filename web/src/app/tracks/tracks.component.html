@@ -10,15 +10,9 @@
             </div>
             <div class="ml-2 mr-auto">
                 <div *ngIf="track.spotify == null" [innerHTML]="track.title"></div>
-                <div *ngIf="track.spotify" class="text-truncate-1">
-                    <a [innerHTML]="track.title" href="{{'https://open.spotify.com/track/' + track.spotify}}" target="_blank"></a>
-                </div>
-                <div *ngIf="track.spotify" class="text-truncate-1">
-                    <a class="font-weight-bold" [innerHTML]="track.album" href="{{'https://open.spotify.com/album/' + track.spalbumid}}" target="_blank"></a>
-                </div>
-                <div *ngIf="track.spotify" class="text-truncate-1">
-                    <a [innerHTML]="track.artist" href="{{'https://open.spotify.com/artist/' + track.spartistid}}" target="_blank"></a>
-                </div>
+                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.title"></div>
+                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.album"></div>
+                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.artist"></div>
             </div>
             <div *ngIf="track.artistid" class="icon ml-2" (click)="component.loadEvents(track.artistid)">
                 <span class="songkick"></span>

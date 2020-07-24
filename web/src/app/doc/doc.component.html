@@ -1,89 +1,51 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container w-800 p-0 mt-2">
-  <!--div class="d-flex flex-column pl-0 pr-0"-->
-    <!-- cover -->
-    <!--div class="cover mx-auto">
-      <a *ngIf="doc.type != 'podcast' && doc.spalbumid != null" 
-        href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
-        <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
-        <span class="play"></span>
-      </a>
-      <a *ngIf="doc.type != 'podcast' && doc.spalbumid == null && doc.spartistid != null" 
-        href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
-        <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
-        <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
-        <span class="play"></span>
-      </a>
-      <div *ngIf="doc.type == 'podcast' || (doc.spalbumid == null && doc.spartistid == null)" (click)="loadAlbum()">
-        <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
-        <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
-        <span *ngIf="doc.audio" class="play"></span>
-      </div>
-      <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
-      <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
-        <span class="star"></span>
-      </div>
-    </div-->
-
-    <!-- album -->
     <div class="bg-white p-2">
+      <!-- cover -->
       <div class="d-flex flex-row" (click)="loadAlbum()">
         <a class="cover mr-2" [routerLink]="['/docs/' + doc.id]">
           <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
           <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
-          <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
-          <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
-            <span class="star"></span>
-          </div>
         </a>
         <div class="w-100 p-0">
           <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
           <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-          <!--p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p-->
           <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
           <h3 *ngIf="doc.authors" class="text-muted mx-auto mb-2">di {{doc.authors}}</h3>
-          <div class="d-flex flex-row">
-            <a href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"></a>
-            <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
-              <span class="songkick"></span>
-            </div>
-          </div>
         </div>
       </div>
-      
-      <!--div class="mx-auto">
-        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" class="font-weight-bold"
-          [innerHTML]="doc.title" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
-        </a>
-        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" class="font-weight-bold"
-          [innerHTML]="doc.title" href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}" target="_blank">
-        </a>
-        <h2 *ngIf="!doc.spalbumid" [innerHTML]="doc.title"></h2>
-      </div-->
 
-      <!-- artist -->
-      <!--div class="mx-auto">
-        <a *ngIf="doc.spartistid"
-          [innerHTML]="doc.artist" href="{{'https://open.spotify.com/artist/' + doc.spartistid}}" target="_blank">
+      <!-- spotify + songkick -->
+      <div class="d-flex flex-row justify-content-center mt-3 mb-3">
+        <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
+        <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
+          <span class="star"></span>
+        </div>
+        <a href="{{doc.url}}" target="_blank" class="ml-2">
+          <img class="{{doc.source}}">
         </a>
-        <h3 *ngIf="!doc.spartistid" [innerHTML]="doc.artist"></h3>
-      </div-->
-      
-      <!-- label + authors -->
-
-      <!-- source + events -->
+        <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
+          <span class="songkick"></span>
+        </div>
+        <a *ngIf="doc.spalbumid && doc.type != 'podcast'" target="_blank" class="ml-2"
+          href="{{'https://open.spotify.com/album/' + doc.spalbumid}}">
+          <span class="spotify"></span>
+        </a>
+        <a *ngIf="doc.spalbumid && doc.type == 'podcast'" target="_blank" class="ml-2"
+          href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}">
+          <span class="spotify"></span>
+        </a>
+      </div>
 
       <!-- content -->
       <p *ngIf="doc.review" class="text-justify mt-2" [innerHTML]="doc.review"></p>
       <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
-    </div>
 
-    <!-- videos + links -->
-    <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks" type="videos" label="Video"></app-video>
-    <app-link [links]="links" type="links" label="Link"></app-link>
-    <app-link [links]="otherLinks" type="otherlinks" label="Altri Link"></app-link>
-  <!--/div-->
+      <!-- videos + links -->
+      <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks" type="videos" label="Video"></app-video>
+      <app-link [links]="podcasts" type="podcasts" label="Podcast"></app-link>
+      <app-link [links]="links" type="links" label="Link"></app-link>
+    </div>
 </div>
 
 <!-- Spotify player-->

@@ -13,7 +13,7 @@ export class DocComponent implements OnInit {
   id: string = null;
   doc = null;
   links = [];
-  otherLinks = [];
+  podcasts = [];
   spotify: string = null;
   songkick: string = null;
   audio = null;
@@ -40,7 +40,7 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
     this.links = [];
-    this.otherLinks = [];
+    this.podcasts = [];
     this.spotify = null;
     this.songkick = null;
     if(this.audio){
@@ -59,12 +59,11 @@ export class DocComponent implements OnInit {
   }
 
   setLinks(links: any) {
-    var doc = this.doc;
     this.links = links.filter(function(link: any){
-		  return doc.spartistid != null && doc.spartistid == link.spartistid;
+		  return link.type != 'podcast';
     });
-    this.otherLinks = links.filter(function(link: any){
-		  return doc.spartistid == null || doc.spartistid != link.spartistid;
+    this.podcasts = links.filter(function(link: any){
+		  return link.type == 'podcast';
     });
   }
 

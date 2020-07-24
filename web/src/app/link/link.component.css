@@ -1,7 +1,7 @@
 .backward {
-  width: 40px;
-  height: 20px;
-  background: none;
+  width: 30px;
+  min-width: 30px;
+  background: #18A2B8;
   cursor: pointer;
 }
 
@@ -10,16 +10,16 @@
   mask: url("/images/previous.svg");
   width: 10px;
   height: 15px;
-  margin-top: 2px;
-  margin-left: 20px;
-  background: #18A2B8;
+  margin-top: 102px;
+  margin-left: 10px;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
 .forward {
-  width: 40px;
-  height: 20px;
-  background: none;
+  width: 30px;
+  min-width: 30px;
+  background: #18A2B8;
   cursor: pointer;
 }
 
@@ -28,9 +28,9 @@
   mask: url("/images/next.svg");
   width: 10px;
   height: 15px;
-  margin-top: 2px;
-  margin-left: 20px;
-  background: #18A2B8;
+  margin-top: 102px;
+  margin-left: 10px;
+  background: #FFFFFF;
   cursor: pointer;
 }
 

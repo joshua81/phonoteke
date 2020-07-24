@@ -8,7 +8,7 @@
                 <!--span *ngIf="track.spotify" class="play"></span-->
                 <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
             </div>
-            <div class="ml-2 mr-auto">
+            <div class="ml-2 w-100">
                 <div *ngIf="track.spotify == null" [innerHTML]="track.title"></div>
                 <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.title"></div>
                 <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.album"></div>

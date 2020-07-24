@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -37,7 +36,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("artistid", null)),
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).sort(new BasicDBObject("date",-1)).noCursorTimeout(true).iterator();
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).noCursorTimeout(true).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();

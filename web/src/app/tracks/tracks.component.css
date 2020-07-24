@@ -5,12 +5,11 @@
 }
 
 .icon {
-    border-radius: 50%;
-    background: #FFFFFF;
+    background: #F80046;
     width: 20px;
     min-width: 20px;
-    height: 20px;
-    min-height: 20px;
+    height: 62px;
+    min-height: 62px;
     cursor: pointer;
 }
 
@@ -19,7 +18,8 @@
     mask: url("/images/songkick.svg");
     width: 20px;
     height: 20px;
-    background: #F80046;
+    margin-top: 21px;
+    background: #FFFFFF;
     cursor: pointer;
 }
 
@@ -43,10 +43,8 @@ img.cover {
 }
 
 h1.cover {
-    width: 60px;
-    height: 60px;
     text-align: center;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .play {

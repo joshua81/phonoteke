@@ -1,10 +1,9 @@
-<div *ngIf="links && links.length != 0" class="mt-3">
+<div *ngIf="links && links.length != 0" class="link mt-3">
   <!--h1 class="text-uppercase mt-0 mb-0">{{label}}</h1-->
-  <div class="d-flex flex-row mt-2">
-    <div *ngIf="component.isDesktop()" class="backward mr-2" (click)="previous()">
-      <span class="previous"></span>
-    </div>
-    <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll w-100">
+  <div *ngIf="component.isDesktop()" class="backward" (click)="previous()">
+    <span class="previous"></span>
+  </div>
+    <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
       <div *ngFor="let link of links" class="mr-2">
         <div class="cover card">
           <a class="cover" [routerLink]="['/docs/' + link.id]">
@@ -17,10 +16,9 @@
             <h3 class="card-footer text-muted text-uppercase p-0">{{link.type}}</h3>
           </div>
         </div>
-      </div>
     </div>
-    <div *ngIf="component.isDesktop()" class="forward ml-2" (click)="next()">
-      <span class="next"></span>
-    </div>
+  </div>
+  <div *ngIf="component.isDesktop()" class="forward" (click)="next()">
+    <span class="next"></span>
   </div>
 </div>

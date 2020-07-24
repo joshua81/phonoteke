@@ -21,9 +21,9 @@
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
         </div>
-        <a href="{{doc.url}}" target="_blank" class="ml-2">
+        <!--a href="{{doc.url}}" target="_blank" class="ml-2">
           <img class="{{doc.source}}">
-        </a>
+        </a-->
         <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
           <span class="songkick"></span>
         </div>

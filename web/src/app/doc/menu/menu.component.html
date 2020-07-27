@@ -1,7 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row align-items-center w-800">
-    <!--a class="ml-2 mr-2" (click)="back()"><img class="logo"></a-->
-    <a class="ml-2 mr-2" (click)="back()">
+    <a class="ml-2 mr-2" [routerLink]="['/']">
       <img *ngIf="component.doc.coverM == null" class="cover" src="{{component.doc.cover}}"/>
       <img *ngIf="component.doc.coverM != null" class="cover" src="{{component.doc.coverM}}"/>
     </a>

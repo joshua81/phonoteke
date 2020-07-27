@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-doc',
@@ -14,14 +13,13 @@ export class DocComponent implements OnInit {
   doc = null;
   links = [];
   podcasts = [];
-  spotify: string = null;
   songkick: string = null;
   audio = null;
   audioCurrentTime: string = null;
   audioDuration: string = null;
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, public sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -41,7 +39,6 @@ export class DocComponent implements OnInit {
     this.doc = doc;
     this.links = [];
     this.podcasts = [];
-    this.spotify = null;
     this.songkick = null;
     if(this.audio){
       this.audio.pause();
@@ -67,36 +64,7 @@ export class DocComponent implements OnInit {
     });
   }
 
-  spotifyURL() {
-    return this.doc.type == 'podcast' ?
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.spotify) :
-    this.doc.spalbumid != null ?
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify) :
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/artist/' + this.spotify);
-  }
-
-  loadAlbum() {
-    if(this.doc.spartistid || this.doc.spalbumid) {
-      this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
-    }
-    if(this.doc.audio != null && this.audio == null) {
-      this.audio = new Audio();
-      this.audio.src = this.doc.audio;
-      this.audio.ontimeupdate = () => {
-        this.audioDuration = this.formatTime(this.audio.duration);
-        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
-      }
-      this.audio.load();
-      this.audio.play();
-    }
-  }
-
-  loadTrack(track: any) {
-    this.spotify = track.spotify;
-  }
-
   close(event: Event){
-    this.spotify = null;
     if(this.audio) {
       this.audio.pause();
       this.audio = null;
@@ -106,6 +74,16 @@ export class DocComponent implements OnInit {
   }
 
   playPause(event: Event){
+    if(this.doc.audio != null && this.audio == null) {
+      this.audio = new Audio();
+      this.audio.src = this.doc.audio;
+      this.audio.ontimeupdate = () => {
+        this.audioDuration = this.formatTime(this.audio.duration);
+        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
+      }
+      this.audio.load();
+    }
+
     if(this.audio.paused){
       this.audio.play();
     }

@@ -7,7 +7,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -56,7 +59,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final int THRESHOLD = 90;
 
 	protected MongoCollection<org.bson.Document> docs;
-	protected MongoCollection<org.bson.Document> podcasts;
 
 	protected enum TYPE {
 		artist,
@@ -74,7 +76,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
 			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
-			podcasts = db.getCollection("podcasts");
 		} 
 		catch (Throwable t) 
 		{
@@ -282,8 +283,26 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected static org.bson.Document newTrack(String title, String youtube)
 	{
-		return new org.bson.Document("title", title).
+		List<String> chunks = Lists.newArrayList();
+		for(String match : TRACKS_MATCH)
+		{
+			Pattern p = Pattern.compile(match);
+			Matcher m = p.matcher(title);
+			if(m.matches()) {
+				for(int j=1; j<= m.groupCount(); j++){
+					chunks.add(m.group(j));
+				}
+				break;
+			}
+		}
+
+		org.bson.Document doc = new org.bson.Document("titleOrig", title).
+				append("title", title).
 				append("youtube", youtube);
+		if(chunks.size() >= 2) {
+			doc.append("title", StringUtils.capitalize(chunks.get(0)) + " - " + StringUtils.capitalize(chunks.get(1)));
+		}
+		return doc;
 	}
 
 	//---------------------------------

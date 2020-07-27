@@ -52,7 +52,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new SpotifyLoader().load("b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb");
+//		new SpotifyLoader().load("b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb");
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists();
 		//		new SpotifyLoader().renamePlaylists();

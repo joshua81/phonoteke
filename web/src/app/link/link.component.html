@@ -1,22 +1,21 @@
 <div *ngIf="links && links.length != 0" class="link mt-3">
-  <!--h1 class="text-uppercase mt-0 mb-0">{{label}}</h1-->
   <div *ngIf="component.isDesktop()" class="backward" (click)="previous()">
     <span class="previous"></span>
   </div>
-    <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
-      <div *ngFor="let link of links" class="mr-2">
-        <div class="cover card">
-          <a class="cover" [routerLink]="['/docs/' + link.id]">
-            <img *ngIf="link.coverM == null" class="cover card-img-top" src="{{link.cover}}"/>
-            <img *ngIf="link.coverM != null" class="cover card-img-top" src="{{link.coverM}}"/>
-          </a>
-          <div class="card-body p-1">
-            <h2 class="text-truncate-2" [innerHTML]="link.title"></h2>
-            <h3 class="text-truncate-2" [innerHTML]="link.artist"></h3>
-            <h3 class="card-footer text-muted text-uppercase p-0">{{link.type}}</h3>
-          </div>
+  <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
+    <div *ngFor="let link of links" class="mr-2">
+      <div class="cover card">
+        <a class="cover" [routerLink]="['/docs/' + link.id]">
+          <img *ngIf="link.coverM == null" class="cover card-img-top" src="{{link.cover}}"/>
+          <img *ngIf="link.coverM != null" class="cover card-img-top" src="{{link.coverM}}"/>
+        </a>
+        <div class="card-body p-1">
+          <h2 class="text-truncate-2" [innerHTML]="link.title"></h2>
+          <h3 class="text-truncate-2" [innerHTML]="link.artist"></h3>
+          <h3 class="card-footer text-muted text-uppercase p-0">{{link.type}}</h3>
         </div>
-    </div>
+      </div>
+  </div>
   </div>
   <div *ngIf="component.isDesktop()" class="forward" (click)="next()">
     <span class="next"></span>

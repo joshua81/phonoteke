@@ -20,7 +20,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().resetTracks();
+		new PatchLoader().resetTracksTitle();
 	}
 
 	public PatchLoader()
@@ -41,9 +41,7 @@ public class PatchLoader extends PhonotekeLoader
 			{
 				for(org.bson.Document track : tracks)
 				{
-					String title = track.getString("title");
-					track.append("titleOrig", title);
-
+					String title = track.getString("titleOrig");
 					List<String> chunks = Lists.newArrayList();
 					for(String match : TRACKS_MATCH)
 					{
@@ -58,7 +56,7 @@ public class PatchLoader extends PhonotekeLoader
 					}
 
 					if(chunks.size() >= 2) {
-						track.append("title", StringUtils.capitalize(chunks.get(0)) + " - " + StringUtils.capitalize(chunks.get(1)));
+						track.append("title", StringUtils.capitalize(chunks.get(0).trim()) + " - " + StringUtils.capitalize(chunks.get(1).trim()));
 					}
 				}
 			}
@@ -70,7 +68,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		MongoCursor<Document> i = docs.find(Filters.eq("id", "b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb")).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{

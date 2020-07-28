@@ -300,7 +300,9 @@ public abstract class PhonotekeLoader extends WebCrawler
 				append("title", title).
 				append("youtube", youtube);
 		if(chunks.size() >= 2) {
-			doc.append("title", StringUtils.capitalize(chunks.get(0)) + " - " + StringUtils.capitalize(chunks.get(1)));
+			String artist = StringUtils.capitalize(chunks.get(0).trim());
+			String song = StringUtils.capitalize(chunks.get(1).trim());
+			doc.append("title", artist + " - " + song);
 		}
 		return doc;
 	}

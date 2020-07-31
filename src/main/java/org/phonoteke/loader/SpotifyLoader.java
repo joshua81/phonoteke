@@ -91,7 +91,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	//				}
 	//				catch (Exception e) 
 	//				{
-	//					LOGGER.error("Error renaming playlist " + id + ": " + e.getMessage(), e);
+	//					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
 	//				}
 	//			}
 	//		}
@@ -128,7 +128,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				}
 				catch (Exception e) 
 				{
-					LOGGER.error("Error creating playlist " + title + ": " + e.getMessage(), e);
+					LOGGER.error("ERROR creating playlist " + title + ": " + e.getMessage());
 				}
 			}
 		}
@@ -205,7 +205,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		} 
 		catch (Exception e) 
 		{
-			LOGGER.error("Error connecting to Spotify: " + e.getMessage());
+			LOGGER.error("ERROR connecting to Spotify: " + e.getMessage());
 		}
 	}
 
@@ -266,7 +266,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error loading " + artist + " - " + album + ": " + e.getMessage(), e);
+			LOGGER.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage());
 			relogin();
 		}
 		return null;
@@ -318,7 +318,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("Error loading " + artist + ": " + e.getMessage(), e);
+			LOGGER.error("ERROR loading " + artist + ": " + e.getMessage());
 			relogin();
 		}
 		return null;
@@ -360,7 +360,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					}
 					catch (Exception e) 
 					{
-						LOGGER.error("Error loading " + title + ": " + e.getMessage(), e);
+						LOGGER.error("ERROR loading " + title + ": " + e.getMessage());
 						relogin();
 					}
 				}

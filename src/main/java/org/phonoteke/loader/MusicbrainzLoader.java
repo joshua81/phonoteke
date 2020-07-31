@@ -127,7 +127,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		} 
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage(), t);
+			LOGGER.error("ERROR: " + t.getMessage());
 			return null;
 		}
 
@@ -144,7 +144,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage(), t);
+			LOGGER.error("ERROR: " + t.getMessage());
 			return null;
 		}
 		finally
@@ -187,8 +187,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			t.printStackTrace();
-			LOGGER.error("Track Musicbrainz: " + id, t);
+			LOGGER.error("ERROR track Musicbrainz " + id + ": " + t.getMessage());
 		}
 	}
 

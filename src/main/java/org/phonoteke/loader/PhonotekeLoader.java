@@ -79,7 +79,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage(), t);
+			LOGGER.error("ERROR connecting to Mongo db: " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -100,7 +100,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error crawling " + url + ": " + t.getMessage());
+			LOGGER.error("ERROR crawling " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -239,7 +239,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 			}
 			catch (Throwable t) 
 			{
-				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
+				LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
 				throw new RuntimeException(t);
 			}
 		}
@@ -263,7 +263,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error getUrl() "+ url + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR getUrl() "+ url + ": " + t.getMessage());
 			return null;
 		} 
 	}
@@ -405,7 +405,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 				parsedData.setMetaTags(Maps.newHashMap());
 				return parsedData;
 			} catch (IOException e) {
-				LOGGER.error("Error parsing page " + contextURL + ": " + e.getMessage(), e);
+				LOGGER.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
 				throw new ParseException();
 			}
 		}

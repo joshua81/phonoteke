@@ -43,7 +43,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage(), t);
+			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage());
 		}
 	}
 
@@ -63,7 +63,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 		catch(IOException e)
 		{
-			LOGGER.error("ERROR YoutubeLoader: " + e.getMessage(), e);
+			LOGGER.error("ERROR YoutubeLoader: " + e.getMessage());
 		}
 	}
 

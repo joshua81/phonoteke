@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import { DocsComponent } from '../docs/docs.component';
+import { PodcastsComponent } from '../podcasts/podcasts.component';
 
 @Component({
   selector: 'app-section',
@@ -12,7 +12,7 @@ export class SectionComponent implements OnInit {
   @Input() docs = [];
   scroll: number = 0;
 
-  constructor(public component: DocsComponent) {}
+  constructor(public component: PodcastsComponent) {}
 
   ngOnInit() {
   }

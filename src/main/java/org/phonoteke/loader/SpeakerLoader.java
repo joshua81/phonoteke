@@ -84,7 +84,7 @@ public class SpeakerLoader extends PhonotekeLoader
 							LOGGER.info(json.getString("type") + " " + url + " added");
 						}
 						catch(Exception e) {
-							LOGGER.error(e.getMessage());
+							LOGGER.error("ERROR: " + e.getMessage());
 						}
 					}
 				});
@@ -92,7 +92,7 @@ public class SpeakerLoader extends PhonotekeLoader
 		}
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error parsing page " + baseurl + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR parsing page " + baseurl + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}

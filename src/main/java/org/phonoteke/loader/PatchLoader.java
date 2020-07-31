@@ -1,12 +1,16 @@
 package org.phonoteke.loader;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -16,7 +20,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new PatchLoader().resetTracks();
+		new PatchLoader().resetTracksTitle();
 	}
 
 	public PatchLoader()
@@ -24,12 +28,51 @@ public class PatchLoader extends PhonotekeLoader
 		super();
 	}
 
+	private void resetTracksTitle()
+	{
+		LOGGER.info("Resetting tracks title...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String title = track.getString("titleOrig");
+					List<String> chunks = Lists.newArrayList();
+					for(String match : TRACKS_MATCH)
+					{
+						Pattern p = Pattern.compile(match);
+						Matcher m = p.matcher(title);
+						if(m.matches()) {
+							for(int j=1; j<= m.groupCount(); j++){
+								chunks.add(m.group(j));
+							}
+							break;
+						}
+					}
+
+					if(chunks.size() >= 2) {
+						track.append("title", StringUtils.capitalize(chunks.get(0).trim()) + " - " + StringUtils.capitalize(chunks.get(1).trim()));
+					}
+				}
+			}
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
+		}
+	}
+
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.eq("id", "b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb")).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
-		{ 
+		{
+			boolean update = false;
 			Document page = i.next();
 			String id = page.getString("id");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
@@ -52,11 +95,14 @@ public class PatchLoader extends PhonotekeLoader
 						track.append("coverM", null);
 						track.append("coverS", null);
 						track.append("artistid", null);
+						update = true;
 					}
 				}
 			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			if(update) {
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				LOGGER.info("Document " + id + " updated");
+			}
 		}
 	}
 
@@ -85,10 +131,23 @@ public class PatchLoader extends PhonotekeLoader
 		}
 	}
 
+	private void deletePodcasts()
+	{
+		LOGGER.info("Deleting podcasts...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			docs.deleteOne(Filters.eq("id", id));
+			LOGGER.info("Document " + id + " deleted");
+		}
+	}
+
 	private void clearPodcasts()
 	{
 		LOGGER.info("Clearing podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "seigradi"))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();

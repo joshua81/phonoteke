@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-doc',
@@ -13,15 +12,14 @@ export class DocComponent implements OnInit {
   id: string = null;
   doc = null;
   links = [];
-  otherLinks = [];
-  spotify: string = null;
+  podcasts = [];
   songkick: string = null;
   audio = null;
   audioCurrentTime: string = null;
   audioDuration: string = null;
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, public sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -40,8 +38,7 @@ export class DocComponent implements OnInit {
   setDoc(doc: any) {
     this.doc = doc;
     this.links = [];
-    this.otherLinks = [];
-    this.spotify = null;
+    this.podcasts = [];
     this.songkick = null;
     if(this.audio){
       this.audio.pause();
@@ -59,45 +56,15 @@ export class DocComponent implements OnInit {
   }
 
   setLinks(links: any) {
-    var doc = this.doc;
     this.links = links.filter(function(link: any){
-		  return doc.spartistid != null && doc.spartistid == link.spartistid;
+		  return link.type != 'podcast';
     });
-    this.otherLinks = links.filter(function(link: any){
-		  return doc.spartistid == null || doc.spartistid != link.spartistid;
+    this.podcasts = links.filter(function(link: any){
+		  return link.type == 'podcast';
     });
-  }
-
-  spotifyURL() {
-    return this.doc.type == 'podcast' ?
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/track/' + this.spotify) :
-    this.doc.spalbumid != null ?
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/album/' + this.spotify) :
-    this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/artist/' + this.spotify);
-  }
-
-  loadAlbum() {
-    if(this.doc.spartistid || this.doc.spalbumid) {
-      this.spotify = this.doc.spalbumid != null ? this.doc.spalbumid : this.doc.spartistid;
-    }
-    if(this.doc.audio != null && this.audio == null) {
-      this.audio = new Audio();
-      this.audio.src = this.doc.audio;
-      this.audio.ontimeupdate = () => {
-        this.audioDuration = this.formatTime(this.audio.duration);
-        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
-      }
-      this.audio.load();
-      this.audio.play();
-    }
-  }
-
-  loadTrack(track: any) {
-    this.spotify = track.spotify;
   }
 
   close(event: Event){
-    this.spotify = null;
     if(this.audio) {
       this.audio.pause();
       this.audio = null;
@@ -107,6 +74,16 @@ export class DocComponent implements OnInit {
   }
 
   playPause(event: Event){
+    if(this.doc.audio != null && this.audio == null) {
+      this.audio = new Audio();
+      this.audio.src = this.doc.audio;
+      this.audio.ontimeupdate = () => {
+        this.audioDuration = this.formatTime(this.audio.duration);
+        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
+      }
+      this.audio.load();
+    }
+
     if(this.audio.paused){
       this.audio.play();
     }

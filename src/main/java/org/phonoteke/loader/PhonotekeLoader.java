@@ -7,7 +7,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -40,23 +43,22 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String BATTITI_MATCH = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
-	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[ _)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
-	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[ _)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})";
-	private static final String INTHEMIX_MATCH = "[*-]{0,1}(.{1,80})[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String RAI_MATCH = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"'‘’](.{1,80})[“”\"'‘’](.{1,80})";
+	private static final String BERTALLOT_MATCH = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
+	private static final String BERTALLOT2_MATCH = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})";
+	private static final String RAI2_MATCH = "[*-]{0,1}(.{1,80})[“”\"'‘’](.{1,80})[“”\"'‘’](.{0,80})";
 	private static final String DEFAULT_MATCH = "[*-]{0,1}(.{1,80})[:\\-–](.{1,80})";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(BATTITI_MATCH, BERTALLOT_MATCH, BERTALLOT2_MATCH, INTHEMIX_MATCH, DEFAULT_MATCH);
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(RAI_MATCH, BERTALLOT_MATCH, BERTALLOT2_MATCH, RAI2_MATCH, DEFAULT_MATCH);
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	protected static final int SLEEP_TIME = 2000;
 	protected static final int THRESHOLD = 90;
 
 	protected MongoCollection<org.bson.Document> docs;
-	protected MongoCollection<org.bson.Document> podcasts;
 
 	protected enum TYPE {
 		artist,
@@ -74,11 +76,10 @@ public abstract class PhonotekeLoader extends WebCrawler
 			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
 			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
-			podcasts = db.getCollection("podcasts");
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error connecting to Mongo db: " + t.getMessage(), t);
+			LOGGER.error("ERROR connecting to Mongo db: " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -99,7 +100,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error crawling " + url + ": " + t.getMessage());
+			LOGGER.error("ERROR crawling " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -238,7 +239,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 			}
 			catch (Throwable t) 
 			{
-				LOGGER.error("Error parsing page " + url + ": " + t.getMessage(), t);
+				LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
 				throw new RuntimeException(t);
 			}
 		}
@@ -262,13 +263,14 @@ public abstract class PhonotekeLoader extends WebCrawler
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("Error getUrl() "+ url + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR getUrl() "+ url + ": " + t.getMessage());
 			return null;
 		} 
 	}
 
 	protected static boolean isTrack(String title)
 	{
+		title = title.trim();
 		for(String match : TRACKS_MATCH)
 		{
 			if(title.matches(match))
@@ -281,8 +283,28 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected static org.bson.Document newTrack(String title, String youtube)
 	{
-		return new org.bson.Document("title", title).
+		List<String> chunks = Lists.newArrayList();
+		for(String match : TRACKS_MATCH)
+		{
+			Pattern p = Pattern.compile(match);
+			Matcher m = p.matcher(title);
+			if(m.matches()) {
+				for(int j=1; j<= m.groupCount(); j++){
+					chunks.add(m.group(j));
+				}
+				break;
+			}
+		}
+
+		org.bson.Document doc = new org.bson.Document("titleOrig", title).
+				append("title", title).
 				append("youtube", youtube);
+		if(chunks.size() >= 2) {
+			String artist = StringUtils.capitalize(chunks.get(0).trim());
+			String song = StringUtils.capitalize(chunks.get(1).trim());
+			doc.append("title", artist + " - " + song);
+		}
+		return doc;
 	}
 
 	//---------------------------------
@@ -383,7 +405,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 				parsedData.setMetaTags(Maps.newHashMap());
 				return parsedData;
 			} catch (IOException e) {
-				LOGGER.error("Error parsing page " + contextURL + ": " + e.getMessage(), e);
+				LOGGER.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
 				throw new ParseException();
 			}
 		}

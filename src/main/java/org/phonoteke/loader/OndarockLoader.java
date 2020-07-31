@@ -300,7 +300,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getCreationDate() "+ url + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR getCreationDate() "+ url + ": " + t.getMessage());
 			return null;
 		}
 	}
@@ -343,7 +343,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getCover() "+ url + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR getCover() "+ url + ": " + t.getMessage());
 			return null;
 		}
 	}
@@ -530,7 +530,7 @@ public class OndarockLoader extends PhonotekeLoader
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("Error getVote() "+ url + ": " + t.getMessage(), t);
+			LOGGER.error("ERROR getVote() "+ url + ": " + t.getMessage());
 			return 0F;
 		}
 	}

@@ -19,8 +19,28 @@
   mask: url("/images/songkick.svg");
   width: 30px;
   height: 30px;
-  background: #F80046; 
+  background: #18A2B8;
   cursor: pointer;
+}
+
+.spotify {
+  display: inline-block;
+  mask: url("/images/spotify.svg");
+  width: 30px;
+  height: 30px;
+  background: #18A2B8; 
+  cursor: pointer;
+}
+
+.play-circle {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background: #FFFFFF;
+
+  color: #18A2B8;
+  text-align: center;
+  margin: 0px;
 }
 
 h2.vote {
@@ -32,11 +52,7 @@ h2.vote {
   color: #FFFFFF;
   text-align: center;
   padding-top: 8px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
+  margin: 0px;
 }
 
 div.vote {
@@ -48,11 +64,7 @@ div.vote {
   color: #FFFFFF;
   text-align: center;
   padding-top: 6px;
-
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 20;
+  margin: 0px;
 }
 
 .star {
@@ -64,22 +76,14 @@ div.vote {
 }
 
 div.cover {
-  width: 250px;
+  width: 120px;
   position: relative;
-  cursor: pointer;
-}
-
-a.cover {
-  width: 250px;
-  height: 250px;
-  cursor: pointer;
 }
 
 img.cover {
-  width: 250px;
-  height: 250px;
+  width: 120px;
+  height: 120px;
   object-fit:cover;
-  cursor: pointer;
 }
 
 .play {
@@ -107,6 +111,28 @@ img.cover-player {
   width: 80px;
   height: 80px;
   object-fit:cover;
+}
+
+.player-play-circle {
+  display: inline-block;
+  mask: url("/images/play-circle.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.player-pause-circle {
+  display: inline-block;
+  mask: url("/images/pause-circle.svg");
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #18A2B8;
+  cursor: pointer;
 }
 
 .player-play {

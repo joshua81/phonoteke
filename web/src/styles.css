@@ -26,6 +26,7 @@ html, body {
     padding: 0px;
     height: 40px;
     background: #FFFFFF;
+    border-bottom: 1px solid #18A2B8;
 }
 
 .hscroll {

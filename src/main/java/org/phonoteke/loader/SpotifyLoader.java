@@ -52,7 +52,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-//		new SpotifyLoader().load("b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb");
+		//		new SpotifyLoader().load("b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb");
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists();
 		//		new SpotifyLoader().renamePlaylists();
@@ -251,13 +251,13 @@ public class SpotifyLoader extends PhonotekeLoader
 					String spartist = artists[k].getName();
 					String artistid = artists[k].getId();
 					String spalbum = a.getName();
-					String albumId = a.getId();
+					String albumid = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
-					//LOGGER.info("album: " + artist + " " + album + ", spotify: " + spartist + " " + spalbum + " score " + score);
+					LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 					if(score >= THRESHOLD)
 					{
-						LOGGER.info(artist + " " + album + ": " + spartist + " " + spalbum + " (" + albumId + ")");
-						Document page = new Document("spartistid", artistid).append("spalbumid", albumId);
+						LOGGER.info(albumid + ": " + artist + " - " + album);
+						Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
 						getImages(page, a.getImages());
 						return page;
 					}
@@ -306,10 +306,10 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spartist = a.getName();
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
-				LOGGER.info("artist: " + artist + ", spotify: " + spartist + " score; " + score);
+				LOGGER.info(artist + " | " + spartist + ": " + score);
 				if(score >= THRESHOLD)
 				{
-					LOGGER.info(artist + ": " + spartist + " (" + artistid + ")");
+					LOGGER.info(artistid + ": " + artist);
 					Document page = new Document("spartistid", artistid);
 					getImages(page, a.getImages());
 					return page;
@@ -397,8 +397,8 @@ public class SpotifyLoader extends PhonotekeLoader
 			{
 				return track;
 			}
+			LOGGER.info(chunks.get(0) + " - " + chunks.get(1) + " not found");
 		}
-		LOGGER.info("NOT FOUND: " + title);
 		return null;
 	}
 
@@ -421,6 +421,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spsong = track.getName();
 				String trackid = track.getId();
 				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+				LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
 				if(score >= THRESHOLD)
 				{
 					LOGGER.info(trackid + ": " + artist + " - " + song);

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.common.collect.Lists;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -69,8 +68,8 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date",-1)).limit(10).noCursorTimeout(true).iterator();
-		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb")).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date",-1)).limit(100).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;

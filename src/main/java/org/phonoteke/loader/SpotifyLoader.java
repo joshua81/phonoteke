@@ -3,6 +3,7 @@ package org.phonoteke.loader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Lists;
+import com.google.api.client.util.Maps;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -28,6 +30,7 @@ import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.playlists.AddTracksToPlaylistRequest;
+import com.wrapper.spotify.requests.data.playlists.ChangePlaylistsDetailsRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
@@ -38,6 +41,8 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class SpotifyLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
+
+	protected static final int THRESHOLD = 80;
 
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
@@ -71,31 +76,31 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 	}
 
-	//	private void renamePlaylists()
-	//	{
-	//		LOGGER.info("Loading Spotify Playlists...");
-	//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator(); 
-	//		while(i.hasNext()) 
-	//		{ 
-	//			Document page = i.next();
-	//			String id = page.getString("spalbumid");
-	//			if(id != null) {
-	//				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-	//				String name = page.getString("artist") + " del " + date;
-	//				String description = page.getString("title");
-	//				try
-	//				{
-	//					ChangePlaylistsDetailsRequest req = PLAYLIST_API.changePlaylistsDetails(SPOTIFY_USER, id).name(name).description(description).build();
-	//					String res = req.execute();
-	//					LOGGER.info("Playlist " + id + " renamed");
-	//				}
-	//				catch (Exception e) 
-	//				{
-	//					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
-	//				}
-	//			}
-	//		}
-	//	}
+	private void renamePlaylists()
+	{
+		LOGGER.info("Loading Spotify Playlists...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator(); 
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("spalbumid");
+			if(id != null) {
+				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+				String name = page.getString("artist") + " del " + date;
+				String description = page.getString("title");
+				try
+				{
+					ChangePlaylistsDetailsRequest req = PLAYLIST_API.changePlaylistsDetails(SPOTIFY_USER, id).name(name).description(description).build();
+					String res = req.execute();
+					LOGGER.info("Playlist " + id + " renamed");
+				}
+				catch (Exception e) 
+				{
+					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
+				}
+			}
+		}
+	}
 
 	private void createPlaylist(Document page)
 	{
@@ -236,11 +241,12 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private Document loadAlbum(String artist, String album)
 	{
+		TreeMap<Integer, Document> albumsMap = Maps.newTreeMap();
 		try
 		{
 			login();
 			String q = "artist:"+ artist + " album:" + album;
-			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
+			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).limit(5).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
 			{
@@ -256,10 +262,12 @@ public class SpotifyLoader extends PhonotekeLoader
 					LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 					if(score >= THRESHOLD)
 					{
-						LOGGER.info(albumid + ": " + artist + " - " + album);
+						LOGGER.info(artist + " - " + album + ": " + albumid);
 						Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
 						getImages(page, a.getImages());
-						return page;
+						if(!albumsMap.containsKey(score)) {
+							albumsMap.put(score, page);
+						}
 					}
 				}
 			}
@@ -269,7 +277,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			LOGGER.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage());
 			relogin();
 		}
-		return null;
+		return albumsMap.isEmpty() ?  null : albumsMap.descendingMap().firstEntry().getValue();
 	}
 
 	private void loadArtist(Document page)
@@ -294,11 +302,12 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private Document loadArtist(String artist)
 	{
+		TreeMap<Integer, Document> artistsMap = Maps.newTreeMap();
 		try
 		{
 			login();
 			String q = "artist:" + artist;
-			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).build();
+			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).limit(5).build();
 			Paging<Artist> artists = request.execute();
 			for(int j = 0; j < artists.getItems().length; j++)
 			{
@@ -309,10 +318,12 @@ public class SpotifyLoader extends PhonotekeLoader
 				LOGGER.info(artist + " | " + spartist + ": " + score);
 				if(score >= THRESHOLD)
 				{
-					LOGGER.info(artistid + ": " + artist);
+					LOGGER.info(artist + ": " + artistid);
 					Document page = new Document("spartistid", artistid);
 					getImages(page, a.getImages());
-					return page;
+					if(!artistsMap.containsKey(score)) {
+						artistsMap.put(score, page);
+					}
 				}
 			}
 		}
@@ -321,7 +332,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			LOGGER.error("ERROR loading " + artist + ": " + e.getMessage());
 			relogin();
 		}
-		return null;
+		return artistsMap.isEmpty() ?  null : artistsMap.descendingMap().firstEntry().getValue();
 	}
 
 	private void loadTracks(Document page)
@@ -404,12 +415,13 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private Document loadTrack(String artist, String song) throws Exception
 	{
+		TreeMap<Integer, Document> tracksMap = Maps.newTreeMap();
 		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
 		{
 			artist = artist.trim();
 			song = song.trim();
 			String q = "artist:" + artist + " track: " + song;
-			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
+			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).limit(5).build();
 			Paging<Track> tracks = request.execute();
 			for(int i = 0; i < tracks.getItems().length; i++)
 			{
@@ -424,7 +436,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
 				if(score >= THRESHOLD)
 				{
-					LOGGER.info(trackid + ": " + artist + " - " + song);
+					LOGGER.info(artist + " - " + song + ": " + trackid);
 					Document page = new Document("spotify", trackid);
 					page.append("artist", spartist);
 					page.append("spartistid", spartistid);
@@ -432,11 +444,13 @@ public class SpotifyLoader extends PhonotekeLoader
 					page.append("spalbumid", spalbumid);
 					page.append("track", spsong);
 					getImages(page, track.getAlbum().getImages());
-					return page;
+					if(!tracksMap.containsKey(score)) {
+						tracksMap.put(score, page);
+					}
 				}
 			}
 		}
-		return null;
+		return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
 	}
 
 	private void getImages(Document page, Image[] images)

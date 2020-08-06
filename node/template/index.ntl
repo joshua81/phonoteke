@@ -14,7 +14,15 @@
     <base href="/">
     <link type="image/x-icon" href="favicon.ico" rel="icon">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.f691a7c5036027cc9f49.css"></head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-174792458-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-174792458-1');
+    </script>
+  <link rel="stylesheet" href="styles.00d23071e4494ca2af15.css"></head>
   <body>
     <app-root>
       <div class="d-flex justify-content-center">
@@ -23,6 +31,6 @@
         </div>
       </div>
     </app-root>
-  <script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.ef4b1e1fc703b3ff76e3.js" nomodule defer></script><script src="polyfills-es2015.2987770fde9daa1d8a2e.js" type="module"></script><script src="main-es2015.a4f1c137a160a9b167f1.js" type="module"></script><script src="main-es5.a4f1c137a160a9b167f1.js" nomodule defer></script></body>
+  <script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.ef4b1e1fc703b3ff76e3.js" nomodule defer></script><script src="polyfills-es2015.2987770fde9daa1d8a2e.js" type="module"></script><script src="main-es2015.15783e51bab686ee33ce.js" type="module"></script><script src="main-es5.15783e51bab686ee33ce.js" nomodule defer></script></body>
 </html>
 

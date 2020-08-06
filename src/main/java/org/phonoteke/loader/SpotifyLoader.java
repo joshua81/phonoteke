@@ -15,7 +15,7 @@ import org.bson.Document;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
-import com.mongodb.BasicDBObject;
+import com.google.gson.JsonArray;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
@@ -30,8 +30,8 @@ import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.playlists.AddTracksToPlaylistRequest;
-import com.wrapper.spotify.requests.data.playlists.ChangePlaylistsDetailsRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
+import com.wrapper.spotify.requests.data.playlists.ReplacePlaylistsTracksRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
@@ -41,8 +41,6 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class SpotifyLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
-
-	protected static final int THRESHOLD = 80;
 
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
@@ -76,27 +74,33 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 	}
 
-	private void renamePlaylists()
+	private void recreatePlaylists()
 	{
-		LOGGER.info("Loading Spotify Playlists...");
+		LOGGER.info("Recreating Spotify Playlists...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
 			String id = page.getString("spalbumid");
-			if(id != null) {
-				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-				String name = page.getString("artist") + " del " + date;
-				String description = page.getString("title");
-				try
-				{
-					ChangePlaylistsDetailsRequest req = PLAYLIST_API.changePlaylistsDetails(SPOTIFY_USER, id).name(name).description(description).build();
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(id != null && CollectionUtils.isNotEmpty(tracks)) {
+				try {
+					JsonArray uris = new JsonArray();
+					for(org.bson.Document track : tracks)
+					{
+						String spotify = track.getString("spotify");
+						if(spotify != null && !NA.equals(spotify))
+						{
+							uris.add("spotify:track:" + spotify);
+						}
+					}
+					ReplacePlaylistsTracksRequest req = PLAYLIST_API.replacePlaylistsTracks(SPOTIFY_USER, id, uris).build();
 					String res = req.execute();
-					LOGGER.info("Playlist " + id + " renamed");
+					LOGGER.info("Playlist " + id + " recreated");
 				}
 				catch (Exception e) 
 				{
-					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
+					LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
 				}
 			}
 		}
@@ -168,7 +172,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		LOGGER.info("Loading Spotify...");
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).sort(new BasicDBObject("date",-1)).noCursorTimeout(true).iterator();
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -260,14 +264,10 @@ public class SpotifyLoader extends PhonotekeLoader
 					String albumid = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
 					LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
-					if(score >= THRESHOLD)
-					{
-						LOGGER.info(artist + " - " + album + ": " + albumid);
-						Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
-						getImages(page, a.getImages());
-						if(!albumsMap.containsKey(score)) {
-							albumsMap.put(score, page);
-						}
+					Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
+					getImages(page, a.getImages());
+					if(!albumsMap.containsKey(score)) {
+						albumsMap.put(score, page);
 					}
 				}
 			}
@@ -316,14 +316,10 @@ public class SpotifyLoader extends PhonotekeLoader
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
 				LOGGER.info(artist + " | " + spartist + ": " + score);
-				if(score >= THRESHOLD)
-				{
-					LOGGER.info(artist + ": " + artistid);
-					Document page = new Document("spartistid", artistid);
-					getImages(page, a.getImages());
-					if(!artistsMap.containsKey(score)) {
-						artistsMap.put(score, page);
-					}
+				Document page = new Document("spartistid", artistid);
+				getImages(page, a.getImages());
+				if(!artistsMap.containsKey(score)) {
+					artistsMap.put(score, page);
 				}
 			}
 		}
@@ -434,19 +430,15 @@ public class SpotifyLoader extends PhonotekeLoader
 				String trackid = track.getId();
 				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
 				LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
-				if(score >= THRESHOLD)
-				{
-					LOGGER.info(artist + " - " + song + ": " + trackid);
-					Document page = new Document("spotify", trackid);
-					page.append("artist", spartist);
-					page.append("spartistid", spartistid);
-					page.append("album", spalbum);
-					page.append("spalbumid", spalbumid);
-					page.append("track", spsong);
-					getImages(page, track.getAlbum().getImages());
-					if(!tracksMap.containsKey(score)) {
-						tracksMap.put(score, page);
-					}
+				Document page = new Document("spotify", trackid);
+				page.append("artist", spartist);
+				page.append("spartistid", spartistid);
+				page.append("album", spalbum);
+				page.append("spalbumid", spalbumid);
+				page.append("track", spsong);
+				getImages(page, track.getAlbum().getImages());
+				if(!tracksMap.containsKey(score)) {
+					tracksMap.put(score, page);
 				}
 			}
 		}

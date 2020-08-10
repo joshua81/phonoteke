@@ -20,6 +20,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.Artist;
@@ -49,6 +50,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 	private static final SpotifyApi PLAYLIST_API = new SpotifyApi.Builder().setAccessToken(System.getenv("SPOTIFY_TOKEN")).build();
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
+	private static final String VA = "Artisti Vari";
 
 	private static ClientCredentials credentials;
 
@@ -130,10 +132,10 @@ public class SpotifyLoader extends PhonotekeLoader
 				{
 					CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 					Playlist playlist = playlistRequest.execute();
-					System.out.println("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
 					AddTracksToPlaylistRequest itemsRequest = PLAYLIST_API.addTracksToPlaylist(SPOTIFY_USER, playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 					itemsRequest.execute();
 					page.append("spalbumid", playlist.getId());
+					LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
 				}
 				catch (Exception e) 
 				{
@@ -234,12 +236,14 @@ public class SpotifyLoader extends PhonotekeLoader
 			append("spalbumid", albumId).
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
-			append("coverS", spotify.getString("coverS"));
+			append("coverS", spotify.getString("coverS")).
+			append("score", spotify.getInteger("score"));
 		}
 		else
 		{
 			page.append("spartistid", NA).
-			append("spalbumid", NA);
+			append("spalbumid", NA).
+			append("score", 0);
 		}
 	}
 
@@ -250,7 +254,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		{
 			login();
 			String q = "artist:"+ artist + " album:" + album;
-			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).limit(5).build();
+			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).limit(10).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
 			{
@@ -263,10 +267,12 @@ public class SpotifyLoader extends PhonotekeLoader
 					String spalbum = a.getName();
 					String albumid = a.getId();
 					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
-					LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 					Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
+					page.append("score", score);
 					getImages(page, a.getImages());
-					if(!albumsMap.containsKey(score)) {
+
+					if(!VA.equalsIgnoreCase(a.getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(a.getAlbumType()) && !albumsMap.containsKey(score)) {
+						LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 						albumsMap.put(score, page);
 					}
 				}
@@ -292,11 +298,13 @@ public class SpotifyLoader extends PhonotekeLoader
 			page.append("spartistid", artistId).
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
-			append("coverS", spotify.getString("coverS"));
+			append("coverS", spotify.getString("coverS")).
+			append("score", spotify.getInteger("score"));
 		}
 		else
 		{
-			page.append("spartistid", NA);
+			page.append("spartistid", NA).
+			append("score", 0);
 		}
 	}
 
@@ -307,7 +315,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		{
 			login();
 			String q = "artist:" + artist;
-			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).limit(5).build();
+			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).limit(10).build();
 			Paging<Artist> artists = request.execute();
 			for(int j = 0; j < artists.getItems().length; j++)
 			{
@@ -315,10 +323,12 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spartist = a.getName();
 				String artistid = a.getId();
 				int score = FuzzySearch.tokenSortRatio(artist, spartist);
-				LOGGER.info(artist + " | " + spartist + ": " + score);
 				Document page = new Document("spartistid", artistid);
+				page.append("score", score);
 				getImages(page, a.getImages());
+
 				if(!artistsMap.containsKey(score)) {
+					LOGGER.info(artist + " | " + spartist + ": " + score);
 					artistsMap.put(score, page);
 				}
 			}
@@ -358,11 +368,13 @@ public class SpotifyLoader extends PhonotekeLoader
 							append("spalbumid", spotify.getString("spalbumid")).
 							append("coverL", spotify.getString("coverL")).
 							append("coverM", spotify.getString("coverM")).
-							append("coverS", spotify.getString("coverS"));
+							append("coverS", spotify.getString("coverS")).
+							append("score", spotify.getInteger("score"));
 						}
 						else
 						{
-							track.append("spotify", NA);
+							track.append("spotify", NA).
+							append("score", 0);
 						}
 					}
 					catch (Exception e) 
@@ -390,26 +402,17 @@ public class SpotifyLoader extends PhonotekeLoader
 			}
 		}
 
-		// artist - song
 		if(chunks.size() >= 2) {
 			LOGGER.info(chunks.get(0) + " - " + chunks.get(1));
-			org.bson.Document track = loadTrack(chunks.get(0), chunks.get(1));
-			if(track != null)
-			{
-				return track;
-			}
-			// song - artist
-			track = loadTrack(chunks.get(1), chunks.get(0));
-			if(track != null)
-			{
-				return track;
-			}
-			LOGGER.info(chunks.get(0) + " - " + chunks.get(1) + " not found");
+			TreeMap<Integer, Document> tracksMap = loadTrack(chunks.get(0), chunks.get(1));
+			tracksMap.putAll(loadTrack(chunks.get(1), chunks.get(0)));
+			return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
 		}
+		LOGGER.info(title + " not found");
 		return null;
 	}
 
-	private Document loadTrack(String artist, String song) throws Exception
+	private TreeMap<Integer, Document> loadTrack(String artist, String song) throws Exception
 	{
 		TreeMap<Integer, Document> tracksMap = Maps.newTreeMap();
 		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
@@ -417,7 +420,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			artist = artist.trim();
 			song = song.trim();
 			String q = "artist:" + artist + " track: " + song;
-			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).limit(5).build();
+			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).limit(10).build();
 			Paging<Track> tracks = request.execute();
 			for(int i = 0; i < tracks.getItems().length; i++)
 			{
@@ -429,20 +432,22 @@ public class SpotifyLoader extends PhonotekeLoader
 				String spsong = track.getName();
 				String trackid = track.getId();
 				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
-				LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
 				Document page = new Document("spotify", trackid);
 				page.append("artist", spartist);
 				page.append("spartistid", spartistid);
 				page.append("album", spalbum);
 				page.append("spalbumid", spalbumid);
 				page.append("track", spsong);
+				page.append("score", score);
 				getImages(page, track.getAlbum().getImages());
-				if(!tracksMap.containsKey(score)) {
+
+				if(!VA.equalsIgnoreCase(track.getAlbum().getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(track.getAlbum().getAlbumType()) && !tracksMap.containsKey(score)) {
+					LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
 					tracksMap.put(score, page);
 				}
 			}
 		}
-		return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
+		return tracksMap;
 	}
 
 	private void getImages(Document page, Image[] images)

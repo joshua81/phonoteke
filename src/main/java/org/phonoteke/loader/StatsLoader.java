@@ -61,7 +61,7 @@ public class StatsLoader extends PhonotekeLoader
 		for(Integer key : stats.descendingKeySet()) {
 			int num = stats.get(key);
 			double perc = Double.valueOf(num)/Double.valueOf(tot);
-			LOGGER.info("Stats score " + key + ": " + num + " (" + NumberFormat.getPercentInstance().format(perc) + ")" );
+			LOGGER.info("Stats tracks score " + key + ": " + num + " (" + NumberFormat.getPercentInstance().format(perc) + ")" );
 		}
 	}
 }

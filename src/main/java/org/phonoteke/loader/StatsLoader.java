@@ -32,14 +32,18 @@ public class StatsLoader extends PhonotekeLoader
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> stats = Maps.newTreeMap();
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		int numPodcasts = 0;
+		int numTracks = 0;
 		while(i.hasNext()) 
 		{
+			numPodcasts++;
 			Document page = i.next();
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
 			if(CollectionUtils.isNotEmpty(tracks))
 			{
 				for(org.bson.Document track : tracks)
 				{
+					numTracks++;
 					Integer score = track.getInteger("score");
 					if(score == null) {
 						score = -1;
@@ -51,17 +55,13 @@ public class StatsLoader extends PhonotekeLoader
 				}
 			}
 		}
-
-		int tot = 0;
-		for(Integer key : stats.keySet()) {
-			tot += stats.get(key);
-		}
 		
-		LOGGER.info("Stats total tracks: " + tot);
+		LOGGER.info("Stats total Podcasts: " + numPodcasts);
+		LOGGER.info("Stats total Tracks: " + numTracks);
 		for(Integer key : stats.descendingKeySet()) {
 			int num = stats.get(key);
-			double perc = Double.valueOf(num)/Double.valueOf(tot);
-			LOGGER.info("Stats tracks score " + key + ": " + num + " (" + NumberFormat.getPercentInstance().format(perc) + ")" );
+			double perc = Double.valueOf(num)/Double.valueOf(numTracks);
+			LOGGER.info("Stats Tracks score " + key + ": " + num + " (" + NumberFormat.getPercentInstance().format(perc) + ")" );
 		}
 	}
 }

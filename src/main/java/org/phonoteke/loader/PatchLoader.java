@@ -45,8 +45,7 @@ public class PatchLoader extends PhonotekeLoader
 					List<String> chunks = Lists.newArrayList();
 					for(String match : TRACKS_MATCH)
 					{
-						Pattern p = Pattern.compile(match);
-						Matcher m = p.matcher(title);
+						Matcher m = Pattern.compile(match).matcher(title);
 						if(m.matches()) {
 							for(int j=1; j<= m.groupCount(); j++){
 								chunks.add(m.group(j));
@@ -68,7 +67,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date",-1)).limit(100).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "dbb3bd8b709b216319362180d573d02b0f75e0d4daedb6182278f754edd1c015")).noCursorTimeout(true).iterator();
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
@@ -80,7 +79,7 @@ public class PatchLoader extends PhonotekeLoader
 			{
 				for(org.bson.Document track : tracks)
 				{
-					if(NA.equals(track.getString("spotify")))
+					if(track.getInteger("score").equals(0))
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);
@@ -95,6 +94,7 @@ public class PatchLoader extends PhonotekeLoader
 						track.append("coverM", null);
 						track.append("coverS", null);
 						track.append("artistid", null);
+						track.append("score", null);
 						update = true;
 					}
 				}

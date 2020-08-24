@@ -43,18 +43,30 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String MATCH1 = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“”\"‘’](.{1,80})[“”\"‘’](.{1,80})";
-	private static final String MATCH2 = "[*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}['](.{1,80})['](.{1,80})";
-	private static final String MATCH3 = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
-	private static final String MATCH4 = "[0-9]{1,2}[ ]{0,}[ \\._)\\-–][ ]{0,}(.{1,80})[-–](.{1,80})";
-	private static final String MATCH5 = "[*-]{0,1}(.{1,80})[“”\"‘’](.{1,80})[“”\"‘’](.{0,80})";
-	private static final String MATCH6 = "[*-]{0,1}(.{1,80})['](.{1,80})['](.{0,80})";
-	private static final String MATCH7 = "[*-]{0,1}(.{1,80})[:\\-–](.{1,80})";
+	private static final String MATCH1 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“](.{1,80})[”](.{1,80})";
+	private static final String MATCH2 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[‘](.{1,80})[’](.{1,80})";
+	private static final String MATCH3 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[\"](.{1,80})[\"](.{1,80})";
+	private static final String MATCH4 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}['](.{1,80})['](.{1,80})";
+	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
+	private static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[-–](.{1,80})";
+	private static final String MATCH7 = "[•*-]{0,1}(.{1,80})[“](.{1,80})[”](.{0,80})";
+	private static final String MATCH8 = "[•*-]{0,1}(.{1,80})[‘](.{1,80})[’](.{0,80})";
+	private static final String MATCH9 = "[•*-]{0,1}(.{1,80})[\"](.{1,80})[\"](.{0,80})";
+	private static final String MATCH10 = "[•*-]{0,1}(.{1,80})['](.{1,80})['](.{0,80})";
+	private static final String MATCH11 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})\\([0-9]{4}\\)";
+	private static final String MATCH12 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})";
+
+	private static final String FEAT1 = "(?i)(.{1,80})[ \\(]feat .*";
+	private static final String FEAT2 = "(?i)(.{1,80})[ \\(]feat. .*";
+	private static final String FEAT3 = "(?i)(.{1,80})[ \\(]ft .*";
+	private static final String FEAT4 = "(?i)(.{1,80})[ \\(]ft. .*";
+	private static final String FEAT5 = "(?i)(.{1,80})[ \\(]featuring .*";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7, MATCH8, MATCH9, MATCH10, MATCH11, MATCH12);
+	protected static final List<String> FEAT_MATCH = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5);
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	protected static final int SLEEP_TIME = 2000;
@@ -288,8 +300,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 		List<String> chunks = Lists.newArrayList();
 		for(String match : TRACKS_MATCH)
 		{
-			Pattern p = Pattern.compile(match);
-			Matcher m = p.matcher(title);
+			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				for(int j=1; j<= m.groupCount(); j++){
 					chunks.add(m.group(j));

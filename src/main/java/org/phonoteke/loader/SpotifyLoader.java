@@ -172,6 +172,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void load()
 	{
 		LOGGER.info("Loading Spotify...");
+		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "dbb3bd8b709b216319362180d573d02b0f75e0d4daedb6182278f754edd1c015")).noCursorTimeout(true).iterator();
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
@@ -390,10 +391,8 @@ public class SpotifyLoader extends PhonotekeLoader
 	private org.bson.Document getTrack(String title, String source) throws Exception
 	{
 		List<String> chunks = Lists.newArrayList();
-		for(String match : TRACKS_MATCH)
-		{
-			Pattern p = Pattern.compile(match);
-			Matcher m = p.matcher(title);
+		for(String match : TRACKS_MATCH) {
+			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				for(int j=1; j<= m.groupCount(); j++){
 					chunks.add(m.group(j));
@@ -403,9 +402,35 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 
 		if(chunks.size() >= 2) {
-			LOGGER.info(chunks.get(0) + " - " + chunks.get(1));
-			TreeMap<Integer, Document> tracksMap = loadTrack(chunks.get(0), chunks.get(1));
-			tracksMap.putAll(loadTrack(chunks.get(1), chunks.get(0)));
+			String artist = chunks.get(0);
+			artist = artist.replaceAll("/", " ");
+			artist = artist.replaceAll("&", " ");
+			artist = artist.replaceAll("\\+", " ");
+			artist = artist.replaceAll(",", " ");
+			for(String match : FEAT_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(artist);
+				if(m.matches()) {
+					artist = m.group(1);
+					break;
+				}
+			}
+
+			String song = chunks.get(1);
+			song = song.replaceAll("/", " ");
+			song = song.replaceAll("&", " ");
+			song = song.replaceAll("\\+", " ");
+			song = song.replaceAll(",", " ");
+			for(String match : FEAT_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(song);
+				if(m.matches()) {
+					song = m.group(1);
+					break;
+				}
+			}
+
+			LOGGER.info(artist + " - " + song);
+			TreeMap<Integer, Document> tracksMap = loadTrack(artist, song);
+			tracksMap.putAll(loadTrack(song, artist));
 			return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
 		}
 		LOGGER.info(title + " not found");

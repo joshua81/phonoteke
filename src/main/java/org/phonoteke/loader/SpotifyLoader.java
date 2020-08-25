@@ -57,7 +57,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new SpotifyLoader().load("b771b4dc8081520f7b43f3788b63dfc5a6f6587d7e68c38e26c9ae02ca8397bb");
+		//		new SpotifyLoader().load("fffb71e3c112f4312f431a58505f3ccec894a2caa41dd2e0ffd03f904e28ce06");
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists();
 		//		new SpotifyLoader().renamePlaylists();
@@ -165,7 +165,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			{
 				loadArtist(page);
 			}
-			//docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 	}
 
@@ -414,6 +414,13 @@ public class SpotifyLoader extends PhonotekeLoader
 					break;
 				}
 			}
+			for(String match : YEAR_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(artist);
+				if(m.matches()) {
+					artist = m.group(1);
+					break;
+				}
+			}
 
 			String song = chunks.get(1);
 			song = song.replaceAll("/", " ");
@@ -421,6 +428,13 @@ public class SpotifyLoader extends PhonotekeLoader
 			song = song.replaceAll("\\+", " ");
 			song = song.replaceAll(",", " ");
 			for(String match : FEAT_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(song);
+				if(m.matches()) {
+					song = m.group(1);
+					break;
+				}
+			}
+			for(String match : YEAR_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
 					song = m.group(1);

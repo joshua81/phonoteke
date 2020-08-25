@@ -7,10 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -43,30 +40,29 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String MATCH1 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[“](.{1,80})[”](.{1,80})";
-	private static final String MATCH2 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[‘](.{1,80})[’](.{1,80})";
-	private static final String MATCH3 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}[\"](.{1,80})[\"](.{1,80})";
-	private static final String MATCH4 = "[•*-]{0,1}(.{1,80}),(.{1,80}),[ ]{0,}da[ ]{0,}['](.{1,80})['](.{1,80})";
-	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[-–](.{1,80})\\([0-9]{4}\\)";
-	private static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[-–](.{1,80})";
-	private static final String MATCH7 = "[•*-]{0,1}(.{1,80})[“](.{1,80})[”](.{0,80})";
-	private static final String MATCH8 = "[•*-]{0,1}(.{1,80})[‘](.{1,80})[’](.{0,80})";
-	private static final String MATCH9 = "[•*-]{0,1}(.{1,80})[\"](.{1,80})[\"](.{0,80})";
-	private static final String MATCH10 = "[•*-]{0,1}(.{1,80})['](.{1,80})['](.{0,80})";
-	private static final String MATCH11 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})\\([0-9]{4}\\)";
-	private static final String MATCH12 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})";
+	private static final String MATCH1 = "[•*-]{0,1}(.{1,80}?),(.{1,80}),[ ]{0,}da[ ]{0,}[“”](.{1,80})[“”](.{0,80})";
+	private static final String MATCH2 = "[•*-]{0,1}(.{1,80}?),(.{1,80}),[ ]{0,}da[ ]{0,}[‘’](.{1,80})[‘’](.{0,80})";
+	private static final String MATCH3 = "[•*-]{0,1}(.{1,80}?),(.{1,80}),[ ]{0,}da[ ]{0,}[\"](.{1,80})[\"](.{0,80})";
+	private static final String MATCH4 = "[•*-]{0,1}(.{1,80}?),(.{1,80}),[ ]{0,}da[ ]{0,}['](.{1,80})['](.{0,80})";
+	private static final String MATCH5 = "[•*-]{0,1}(.{1,80}?)[“”](.{1,80})[“”](.{0,80})";
+	private static final String MATCH6 = "[•*-]{0,1}(.{1,80}?)[‘’](.{1,80})[‘’](.{0,80})";
+	private static final String MATCH7 = "[•*-]{0,1}(.{1,80}?)[\"](.{1,80})[\"](.{0,80})";
+	private static final String MATCH8 = "[•*-]{0,1}(.{1,80}?)['](.{1,80})['](.{0,80})";
+	private static final String MATCH9 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[:-–](.{1,80})";
+	private static final String MATCH10 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})";
 
-	private static final String FEAT1 = "(?i)(.{1,80})[ \\(]feat .*";
-	private static final String FEAT2 = "(?i)(.{1,80})[ \\(]feat. .*";
-	private static final String FEAT3 = "(?i)(.{1,80})[ \\(]ft .*";
-	private static final String FEAT4 = "(?i)(.{1,80})[ \\(]ft. .*";
-	private static final String FEAT5 = "(?i)(.{1,80})[ \\(]featuring .*";
+	private static final String FEAT1 = "(?i)(.{1,80})[\\(\\[]{0,1}[ ]{0,}feat[.]{0,1} .*";
+	private static final String FEAT2 = "(?i)(.{1,80})[\\(\\[]{0,1}[ ]{0,}ft[.]{0,1} .*";
+	private static final String FEAT3 = "(?i)(.{1,80})[\\(\\[]{0,1}[ ]{0,}featuring .*";
+
+	private static final String YEAR1 = "(.{1,80}).*([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7, MATCH8, MATCH9, MATCH10, MATCH11, MATCH12);
-	protected static final List<String> FEAT_MATCH = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5);
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7, MATCH8, MATCH9, MATCH10);
+	protected static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3);
+	protected static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	protected static final int SLEEP_TIME = 2000;
@@ -297,27 +293,9 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	protected static org.bson.Document newTrack(String title, String youtube)
 	{
-		List<String> chunks = Lists.newArrayList();
-		for(String match : TRACKS_MATCH)
-		{
-			Matcher m = Pattern.compile(match).matcher(title);
-			if(m.matches()) {
-				for(int j=1; j<= m.groupCount(); j++){
-					chunks.add(m.group(j));
-				}
-				break;
-			}
-		}
-
-		org.bson.Document doc = new org.bson.Document("titleOrig", title).
+		return new org.bson.Document("titleOrig", title).
 				append("title", title).
 				append("youtube", youtube);
-		if(chunks.size() >= 2) {
-			String artist = StringUtils.capitalize(chunks.get(0).trim());
-			String song = StringUtils.capitalize(chunks.get(1).trim());
-			doc.append("title", artist + " - " + song);
-		}
-		return doc;
 	}
 
 	//---------------------------------

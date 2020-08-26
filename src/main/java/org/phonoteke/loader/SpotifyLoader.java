@@ -15,7 +15,6 @@ import org.bson.Document;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
-import com.google.gson.JsonArray;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
@@ -59,7 +58,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		new SpotifyLoader().load("d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5");
 		new SpotifyLoader().load();
-		new SpotifyLoader().loadPlaylists(false);
+		new SpotifyLoader().loadPlaylists(true);
 	}
 
 	private void loadPlaylists(boolean replace)
@@ -71,39 +70,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
-			if(replace) {
-				recreatePlaylists(page);
-			}
-			else {
-				createPlaylist(page);
-			}
+			createPlaylist(page);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		}
-	}
-
-	private void recreatePlaylists(Document page)
-	{
-		String id = page.getString("spalbumid");
-		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		if(id != null && CollectionUtils.isNotEmpty(tracks)) {
-			try {
-				JsonArray uris = new JsonArray();
-				for(org.bson.Document track : tracks)
-				{
-					String spotify = track.getString("spotify");
-					if(spotify != null && !NA.equals(spotify))
-					{
-						uris.add("spotify:track:" + spotify);
-					}
-				}
-				ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, uris).build();
-				req.execute();
-				LOGGER.info("Playlist " + id + " recreated");
-			}
-			catch (Exception e) 
-			{
-				LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
-			}
 		}
 	}
 
@@ -124,60 +92,57 @@ public class SpotifyLoader extends PhonotekeLoader
 
 			if(CollectionUtils.isNotEmpty(uris))
 			{
-				String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-				String title = page.getString("artist") + " del " + date;
-				String description = page.getString("title");
-				try
-				{
-					CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
-					Playlist playlist = playlistRequest.execute();
-					AddItemsToPlaylistRequest itemsRequest = PLAYLIST_API.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
-					itemsRequest.execute();
-					page.append("spalbumid", playlist.getId());
-					LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
+				String id = page.getString("spalbumid");
+				// create new playlist
+				if(id == null) {
+					String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+					String title = page.getString("artist") + " del " + date;
+					String description = page.getString("title");
+					try
+					{
+						CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
+						Playlist playlist = playlistRequest.execute();
+						AddItemsToPlaylistRequest itemsRequest = PLAYLIST_API.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+						itemsRequest.execute();
+						page.append("spalbumid", playlist.getId());
+						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
+					}
+					catch (Exception e) 
+					{
+						LOGGER.error("ERROR creating playlist " + title + ": " + e.getMessage());
+					}
 				}
-				catch (Exception e) 
-				{
-					LOGGER.error("ERROR creating playlist " + title + ": " + e.getMessage());
+				// replace existing playlist
+				else {
+					try {
+						ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+						req.execute();
+						LOGGER.info("Playlist " + id + " recreated");
+					}
+					catch (Exception e) 
+					{
+						LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
+					}
 				}
 			}
-		}
-	}
-
-	private void load(String id)
-	{
-		LOGGER.info("Loading Spotify...");
-		MongoCursor<Document> i = docs.find(Filters.eq("id", id)).noCursorTimeout(true).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String type = page.getString("type");
-			if("album".equals(type))
-			{
-				loadAlbum(page);
-			}
-			else if("podcast".equals(type))
-			{
-				loadTracks(page);
-			}
-			else
-			{
-				loadArtist(page);
-			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 	}
 
 	private void load()
 	{
+		load(null);
+	}
+
+	private void load(String id)
+	{
 		LOGGER.info("Loading Spotify...");
-		MongoCursor<Document> i = docs.find(Filters.or(
-				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).noCursorTimeout(true).iterator() :
+			docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
+					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
-			String id = page.getString("id"); 
+			id = page.getString("id"); 
 			String type = page.getString("type");
 			if("album".equals(type))
 			{

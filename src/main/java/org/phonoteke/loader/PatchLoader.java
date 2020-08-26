@@ -1,16 +1,12 @@
 package org.phonoteke.loader;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -21,6 +17,7 @@ public class PatchLoader extends PhonotekeLoader
 	public static void main(String[] args)
 	{
 		new PatchLoader().resetTracks();
+		//new PatchLoader().resetTracksTitle();
 	}
 
 	public PatchLoader()
@@ -41,21 +38,12 @@ public class PatchLoader extends PhonotekeLoader
 			{
 				for(org.bson.Document track : tracks)
 				{
-					String title = track.getString("titleOrig");
-					List<String> chunks = Lists.newArrayList();
-					for(String match : TRACKS_MATCH)
-					{
-						Matcher m = Pattern.compile(match).matcher(title);
-						if(m.matches()) {
-							for(int j=1; j<= m.groupCount(); j++){
-								chunks.add(m.group(j));
-							}
-							break;
-						}
+					String spotify = track.getString("spotify");
+					if(spotify != null && !NA.equals(spotify)) {
+						track.append("title", track.getString("artist") + " - " + track.getString("track"));
 					}
-
-					if(chunks.size() >= 2) {
-						track.append("title", StringUtils.capitalize(chunks.get(0).trim()) + " - " + StringUtils.capitalize(chunks.get(1).trim()));
+					else {
+						track.append("title", track.getString("titleOrig"));
 					}
 				}
 			}
@@ -67,7 +55,7 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		//MongoCursor<Document> i = docs.find(Filters.eq("id", "fffb71e3c112f4312f431a58505f3ccec894a2caa41dd2e0ffd03f904e28ce06")).noCursorTimeout(true).iterator();
+		//MongoCursor<Document> i = docs.find(Filters.eq("id", "d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5")).noCursorTimeout(true).iterator();
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.score", 0))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{

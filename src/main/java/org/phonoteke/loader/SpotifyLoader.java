@@ -30,9 +30,9 @@ import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import com.wrapper.spotify.requests.data.playlists.AddTracksToPlaylistRequest;
+import com.wrapper.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
-import com.wrapper.spotify.requests.data.playlists.ReplacePlaylistsTracksRequest;
+import com.wrapper.spotify.requests.data.playlists.ReplacePlaylistsItemsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
@@ -57,7 +57,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		//		new SpotifyLoader().load("fffb71e3c112f4312f431a58505f3ccec894a2caa41dd2e0ffd03f904e28ce06");
+		new SpotifyLoader().load("d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5");
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists();
 		//		new SpotifyLoader().renamePlaylists();
@@ -96,7 +96,7 @@ public class SpotifyLoader extends PhonotekeLoader
 							uris.add("spotify:track:" + spotify);
 						}
 					}
-					ReplacePlaylistsTracksRequest req = PLAYLIST_API.replacePlaylistsTracks(SPOTIFY_USER, id, uris).build();
+					ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, uris).build();
 					String res = req.execute();
 					LOGGER.info("Playlist " + id + " recreated");
 				}
@@ -132,7 +132,7 @@ public class SpotifyLoader extends PhonotekeLoader
 				{
 					CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 					Playlist playlist = playlistRequest.execute();
-					AddTracksToPlaylistRequest itemsRequest = PLAYLIST_API.addTracksToPlaylist(SPOTIFY_USER, playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+					AddItemsToPlaylistRequest itemsRequest = PLAYLIST_API.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 					itemsRequest.execute();
 					page.append("spalbumid", playlist.getId());
 					LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
@@ -370,6 +370,7 @@ public class SpotifyLoader extends PhonotekeLoader
 							append("coverL", spotify.getString("coverL")).
 							append("coverM", spotify.getString("coverM")).
 							append("coverS", spotify.getString("coverS")).
+							append("title", spotify.getString("artist") + " - " + spotify.getString("track")).
 							append("score", spotify.getInteger("score"));
 						}
 						else

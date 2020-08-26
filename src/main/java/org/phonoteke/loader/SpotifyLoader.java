@@ -59,51 +59,50 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		new SpotifyLoader().load("d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5");
 		new SpotifyLoader().load();
-		new SpotifyLoader().loadPlaylists();
-		//		new SpotifyLoader().renamePlaylists();
+		new SpotifyLoader().loadPlaylists(false);
 	}
 
-	private void loadPlaylists()
+	private void loadPlaylists(boolean replace)
 	{
 		LOGGER.info("Loading Spotify Playlists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator(); 
+		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator() : 
+			docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
-			String id = page.getString("id"); 
-			createPlaylist(page);
+			String id = page.getString("id");
+			if(replace) {
+				recreatePlaylists(page);
+			}
+			else {
+				createPlaylist(page);
+			}
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 	}
 
-	private void recreatePlaylists()
+	private void recreatePlaylists(Document page)
 	{
-		LOGGER.info("Recreating Spotify Playlists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator(); 
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("spalbumid");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(id != null && CollectionUtils.isNotEmpty(tracks)) {
-				try {
-					JsonArray uris = new JsonArray();
-					for(org.bson.Document track : tracks)
-					{
-						String spotify = track.getString("spotify");
-						if(spotify != null && !NA.equals(spotify))
-						{
-							uris.add("spotify:track:" + spotify);
-						}
-					}
-					ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, uris).build();
-					String res = req.execute();
-					LOGGER.info("Playlist " + id + " recreated");
-				}
-				catch (Exception e) 
+		String id = page.getString("spalbumid");
+		List<org.bson.Document> tracks = page.get("tracks", List.class);
+		if(id != null && CollectionUtils.isNotEmpty(tracks)) {
+			try {
+				JsonArray uris = new JsonArray();
+				for(org.bson.Document track : tracks)
 				{
-					LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
+					String spotify = track.getString("spotify");
+					if(spotify != null && !NA.equals(spotify))
+					{
+						uris.add("spotify:track:" + spotify);
+					}
 				}
+				ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, uris).build();
+				req.execute();
+				LOGGER.info("Playlist " + id + " recreated");
+			}
+			catch (Exception e) 
+			{
+				LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
 			}
 		}
 	}
@@ -172,7 +171,6 @@ public class SpotifyLoader extends PhonotekeLoader
 	private void load()
 	{
 		LOGGER.info("Loading Spotify...");
-		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "dbb3bd8b709b216319362180d573d02b0f75e0d4daedb6182278f754edd1c015")).noCursorTimeout(true).iterator();
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
@@ -254,7 +252,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		try
 		{
 			login();
-			String q = "artist:"+ artist + " album:" + album;
+			//			String q = "artist:"+ artist + " album:" + album;
+			String q = artist + " " + album;
 			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).limit(10).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
@@ -315,7 +314,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		try
 		{
 			login();
-			String q = "artist:" + artist;
+			//			String q = "artist:" + artist;
+			String q = artist;
 			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).limit(10).build();
 			Paging<Artist> artists = request.execute();
 			for(int j = 0; j < artists.getItems().length; j++)
@@ -344,10 +344,10 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private void loadTracks(Document page)
 	{
-		String source = page.getString("source");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
 		if(CollectionUtils.isNotEmpty(tracks))
 		{
+			int score = 0;
 			for(org.bson.Document track : tracks)
 			{
 				String title = track.getString("titleOrig");
@@ -358,7 +358,7 @@ public class SpotifyLoader extends PhonotekeLoader
 					try
 					{
 						login();
-						Document spotify = getTrack(title, source);
+						Document spotify = getTrack(title);
 						if(spotify != null)
 						{
 							track.append("spotify", spotify.getString("spotify")).
@@ -385,11 +385,14 @@ public class SpotifyLoader extends PhonotekeLoader
 						relogin();
 					}
 				}
+				score += track.getInteger("score", 0);
 			}
+			score = score/tracks.size();
+			page.append("score", score);
 		}
 	}
 
-	private org.bson.Document getTrack(String title, String source) throws Exception
+	private org.bson.Document getTrack(String title) throws Exception
 	{
 		List<String> chunks = Lists.newArrayList();
 		for(String match : TRACKS_MATCH) {
@@ -445,7 +448,6 @@ public class SpotifyLoader extends PhonotekeLoader
 
 			LOGGER.info(artist + " - " + song);
 			TreeMap<Integer, Document> tracksMap = loadTrack(artist, song);
-			tracksMap.putAll(loadTrack(song, artist));
 			return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
 		}
 		LOGGER.info(title + " not found");
@@ -459,7 +461,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		{
 			artist = artist.trim();
 			song = song.trim();
-			String q = "artist:" + artist + " track: " + song;
+			//			String q = "artist:" + artist + " track: " + song;
+			String q = artist + " " + song;
 			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).limit(10).build();
 			Paging<Track> tracks = request.execute();
 			for(int i = 0; i < tracks.getItems().length; i++)

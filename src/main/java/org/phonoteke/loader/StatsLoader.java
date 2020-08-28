@@ -30,7 +30,7 @@ public class StatsLoader extends PhonotekeLoader
 	private void calculateStats()
 	{
 		LOGGER.info("Calculating stats...");
-		TreeMap<Integer, Integer> stats = Maps.newTreeMap();
+		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();
 		//		TreeMap<String, TreeMap<String, Integer>> topCharts = Maps.newTreeMap();
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		int numPodcasts = 0;
@@ -58,10 +58,10 @@ public class StatsLoader extends PhonotekeLoader
 					if(score == null) {
 						score = -1;
 					}
-					if(!stats.containsKey(score)) {
-						stats.put(score, 0);
+					if(!scoreStats.containsKey(score)) {
+						scoreStats.put(score, 0);
 					}
-					stats.put(score, stats.get(score)+1);
+					scoreStats.put(score, scoreStats.get(score)+1);
 
 					//					String artistSp = track.getString("spartistid");
 					//					if(artistSp != null) {
@@ -81,6 +81,10 @@ public class StatsLoader extends PhonotekeLoader
 						}
 					}
 				}
+
+				if(tracks.size() < 5) {
+					LOGGER.info(page.get("source") + ": " + page.get("id") + " (tracks " + tracks.size() + ")");
+				}
 			}
 		}
 
@@ -90,8 +94,8 @@ public class StatsLoader extends PhonotekeLoader
 		LOGGER.info("Podcasts MusicBrainz: " + numMusicBrainz + " (" + NumberFormat.getPercentInstance().format(perc) + ")");
 		perc = Double.valueOf(numMusicBrainzNA)/Double.valueOf(numTracks);
 		LOGGER.info("Podcasts MusicBrainz NA: " + numMusicBrainzNA + " (" + NumberFormat.getPercentInstance().format(perc) + ")");
-		for(Integer key : stats.descendingKeySet()) {
-			int num = stats.get(key);
+		for(Integer key : scoreStats.descendingKeySet()) {
+			int num = scoreStats.get(key);
 			perc = Double.valueOf(num)/Double.valueOf(numTracks);
 			LOGGER.info("Podcasts Tracks score " + key + ": " + num + " (" + NumberFormat.getPercentInstance().format(perc) + ")");
 		}

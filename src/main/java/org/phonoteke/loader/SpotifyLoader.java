@@ -219,7 +219,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			login();
 			//			String q = "artist:"+ artist + " album:" + album;
 			String q = artist + " " + album;
-			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).limit(10).build();
+			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
 			{
@@ -281,7 +281,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			login();
 			//			String q = "artist:" + artist;
 			String q = artist;
-			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).limit(10).build();
+			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).build();
 			Paging<Artist> artists = request.execute();
 			for(int j = 0; j < artists.getItems().length; j++)
 			{
@@ -376,6 +376,8 @@ public class SpotifyLoader extends PhonotekeLoader
 			artist = artist.replaceAll("&", " ");
 			artist = artist.replaceAll("\\+", " ");
 			artist = artist.replaceAll(",", " ");
+			artist = artist.replaceAll("=", " ");
+			artist = artist.replaceAll(";", " ");
 			for(String match : FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(artist);
 				if(m.matches()) {
@@ -396,6 +398,8 @@ public class SpotifyLoader extends PhonotekeLoader
 			song = song.replaceAll("&", " ");
 			song = song.replaceAll("\\+", " ");
 			song = song.replaceAll(",", " ");
+			song = song.replaceAll("=", " ");
+			song = song.replaceAll(";", " ");
 			for(String match : FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
@@ -428,7 +432,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			song = song.trim();
 			//			String q = "artist:" + artist + " track: " + song;
 			String q = artist + " " + song;
-			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).limit(10).build();
+			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
 			Paging<Track> tracks = request.execute();
 			for(int i = 0; i < tracks.getItems().length; i++)
 			{

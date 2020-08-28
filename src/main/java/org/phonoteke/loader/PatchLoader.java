@@ -16,6 +16,7 @@ public class PatchLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
+		//		new PatchLoader().calculateScore();
 		new PatchLoader().resetTracks();
 		//new PatchLoader().resetTracksTitle();
 	}
@@ -52,11 +53,43 @@ public class PatchLoader extends PhonotekeLoader
 		}
 	}
 
+	private void calculateScore()
+	{
+		LOGGER.info("Calculating podcasts score...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			int score = 0;
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String spotify = track.getString("spotify");
+					if(spotify != null && !NA.equals(spotify)) {
+						track.append("title", track.getString("artist") + " - " + track.getString("track"));
+					}
+					else {
+						track.append("title", track.getString("titleOrig"));
+					}
+					score += track.getInteger("score", 0);
+				}
+			}
+			score = score/tracks.size();
+			page.append("score", score);
+
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
+		}
+	}
+
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
 		//MongoCursor<Document> i = docs.find(Filters.eq("id", "d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5")).noCursorTimeout(true).iterator();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.score", 0))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.lt("tracks.score", 50))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;
@@ -68,7 +101,7 @@ public class PatchLoader extends PhonotekeLoader
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score == null || score == 0)
+					if(score == null || score < 50)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);

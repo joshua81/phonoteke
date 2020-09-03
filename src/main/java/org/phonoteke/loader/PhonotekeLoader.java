@@ -40,19 +40,19 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String MATCH1 = "[•*-]{0,1}(.{1,80}?),(.{1,80}),(.{0,80})";
-	private static final String MATCH2 = "[•*-]{0,1}(.{1,80}?)[\"“”](.{1,80})[\"“”](.{0,80})";
-	private static final String MATCH3 = "[•*-]{0,1}(.{1,80}?)[‘’](.{1,80})[‘’](.{0,80})";
-	private static final String MATCH4 = "[•*-]{0,1}(.{1,80}?)['](.{1,80})['](.{0,80})";
-	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,80})[:–-](.{1,80})";
-	private static final String MATCH6 = "[•*-]{0,1}(.{1,80})[:–-](.{1,80})";
+	private static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.*)";
+	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.*)";
+	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.*)";
+	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.*)";
+	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
+	private static final String MATCH6 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
 
-	private static final String FEAT1 = "(?i)(.{1,80}) feat[.]{0,1} (.{1,80})";
-	private static final String FEAT2 = "(?i)(.{1,80}) ft[.]{0,1} (.{1,80})";
-	private static final String FEAT3 = "(?i)(.{1,80}) featuring (.{1,80})";
-	private static final String FEAT4 = "(.{1,80})[\\(\\[](.{1,80})";
+	private static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
+	private static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
+	private static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
+	private static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
 
-	private static final String YEAR1 = "(.{1,80})([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	private static final String YEAR1 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";

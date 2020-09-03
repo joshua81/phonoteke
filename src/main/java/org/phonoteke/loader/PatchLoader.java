@@ -88,8 +88,8 @@ public class PatchLoader extends PhonotekeLoader
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		//MongoCursor<Document> i = docs.find(Filters.eq("id", "d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5")).noCursorTimeout(true).iterator();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.lt("tracks.score", 50))).noCursorTimeout(true).iterator();
+		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "50c6be1f6578b50c167a0fad0748168d0fa6f57ac031b7cdcfa9b7893c5c532d")).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.lt("tracks.score", 60))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;
@@ -101,7 +101,7 @@ public class PatchLoader extends PhonotekeLoader
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score == null || score < 50)
+					if(score != null && score < 60)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);

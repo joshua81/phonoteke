@@ -56,7 +56,7 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	public static void main(String[] args)
 	{
-		new SpotifyLoader().load("d67a665575ca0d012dc45d2dada0edd52d2c241af797a916c57bc7e9529567a5");
+		new SpotifyLoader().load("50c6be1f6578b50c167a0fad0748168d0fa6f57ac031b7cdcfa9b7893c5c532d");
 		new SpotifyLoader().load();
 		new SpotifyLoader().loadPlaylists(true);
 	}
@@ -112,16 +112,16 @@ public class SpotifyLoader extends PhonotekeLoader
 						LOGGER.error("ERROR creating playlist " + title + ": " + e.getMessage());
 					}
 				}
-				// replace existing playlist
+				// update existing playlist
 				else {
 					try {
 						ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req.execute();
-						LOGGER.info("Playlist " + id + " recreated");
+						LOGGER.info("Playlist " + id + " updated");
 					}
 					catch (Exception e) 
 					{
-						LOGGER.error("ERROR r playlist " + id + ": " + e.getMessage());
+						LOGGER.error("ERROR updating playlist " + id + ": " + e.getMessage());
 					}
 				}
 			}

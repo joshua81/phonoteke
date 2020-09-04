@@ -33,21 +33,9 @@ public class TwitterLoader extends PhonotekeLoader
 	private void tweet()
 	{
 		LOGGER.info("Tweetting podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1000).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
-//			#BattitiRadio3
-//			#cassabertallot
-//			#casabertallot
-//			#rolloverhangover
-//			#blackalot
-//			refreshrefresh
-//			#seigradiradio3 @DeaPaola
-//			#musicalboxradio2
-//			@Stereonotte @MaxDeTomassi @djlelesacchi
-//			inthemix
-//			babylon
-			
 			String links = "#spotifyplaylist";
 			String tweet = "";
 			Document page = i.next();
@@ -56,6 +44,18 @@ public class TwitterLoader extends PhonotekeLoader
 			String source = page.getString("source");
 			Integer score = page.getInteger("score");
 			if("casabertallot".equals(source)) {
+				links = "@bertallot #casabertallot " + links;
+			}
+			else if("cassabertallot".equals(source)) {
+				links = "@bertallot #cassabertallot " + links;
+			}
+			else if("rolloverhangover".equals(source)) {
+				links = "@bertallot #rolloverhangover " + links;
+			}
+			else if("blackalot".equals(source)) {
+				links = "@bertallot #blackalot " + links;
+			}
+			else if("refreshrefresh".equals(source)) {
 				links = "@bertallot " + links;
 			}
 			else if("battiti".equals(source)) {
@@ -69,6 +69,12 @@ public class TwitterLoader extends PhonotekeLoader
 			}
 			else if("stereonotte".equals(source)) {
 				links = "@radio1rai @stereonotte @maxdetomassi @djlelesacchi #stereonotteradio1 " + links;
+			}
+			else if("inthemix".equals(source)) {
+				links = "@rairadio2 @djlelesacchi #inthemixradio2 " + links;
+			}
+			else if("babylon".equals(source)) {
+				links = "@rairadio2 @carlopastore #babylonradio2 " + links;
 			}
 			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
 			String spotify = page.getString("spalbumid");
@@ -85,10 +91,10 @@ public class TwitterLoader extends PhonotekeLoader
 					}
 				}
 
-				tweet += artist + " (" + date  + ") - " + title + "\n";
+				tweet += "\n" + artist + " (" + date  + ") - " + title + "\n";
 				tweet += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 				tweet += links + "\n";
-				tweet += "https://open.spotify.com/playlist/" + spotify;
+				tweet += "https://open.spotify.com/playlist/" + spotify + "\n";
 				LOGGER.info(tweet);
 			}
 		}

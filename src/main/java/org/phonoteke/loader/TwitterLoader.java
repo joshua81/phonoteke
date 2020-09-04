@@ -16,16 +16,16 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
-public class TweetterLoader extends PhonotekeLoader
+public class TwitterLoader extends PhonotekeLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(TweetterLoader.class);
+	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
 
 	public static void main(String[] args)
 	{
-		new TweetterLoader().tweet();
+		new TwitterLoader().tweet();
 	}
 
-	public TweetterLoader()
+	public TwitterLoader()
 	{
 		super();
 	}
@@ -36,6 +36,18 @@ public class TweetterLoader extends PhonotekeLoader
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
+//			#BattitiRadio3
+//			#cassabertallot
+//			#casabertallot
+//			#rolloverhangover
+//			#blackalot
+//			refreshrefresh
+//			#seigradiradio3 @DeaPaola
+//			#musicalboxradio2
+//			@Stereonotte @MaxDeTomassi @djlelesacchi
+//			inthemix
+//			babylon
+			
 			String links = "#spotifyplaylist";
 			String tweet = "";
 			Document page = i.next();
@@ -47,16 +59,16 @@ public class TweetterLoader extends PhonotekeLoader
 				links = "@bertallot " + links;
 			}
 			else if("battiti".equals(source)) {
-				links = "@Radio3tweet " + links;
+				links = "@radio3tweet #battitiradio3 " + links;
 			}
 			else if("seigradi".equals(source)) {
-				links = "@Radio3tweet " + links;
+				links = "@radio3tweet @deapaola #seigradiradio3 " + links;
 			}
 			else if("musicalbox".equals(source)) {
-				links = "@RaiRadio2 @raffacostantino @_musicalbox " + links;
+				links = "@rairadio2 @raffacostantino @_musicalbox #musicalboxradio2 " + links;
 			}
 			else if("stereonotte".equals(source)) {
-				links = "@Radio1Rai " + links;
+				links = "@radio1rai @stereonotte @maxdetomassi @djlelesacchi #stereonotteradio1 " + links;
 			}
 			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
 			String spotify = page.getString("spalbumid");

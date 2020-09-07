@@ -57,15 +57,40 @@ public class SpotifyLoader extends PhonotekeLoader
 	public SpotifyLoader() {
 		super();
 	}
-	
-//	public static void main(String[] args)
-//	{
-//		new SpotifyLoader().load("50c6be1f6578b50c167a0fad0748168d0fa6f57ac031b7cdcfa9b7893c5c532d");
-//		new SpotifyLoader().load();
-//		new SpotifyLoader().loadPlaylists(false);
-//	}
 
-	private void loadPlaylists(boolean replace)
+	protected void load(String id)
+	{
+		if("playlist".equals(id)) {
+			loadPlaylists(false);
+		}
+		else {
+			LOGGER.info("Loading Spotify...");
+			MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).noCursorTimeout(true).iterator() :
+				docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
+						Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
+			while(i.hasNext()) 
+			{ 
+				Document page = i.next();
+				id = page.getString("id"); 
+				String type = page.getString("type");
+				if("album".equals(type))
+				{
+					loadAlbum(page);
+				}
+				else if("podcast".equals(type))
+				{
+					loadTracks(page);
+				}
+				else
+				{
+					loadArtist(page);
+				}
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+			}
+		}
+	}
+
+	protected void loadPlaylists(boolean replace)
 	{
 		LOGGER.info("Loading Spotify Playlists...");
 		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator() : 
@@ -129,38 +154,6 @@ public class SpotifyLoader extends PhonotekeLoader
 					}
 				}
 			}
-		}
-	}
-
-	protected void load()
-	{
-		load(null);
-	}
-
-	private void load(String id)
-	{
-		LOGGER.info("Loading Spotify...");
-		MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).noCursorTimeout(true).iterator() :
-			docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			id = page.getString("id"); 
-			String type = page.getString("type");
-			if("album".equals(type))
-			{
-				loadAlbum(page);
-			}
-			else if("podcast".equals(type))
-			{
-				loadTracks(page);
-			}
-			else
-			{
-				loadArtist(page);
-			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 	}
 

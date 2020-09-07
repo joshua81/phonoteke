@@ -14,22 +14,16 @@ public class PatchLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
-//	public static void main(String[] args)
-//	{
-//		//		new PatchLoader().calculateScore();
-//		new PatchLoader().resetTracks();
-//		//new PatchLoader().resetTracksTitle();
-//	}
 
 	public PatchLoader() {
 		super();
 	}
 	
-	protected void patch()
+	protected void load(String task) 
 	{
-		
+		// does nothing
 	}
-
+	
 	private void resetTracksTitle()
 	{
 		LOGGER.info("Resetting tracks title...");

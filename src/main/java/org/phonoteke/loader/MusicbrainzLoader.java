@@ -25,12 +25,12 @@ public class MusicbrainzLoader extends PhonotekeLoader
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
 
-	
+
 	public MusicbrainzLoader() {
 		super();
 	}
-	
-	protected void load() 
+
+	protected void load(String task) 
 	{
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(

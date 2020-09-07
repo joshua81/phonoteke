@@ -23,7 +23,7 @@ public class StatsLoader extends PhonotekeLoader
 		super();
 	}
 
-	protected void load()
+	protected void load(String task)
 	{
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();

@@ -39,42 +39,51 @@ public class RadioRaiLoader extends PhonotekeLoader
 		super();
 	}
 
-	protected void load(String source) 
+	protected void load(String task) 
 	{
-		if("babylon".equals(source))
+		if(task == null) {
+			load("musicalbox");
+			load("battiti");
+			load("seigradi");
+			load("stereonotte");
+			//		load("babylon");
+			//		load("inthemix");	
+		}
+
+		if("babylon".equals(task))
 		{
 			RadioRaiLoader.artist = "Babylon";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(BABYLON);
 		}
-		else if("musicalbox".equals(source))
+		else if("musicalbox".equals(task))
 		{
 			RadioRaiLoader.artist = "Musicalbox";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(MUSICALBOX);
 		}
-		else if("inthemix".equals(source))
+		else if("inthemix".equals(task))
 		{
 			RadioRaiLoader.artist = "Inthemix";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(INTHEMIX);
 		}
-		else if("battiti".equals(source))
+		else if("battiti".equals(task))
 		{
 			RadioRaiLoader.artist = "Battiti";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(BATTITI);
 		}
-		else if("seigradi".equals(source))
+		else if("seigradi".equals(task))
 		{
 			RadioRaiLoader.artist = "Sei Gradi";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(SEIGRADI);
 		}
-		else if("stereonotte".equals(source))
+		else if("stereonotte".equals(task))
 		{
 			RadioRaiLoader.artist = "Stereonotte";
-			RadioRaiLoader.source = source;
+			RadioRaiLoader.source = task;
 			crawl(STEREONOTTE);
 		}
 	}

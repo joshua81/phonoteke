@@ -26,18 +26,36 @@ public class SpeakerLoader extends PhonotekeLoader
 	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
 
-	
+
 	public SpeakerLoader() {
 		super();
 	}
-	
-	protected void load() 
+
+	protected void load(String task) 
 	{
-		crawl(URL1, "casabertallot", "Casa Bertallot");
-		crawl(URL2, "rolloverhangover", "Rollover Hangover");
-		crawl(URL3, "blackalot", "Black A Lot");
-		crawl(URL4, "cassabertallot", "Cassa Bertallot");
-		crawl(URL5, "refreshrefresh", "Refresh Refresh");
+		if(task == null) {
+			load("casabertallot");
+			load("rolloverhangover");
+			load("blackalot");
+			load("cassabertallot");
+			load("refreshrefresh");	
+		}
+
+		if("casabertallot".equals(task)) {
+			crawl(URL1, "casabertallot", "Casa Bertallot");
+		}
+		else if("casabertallot".equals(task)) {
+			crawl(URL2, "rolloverhangover", "Rollover Hangover");
+		}
+		else if("casabertallot".equals(task)) {
+			crawl(URL3, "blackalot", "Black A Lot");
+		}
+		else if("casabertallot".equals(task)) {
+			crawl(URL4, "cassabertallot", "Cassa Bertallot");
+		}
+		else if("casabertallot".equals(task)) {
+			crawl(URL5, "refreshrefresh", "Refresh Refresh");
+		}
 	}
 
 	protected void crawl(String baseurl, String source, String artist)

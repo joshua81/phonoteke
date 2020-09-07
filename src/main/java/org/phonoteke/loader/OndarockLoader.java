@@ -23,16 +23,18 @@ public class OndarockLoader extends PhonotekeLoader
 {
 	public static final String URL = "https://www.ondarock.it/";
 	public static final String SOURCE = "ondarock";
-	
-	
+
+
 	public OndarockLoader() {
 		super();
 	}
-	
-	protected void load() 
+
+	protected void load(String url) 
 	{
-		crawl(OndarockLoader.URL);
+		url = url == null ? OndarockLoader.URL : url;
+		crawl(url);
 	}
+
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 

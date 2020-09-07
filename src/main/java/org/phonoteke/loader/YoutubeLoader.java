@@ -43,11 +43,11 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 	}
 
-	protected void load()
+	protected void load(String task)
 	{
-		LOGGER.info("Loading Youtube...");
 		try
 		{
+			LOGGER.info("Loading Youtube...");
 			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), 
 					Filters.or(Filters.exists("tracks.youtube", false),Filters.eq("tracks.youtube", null)))).
 					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();

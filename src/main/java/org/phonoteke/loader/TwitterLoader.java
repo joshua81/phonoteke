@@ -25,7 +25,7 @@ public class TwitterLoader extends PhonotekeLoader
 		super();
 	}
 
-	protected void tweet()
+	protected void load(String task)
 	{
 		LOGGER.info("Tweetting podcasts...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1000).noCursorTimeout(true).iterator();

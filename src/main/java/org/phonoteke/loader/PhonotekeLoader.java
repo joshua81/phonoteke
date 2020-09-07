@@ -41,11 +41,12 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
 	private static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{1,200})";
-	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{1,200})";
-	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
-	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
-	private static final String MATCH6 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
+	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[–-](.{1,200})";
+	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{1,200})";
+	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{1,200})";
+	private static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
+	private static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
+	private static final String MATCH7 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
 
 	private static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
 	private static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
@@ -57,7 +58,7 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6);
+	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
 	protected static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4);
 	protected static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
@@ -78,43 +79,41 @@ public abstract class PhonotekeLoader extends WebCrawler
 
 	public static void main(String[] args) {
 		if(args.length > 0) {
-			if("mb".equals(args[0])) {
-				new MusicbrainzLoader().load();
+			String task = args[0].split(":")[0];
+			String subtask = args[0].split(":").length == 1 ? null : args[0].split(":")[1];
+			if("mb".equals(task)) {
+				new MusicbrainzLoader().load(subtask);
 			}
-			else if("sp".equals(args[0])) {
-				new SpotifyLoader().load();
+			else if("sp".equals(task)) {
+				new SpotifyLoader().load(subtask);
 			}
-			else if("tw".equals(args[0])) {
-				new TwitterLoader().tweet();
+			else if("tw".equals(task)) {
+				new TwitterLoader().load(subtask);
 			}
-			else if("yt".equals(args[0])) {
-				new YoutubeLoader().load();
+			else if("yt".equals(task)) {
+				new YoutubeLoader().load(subtask);
 			}
-			else if("doc".equals(args[0])) {
-				new OndarockLoader().load();
+			else if("doc".equals(task)) {
+				new OndarockLoader().load(subtask);
 			}
-			else if("pod".equals(args[0])) {
-				new RadioRaiLoader().load("stereonotte");
-				new RadioRaiLoader().load("seigradi");
-				new RadioRaiLoader().load("battiti");
-				new RadioRaiLoader().load("musicalbox");
-				//				new RadioRaiLoader().load("inthemix");
-				//				new RadioRaiLoader().load("babylon");
-				new SpeakerLoader().load();
+			else if("pod".equals(task)) {
+				new RadioRaiLoader().load(subtask);
+				new SpeakerLoader().load(subtask);
 			}
-			else if("stats".equals(args[0])) {
-				new StatsLoader().load();
+			else if("stats".equals(task)) {
+				new StatsLoader().load(subtask);
 			}
-			else if("patch".equals(args[0])) {
-				new PatchLoader().patch();
+			else if("patch".equals(task)) {
+				new PatchLoader().load(subtask);
 			}
 			else {
 				System.out.println("Usage:");
-				System.out.println("- compile (compiles artifacts)");
+				System.out.println("- compile (compiles sources)");
 				System.out.println("- deploy (deploys to GCloud)");
 				System.out.println("- test (deploys test)");
 				System.out.println("- mb (loads Music Brainz)");
 				System.out.println("- sp (loads Spotify)");
+				System.out.println("- sp:playlist (loads Spotify playlists)");
 				System.out.println("- tw (loads Twitter)");
 				System.out.println("- yt (loads Youtube)");
 				System.out.println("- doc (loads documents)");
@@ -417,6 +416,10 @@ public abstract class PhonotekeLoader extends WebCrawler
 	protected String getAudio(String url, Document doc) {
 		return null;
 	}
+
+	protected abstract void load(String task);
+
+	//-------------------------------------------
 
 	private class PhonotekeParser extends Parser {
 		public PhonotekeParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {

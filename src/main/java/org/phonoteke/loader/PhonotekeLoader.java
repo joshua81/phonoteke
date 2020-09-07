@@ -40,10 +40,10 @@ public abstract class PhonotekeLoader extends WebCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
 
-	private static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.*)";
-	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.*)";
-	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.*)";
-	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.*)";
+	private static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
+	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{1,200})";
+	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{1,200})";
+	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
 	private static final String MATCH5 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
 	private static final String MATCH6 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
 
@@ -74,6 +74,55 @@ public abstract class PhonotekeLoader extends WebCrawler
 		interview,
 		podcast,
 		unknown
+	}
+
+	public static void main(String[] args) {
+		if(args.length > 0) {
+			if("mb".equals(args[0])) {
+				new MusicbrainzLoader().load();
+			}
+			else if("sp".equals(args[0])) {
+				new SpotifyLoader().load();
+			}
+			else if("tw".equals(args[0])) {
+				new TwitterLoader().tweet();
+			}
+			else if("yt".equals(args[0])) {
+				new YoutubeLoader().load();
+			}
+			else if("doc".equals(args[0])) {
+				new OndarockLoader().load();
+			}
+			else if("pod".equals(args[0])) {
+				new RadioRaiLoader().load("stereonotte");
+				new RadioRaiLoader().load("seigradi");
+				new RadioRaiLoader().load("battiti");
+				new RadioRaiLoader().load("musicalbox");
+				//				new RadioRaiLoader().load("inthemix");
+				//				new RadioRaiLoader().load("babylon");
+				new SpeakerLoader().load();
+			}
+			else if("stats".equals(args[0])) {
+				new StatsLoader().load();
+			}
+			else if("patch".equals(args[0])) {
+				new PatchLoader().patch();
+			}
+			else {
+				System.out.println("Usage:");
+				System.out.println("- compile (compiles)");
+				System.out.println("- deploy (deploys to GCloud)");
+				System.out.println("- test (deploys test)");
+				System.out.println("- mb (loads Music Brainz)");
+				System.out.println("- sp (loads Spotify)");
+				System.out.println("- tw (loads Twitter)");
+				System.out.println("- yt (loads Youtube)");
+				System.out.println("- doc (loads Ondarock)");
+				System.out.println("- pod (loads podcasts)");
+				System.out.println("- stats (loads stats)");
+				System.out.println("- patch (patches db)");
+			}
+		}
 	}
 
 	public PhonotekeLoader()

@@ -28,13 +28,9 @@ public class YoutubeLoader extends PhonotekeLoader
 	private YouTube youtube = null;
 
 
-	public static void main(String[] args)
-	{
-		new YoutubeLoader().load();
-	}
-
 	public YoutubeLoader()
 	{
+		super();
 		try 
 		{
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
@@ -47,7 +43,7 @@ public class YoutubeLoader extends PhonotekeLoader
 		}
 	}
 
-	private void load()
+	protected void load()
 	{
 		LOGGER.info("Loading Youtube...");
 		try

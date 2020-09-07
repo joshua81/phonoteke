@@ -1,8 +1,0 @@
-cd $HOME/workspace/phonoteke/target
-java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader stereonotte
-java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader seigradi
-java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader battiti
-java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader musicalbox
-#java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader inthemix
-#java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.RadioRaiLoader babylon
-java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.SpeakerLoader

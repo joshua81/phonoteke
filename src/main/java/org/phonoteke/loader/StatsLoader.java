@@ -17,17 +17,13 @@ public class StatsLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
 
-	public static void main(String[] args)
-	{
-		new StatsLoader().calculateStats();
-	}
 
 	public StatsLoader()
 	{
 		super();
 	}
 
-	private void calculateStats()
+	protected void load()
 	{
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();

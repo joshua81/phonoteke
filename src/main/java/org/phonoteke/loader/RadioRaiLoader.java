@@ -35,51 +35,48 @@ public class RadioRaiLoader extends PhonotekeLoader
 	private static String source;
 
 
-	public static void mainTest(String[] args) {
-		new RadioRaiLoader("Stereonotte", "stereonotte").crawl("https://www.raiplayradio.it/programmi/stereonotte/");
-	}
-
-	public static void main(String[] args) 
-	{
-		if(args.length == 1)
-		{
-			if("babylon".equals(args[0]))
-			{
-				new RadioRaiLoader("Babylon", "babylon").crawl(BABYLON);
-			}
-			else if("musicalbox".equals(args[0]))
-			{
-				new RadioRaiLoader("Musicalbox", "musicalbox").crawl(MUSICALBOX);
-			}
-			else if("inthemix".equals(args[0]))
-			{
-				new RadioRaiLoader("Inthemix", "inthemix").crawl(INTHEMIX);
-			}
-			else if("battiti".equals(args[0]))
-			{
-				new RadioRaiLoader("Battiti", "battiti").crawl(BATTITI);
-			}
-			else if("seigradi".equals(args[0]))
-			{
-				new RadioRaiLoader("Sei Gradi", "seigradi").crawl(SEIGRADI);
-			}
-			else if("stereonotte".equals(args[0]))
-			{
-				new RadioRaiLoader("Stereonotte", "stereonotte").crawl(STEREONOTTE);
-			}
-		}
-	}
-
-	public RadioRaiLoader()
-	{
-		// default constructor
-	}
-
-	public RadioRaiLoader(String artist, String source)
-	{
+	public RadioRaiLoader() {
 		super();
-		RadioRaiLoader.artist = artist;
-		RadioRaiLoader.source = source;
+	}
+
+	protected void load(String source) 
+	{
+		if("babylon".equals(source))
+		{
+			RadioRaiLoader.artist = "Babylon";
+			RadioRaiLoader.source = source;
+			crawl(BABYLON);
+		}
+		else if("musicalbox".equals(source))
+		{
+			RadioRaiLoader.artist = "Musicalbox";
+			RadioRaiLoader.source = source;
+			crawl(MUSICALBOX);
+		}
+		else if("inthemix".equals(source))
+		{
+			RadioRaiLoader.artist = "Inthemix";
+			RadioRaiLoader.source = source;
+			crawl(INTHEMIX);
+		}
+		else if("battiti".equals(source))
+		{
+			RadioRaiLoader.artist = "Battiti";
+			RadioRaiLoader.source = source;
+			crawl(BATTITI);
+		}
+		else if("seigradi".equals(source))
+		{
+			RadioRaiLoader.artist = "Sei Gradi";
+			RadioRaiLoader.source = source;
+			crawl(SEIGRADI);
+		}
+		else if("stereonotte".equals(source))
+		{
+			RadioRaiLoader.artist = "Stereonotte";
+			RadioRaiLoader.source = source;
+			crawl(STEREONOTTE);
+		}
 	}
 
 	@Override

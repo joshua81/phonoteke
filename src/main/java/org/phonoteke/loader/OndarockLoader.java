@@ -23,17 +23,15 @@ public class OndarockLoader extends PhonotekeLoader
 {
 	public static final String URL = "https://www.ondarock.it/";
 	public static final String SOURCE = "ondarock";
-
-
-	public static void main(String[] args) 
-	{
-		new OndarockLoader().crawl(OndarockLoader.URL);
-		//		new OndarockLoader().crawl("https://www.ondarock.it/recensioni/2020-suzannevallie-loveliveswhererulesdie.htm");
-	}
-
-	public OndarockLoader()
-	{
+	
+	
+	public OndarockLoader() {
 		super();
+	}
+	
+	protected void load() 
+	{
+		crawl(OndarockLoader.URL);
 	}
 
 	@Override

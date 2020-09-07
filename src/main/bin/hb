@@ -1,0 +1,29 @@
+#/bin/bash
+case "$1" in
+  "compile")
+  	cd $HOME/workspace/phonoteke
+	mvn clean install
+ 	;;
+	"deploy")
+ 	cd $HOME/workspace/phonoteke/web
+	ng build --prod=true
+	rm -rf $HOME/workspace/phonoteke/node/web
+	cp -r dist/web $HOME/workspace/phonoteke/node/
+	cd $HOME/workspace/phonoteke/node/
+	mv web/index.html template/index.ntl
+	gcloud app deploy
+	;;
+	"test")
+	cd $HOME/workspace/phonoteke/web
+	ng build --prod=false
+	rm -rf $HOME/workspace/phonoteke/node/web
+	cp -r dist/web $HOME/workspace/phonoteke/node/
+	cd $HOME/workspace/phonoteke/node/
+	mv web/index.html template/index.ntl
+	node app.js
+	;;
+ 	*)
+ 	cd $HOME/workspace/phonoteke/target
+ 	java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.PhonotekeLoader $1
+    ;;
+esac

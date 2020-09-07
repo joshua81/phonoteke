@@ -20,17 +20,12 @@ public class TwitterLoader extends PhonotekeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
 
-	public static void main(String[] args)
-	{
-		new TwitterLoader().tweet();
-	}
 
-	public TwitterLoader()
-	{
+	public TwitterLoader() {
 		super();
 	}
 
-	private void tweet()
+	protected void tweet()
 	{
 		LOGGER.info("Tweetting podcasts...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1000).noCursorTimeout(true).iterator();

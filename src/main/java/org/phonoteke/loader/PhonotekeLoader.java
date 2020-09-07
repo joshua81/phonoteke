@@ -108,18 +108,21 @@ public abstract class PhonotekeLoader extends WebCrawler
 			}
 			else {
 				System.out.println("Usage:");
-				System.out.println("- compile (compiles sources)");
-				System.out.println("- deploy (deploys to GCloud)");
-				System.out.println("- test (deploys test)");
-				System.out.println("- mb (loads Music Brainz)");
-				System.out.println("- sp (loads Spotify)");
-				System.out.println("- sp:playlist (loads Spotify playlists)");
-				System.out.println("- tw (loads Twitter)");
-				System.out.println("- yt (loads Youtube)");
-				System.out.println("- doc (loads documents)");
-				System.out.println("- pod (loads podcasts)");
-				System.out.println("- stats (loads stats)");
-				System.out.println("- patch (patches db)");
+				System.out.println("compile (compiles sources)");
+				System.out.println("deploy (deploys to GCloud)");
+				System.out.println("test (deploys test)");
+				System.out.println("mb (loads Music Brainz)");
+				System.out.println("sp (loads Spotify)");
+				System.out.println("sp:playlist (loads Spotify playlists)");
+				System.out.println("tw (loads Twitter)");
+				System.out.println("yt (loads Youtube)");
+				System.out.println("doc (loads documents)");
+				System.out.println("pod (loads podcasts)");
+				System.out.println("stats (loads stats)");
+				System.out.println("patch:resetTracksTitle (patches db)");
+				System.out.println("patch:calculateScore (patches db)");
+				System.out.println("patch:resetTracks (patches db)");
+				System.out.println("patch:replaceSpecialChars (patches db)");
 			}
 		}
 	}

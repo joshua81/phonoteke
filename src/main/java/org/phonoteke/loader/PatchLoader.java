@@ -18,12 +18,23 @@ public class PatchLoader extends PhonotekeLoader
 	public PatchLoader() {
 		super();
 	}
-	
+
 	protected void load(String task) 
 	{
-		// does nothing
+		if("resetTracksTitle".equals(task)) {
+			resetTracksTitle();
+		}
+		else if("calculateScore".equals(task)) {
+			calculateScore();
+		}
+		else if("resetTracks".equals(task)) {
+			resetTracks();
+		}
+		else if("replaceSpecialChars".equals(task)) {
+			replaceSpecialChars();
+		}
 	}
-	
+
 	private void resetTracksTitle()
 	{
 		LOGGER.info("Resetting tracks title...");
@@ -38,10 +49,7 @@ public class PatchLoader extends PhonotekeLoader
 				for(org.bson.Document track : tracks)
 				{
 					String spotify = track.getString("spotify");
-					if(spotify != null && !NA.equals(spotify)) {
-						track.append("title", track.getString("artist") + " - " + track.getString("track"));
-					}
-					else {
+					if(spotify == null || NA.equals(spotify)) {
 						track.append("title", track.getString("titleOrig"));
 					}
 				}
@@ -65,13 +73,6 @@ public class PatchLoader extends PhonotekeLoader
 			{
 				for(org.bson.Document track : tracks)
 				{
-					String spotify = track.getString("spotify");
-					if(spotify != null && !NA.equals(spotify)) {
-						track.append("title", track.getString("artist") + " - " + track.getString("track"));
-					}
-					else {
-						track.append("title", track.getString("titleOrig"));
-					}
 					score += track.getInteger("score", 0);
 				}
 			}
@@ -148,54 +149,6 @@ public class PatchLoader extends PhonotekeLoader
 			page.append("spalbumid", null);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("Document " + id + ": " + title + " - " + artist);
-		}
-	}
-
-	private void deletePodcasts()
-	{
-		LOGGER.info("Deleting podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info("Document " + id + " deleted");
-		}
-	}
-
-	private void clearPodcasts()
-	{
-		LOGGER.info("Clearing podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "stereonotte"))).noCursorTimeout(true).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			for(org.bson.Document track : tracks)
-			{
-				if(NA.equals(track.getString("spotify")))
-				{
-					track.append("spotify", null);
-				}
-			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
-		}
-	}
-
-	private void updateBertallot()
-	{
-		LOGGER.info("Updating Bertallot...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", "casabertallot"))).noCursorTimeout(true).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			page.append("artist", "Casa Bertallot");
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
 		}
 	}
 }

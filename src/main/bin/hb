@@ -1,10 +1,11 @@
 #/bin/bash
+
 case "$1" in
-  "compile")
+"compile")
   	cd $HOME/workspace/phonoteke
 	mvn clean install
  	;;
-	"deploy")
+"deploy")
  	cd $HOME/workspace/phonoteke/web
 	ng build --prod=true
 	rm -rf $HOME/workspace/phonoteke/node/web
@@ -13,7 +14,7 @@ case "$1" in
 	mv web/index.html template/index.ntl
 	gcloud app deploy
 	;;
-	"test")
+"test")
 	cd $HOME/workspace/phonoteke/web
 	ng build --prod=false
 	rm -rf $HOME/workspace/phonoteke/node/web
@@ -22,7 +23,7 @@ case "$1" in
 	mv web/index.html template/index.ntl
 	node app.js
 	;;
- 	*)
+*)
  	cd $HOME/workspace/phonoteke/target
  	java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.PhonotekeLoader $1
     ;;

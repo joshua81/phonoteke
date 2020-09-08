@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,8 +53,9 @@ public class SpotifyLoader implements HumanBeats
 	private static ClientCredentials credentials;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-	
 
+
+	@Override
 	public void load(String id)
 	{
 		if("playlist".equals(id)) {
@@ -89,7 +88,7 @@ public class SpotifyLoader implements HumanBeats
 		}
 	}
 
-	protected void loadPlaylists(boolean replace)
+	private void loadPlaylists(boolean replace)
 	{
 		LOGGER.info("Loading Spotify Playlists...");
 		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator() : 
@@ -355,62 +354,10 @@ public class SpotifyLoader implements HumanBeats
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		List<String> chunks = Lists.newArrayList();
-		for(String match : TRACKS_MATCH) {
-			Matcher m = Pattern.compile(match).matcher(title);
-			if(m.matches()) {
-				for(int j=1; j<= m.groupCount(); j++){
-					chunks.add(m.group(j));
-				}
-				break;
-			}
-		}
-
+		List<String> chunks = HumanBeats.parseTrack(title);
 		if(chunks.size() >= 2) {
 			String artist = chunks.get(0);
-			artist = artist.replaceAll("/", " ");
-			artist = artist.replaceAll("&", " ");
-			artist = artist.replaceAll("\\+", " ");
-			artist = artist.replaceAll(",", " ");
-			artist = artist.replaceAll("=", " ");
-			artist = artist.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(artist);
-				if(m.matches()) {
-					artist = m.group(1);
-					break;
-				}
-			}
-			for(String match : YEAR_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(artist);
-				if(m.matches()) {
-					artist = m.group(1);
-					break;
-				}
-			}
-
 			String song = chunks.get(1);
-			song = song.replaceAll("/", " ");
-			song = song.replaceAll("&", " ");
-			song = song.replaceAll("\\+", " ");
-			song = song.replaceAll(",", " ");
-			song = song.replaceAll("=", " ");
-			song = song.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(song);
-				if(m.matches()) {
-					song = m.group(1);
-					break;
-				}
-			}
-			for(String match : YEAR_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(song);
-				if(m.matches()) {
-					song = m.group(1);
-					break;
-				}
-			}
-
 			LOGGER.info(artist + " - " + song);
 			TreeMap<Integer, Document> tracksMap = loadTrack(artist, song);
 			return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();

@@ -31,6 +31,7 @@ public class SpeakerLoader extends AbstractCrawler
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
 	
 
+	@Override
 	public void load(String task) 
 	{
 		if(task == null) {
@@ -58,7 +59,7 @@ public class SpeakerLoader extends AbstractCrawler
 		}
 	}
 
-	protected void crawl(String baseurl, String source, String artist)
+	private void crawl(String baseurl, String source, String artist)
 	{
 		try
 		{

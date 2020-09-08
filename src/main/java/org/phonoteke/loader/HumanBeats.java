@@ -1,6 +1,8 @@
 package org.phonoteke.loader;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
@@ -13,20 +15,20 @@ public interface HumanBeats
 	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
 	public static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
 	public static final String MATCH7 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
+	public static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
 	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
 	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
+	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4);
 
 	public static final String YEAR1 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	public static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	public static final int NUMBER_OF_CRAWLERS = 10;
-	public static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
-	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4);
-	public static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
 	public static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	public static final int SLEEP_TIME = 2000;
@@ -90,7 +92,7 @@ public interface HumanBeats
 			}
 		}
 	}
-	
+
 	public void load(String task);
 
 	public static boolean isTrack(String title)
@@ -104,5 +106,72 @@ public interface HumanBeats
 			}
 		}
 		return false;
+	}
+
+	public static List<String> parseTrack(String track) 
+	{
+		List<String> chunks = Lists.newArrayList();
+		for(String match : TRACKS_MATCH) 
+		{
+			Matcher m = Pattern.compile(match).matcher(track);
+			if(m.matches()) {
+				for(int j=1; j<= m.groupCount(); j++){
+					chunks.add(m.group(j));
+				}
+				break;
+			}
+		}
+
+		if(chunks.size() >= 2) {
+			// artist
+			String artist = chunks.get(0);
+			artist = artist.replaceAll("/", " ");
+			artist = artist.replaceAll("&", " ");
+			artist = artist.replaceAll("\\+", " ");
+			artist = artist.replaceAll(",", " ");
+			artist = artist.replaceAll("=", " ");
+			artist = artist.replaceAll(";", " ");
+			for(String match : FEAT_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(artist);
+				if(m.matches()) {
+					artist = m.group(1);
+					break;
+				}
+			}
+			for(String match : YEAR_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(artist);
+				if(m.matches()) {
+					artist = m.group(1);
+					break;
+				}
+			}
+
+			// song
+			String song = chunks.get(1);
+			song = song.replaceAll("/", " ");
+			song = song.replaceAll("&", " ");
+			song = song.replaceAll("\\+", " ");
+			song = song.replaceAll(",", " ");
+			song = song.replaceAll("=", " ");
+			song = song.replaceAll(";", " ");
+			for(String match : FEAT_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(song);
+				if(m.matches()) {
+					song = m.group(1);
+					break;
+				}
+			}
+			for(String match : YEAR_MATCH) {
+				Matcher m = Pattern.compile(match).matcher(song);
+				if(m.matches()) {
+					song = m.group(1);
+					break;
+				}
+			}
+
+			return Lists.newArrayList(artist, song);
+		}
+
+		return Lists.newArrayList();
 	}
 }

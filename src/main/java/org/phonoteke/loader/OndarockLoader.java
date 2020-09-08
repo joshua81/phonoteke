@@ -29,12 +29,12 @@ public class OndarockLoader extends AbstractCrawler
 	private static final String URL = "https://www.ondarock.it/";
 
 
+	@Override
 	public void load(String url) 
 	{
 		url = url == null ? OndarockLoader.URL : url;
 		crawl(url);
 	}
-
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 

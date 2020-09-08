@@ -29,6 +29,7 @@ public class MusicbrainzLoader implements HumanBeats
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 	
 
+	@Override
 	public void load(String task) 
 	{
 		LOGGER.info("Loading Musicbrainz...");

@@ -32,7 +32,6 @@ public class YoutubeLoader implements HumanBeats
 
 	public YoutubeLoader()
 	{
-		super();
 		try 
 		{
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
@@ -45,6 +44,7 @@ public class YoutubeLoader implements HumanBeats
 		}
 	}
 
+	@Override
 	public void load(String task)
 	{
 		try

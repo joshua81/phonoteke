@@ -23,13 +23,13 @@ import com.mongodb.client.model.Filters;
 public class SpreakerLoader extends AbstractCrawler
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpreakerLoader.class);
-	
+
 	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
 	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";
 	private static final String URL3 = "https://api.spreaker.com/show/2071330/episodes";
 	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
-	
+
 
 	@Override
 	public void load(String task) 
@@ -43,23 +43,23 @@ public class SpreakerLoader extends AbstractCrawler
 		}
 
 		if("casabertallot".equals(task)) {
-			crawl(URL1, "casabertallot", "Casa Bertallot");
+			crawl(URL1, "casabertallot", "Casa Bertallot", Lists.newArrayList("Alessio Bertallot"));
 		}
 		else if("rolloverhangover".equals(task)) {
-			crawl(URL2, "rolloverhangover", "Rollover Hangover");
+			crawl(URL2, "rolloverhangover", "Rollover Hangover", Lists.newArrayList("Rocco Fusco"));
 		}
 		else if("blackalot".equals(task)) {
-			crawl(URL3, "blackalot", "Black A Lot");
+			crawl(URL3, "blackalot", "Black A Lot", Lists.newArrayList("Michele Gas"));
 		}
 		else if("cassabertallot".equals(task)) {
-			crawl(URL4, "cassabertallot", "Cassa Bertallot");
+			crawl(URL4, "cassabertallot", "Cassa Bertallot", Lists.newArrayList("Albi Scotti", "Marco Rigamonti"));
 		}
 		else if("resetrefresh".equals(task)) {
-			crawl(URL5, "resetrefresh", "Reset Refresh");
+			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Alessio Bertallot"));
 		}
 	}
 
-	private void crawl(String baseurl, String source, String artist)
+	private void crawl(String baseurl, String source, String artist, List<String> authors)
 	{
 		try
 		{
@@ -90,7 +90,7 @@ public class SpreakerLoader extends AbstractCrawler
 									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
-									append("authors", Lists.newArrayList("Alessio Bertallot")).
+									append("authors", authors).
 									append("cover", doc.get("image_original_url").getAsString()).
 									append("date", getDate(doc.get("published_at").getAsString())).
 									append("description", title).

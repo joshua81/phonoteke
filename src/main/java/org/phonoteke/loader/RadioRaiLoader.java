@@ -37,6 +37,7 @@ public class RadioRaiLoader extends AbstractCrawler
 
 	private static String artist;
 	private static String source;
+	private static List<String> authors;
 
 
 	@Override
@@ -52,37 +53,43 @@ public class RadioRaiLoader extends AbstractCrawler
 		if("babylon".equals(task))
 		{
 			RadioRaiLoader.artist = "Babylon";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "babylon";
+			RadioRaiLoader.authors = Lists.newArrayList("Carlo Pastore");
 			crawl(BABYLON);
 		}
 		else if("musicalbox".equals(task))
 		{
 			RadioRaiLoader.artist = "Musicalbox";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "musicalbox";
+			RadioRaiLoader.authors = Lists.newArrayList("Raffaele Costantino");
 			crawl(MUSICALBOX);
 		}
 		else if("inthemix".equals(task))
 		{
 			RadioRaiLoader.artist = "Inthemix";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "inthemix";
+			RadioRaiLoader.authors = Lists.newArrayList("Lele Sacchi");
 			crawl(INTHEMIX);
 		}
 		else if("battiti".equals(task))
 		{
 			RadioRaiLoader.artist = "Battiti";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "battiti";
+			RadioRaiLoader.authors = Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore");
 			crawl(BATTITI);
 		}
 		else if("seigradi".equals(task))
 		{
 			RadioRaiLoader.artist = "Sei Gradi";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "seigradi";
+			RadioRaiLoader.authors = Lists.newArrayList("Luca Damiani");
 			crawl(SEIGRADI);
 		}
 		else if("stereonotte".equals(task))
 		{
 			RadioRaiLoader.artist = "Stereonotte";
-			RadioRaiLoader.source = task;
+			RadioRaiLoader.source = "stereonotte";
+			RadioRaiLoader.authors = Lists.newArrayList("Francesco Adinolfi", "Max De Tomassi", "Lele Sacchi", "Luca Sapio", "Mauro Zanda");
 			crawl(STEREONOTTE);
 		}
 	}
@@ -116,6 +123,12 @@ public class RadioRaiLoader extends AbstractCrawler
 	protected String getArtist(String url, Document doc) 
 	{
 		return artist;
+	}
+	
+	@Override
+	protected List<String> getAuthors(String url, Document doc) 
+	{
+		return authors;
 	}
 
 	@Override
@@ -292,16 +305,5 @@ public class RadioRaiLoader extends AbstractCrawler
 		}
 		LOGGER.debug("audio: " + audio);
 		return audio;
-	}
-
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
-	{
-		return RadioRaiLoader.source.equals("babylon") ? Lists.newArrayList("Carlo Pastore") : 
-			RadioRaiLoader.source.equals("musicalbox") ? Lists.newArrayList("Raffaele Costantino") : 
-				RadioRaiLoader.source.equals("inthemix") ? Lists.newArrayList("Lele Sacchi") : 
-					RadioRaiLoader.source.equals("battiti") ? Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore") : 
-						RadioRaiLoader.source.equals("seigradi") ? Lists.newArrayList("Luca Damiani") :
-							RadioRaiLoader.source.equals("stereonotte") ? Lists.newArrayList("Francesco Adinolfi", "Max De Tomassi", "Lele Sacchi", "Luca Sapio", "Mauro Zanda") : null;
 	}
 }

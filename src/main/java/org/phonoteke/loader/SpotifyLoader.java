@@ -15,6 +15,7 @@ import org.bson.Document;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
@@ -38,7 +39,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader extends PhonotekeLoader
+public class SpotifyLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
@@ -53,10 +54,8 @@ public class SpotifyLoader extends PhonotekeLoader
 
 	private static ClientCredentials credentials;
 
-
-	public SpotifyLoader() {
-		super();
-	}
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
+	
 
 	protected void load(String id)
 	{
@@ -113,7 +112,7 @@ public class SpotifyLoader extends PhonotekeLoader
 			for(org.bson.Document track : tracks)
 			{
 				String spotify = track.getString("spotify");
-				if(spotify != null && !NA.equals(spotify))
+				if(spotify != null && !HumanBeats.NA.equals(spotify))
 				{
 					uris.add("spotify:track:" + spotify);
 				}
@@ -167,7 +166,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	{
 		try 
 		{
-			Thread.sleep(SLEEP_TIME);
+			Thread.sleep(HumanBeats.SLEEP_TIME);
 			if(credentials == null)
 			{
 				credentials = SPOTIFY_LOGIN.execute();
@@ -202,8 +201,8 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 		else
 		{
-			page.append("spartistid", NA).
-			append("spalbumid", NA).
+			page.append("spartistid", HumanBeats.NA).
+			append("spalbumid", HumanBeats.NA).
 			append("score", 0);
 		}
 	}
@@ -265,7 +264,7 @@ public class SpotifyLoader extends PhonotekeLoader
 		}
 		else
 		{
-			page.append("spartistid", NA).
+			page.append("spartistid", HumanBeats.NA).
 			append("score", 0);
 		}
 	}
@@ -337,7 +336,7 @@ public class SpotifyLoader extends PhonotekeLoader
 						}
 						else
 						{
-							track.append("spotify", NA).
+							track.append("spotify", HumanBeats.NA).
 							append("score", 0);
 						}
 					}
@@ -357,7 +356,7 @@ public class SpotifyLoader extends PhonotekeLoader
 	private org.bson.Document getTrack(String title) throws Exception
 	{
 		List<String> chunks = Lists.newArrayList();
-		for(String match : TRACKS_MATCH) {
+		for(String match : HumanBeats.TRACKS_MATCH) {
 			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				for(int j=1; j<= m.groupCount(); j++){
@@ -375,14 +374,14 @@ public class SpotifyLoader extends PhonotekeLoader
 			artist = artist.replaceAll(",", " ");
 			artist = artist.replaceAll("=", " ");
 			artist = artist.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
+			for(String match : HumanBeats.FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(artist);
 				if(m.matches()) {
 					artist = m.group(1);
 					break;
 				}
 			}
-			for(String match : YEAR_MATCH) {
+			for(String match : HumanBeats.YEAR_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(artist);
 				if(m.matches()) {
 					artist = m.group(1);
@@ -397,14 +396,14 @@ public class SpotifyLoader extends PhonotekeLoader
 			song = song.replaceAll(",", " ");
 			song = song.replaceAll("=", " ");
 			song = song.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
+			for(String match : HumanBeats.FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
 					song = m.group(1);
 					break;
 				}
 			}
-			for(String match : YEAR_MATCH) {
+			for(String match : HumanBeats.YEAR_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
 					song = m.group(1);

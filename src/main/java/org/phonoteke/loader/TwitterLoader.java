@@ -12,18 +12,17 @@ import org.bson.Document;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
-public class TwitterLoader extends PhonotekeLoader
+public class TwitterLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
+	
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
-
-	public TwitterLoader() {
-		super();
-	}
 
 	protected void load(String task)
 	{
@@ -50,8 +49,8 @@ public class TwitterLoader extends PhonotekeLoader
 			else if("blackalot".equals(source)) {
 				links = "@bertallot #blackalot " + links;
 			}
-			else if("refreshrefresh".equals(source)) {
-				links = "@bertallot " + links;
+			else if("resetrefresh".equals(source)) {
+				links = "@bertallot #resetrefresh " + links;
 			}
 			else if("battiti".equals(source)) {
 				links = "@radio3tweet #battitiradio3 " + links;

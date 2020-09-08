@@ -11,6 +11,9 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -18,18 +21,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mongodb.client.model.Filters;
 
-public class SpeakerLoader extends PhonotekeLoader
+public class SpeakerLoader extends AbstractCrawler
 {
+	private static final Logger LOGGER = LogManager.getLogger(SpeakerLoader.class);
+	
 	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
 	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";
 	private static final String URL3 = "https://api.spreaker.com/show/2071330/episodes";
 	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
-
-
-	public SpeakerLoader() {
-		super();
-	}
+	
 
 	protected void load(String task) 
 	{
@@ -38,23 +39,23 @@ public class SpeakerLoader extends PhonotekeLoader
 			load("rolloverhangover");
 			load("blackalot");
 			load("cassabertallot");
-			load("refreshrefresh");	
+			load("resetrefresh");	
 		}
 
 		if("casabertallot".equals(task)) {
 			crawl(URL1, "casabertallot", "Casa Bertallot");
 		}
-		else if("casabertallot".equals(task)) {
+		else if("rolloverhangover".equals(task)) {
 			crawl(URL2, "rolloverhangover", "Rollover Hangover");
 		}
-		else if("casabertallot".equals(task)) {
+		else if("blackalot".equals(task)) {
 			crawl(URL3, "blackalot", "Black A Lot");
 		}
-		else if("casabertallot".equals(task)) {
+		else if("cassabertallot".equals(task)) {
 			crawl(URL4, "cassabertallot", "Cassa Bertallot");
 		}
-		else if("casabertallot".equals(task)) {
-			crawl(URL5, "refreshrefresh", "Refresh Refresh");
+		else if("resetrefresh".equals(task)) {
+			crawl(URL5, "resetrefresh", "Reset Refresh");
 		}
 	}
 
@@ -147,7 +148,7 @@ public class SpeakerLoader extends PhonotekeLoader
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && isTrack(title))
+			if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
 			{
 				String youtube = null;
 				tracks.add(newTrack(title, youtube));

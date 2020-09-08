@@ -7,16 +7,34 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader extends PhonotekeLoader
+public class PatchLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
+	
 
-	public PatchLoader() {
-		super();
+	public static void main(String[] args) {
+		new PatchLoader().resetRefresh();
+	}
+	
+	private void resetRefresh()
+	{
+		LOGGER.info("Resetting tracks title...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"),Filters.eq("source", "resetrefresh"))).noCursorTimeout(true).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			page.append("source", "resetrefresh");
+			page.append("artist", "Reset Refresh");
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
+		}
 	}
 
 	protected void load(String task) 
@@ -49,7 +67,7 @@ public class PatchLoader extends PhonotekeLoader
 				for(org.bson.Document track : tracks)
 				{
 					String spotify = track.getString("spotify");
-					if(spotify == null || NA.equals(spotify)) {
+					if(spotify == null || HumanBeats.NA.equals(spotify)) {
 						track.append("title", track.getString("titleOrig"));
 					}
 				}

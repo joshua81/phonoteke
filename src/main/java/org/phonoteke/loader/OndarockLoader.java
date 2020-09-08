@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
@@ -19,15 +22,13 @@ import com.google.common.collect.Lists;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class OndarockLoader extends PhonotekeLoader
+public class OndarockLoader extends AbstractCrawler
 {
+	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
+	
 	public static final String URL = "https://www.ondarock.it/";
 	public static final String SOURCE = "ondarock";
 
-
-	public OndarockLoader() {
-		super();
-	}
 
 	protected void load(String url) 
 	{

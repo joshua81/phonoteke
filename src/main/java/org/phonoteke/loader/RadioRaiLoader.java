@@ -9,18 +9,23 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.common.collect.Lists;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class RadioRaiLoader extends PhonotekeLoader
+public class RadioRaiLoader extends AbstractCrawler
 {
+	private static final Logger LOGGER = LogManager.getLogger(RadioRaiLoader.class);
+	
 	private static final String URL = "https://www.raiplayradio.it/";
 	private static final String URL_AUDIO = "https://www.raiplayradio.it/audio";
 	private static final String BABYLON = "https://www.raiplayradio.it/programmi/babylon/";
@@ -33,11 +38,7 @@ public class RadioRaiLoader extends PhonotekeLoader
 
 	private static String artist;
 	private static String source;
-
-
-	public RadioRaiLoader() {
-		super();
-	}
+	
 
 	protected void load(String task) 
 	{
@@ -46,8 +47,6 @@ public class RadioRaiLoader extends PhonotekeLoader
 			load("battiti");
 			load("seigradi");
 			load("stereonotte");
-			//		load("babylon");
-			//		load("inthemix");	
 		}
 
 		if("babylon".equals(task))
@@ -208,26 +207,26 @@ public class RadioRaiLoader extends PhonotekeLoader
 		Element content = doc.select("div.aodHtmlDescription").first();
 		if(content != null)
 		{
-			content.select("br").after(TRACKS_NEW_LINE);
-			content.select("p").after(TRACKS_NEW_LINE);
-			content.select("li").after(TRACKS_NEW_LINE);
-			content.select("h1").after(TRACKS_NEW_LINE);
-			content.select("h2").after(TRACKS_NEW_LINE);
-			content.select("h3").after(TRACKS_NEW_LINE);
-			content.select("div").after(TRACKS_NEW_LINE);
+			content.select("br").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("p").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("li").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("h1").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("h2").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("h3").after(HumanBeats.TRACKS_NEW_LINE);
+			content.select("div").after(HumanBeats.TRACKS_NEW_LINE);
 
-			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			String[] chunks = content.text().replace("||", HumanBeats.TRACKS_NEW_LINE).split(HumanBeats.TRACKS_NEW_LINE);
 			if("seigradi".equals(source))
 			{
-				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
-				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+				String str = content.text().replace(HumanBeats.TRACKS_NEW_LINE + " "+ HumanBeats.TRACKS_NEW_LINE, "||").replace(HumanBeats.TRACKS_NEW_LINE, " - ");
+				chunks = str.replace("||", HumanBeats.TRACKS_NEW_LINE).split(HumanBeats.TRACKS_NEW_LINE);
 			}
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
 				if(StringUtils.isNotBlank(title))
 				{
-					for(String p : TRACKS_TRIM)
+					for(String p : HumanBeats.TRACKS_TRIM)
 					{
 						if(title.toUpperCase().startsWith(p))
 						{
@@ -235,7 +234,7 @@ public class RadioRaiLoader extends PhonotekeLoader
 						}
 					}
 				}
-				if(StringUtils.isNotBlank(title) && isTrack(title))
+				if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
 				{
 					String youtube = null;
 					tracks.add(newTrack(title, youtube));

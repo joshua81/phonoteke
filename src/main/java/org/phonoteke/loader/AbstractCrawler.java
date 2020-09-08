@@ -13,14 +13,11 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.HumanBeats.TYPE;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -36,111 +33,11 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public abstract class PhonotekeLoader extends WebCrawler
+public abstract class AbstractCrawler extends WebCrawler
 {
-	protected static final Logger LOGGER = LogManager.getLogger(PhonotekeLoader.class);
+	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
 
-	private static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	private static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[–-](.{1,200})";
-	private static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{1,200})";
-	private static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{1,200})";
-	private static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
-	private static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
-	private static final String MATCH7 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
-
-	private static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
-	private static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
-	private static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
-	private static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
-
-	private static final String YEAR1 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-
-	protected static final String NA = "na";
-	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	protected static final int NUMBER_OF_CRAWLERS = 10;
-	protected static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
-	protected static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4);
-	protected static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
-	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
-	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
-	protected static final int SLEEP_TIME = 2000;
-	protected static final int THRESHOLD = 90;
-
-	protected MongoCollection<org.bson.Document> docs;
-
-	protected enum TYPE {
-		artist,
-		album,
-		concert,
-		interview,
-		podcast,
-		unknown
-	}
-
-	public static void main(String[] args) {
-		if(args.length > 0) {
-			String task = args[0].split(":")[0];
-			String subtask = args[0].split(":").length == 1 ? null : args[0].split(":")[1];
-			if("mb".equals(task)) {
-				new MusicbrainzLoader().load(subtask);
-			}
-			else if("sp".equals(task)) {
-				new SpotifyLoader().load(subtask);
-			}
-			else if("tw".equals(task)) {
-				new TwitterLoader().load(subtask);
-			}
-			else if("yt".equals(task)) {
-				new YoutubeLoader().load(subtask);
-			}
-			else if("doc".equals(task)) {
-				new OndarockLoader().load(subtask);
-			}
-			else if("pod".equals(task)) {
-				new RadioRaiLoader().load(subtask);
-				new SpeakerLoader().load(subtask);
-			}
-			else if("stats".equals(task)) {
-				new StatsLoader().load(subtask);
-			}
-			else if("patch".equals(task)) {
-				new PatchLoader().load(subtask);
-			}
-			else {
-				System.out.println("Usage:");
-				System.out.println("compile (compiles sources)");
-				System.out.println("deploy (deploys to GCloud)");
-				System.out.println("test (deploys test)");
-				System.out.println("mb (loads Music Brainz)");
-				System.out.println("sp (loads Spotify)");
-				System.out.println("sp:playlist (loads Spotify playlists)");
-				System.out.println("tw (loads Twitter)");
-				System.out.println("yt (loads Youtube)");
-				System.out.println("doc (loads documents)");
-				System.out.println("pod (loads podcasts)");
-				System.out.println("stats (loads stats)");
-				System.out.println("patch:resetTracksTitle (patches db)");
-				System.out.println("patch:calculateScore (patches db)");
-				System.out.println("patch:resetTracks (patches db)");
-				System.out.println("patch:replaceSpecialChars (patches db)");
-			}
-		}
-	}
-
-	public PhonotekeLoader()
-	{
-		try
-		{
-			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
-			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
-			docs = db.getCollection("docs");
-		} 
-		catch (Throwable t) 
-		{
-			LOGGER.error("ERROR connecting to Mongo db: " + t.getMessage());
-			throw new RuntimeException(t);
-		}
-	}
+	protected MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 	protected void crawl(String url)
 	{
@@ -148,13 +45,13 @@ public abstract class PhonotekeLoader extends WebCrawler
 		{
 			LOGGER.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
-			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+			config.setCrawlStorageFolder(HumanBeats.CRAWL_STORAGE_FOLDER);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);
-			controller.start(getClass(), NUMBER_OF_CRAWLERS);
+			controller.start(getClass(), HumanBeats.NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
@@ -324,19 +221,6 @@ public abstract class PhonotekeLoader extends WebCrawler
 			LOGGER.error("ERROR getUrl() "+ url + ": " + t.getMessage());
 			return null;
 		} 
-	}
-
-	protected static boolean isTrack(String title)
-	{
-		title = title.trim();
-		for(String match : TRACKS_MATCH)
-		{
-			if(title.matches(match))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	protected static org.bson.Document newTrack(String title, String youtube)

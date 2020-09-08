@@ -14,21 +14,20 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class MusicbrainzLoader extends PhonotekeLoader
+public class MusicbrainzLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
-
-
-	public MusicbrainzLoader() {
-		super();
-	}
+	
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
+	
 
 	protected void load(String task) 
 	{
@@ -73,7 +72,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				artistId = getAlbumId(artist + " - " + title, mbalbum);
 			}
-			page.append("artistid", artistId == null ? NA : artistId);
+			page.append("artistid", artistId == null ? HumanBeats.NA : artistId);
 			LOGGER.info(artist + " - " + title + ": " + artistId);
 		}
 	}
@@ -102,7 +101,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 			{
 				artistId = getArtistId(artist, mbartist);
 			}
-			page.append("artistid", artistId == null ? NA : artistId);
+			page.append("artistid", artistId == null ? HumanBeats.NA : artistId);
 			LOGGER.debug(artist + ": " + artistId);
 		}
 	}
@@ -149,7 +148,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 		finally
 		{
 			try {
-				Thread.sleep(SLEEP_TIME);
+				Thread.sleep(HumanBeats.SLEEP_TIME);
 			} catch (InterruptedException e) {
 				// do nothing
 			}
@@ -178,7 +177,7 @@ public class MusicbrainzLoader extends PhonotekeLoader
 						{
 							artistId = getAlbumId(artist + " - " + album, mbalbum);
 						}
-						track.append("artistid", artistId == null ? NA : artistId);
+						track.append("artistid", artistId == null ? HumanBeats.NA : artistId);
 						LOGGER.info(artist + " - " + album + ": " + artistId);
 					}
 				}
@@ -203,14 +202,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 
-				if(score >= THRESHOLD && scoreTitle >= THRESHOLD)
+				if(score >= HumanBeats.THRESHOLD && scoreTitle >= HumanBeats.THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeats.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getArtistId(String name, org.bson.Document artist)
@@ -224,14 +223,14 @@ public class MusicbrainzLoader extends PhonotekeLoader
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score >= THRESHOLD && scoreArtist >= THRESHOLD)
+				if(score >= HumanBeats.THRESHOLD && scoreArtist >= HumanBeats.THRESHOLD)
 				{
 					String artistId = mbartist.getString("id");
 					scores.put(score, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeats.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getRecordingArtistId(org.bson.Document recording)

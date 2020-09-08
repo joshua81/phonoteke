@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequest;
@@ -15,16 +16,19 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class YoutubeLoader extends PhonotekeLoader
+public class YoutubeLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
+	
 	private YouTube youtube = null;
 
 
@@ -109,7 +113,7 @@ public class YoutubeLoader extends PhonotekeLoader
 				String title = searchResult.getSnippet().getTitle();
 				int score = FuzzySearch.tokenSetRatio(track, title);
 				LOGGER.info(track + ", " + title + " (score: " + score + ")");
-				if(score >= THRESHOLD)
+				if(score >= HumanBeats.THRESHOLD)
 				{
 					return id;
 				}

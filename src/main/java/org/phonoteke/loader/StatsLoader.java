@@ -10,18 +10,16 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class StatsLoader extends PhonotekeLoader
+public class StatsLoader
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
+	
+	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
-
-	public StatsLoader()
-	{
-		super();
-	}
 
 	protected void load(String task)
 	{
@@ -69,7 +67,7 @@ public class StatsLoader extends PhonotekeLoader
 					//					}
 					String artistMb = track.getString("artistid");
 					if(artistMb != null) {
-						if(!artistMb.equals(NA)) {
+						if(!artistMb.equals(HumanBeats.NA)) {
 							numMusicBrainz++;
 						}
 						else {

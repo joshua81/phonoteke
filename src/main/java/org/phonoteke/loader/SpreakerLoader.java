@@ -20,9 +20,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mongodb.client.model.Filters;
 
-public class SpeakerLoader extends AbstractCrawler
+public class SpreakerLoader extends AbstractCrawler
 {
-	private static final Logger LOGGER = LogManager.getLogger(SpeakerLoader.class);
+	private static final Logger LOGGER = LogManager.getLogger(SpreakerLoader.class);
 	
 	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
 	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";

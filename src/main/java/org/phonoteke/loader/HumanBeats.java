@@ -64,7 +64,7 @@ public interface HumanBeats
 			}
 			else if("pod".equals(task)) {
 				new RadioRaiLoader().load(subtask);
-				new SpeakerLoader().load(subtask);
+				new SpreakerLoader().load(subtask);
 			}
 			else if("stats".equals(task)) {
 				new StatsLoader().load(subtask);

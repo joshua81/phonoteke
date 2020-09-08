@@ -20,7 +20,7 @@ import com.mongodb.client.model.Filters;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class MusicbrainzLoader
+public class MusicbrainzLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 
@@ -29,7 +29,7 @@ public class MusicbrainzLoader
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 	
 
-	protected void load(String task) 
+	public void load(String task) 
 	{
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(
@@ -72,7 +72,7 @@ public class MusicbrainzLoader
 			{
 				artistId = getAlbumId(artist + " - " + title, mbalbum);
 			}
-			page.append("artistid", artistId == null ? HumanBeats.NA : artistId);
+			page.append("artistid", artistId == null ? NA : artistId);
 			LOGGER.info(artist + " - " + title + ": " + artistId);
 		}
 	}
@@ -101,7 +101,7 @@ public class MusicbrainzLoader
 			{
 				artistId = getArtistId(artist, mbartist);
 			}
-			page.append("artistid", artistId == null ? HumanBeats.NA : artistId);
+			page.append("artistid", artistId == null ? NA : artistId);
 			LOGGER.debug(artist + ": " + artistId);
 		}
 	}
@@ -148,7 +148,7 @@ public class MusicbrainzLoader
 		finally
 		{
 			try {
-				Thread.sleep(HumanBeats.SLEEP_TIME);
+				Thread.sleep(SLEEP_TIME);
 			} catch (InterruptedException e) {
 				// do nothing
 			}
@@ -177,7 +177,7 @@ public class MusicbrainzLoader
 						{
 							artistId = getAlbumId(artist + " - " + album, mbalbum);
 						}
-						track.append("artistid", artistId == null ? HumanBeats.NA : artistId);
+						track.append("artistid", artistId == null ? NA : artistId);
 						LOGGER.info(artist + " - " + album + ": " + artistId);
 					}
 				}
@@ -202,14 +202,14 @@ public class MusicbrainzLoader
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
 
-				if(score >= HumanBeats.THRESHOLD && scoreTitle >= HumanBeats.THRESHOLD)
+				if(score >= THRESHOLD && scoreTitle >= THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeats.NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getArtistId(String name, org.bson.Document artist)
@@ -223,14 +223,14 @@ public class MusicbrainzLoader
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score >= HumanBeats.THRESHOLD && scoreArtist >= HumanBeats.THRESHOLD)
+				if(score >= THRESHOLD && scoreArtist >= THRESHOLD)
 				{
 					String artistId = mbartist.getString("id");
 					scores.put(score, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeats.NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getRecordingArtistId(org.bson.Document recording)

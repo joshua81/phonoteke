@@ -10,7 +10,7 @@ import com.mongodb.client.MongoDatabase;
 
 public class MongoDB 
 {
-	protected static final Logger LOGGER = LogManager.getLogger(MongoDB.class);
+	private static final Logger LOGGER = LogManager.getLogger(MongoDB.class);
 
 	private MongoCollection<org.bson.Document> docs;
 

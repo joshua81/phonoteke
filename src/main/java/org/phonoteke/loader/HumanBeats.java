@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class HumanBeats 
+public interface HumanBeats 
 {
 	public static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
 	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[–-](.{1,200})";
@@ -90,6 +90,8 @@ public class HumanBeats
 			}
 		}
 	}
+	
+	public void load(String task);
 
 	public static boolean isTrack(String title)
 	{

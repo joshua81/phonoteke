@@ -17,14 +17,14 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
-public class TwitterLoader
+public class TwitterLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
 	
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
-	protected void load(String task)
+	public void load(String task)
 	{
 		LOGGER.info("Tweetting podcasts...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1000).noCursorTimeout(true).iterator();

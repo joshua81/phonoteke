@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
@@ -33,7 +32,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public abstract class AbstractCrawler extends WebCrawler
+public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 {
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
 
@@ -45,13 +44,13 @@ public abstract class AbstractCrawler extends WebCrawler
 		{
 			LOGGER.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
-			config.setCrawlStorageFolder(HumanBeats.CRAWL_STORAGE_FOLDER);
+			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);
-			controller.start(getClass(), HumanBeats.NUMBER_OF_CRAWLERS);
+			controller.start(getClass(), NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
@@ -303,8 +302,6 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected String getAudio(String url, Document doc) {
 		return null;
 	}
-
-	protected abstract void load(String task);
 
 	//-------------------------------------------
 

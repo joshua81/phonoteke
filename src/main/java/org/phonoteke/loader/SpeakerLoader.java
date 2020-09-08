@@ -13,7 +13,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -32,7 +31,7 @@ public class SpeakerLoader extends AbstractCrawler
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
 	
 
-	protected void load(String task) 
+	public void load(String task) 
 	{
 		if(task == null) {
 			load("casabertallot");

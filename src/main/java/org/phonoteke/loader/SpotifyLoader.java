@@ -39,7 +39,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader
+public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
@@ -57,7 +57,7 @@ public class SpotifyLoader
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 	
 
-	protected void load(String id)
+	public void load(String id)
 	{
 		if("playlist".equals(id)) {
 			loadPlaylists(false);
@@ -112,7 +112,7 @@ public class SpotifyLoader
 			for(org.bson.Document track : tracks)
 			{
 				String spotify = track.getString("spotify");
-				if(spotify != null && !HumanBeats.NA.equals(spotify))
+				if(spotify != null && !NA.equals(spotify))
 				{
 					uris.add("spotify:track:" + spotify);
 				}
@@ -166,7 +166,7 @@ public class SpotifyLoader
 	{
 		try 
 		{
-			Thread.sleep(HumanBeats.SLEEP_TIME);
+			Thread.sleep(SLEEP_TIME);
 			if(credentials == null)
 			{
 				credentials = SPOTIFY_LOGIN.execute();
@@ -201,8 +201,8 @@ public class SpotifyLoader
 		}
 		else
 		{
-			page.append("spartistid", HumanBeats.NA).
-			append("spalbumid", HumanBeats.NA).
+			page.append("spartistid", NA).
+			append("spalbumid", NA).
 			append("score", 0);
 		}
 	}
@@ -264,7 +264,7 @@ public class SpotifyLoader
 		}
 		else
 		{
-			page.append("spartistid", HumanBeats.NA).
+			page.append("spartistid", NA).
 			append("score", 0);
 		}
 	}
@@ -336,7 +336,7 @@ public class SpotifyLoader
 						}
 						else
 						{
-							track.append("spotify", HumanBeats.NA).
+							track.append("spotify", NA).
 							append("score", 0);
 						}
 					}
@@ -356,7 +356,7 @@ public class SpotifyLoader
 	private org.bson.Document getTrack(String title) throws Exception
 	{
 		List<String> chunks = Lists.newArrayList();
-		for(String match : HumanBeats.TRACKS_MATCH) {
+		for(String match : TRACKS_MATCH) {
 			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				for(int j=1; j<= m.groupCount(); j++){
@@ -374,14 +374,14 @@ public class SpotifyLoader
 			artist = artist.replaceAll(",", " ");
 			artist = artist.replaceAll("=", " ");
 			artist = artist.replaceAll(";", " ");
-			for(String match : HumanBeats.FEAT_MATCH) {
+			for(String match : FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(artist);
 				if(m.matches()) {
 					artist = m.group(1);
 					break;
 				}
 			}
-			for(String match : HumanBeats.YEAR_MATCH) {
+			for(String match : YEAR_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(artist);
 				if(m.matches()) {
 					artist = m.group(1);
@@ -396,14 +396,14 @@ public class SpotifyLoader
 			song = song.replaceAll(",", " ");
 			song = song.replaceAll("=", " ");
 			song = song.replaceAll(";", " ");
-			for(String match : HumanBeats.FEAT_MATCH) {
+			for(String match : FEAT_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
 					song = m.group(1);
 					break;
 				}
 			}
-			for(String match : HumanBeats.YEAR_MATCH) {
+			for(String match : YEAR_MATCH) {
 				Matcher m = Pattern.compile(match).matcher(song);
 				if(m.matches()) {
 					song = m.group(1);

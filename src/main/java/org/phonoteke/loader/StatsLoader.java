@@ -14,14 +14,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class StatsLoader
+public class StatsLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
 	
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
-	protected void load(String task)
+	public void load(String task)
 	{
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();
@@ -67,7 +67,7 @@ public class StatsLoader
 					//					}
 					String artistMb = track.getString("artistid");
 					if(artistMb != null) {
-						if(!artistMb.equals(HumanBeats.NA)) {
+						if(!artistMb.equals(NA)) {
 							numMusicBrainz++;
 						}
 						else {

@@ -11,17 +11,17 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader
+public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-	
+
 
 	public static void main(String[] args) {
 		new PatchLoader().resetRefresh();
 	}
-	
+
 	private void resetRefresh()
 	{
 		LOGGER.info("Resetting tracks title...");
@@ -37,7 +37,7 @@ public class PatchLoader
 		}
 	}
 
-	protected void load(String task) 
+	public void load(String task) 
 	{
 		if("resetTracksTitle".equals(task)) {
 			resetTracksTitle();
@@ -67,7 +67,7 @@ public class PatchLoader
 				for(org.bson.Document track : tracks)
 				{
 					String spotify = track.getString("spotify");
-					if(spotify == null || HumanBeats.NA.equals(spotify)) {
+					if(spotify == null || NA.equals(spotify)) {
 						track.append("title", track.getString("titleOrig"));
 					}
 				}

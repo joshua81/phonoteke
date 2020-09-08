@@ -14,7 +14,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.HumanBeats.TYPE;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
@@ -24,13 +23,13 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class OndarockLoader extends AbstractCrawler
 {
-	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
-	
-	public static final String URL = "https://www.ondarock.it/";
 	public static final String SOURCE = "ondarock";
+	
+	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
+	private static final String URL = "https://www.ondarock.it/";
 
 
-	protected void load(String url) 
+	public void load(String url) 
 	{
 		url = url == null ? OndarockLoader.URL : url;
 		crawl(url);

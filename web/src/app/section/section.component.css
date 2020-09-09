@@ -34,18 +34,18 @@
 }
 
 div.cover {
-  width: 100px;
+  width: 190px;
   position: relative;
 }
 
 a.cover {
-  width: 100px;
-  height: 100px;
+  width: 190px;
+  height: 190px;
 }
 
 img.cover {
-  width: 100px;
-  height: 100px;
+  width: 190px;
+  height: 190px;
   object-fit:cover;
 }
 
@@ -53,8 +53,15 @@ img.cover {
   border-style: none;
 }
 
-.card-body-sm {
+.card-body {
   position: relative;
-  width: 200px;
-  height: 80px;
+  width: 190px;
+  height: 150px;
+}
+
+.card-footer {
+  border-style: none;
+  background: none;
+  position: absolute;
+  bottom: 0px;
 }

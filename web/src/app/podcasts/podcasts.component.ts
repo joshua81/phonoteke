@@ -11,7 +11,6 @@ export class PodcastsComponent implements OnInit {
   error = null;
   searchText = '';
   user = null;
-  isStarred: boolean = false;
   podcasts = [];
   podcastsPage: number = 0;
 
@@ -22,27 +21,18 @@ export class PodcastsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.searchText = '';
-      if(params.get('type') == 'starred') {
-        this.isStarred = true;
-        this.loadStarred();
-      }
-      else {
-        this.isStarred = false;
-        this.loadDocs();
-      }
+      this.loadDocs();
     });
   }
 
   scrollDocs(type: string) {
-    if(!this.isStarred) {
-      var page: number = 0;
-      this.podcastsPage++;
-      page = this.podcastsPage;
+    var page: number = 0;
+    this.podcastsPage++;
+    page = this.podcastsPage;
   
-      this.http.get('/api/docs/podcasts?p=' + page + '&q=' + this.searchText).subscribe(
-        (data: any) => this.docsLoaded('podcasts', data),
-        error => this.error = error);
-    }
+    this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
+      (data: any) => this.docsLoaded('podcasts', data),
+      error => this.error = error);
   }
 
   loadDocs() {
@@ -50,32 +40,13 @@ export class PodcastsComponent implements OnInit {
     this.podcastsPage = 0;
     this.podcasts = [];
 
-    this.http.get('/api/docs/podcasts?p=' + page + '&q=' + this.searchText).subscribe(
+    this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
       (data: any) => this.docsLoaded('podcasts', data),
       error => this.error = error);
   }
 
-  loadStarred() {
-    this.podcasts = [];
-
-    this.http.get('/api/docs/starred').subscribe(
-      (data: any) => this.docsLoaded('starred', data),
-      error => this.error = error);
-  }
-
   docsLoaded(type: string, data: any) {
-    if(type == 'podcasts') {
-      this.podcasts.push.apply(this.podcasts, data);
-    }
-    else if(type == 'starred') {
-      var podcasts = [];
-      data.forEach(function(doc) {
-        if(doc.type  == 'podcast') {
-          podcasts.push(doc);
-        }
-      });
-      this.podcasts.push.apply(this.podcasts, podcasts);
-    }
+    this.podcasts.push.apply(this.podcasts, data);
   }
 
   loadUser() {

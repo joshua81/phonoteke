@@ -67,9 +67,9 @@ h3 {
     margin-bottom: 3px;
 }
 
-.w-800 {
+.w-max {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 .text-truncate-1 {

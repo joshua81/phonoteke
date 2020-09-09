@@ -1,19 +1,20 @@
-<div *ngIf="docs && docs.length != 0" class="container w-800 p-0 mt-2">
+<div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-2">
   <div id="podcast" infinite-scroll (scrolled)="scrollDocs()">
-      <ul class="list-group">
-        <li *ngFor="let doc of docs" class="list-group-item p-2">
-          <div class="d-flex flex-row">
-            <a class="cover mr-2" [routerLink]="['/docs/' + doc.id]">
-              <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
-              <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
-            </a>
-            <div class="w-100 p-0">
-              <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-              <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-              <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
-            </div>
+    <div class="d-flex flex-wrap justify-content-center">
+      <div *ngFor="let doc of docs" class="mr-1 ml-1 mb-2">
+        <div class="cover card">
+          <a class="cover" [routerLink]="['/docs/' + doc.id]">
+            <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
+            <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
+          </a>
+          <div class="card-body p-1">
+            <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+            <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+            <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
+            <h3 class="card-footer text-muted text-uppercase p-0">{{doc.type}}</h3>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

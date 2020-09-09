@@ -9,7 +9,6 @@ const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 8080;
 
 var docs = null;
-var podcasts = null;
 //const uri = "mongodb://localhost:27017/";
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const client_id = 'a6c3686d32cb48d4854d88915d3925be';
@@ -21,7 +20,6 @@ const songkick_id = '1hOiIfT9pFTkyVkg';
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 db.connect(err => {
 	docs = db.db("mbeats").collection("docs");
-	podcasts = db.db("mbeats").collection("podcasts");
 	console.log("Successfully Connected to MongoDB");
 });
 
@@ -47,13 +45,8 @@ app.use('/html', express.static('html'));
 app.use(express.static('web'));
 app.use(cookieParser());
 
-app.get('/api/podcasts', async(req, res)=>{
-	var result = await podcasts.find().sort({"title":1}).toArray();
-	res.send(result);
-});
-
-app.get('/api/podcasts/:source', async(req, res)=>{
-	var result = await podcasts.find({'source': req.params.source}).toArray();
+app.get('/api/docs', async(req, res)=>{
+	var result = await findDocs(null, req.query.p, req.query.q);
 	res.send(result);
 });
 
@@ -250,17 +243,22 @@ async function findDocs(t, p, q) {
 		var query = q;
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
-		if(t != 'podcast') {
-			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		if(t) {
+			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
 		}
 		else {
-			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
 		}
 	}
 	else {
 		console.log('Docs: page=' + p + ', type=' + t);
 		var page = Number(p) > 0 ? Number(p) : 0;
-		result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+		if(t) {
+			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+		}
+		else {
+			result = await docs.find().project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+		}
 	}
 	return result;
 }

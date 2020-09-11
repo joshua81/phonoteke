@@ -244,20 +244,20 @@ async function findDocs(t, p, q) {
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
 		if(t) {
-			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		else {
-			result = await docs.find({$and: [{$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 	}
 	else {
 		console.log('Docs: page=' + p + ', type=' + t);
 		var page = Number(p) > 0 ? Number(p) : 0;
 		if(t) {
-			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+			result = await docs.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		else {
-			result = await docs.find().project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*15).limit(15).sort({"date":-1}).toArray();
+			result = await docs.find().project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 	}
 	return result;
@@ -272,20 +272,20 @@ async function findPodcasts(s, p, q) {
 		query = '.*' + query + '.*';
 		query = query.split(' ').join('.*');
 		if(s) {
-			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		else {
-			result = await docs.find({$and: [{'type': 'podcast'}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': 'podcast'}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 	}
 	else {
 		console.log('Podcasts: page=' + p + ', source=' + s);
 		var page = Number(p) > 0 ? Number(p) : 0;
 		if(s) {
-			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': 'podcast'}, {'source': s}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 		else {
-			result = await docs.find({$and: [{'type': 'podcast'}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*8).limit(8).sort({"date":-1}).toArray();
+			result = await docs.find({$and: [{'type': 'podcast'}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 		}
 	}
 	return result;

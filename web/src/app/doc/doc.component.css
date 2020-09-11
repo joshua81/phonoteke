@@ -2,64 +2,53 @@
   border-radius: 50%;
   background: #FFFFFF;
   width: 30px;
-  min-width: 30px;
   height: 30px;
-  min-height: 30px;
+  margin: 0px;
+  padding: 0px;
   cursor: pointer;
+}
+
+.songtify {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 .songkick {
   display: inline-block;
-  mask: url("/images/songkick.svg");
-  width: 30px;
-  height: 30px;
-  background: #18A2B8;
-  cursor: pointer;
+  content: url("/images/songkick.png");
 }
 
 .spotify {
-  position: absolute;
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  top: 5px;
-  right: 5px;
-  background: none; 
-  cursor: pointer;
-}
-
-.play-circle {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  background: #FFFFFF;
-
-  color: #18A2B8;
-  text-align: center;
-  margin: 0px;
+  content: url("/images/spotify.png");
 }
 
 h2.vote {
   border-radius: 50%;
+  border-style: solid;
+  border-width: 2px;
   width: 30px;
   height: 30px;
-  background: #18A2B8;
+  background: #FFFFFF;
 
-  color: #FFFFFF;
+  color: #000000;
   text-align: center;
-  padding-top: 8px;
+  padding-top: 7px;
   margin: 0px;
 }
 
 div.vote {
   border-radius: 50%;
+  border-style: solid;
+  border-width: 2px;
   width: 30px;
   height: 30px;
-  background: #18A2B8;
+  background: #FFFFFF;
 
-  color: #FFFFFF;
+  color: #000000;
   text-align: center;
-  padding-top: 6px;
+  padding-top: 4px;
   margin: 0px;
 }
 
@@ -68,7 +57,7 @@ div.vote {
   mask: url("/images/star.svg");
   width: 20px;
   height: 18px;
-  background: #FFFFFF;
+  background: #000000;
 }
 
 div.cover {
@@ -157,6 +146,3 @@ img.cover {
   cursor: pointer;
 }
 
-.player-time {
-  width: 50px;
-}

@@ -6,18 +6,21 @@
         <div class="cover mr-2">
           <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
           <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
-          <!-- spotify -->
-          <img *ngIf="doc.spalbumid" class="spotify" src="images/spotify.png" (click)="toggleSpotify()"/>
-          <!-- player -->
+          <!-- spotify + songkick -->
+          <div class="songtify d-flex flex-column">
+            <img *ngIf="doc.spalbumid" class="icon spotify mb-2" (click)="toggleSpotify()"/>
+            <img *ngIf="doc.artistid" class="icon songkick" (click)="loadEvents(doc.artistid)"/>
+          </div>
+          <!-- podcast player -->
           <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row align-items-center p-2">
             <div class="player-button" (click)="playPause($event)">
               <span *ngIf="audio == null || audio.paused" class="player-play"></span>
               <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
             </div>
-            <!--div class="player-button" (click)="backward($event)">
+            <!--div class="icon player-button" (click)="backward($event)">
               <span class="player-backward"></span>
             </div>
-            <div class="player-button" (click)="forward($event)">
+            <div class="icon player-button" (click)="forward($event)">
               <span class="player-forward"></span>
             </div-->
           </div>
@@ -30,17 +33,11 @@
         </div>
       </div>
 
-      <!-- spotify + songkick -->
+      <!-- vote -->
       <div class="d-flex flex-row justify-content-center mt-3 mb-3">
         <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
         <div *ngIf="doc.type == 'album' && doc.vote && doc.vote == 10" class="vote">
           <span class="star"></span>
-        </div>
-        <!--a href="{{doc.url}}" target="_blank" class="ml-2">
-          <img class="{{doc.source}}">
-        </a-->
-        <div *ngIf="doc.artistid" class="icon ml-2" (click)="loadEvents(doc.artistid)">
-          <span class="songkick"></span>
         </div>
       </div>
 

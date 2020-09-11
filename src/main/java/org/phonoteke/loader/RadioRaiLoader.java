@@ -40,6 +40,10 @@ public class RadioRaiLoader extends AbstractCrawler
 	private static List<String> authors;
 
 
+	public static void main(String[] args) {
+		new RadioRaiLoader().load("musicalbox");
+	}
+
 	@Override
 	public void load(String task) 
 	{
@@ -124,7 +128,7 @@ public class RadioRaiLoader extends AbstractCrawler
 	{
 		return artist;
 	}
-	
+
 	@Override
 	protected List<String> getAuthors(String url, Document doc) 
 	{

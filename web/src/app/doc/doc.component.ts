@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-doc',
@@ -14,12 +15,13 @@ export class DocComponent implements OnInit {
   links = [];
   podcasts = [];
   songkick: string = null;
+  spotify = null;
   audio = null;
   audioCurrentTime: string = null;
   audioDuration: string = null;
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private http: HttpClient, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -40,6 +42,7 @@ export class DocComponent implements OnInit {
     this.links = [];
     this.podcasts = [];
     this.songkick = null;
+    this.spotify = null;
     if(this.audio){
       this.audio.pause();
       this.audio = null;
@@ -140,5 +143,18 @@ export class DocComponent implements OnInit {
       var secs = (seconds >= 10) ? seconds : "0" + seconds;
       return mins + ":" + secs;
     }
+  }
+
+  toggleSpotify() {
+    if(this.spotify == null) {
+      this.spotify = this.doc.type == 'album' ? ('https://open.spotify.com/embed/album/' + this.doc.spalbumid) : ('https://open.spotify.com/embed/playlist/' + this.doc.spalbumid);
+    }
+    else {
+      this.spotify = null;
+    }
+  }
+
+  spotifyUrl() {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.spotify);
   }
 }

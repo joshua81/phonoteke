@@ -1,7 +1,7 @@
 <div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-2">
   <div id="podcast" infinite-scroll (scrolled)="scrollDocs()">
     <div class="d-flex flex-wrap justify-content-center">
-      <div *ngFor="let doc of docs" class="mr-1 ml-1 mb-2">
+      <div *ngFor="let doc of docs" class="m-1">
         <div class="cover card">
           <a class="cover" [routerLink]="['/docs/' + doc.id]">
             <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>

@@ -96,8 +96,8 @@ img.cover {
 }
 
 .player-button {
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 20px;
   margin: 0px;
   padding: 0px;
 }
@@ -105,8 +105,8 @@ img.cover {
 .player-play {
   display: inline-block;
   mask: url("/images/play.svg");
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 20px;
   margin: 0px;
   padding: 0px;
   background: #FFFFFF;
@@ -116,8 +116,8 @@ img.cover {
 .player-pause {
   display: inline-block;
   mask: url("/images/pause.svg");
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 20px;
   margin: 0px;
   padding: 0px;
   background: #FFFFFF;
@@ -127,8 +127,8 @@ img.cover {
 .player-forward {
   display: inline-block;
   mask: url("/images/forward.svg");
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 20px;
   margin: 0px;
   padding: 0px;
   background: #FFFFFF;
@@ -138,8 +138,8 @@ img.cover {
 .player-backward {
   display: inline-block;
   mask: url("/images/backward.svg");
-  width: 30px;
-  height: 30px;
+  width: 18px;
+  height: 20px;
   margin: 0px;
   padding: 0px;
   background: #FFFFFF;

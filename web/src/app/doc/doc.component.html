@@ -13,16 +13,16 @@
           </div>
           <!-- podcast player -->
           <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row align-items-center p-2">
-            <div class="player-button" (click)="playPause($event)">
+            <div class="player-button mr-auto" (click)="playPause($event)">
               <span *ngIf="audio == null || audio.paused" class="player-play"></span>
               <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
             </div>
-            <!--div class="icon player-button" (click)="backward($event)">
-              <span class="player-backward"></span>
+            <div class="player-button mr-3" (click)="backward($event)">
+              <span *ngIf="audio != null" class="player-backward"></span>
             </div>
-            <div class="icon player-button" (click)="forward($event)">
-              <span class="player-forward"></span>
-            </div-->
+            <div class="player-button" (click)="forward($event)">
+              <span *ngIf="audio != null" class="player-forward"></span>
+            </div>
           </div>
         </div>
         <div class="w-100 p-0">

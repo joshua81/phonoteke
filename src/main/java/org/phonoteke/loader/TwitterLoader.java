@@ -28,10 +28,10 @@ public class TwitterLoader implements HumanBeats
 	public void load(String task)
 	{
 		LOGGER.info("Tweetting podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1000).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
-			String links = "#spotifyplaylist";
+			String links = "";
 			String tweet = "";
 			Document page = i.next();
 			String artist = page.getString("artist");
@@ -86,7 +86,7 @@ public class TwitterLoader implements HumanBeats
 					}
 				}
 
-				tweet += "\n" + artist + " (" + date  + ") - " + title + "\n";
+				tweet += "\nLa playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
 				tweet += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 				tweet += links + "\n";
 				tweet += "https://open.spotify.com/playlist/" + spotify + "\n";

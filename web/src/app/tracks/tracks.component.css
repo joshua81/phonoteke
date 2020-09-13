@@ -40,6 +40,7 @@ div.cover {
 img.cover {
     width: 60px;
     height: 60px;
+    cursor: pointer;
 }
 
 h1.cover {

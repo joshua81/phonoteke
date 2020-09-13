@@ -145,9 +145,13 @@ export class DocComponent implements OnInit {
     }
   }
 
-  toggleSpotify() {
+  toggleSpotify(id: string) {
+    var type: string = this.doc.type;
+    if(type == 'podcast') {
+      type = 'playlist';
+    }
     if(this.spotify == null) {
-      this.spotify = this.doc.type == 'album' ? ('https://open.spotify.com/embed/album/' + this.doc.spalbumid) : ('https://open.spotify.com/embed/playlist/' + this.doc.spalbumid);
+      this.spotify = 'https://open.spotify.com/embed/' + type + '/' + id;
     }
     else {
       this.spotify = null;

@@ -63,6 +63,7 @@
 div.cover {
   position: relative;
   width: 120px;
+  cursor: pointer;
 }
 
 img.cover {

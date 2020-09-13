@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetRefresh();
+		new PatchLoader().replaceSpecialChars();
 	}
 
 	private void resetRefresh()
@@ -166,6 +166,7 @@ public class PatchLoader implements HumanBeats
 			page.append("artist", artist);
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
+			page.append("score", null);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("Document " + id + ": " + title + " - " + artist);
 		}

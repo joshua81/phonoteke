@@ -11,23 +11,23 @@ export class VideoComponent implements OnInit {
   @Input() type: string;
   @Input() label: string;
   @Input() tracks = [];
-  video = null;
+  youtube = null;
   scroll: number = 0;
 
   constructor(public component: DocComponent, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {}
 
-  youtubeURL(){
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.video.youtube + '?autoplay=1');
+  youtubeUrl(){
+    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.youtube + '?autoplay=1');
   }
 
-  loadVideo(track: any){
-    this.video = track.youtube ? track : null;
+  toggleYoutube(track: any){
+    this.youtube = this.youtube == null ? track : null;
   }
 
   close(event: Event){
-    this.video = null;
+    this.youtube = null;
   }
 
   next() {

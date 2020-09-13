@@ -14,6 +14,10 @@ html, body {
     background: rgba(233, 240, 242, 1);
 }
 
+iframe {
+    max-width: 800px;
+}
+
 .container-fluid {
     min-height: 100%;
     padding-top: 40px;

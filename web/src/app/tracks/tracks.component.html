@@ -2,7 +2,7 @@
     <div *ngFor="let track of tracks" class="mb-2">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
-                <img class="cover" src="{{track.coverM}}" (click)="toggleSpotify(track.spotify)"/>
+                <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" (click)="app.toggleSpotify('track', track.spotify)"/>
                 <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
             </div>
             <div class="ml-2 w-100">
@@ -11,14 +11,7 @@
                 <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.album"></div>
                 <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.artist"></div>
             </div>
-            <div *ngIf="track.artistid" class="icon ml-2" (click)="component.loadEvents(track.artistid)">
-                <span class="songkick"></span>
-            </div>
+            <img *ngIf="track.artistid" class="icon songkick ml-2" src="{{track.coverM}}" (click)="app.loadEvents(track.artistid)"/>
         </div>
     </div>
-</div>
-
-<!-- Spotify player-->
-<div *ngIf="spotify" class="d-flex flex-row justify-content-center fixed-bottom">
-    <iframe [src]="spotifyUrl()" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 </div>

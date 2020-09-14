@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DocComponent } from '../doc/doc.component';
-import { DomSanitizer} from '@angular/platform-browser';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-tracks',
@@ -9,23 +8,9 @@ import { DomSanitizer} from '@angular/platform-browser';
 })
 export class TracksComponent implements OnInit {
   @Input() tracks = null;
-  spotify = null;
 
-  constructor(public component: DocComponent, private sanitizer: DomSanitizer) {}
+  constructor(public app: AppComponent) {}
 
   ngOnInit() {
-  }
-
-  toggleSpotify(id: string) {
-    if(this.spotify == null) {
-      this.spotify = 'https://open.spotify.com/embed/track/' + id;
-    }
-    else {
-      this.spotify = null;
-    }
-  }
-
-  spotifyUrl() {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.spotify);
   }
 }

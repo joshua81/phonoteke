@@ -1,6 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { DocComponent } from '../doc/doc.component';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-link',
@@ -13,7 +13,7 @@ export class LinkComponent implements OnInit {
   @Input() links = [];
   scrollLinks: number = 0;
 
-  constructor(public component: DocComponent, public sanitizer: DomSanitizer) {}
+  constructor(public app: AppComponent, public sanitizer: DomSanitizer) {}
 
   ngOnInit() {}
 

@@ -13,7 +13,6 @@ import { PodcastsComponent } from './podcasts/podcasts.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { TracksComponent } from './tracks/tracks.component';
-import { EventsComponent } from './events/events.component';
 import { SectionComponent } from './section/section.component';
 import { VideoComponent } from './video/video.component';
 import { LinkComponent } from './link/link.component';
@@ -30,8 +29,7 @@ import { FooterComponent } from './footer/footer.component';
     SectionComponent,
     VideoComponent,
     LinkComponent,
-    FooterComponent,
-    EventsComponent
+    FooterComponent
   ],
   imports: [
     BrowserModule,

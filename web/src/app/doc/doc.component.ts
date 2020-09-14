@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer} from '@angular/platform-browser';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-doc',
@@ -14,14 +15,12 @@ export class DocComponent implements OnInit {
   doc = null;
   links = [];
   podcasts = [];
-  songkick: string = null;
-  spotify = null;
   audio = null;
   audioCurrentTime: string = null;
   audioDuration: string = null;
 
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -41,8 +40,6 @@ export class DocComponent implements OnInit {
     this.doc = doc;
     this.links = [];
     this.podcasts = [];
-    this.songkick = null;
-    this.spotify = null;
     if(this.audio){
       this.audio.pause();
       this.audio = null;
@@ -107,34 +104,6 @@ export class DocComponent implements OnInit {
     }
   }
 
-  isDesktop() {
-    var hasTouchScreen = false;
-    if (window.navigator.maxTouchPoints > 0) { 
-      hasTouchScreen = true;
-    } 
-    else if (window.navigator.msMaxTouchPoints > 0) {
-      hasTouchScreen = true;
-    } 
-    else {
-      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
-      if (mQ && mQ.media === "(pointer:coarse)") {
-        hasTouchScreen = !!mQ.matches;
-      }
-      else {
-        // Only as a last resort, fall back to user agent sniffing
-        var ua: string = window.navigator.userAgent;
-        hasTouchScreen = (
-          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
-          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
-      }
-    }
-    return !hasTouchScreen;
-  }
-
-  loadEvents(artistid: string) {
-    this.songkick = artistid;
-  }
-
   formatTime(seconds: number) {
     if(!isNaN(seconds)) {
       var minutes: number = Math.floor(seconds / 60);
@@ -143,22 +112,5 @@ export class DocComponent implements OnInit {
       var secs = (seconds >= 10) ? seconds : "0" + seconds;
       return mins + ":" + secs;
     }
-  }
-
-  toggleSpotify(id: string) {
-    var type: string = this.doc.type;
-    if(type == 'podcast') {
-      type = 'playlist';
-    }
-    if(this.spotify == null) {
-      this.spotify = 'https://open.spotify.com/embed/' + type + '/' + id;
-    }
-    else {
-      this.spotify = null;
-    }
-  }
-
-  spotifyUrl() {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.spotify);
   }
 }

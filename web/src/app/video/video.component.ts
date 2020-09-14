@@ -1,6 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { DocComponent } from '../doc/doc.component';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-video',
@@ -11,24 +10,11 @@ export class VideoComponent implements OnInit {
   @Input() type: string;
   @Input() label: string;
   @Input() tracks = [];
-  youtube = null;
   scroll: number = 0;
 
-  constructor(public component: DocComponent, public sanitizer: DomSanitizer) {}
+  constructor(public app: AppComponent) {}
 
   ngOnInit() {}
-
-  youtubeUrl(){
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.youtube + '?autoplay=1');
-  }
-
-  toggleYoutube(track: any){
-    this.youtube = this.youtube == null ? track : null;
-  }
-
-  close(event: Event){
-    this.youtube = null;
-  }
 
   next() {
     this.scroll++;

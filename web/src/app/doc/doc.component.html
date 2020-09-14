@@ -8,19 +8,19 @@
           <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
           <!-- spotify + songkick -->
           <div class="songtify d-flex flex-column">
-            <img *ngIf="doc.spalbumid" class="icon spotify mb-2" (click)="toggleSpotify(doc.spalbumid)"/>
-            <img *ngIf="doc.artistid" class="icon songkick" (click)="loadEvents(doc.artistid)"/>
+            <img *ngIf="doc.spalbumid" class="icon spotify mb-2" (click)="app.toggleSpotify(doc.type, doc.spalbumid)"/>
+            <img *ngIf="doc.artistid" class="icon songkick" (click)="app.loadEvents(doc.artistid)"/>
           </div>
           <!-- podcast player -->
           <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row align-items-center p-2">
-            <div class="player-button mr-auto" (click)="playPause($event)">
+            <div class="player-button ml-2" (click)="backward($event)">
+              <span *ngIf="audio != null" class="player-backward"></span>
+            </div>
+            <div class="player-button ml-auto mr-auto" (click)="playPause($event)">
               <span *ngIf="audio == null || audio.paused" class="player-play"></span>
               <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
             </div>
-            <div class="player-button mr-3" (click)="backward($event)">
-              <span *ngIf="audio != null" class="player-backward"></span>
-            </div>
-            <div class="player-button" (click)="forward($event)">
+            <div class="player-button mr-2" (click)="forward($event)">
               <span *ngIf="audio != null" class="player-forward"></span>
             </div>
           </div>
@@ -55,10 +55,3 @@
   <app-footer></app-footer>
 </div>
 
-<!-- Spotify player-->
-<div *ngIf="spotify" class="d-flex flex-row justify-content-center fixed-bottom">
-  <iframe [src]="spotifyUrl()" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-</div>
-
-<!-- Events -->
-<app-events [artist]="songkick"></app-events>

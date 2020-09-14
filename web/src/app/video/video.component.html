@@ -1,24 +1,16 @@
 <div *ngIf="tracks && tracks.length != 0" class="video mt-3">
-  <div *ngIf="component.isDesktop()" class="backward" (click)="previous()">
+  <div *ngIf="app.isDesktop()" class="backward" (click)="previous()">
     <span class="previous"></span>
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll pt-2">
     <div *ngFor="let track of tracks" class="pr-2">
       <div *ngIf="track.youtube" class="cover">
-        <img class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}" (click)="toggleYoutube(track.youtube)"/>
+        <img class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}" (click)="app.toggleYoutube(track.youtube)"/>
         <span class="youtube"></span>
       </div>
     </div>
   </div>
-  <div *ngIf="component.isDesktop()" class="forward" (click)="next()">
+  <div *ngIf="app.isDesktop()" class="forward" (click)="next()">
     <span class="next"></span>
   </div>
-</div>
-
-<!-- video player-->
-<div *ngIf="youtube" class="d-flex flex-row justify-content-center fixed-bottom">
-  <iframe [src]='youtubeUrl()' type="text/html" width="350" height="200" frameborder="0"></iframe>
-  <!--div class="close" (click)="close($event)">
-    <span class="close"></span>
-  </div-->
 </div>

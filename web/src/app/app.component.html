@@ -1,3 +1,38 @@
 <div class="container-fluid">
   <router-outlet></router-outlet>
 </div>
+
+<!-- Spotify player-->
+<div *ngIf="spotify" class="d-flex flex-row justify-content-center fixed-bottom">
+  <iframe [src]="spotifyUrl()" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+</div>
+
+<!-- Youtube player-->
+<div *ngIf="youtube" class="d-flex flex-row justify-content-center fixed-bottom">
+  <iframe [src]='youtubeUrl()' type="text/html" width="350" height="200" frameborder="0"></iframe>
+  <!--div class="close" (click)="close($event)">
+    <span class="close"></span>
+  </div-->
+</div>
+
+<!-- Events -->
+<div *ngIf="artist" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
+  <div *ngIf="events && events.length != 0" class="align-self-center overflow-auto modal-box">
+    <div class="list-group">
+      <div *ngFor="let event of events" class="p-2 list-group-item">
+        <div class="d-flex align-items-center">
+          <div class="w-100">
+            <div class="text-white font-weight-bold">{{event.displayName}}</div>
+            <div class="text-white">{{event.start.date}} {{event.location.city}}</div>
+            <div class="text-white">{{event.venue.displayName}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="events && events.length == 0" class="align-self-center overflow-auto modal-box">
+    <div class="d-flex justify-content-center align-middle">
+      <p class="text-white font-weight-bold pt-2">Nessun evento in programma</p>
+    </div>
+  </div>
+</div>

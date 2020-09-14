@@ -16,12 +16,8 @@
 
 .songkick {
     display: inline-block;
-    mask: url("/images/songkick.svg");
-    width: 20px;
-    height: 20px;
-    background: #18A2B8;
-    cursor: pointer;
-}
+    content: url("/images/songkick.png");
+  }
 
 div.cover {
     position: relative;
@@ -46,18 +42,5 @@ img.cover {
 h1.cover {
     text-align: center;
     margin-top: 20px;
-}
-
-.play {
-    position: absolute;
-    display: inline-block;
-    mask: url("/images/play.svg");
-    width: 30px;
-    height: 30px;
-    left: 15px;
-    top: 15px;
-    background: #FFFFFF;
-    opacity: 0.6;
-    cursor: pointer;
 }
 

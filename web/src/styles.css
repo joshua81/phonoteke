@@ -173,6 +173,14 @@ img.rolloverhangover {
     height: 30px;
 }
 
+/*div.close {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background: #18A2B8 !important; 
+    cursor: pointer;
+}
+
 .close {
     display: inline-block;
     mask: url("/images/close.svg");
@@ -180,6 +188,6 @@ img.rolloverhangover {
     height: 20px;
     margin: 0px;
     padding: 0px;
-    background: #000000;
+    background: #FFFFFF !important;
     cursor: pointer;
-}
+}*/

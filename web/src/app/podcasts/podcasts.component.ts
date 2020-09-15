@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-podcasts',
@@ -14,12 +15,13 @@ export class PodcastsComponent implements OnInit {
   podcasts = [];
   podcastsPage: number = 0;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.loadUser();
+    //this.loadUser();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
+      this.app.close();
       this.searchText = '';
       this.loadDocs();
     });
@@ -49,7 +51,7 @@ export class PodcastsComponent implements OnInit {
     this.podcasts.push.apply(this.podcasts, data);
   }
 
-  loadUser() {
+  /*loadUser() {
     if(this.user == null) {
       this.http.get('/api/user').subscribe(
         (data: any) => this.userLoaded(data),
@@ -61,5 +63,5 @@ export class PodcastsComponent implements OnInit {
     if(data) {
       this.user = data.images[0].url;
     }
-  }
+  }*/
 }

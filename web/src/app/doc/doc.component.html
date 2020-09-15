@@ -12,16 +12,16 @@
             <img *ngIf="doc.artistid" class="icon songkick" (click)="app.loadEvents(doc.artistid)"/>
           </div>
           <!-- podcast player -->
-          <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row align-items-center p-2">
+          <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row justify-content-center align-items-center p-2">
             <div class="player-button ml-2" (click)="backward($event)">
-              <span *ngIf="audio != null" class="player-backward"></span>
+              <span class="player-backward"></span>
             </div>
-            <div class="player-button ml-auto mr-auto" (click)="playPause($event)">
+            <div class="player-button ml-4 mr-4" (click)="playPause($event)">
               <span *ngIf="audio == null || audio.paused" class="player-play"></span>
               <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
             </div>
             <div class="player-button mr-2" (click)="forward($event)">
-              <span *ngIf="audio != null" class="player-forward"></span>
+              <span class="player-forward"></span>
             </div>
           </div>
         </div>

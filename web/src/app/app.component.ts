@@ -1,56 +1,47 @@
 import {Component} from '@angular/core';
-import {AppService} from './app.service';
-import { DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  providers: [AppService]
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  spotify = null;
-  youtube = null;
+  spotifyUrl: SafeResourceUrl = null;
+  youtubeUrl: SafeResourceUrl = null;
   artist = null;
   events = [];
   error = null;
 
-  constructor(private service: AppService, private http: HttpClient, private sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
 
   toggleSpotify(type: string, id: string) {
-    if(this.spotify == null) {
-      this.youtube = null;
+    if(this.spotifyUrl == null) {
+      this.close();
       if(type == 'podcast') {
         type = 'playlist';
       }
-      this.spotify = 'https://open.spotify.com/embed/' + type + '/' + id;
+      this.spotifyUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://open.spotify.com/embed/' + type + '/' + id);
     }
     else {
-      this.spotify = null;
+      this.spotifyUrl = null;
     }
   }
 
   toggleYoutube(track: string){
-    if(this.youtube == null) {
-      this.spotify = null;
-      this.youtube = track;
+    if(this.youtubeUrl == null) {
+      this.close();
+      this.youtubeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + track + '?autoplay=1');;
     }
     else {
-      this.youtube = null;
+      this.youtubeUrl = null;
     }
-  }
-
-  spotifyUrl() {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(this.spotify);
-  }
-
-  youtubeUrl(){
-    return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + this.youtube + '?autoplay=1');
   }
 
   loadEvents(artist: string) {
     if(this.artist != artist) {
+      this.close();
       this.artist = artist;
       this.http.get('/api/events/' + artist).subscribe(
         (data: any) => this.setEvents(data),
@@ -62,6 +53,14 @@ export class AppComponent {
     if(typeof(events) != 'undefined' && events != null){
       this.events.push.apply(this.events, events);
     }
+  }
+
+  close() {
+    this.spotifyUrl = null;
+    this.youtubeUrl = null;
+    this.artist = null;
+    this.events = [];
+    this.error = null;
   }
 
   closeEvents(){

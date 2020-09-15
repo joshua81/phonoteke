@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { DomSanitizer} from '@angular/platform-browser';
 import { AppComponent } from '../app.component';
 
 @Component({
@@ -20,11 +19,12 @@ export class DocComponent implements OnInit {
   audioDuration: string = null;
 
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
+      this.app.close();
       this.id = params.get('id');
       this.loadDoc();
     });

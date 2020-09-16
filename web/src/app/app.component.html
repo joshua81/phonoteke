@@ -4,13 +4,18 @@
 
 <!-- Spotify player-->
 <div *ngIf="spotifyUrl" class="d-flex flex-row justify-content-center fixed-bottom">
-  <iframe [src]="spotifyUrl" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+  <div class="player-spotify d-flex flex-row align-items-center">
+    <iframe [src]="spotifyUrl" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    <div class="icon" (click)="close()"><span class="close"></span></div>
+  </div>
 </div>
 
 <!-- Youtube player-->
 <div *ngIf="youtubeUrl" class="d-flex flex-row justify-content-center fixed-bottom">
-  <!--div class="close" (click)="close()"><span class="close"></span></div-->
-  <iframe [src]='youtubeUrl' type="text/html" width="350" height="200" frameborder="0"></iframe>
+  <div class="player-youtube d-flex flex-row align-items-center">
+    <iframe [src]='youtubeUrl' type="text/html" width="350" height="200" frameborder="0"></iframe>
+    <div class="icon" (click)="close()"><span class="close"></span></div>
+  </div>
 </div>
 
 <!-- Events -->

@@ -22,7 +22,7 @@
       gtag('js', new Date());
       gtag('config', 'UA-174792458-1');
     </script>
-  <link rel="stylesheet" href="styles.2052137efa818d617a08.css"></head>
+  <link rel="stylesheet" href="styles.6c6923609852816a44d2.css"></head>
   <body>
     <app-root>
       <div class="d-flex justify-content-center">
@@ -31,6 +31,6 @@
         </div>
       </div>
     </app-root>
-  <script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.ef4b1e1fc703b3ff76e3.js" nomodule defer></script><script src="polyfills-es2015.2987770fde9daa1d8a2e.js" type="module"></script><script src="main-es2015.8ad01c41e35e197f1a13.js" type="module"></script><script src="main-es5.8ad01c41e35e197f1a13.js" nomodule defer></script></body>
+  <script src="runtime-es2015.edb2fcf2778e7bf1d426.js" type="module"></script><script src="runtime-es5.edb2fcf2778e7bf1d426.js" nomodule defer></script><script src="polyfills-es5.ef4b1e1fc703b3ff76e3.js" nomodule defer></script><script src="polyfills-es2015.2987770fde9daa1d8a2e.js" type="module"></script><script src="main-es2015.5690115d78cff2228e7f.js" type="module"></script><script src="main-es5.5690115d78cff2228e7f.js" nomodule defer></script></body>
 </html>
 

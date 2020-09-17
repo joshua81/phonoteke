@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row justify-content-center w-max flex-nowrap hscroll">
     <!--a [routerLink]="['/']" class="ml-2 mr-2"><img class="logo"></a-->
-    <div class="menu-item ml-2 mr-2" [ngClass]="{'selected' : docs.type == null}" (click)="docs.setType(null)"><h2>Tutti</h2></div>
+    <div class="menu-item ml-auto mr-2" [ngClass]="{'selected' : docs.type == null}" (click)="docs.setType(null)"><h2>Tutti</h2></div>
     <div class="menu-item ml-2 mr-2" [ngClass]="{'selected' : docs.type == 'podcast'}" (click)="docs.setType('podcast')"><h2>Podcast</h2></div>
     <div class="menu-item ml-2 mr-2" [ngClass]="{'selected' : docs.type == 'album'}" (click)="docs.setType('album')"><h2>Album</h2></div>
     <div class="menu-item ml-2 mr-2" [ngClass]="{'selected' : docs.type == 'artist'}" (click)="docs.setType('artist')"><h2>Artisti</h2></div>

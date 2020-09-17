@@ -5,7 +5,7 @@
     padding-top: 8px;
     text-align: center;
     cursor: pointer;
-    border-bottom: 4px solid none;
+    border-bottom: 4px solid rgba(233, 240, 242, 1);
 }
 
 .selected {
@@ -17,7 +17,7 @@
     max-width: 200px;
 }
 
-.icon {
+/*.icon {
     border-radius: 50%;
     background: #FFFFFF;
     width: 30px;
@@ -39,4 +39,4 @@ img.spotify {
     border-radius: 50%;
     width: 30px;
     height: 30px;
-}
+}*/

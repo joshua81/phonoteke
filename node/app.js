@@ -46,7 +46,7 @@ app.use(express.static('web'));
 app.use(cookieParser());
 
 app.get('/api/docs', async(req, res)=>{
-	var result = await findDocs(null, req.query.p, req.query.q);
+	var result = await findDocs(req.query.t, req.query.p, req.query.q);
 	res.send(result);
 });
 
@@ -263,7 +263,7 @@ async function findDocs(t, p, q) {
 	return result;
 }
 
-async function findPodcasts(s, p, q) {
+/*async function findPodcasts(s, p, q) {
 	var result = null;
 	if(q) {
 		console.log('Podcasts: page=' + p + ', query=' + q + ', source=' + s);
@@ -289,7 +289,7 @@ async function findPodcasts(s, p, q) {
 		}
 	}
 	return result;
-}
+}*/
 
 async function findEvents(id) {
 	console.log('Events: id=' + id);

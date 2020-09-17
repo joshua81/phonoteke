@@ -10,8 +10,9 @@ import { AppComponent } from '../app.component';
 })
 export class PodcastsComponent implements OnInit {
   error = null;
-  searchText = '';
-  user = null;
+  searchText: string = '';
+  type: string = null;
+  user: string = null;
   podcasts = [];
   podcastsPage: number = 0;
 
@@ -22,19 +23,32 @@ export class PodcastsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.app.close();
-      this.searchText = '';
+      //this.searchText = '';
+      //this.type = null;
       this.loadDocs();
     });
   }
 
-  scrollDocs(type: string) {
+  setType(type: string) {
+    this.type = type;
+    this.loadDocs();
+  }
+
+  scrollDocs() {
     var page: number = 0;
     this.podcastsPage++;
     page = this.podcastsPage;
   
-    this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
-      (data: any) => this.docsLoaded('podcasts', data),
-      error => this.error = error);
+    if(this.type == null) {
+      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.error = error);
+    }
+    else {
+      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.error = error);
+    }
   }
 
   loadDocs() {
@@ -42,12 +56,19 @@ export class PodcastsComponent implements OnInit {
     this.podcastsPage = 0;
     this.podcasts = [];
 
-    this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
-      (data: any) => this.docsLoaded('podcasts', data),
-      error => this.error = error);
+    if(this.type == null) {
+      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.error = error);
+    }
+    else {
+      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.error = error);
+    }
   }
 
-  docsLoaded(type: string, data: any) {
+  docsLoaded(data: any) {
     this.podcasts.push.apply(this.podcasts, data);
   }
 

@@ -8,17 +8,13 @@
     border-bottom: 4px solid none;
 }
 
+.selected {
+    border-bottom: 4px solid #18A2B8;
+}
+
 .search {
     min-width: 200px;
     max-width: 200px;
-}
-
-/*.unselected {
-    border-bottom: 4px solid none;
-}*/
-
-.selected {
-    border-bottom: 4px solid #18A2B8;
 }
 
 .icon {

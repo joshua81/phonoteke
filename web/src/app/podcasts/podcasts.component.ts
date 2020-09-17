@@ -9,9 +9,9 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./podcasts.component.css']
 })
 export class PodcastsComponent implements OnInit {
+  public type: string = null;
   error = null;
   searchText: string = '';
-  type: string = null;
   user: string = null;
   podcasts = [];
   podcastsPage: number = 0;

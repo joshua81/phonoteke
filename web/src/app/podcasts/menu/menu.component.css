@@ -5,6 +5,7 @@
     padding-top: 8px;
     text-align: center;
     cursor: pointer;
+    border-bottom: 4px solid none;
 }
 
 .search {
@@ -12,9 +13,9 @@
     max-width: 200px;
 }
 
-.unselected {
+/*.unselected {
     border-bottom: 4px solid none;
-}
+}*/
 
 .selected {
     border-bottom: 4px solid #18A2B8;

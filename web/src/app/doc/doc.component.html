@@ -1,8 +1,8 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container w-max p-0 mt-2">
     <div class="bg-white p-2">
-      <!-- cover -->
       <div class="d-flex flex-row">
+        <!-- cover -->
         <div class="cover mr-2">
           <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
           <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
@@ -25,11 +25,14 @@
             </div>
           </div>
         </div>
+
+        <!-- info -->
         <div class="w-100 p-0">
           <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
           <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
           <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
           <h3 *ngIf="doc.authors" class="text-muted mx-auto mb-2">di {{doc.authors}}</h3>
+          <a href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a>
         </div>
       </div>
 

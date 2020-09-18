@@ -19,21 +19,25 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().replaceSpecialChars();
+		new PatchLoader().resetPlaylists();
 	}
 
-	private void resetRefresh()
+	private void resetPlaylists()
 	{
-		LOGGER.info("Resetting tracks title...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"),Filters.eq("source", "resetrefresh"))).noCursorTimeout(true).iterator();
+		LOGGER.info("Resetting playlists...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
-			page.append("source", "resetrefresh");
-			page.append("artist", "Reset Refresh");
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			Integer score = page.getInteger("score");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(score < 70 || tracks.size() < 5)
+			{
+				page.put("spalbumid", null);
+				//docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				LOGGER.info("Document " + id + " updated");	
+			}
 		}
 	}
 

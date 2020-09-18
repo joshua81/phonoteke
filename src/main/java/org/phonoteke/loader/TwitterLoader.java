@@ -20,7 +20,7 @@ import com.mongodb.operation.OrderBy;
 public class TwitterLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
-	
+
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
@@ -38,6 +38,9 @@ public class TwitterLoader implements HumanBeats
 			String title = page.getString("title");
 			String source = page.getString("source");
 			Integer score = page.getInteger("score");
+			String spotify = page.getString("spalbumid");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			
 			if("casabertallot".equals(source)) {
 				links = "@bertallot #casabertallot " + links;
 			}
@@ -72,24 +75,20 @@ public class TwitterLoader implements HumanBeats
 				links = "@rairadio2 @carlopastore #babylonradio2 " + links;
 			}
 			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
-			String spotify = page.getString("spalbumid");
-			if(spotify != null && score >= 70) {
+			
+			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
 				Set<String> artists = Sets.newHashSet();
-				List<org.bson.Document> tracks = page.get("tracks", List.class);
-				if(CollectionUtils.isNotEmpty(tracks))
+				for(org.bson.Document track : tracks)
 				{
-					for(org.bson.Document track : tracks)
-					{
-						if(score != null && track.getInteger("score") >= 70) {
-							artists.add(track.getString("artist"));
-						}
+					if(track.getInteger("score") >= 70) {
+						artists.add(track.getString("artist"));
 					}
 				}
 
-				tweet += "\nLa playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
+				tweet += "\n\n\nLa playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
 				tweet += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 				tweet += links + "\n";
-				tweet += "https://open.spotify.com/playlist/" + spotify + "\n";
+				tweet += "https://open.spotify.com/playlist/" + spotify;
 				LOGGER.info(tweet);
 			}
 		}

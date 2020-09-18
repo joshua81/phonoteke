@@ -106,6 +106,13 @@ h3 {
 
 /********** buttons **********/
 
+img.logo {
+    border-radius: 50%;
+    content: url("/images/logo.png");
+    width: 30px;
+    height: 30px;
+}
+
 img.ondarock {
     border-radius: 50%;
     content: url("/images/ondarock.png");
@@ -148,13 +155,6 @@ img.seigradi {
     height: 30px;
 }
 
-img.logo {
-    border-radius: 50%;
-    content: url("/images/logo.png");
-    width: 30px;
-    height: 30px;
-}
-
 img.casabertallot {
     border-radius: 50%;
     content: url("/images/casabertallot.png");
@@ -165,6 +165,34 @@ img.casabertallot {
 img.rolloverhangover {
     border-radius: 50%;
     content: url("/images/rolloverhangover.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.blackalot {
+    border-radius: 50%;
+    content: url("/images/blackalot.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.cassabertallot {
+    border-radius: 50%;
+    content: url("/images/cassabertallot.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.resetrefresh {
+    border-radius: 50%;
+    content: url("/images/resetrefresh.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.stereonotte {
+    border-radius: 50%;
+    content: url("/images/stereonotte.png");
     width: 30px;
     height: 30px;
 }

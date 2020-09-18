@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {Location} from '@angular/common';
 import {DocComponent} from '../doc.component';
 
 @Component({

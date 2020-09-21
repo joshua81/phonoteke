@@ -30,8 +30,10 @@ export class PodcastsComponent implements OnInit {
   }
 
   setType(type: string) {
-    this.type = type;
-    this.loadDocs();
+    if(this.type != type) {
+      this.type = type;
+      this.loadDocs();
+    }
   }
 
   scrollDocs() {

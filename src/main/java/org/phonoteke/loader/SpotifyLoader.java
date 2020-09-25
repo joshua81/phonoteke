@@ -354,51 +354,51 @@ public class SpotifyLoader implements HumanBeats
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		List<String> chunks = HumanBeats.parseTrack(title);
-		if(chunks.size() >= 2) {
-			String artist = chunks.get(0);
-			String song = chunks.get(1);
-			LOGGER.info(artist + " - " + song);
-			TreeMap<Integer, Document> tracksMap = loadTrack(artist, song);
-			return tracksMap.isEmpty() ?  null : tracksMap.descendingMap().firstEntry().getValue();
-		}
-		LOGGER.info(title + " not found");
-		return null;
+		List<String[]> chunks = HumanBeats.parseTrack(title);
+		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
+		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}
 
-	private TreeMap<Integer, Document> loadTrack(String artist, String song) throws Exception
+	private TreeMap<Integer, Document> loadTrack(List<String[]> chunks) throws Exception
 	{
 		TreeMap<Integer, Document> tracksMap = Maps.newTreeMap();
-		if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
-		{
-			artist = artist.trim();
-			song = song.trim();
-			//			String q = "artist:" + artist + " track: " + song;
-			String q = artist + " " + song;
-			SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
-			Paging<Track> tracks = request.execute();
-			for(int i = 0; i < tracks.getItems().length; i++)
-			{
-				Track track = tracks.getItems()[i];
-				String spartist = track.getArtists()[0].getName();
-				String spartistid = track.getArtists()[0].getId();
-				String spalbum = track.getAlbum().getName();
-				String spalbumid = track.getAlbum().getId();
-				String spsong = track.getName();
-				String trackid = track.getId();
-				int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
-				Document page = new Document("spotify", trackid);
-				page.append("artist", spartist);
-				page.append("spartistid", spartistid);
-				page.append("album", spalbum);
-				page.append("spalbumid", spalbumid);
-				page.append("track", spsong);
-				page.append("score", score);
-				getImages(page, track.getAlbum().getImages());
+		if(CollectionUtils.isNotEmpty(chunks)) {
+			for(String[] chunk : chunks) {
+				String artist = chunk[0];
+				String song = chunk[1];
+				if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
+				{
+					artist = artist.trim();
+					song = song.trim();
+					LOGGER.info(artist + " - " + song);
+					//			String q = "artist:" + artist + " track: " + song;
+					String q = artist + " " + song;
+					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
+					Paging<Track> tracks = request.execute();
+					for(int i = 0; i < tracks.getItems().length; i++)
+					{
+						Track track = tracks.getItems()[i];
+						String spartist = track.getArtists()[0].getName();
+						String spartistid = track.getArtists()[0].getId();
+						String spalbum = track.getAlbum().getName();
+						String spalbumid = track.getAlbum().getId();
+						String spsong = track.getName();
+						String trackid = track.getId();
+						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+						Document page = new Document("spotify", trackid);
+						page.append("artist", spartist);
+						page.append("spartistid", spartistid);
+						page.append("album", spalbum);
+						page.append("spalbumid", spalbumid);
+						page.append("track", spsong);
+						page.append("score", score);
+						getImages(page, track.getAlbum().getImages());
 
-				if(!VA.equalsIgnoreCase(track.getAlbum().getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(track.getAlbum().getAlbumType()) && !tracksMap.containsKey(score)) {
-					LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
-					tracksMap.put(score, page);
+						if(!VA.equalsIgnoreCase(track.getAlbum().getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(track.getAlbum().getAlbumType()) && !tracksMap.containsKey(score)) {
+							LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
+							tracksMap.put(score, page);
+						}
+					}
 				}
 			}
 		}

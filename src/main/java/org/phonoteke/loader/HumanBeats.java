@@ -10,9 +10,9 @@ public interface HumanBeats
 {
 	public static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
 	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[–-](.{1,200})";
-	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{1,200})";
-	public static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{1,200})";
-	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{1,200})";
+	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{0,200})";
+	public static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
+	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
 	public static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
 	public static final String MATCH7 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
 	public static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
@@ -108,70 +108,62 @@ public interface HumanBeats
 		return false;
 	}
 
-	public static List<String> parseTrack(String track) 
+	public static List<String[]> parseTrack(String track) 
 	{
-		List<String> chunks = Lists.newArrayList();
+		List<String[]> matches = Lists.newArrayList();
 		for(String match : TRACKS_MATCH) 
 		{
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
-				for(int j=1; j<= m.groupCount(); j++){
-					chunks.add(m.group(j));
+				// artist
+				String artist = m.group(1);
+				artist = artist.split("/")[0];
+				artist = artist.split("\\+")[0];
+				artist = artist.split(",")[0];
+				artist = artist.split("&")[0];
+				artist = artist.split(";")[0];
+				artist = artist.replaceAll("=", " ");
+				for(String match2 : FEAT_MATCH) {
+					Matcher m2 = Pattern.compile(match2).matcher(artist);
+					if(m2.matches()) {
+						artist = m2.group(1);
+						break;
+					}
 				}
-				break;
+				for(String match2 : YEAR_MATCH) {
+					Matcher m2 = Pattern.compile(match2).matcher(artist);
+					if(m2.matches()) {
+						artist = m2.group(1);
+						break;
+					}
+				}
+
+				// song
+				String song = m.group(2);
+				song = song.split("/")[0];
+				song = song.split("\\+")[0];
+				song = song.split(",")[0];
+				song = song.split("&")[0];
+				song = song.split(";")[0];
+				song = song.replaceAll("=", " ");
+				for(String match2 : FEAT_MATCH) {
+					Matcher m2 = Pattern.compile(match2).matcher(song);
+					if(m2.matches()) {
+						song = m2.group(1);
+						break;
+					}
+				}
+				for(String match2 : YEAR_MATCH) {
+					Matcher m2 = Pattern.compile(match2).matcher(song);
+					if(m2.matches()) {
+						song = m2.group(1);
+						break;
+					}
+				}
+
+				matches.add(new String[] {artist, song});
 			}
 		}
-
-		if(chunks.size() >= 2) {
-			// artist
-			String artist = chunks.get(0);
-			artist = artist.replaceAll("/", " ");
-			artist = artist.replaceAll("&", " ");
-			artist = artist.replaceAll("\\+", " ");
-			artist = artist.replaceAll(",", " ");
-			artist = artist.replaceAll("=", " ");
-			artist = artist.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(artist);
-				if(m.matches()) {
-					artist = m.group(1);
-					break;
-				}
-			}
-			for(String match : YEAR_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(artist);
-				if(m.matches()) {
-					artist = m.group(1);
-					break;
-				}
-			}
-
-			// song
-			String song = chunks.get(1);
-			song = song.replaceAll("/", " ");
-			song = song.replaceAll("&", " ");
-			song = song.replaceAll("\\+", " ");
-			song = song.replaceAll(",", " ");
-			song = song.replaceAll("=", " ");
-			song = song.replaceAll(";", " ");
-			for(String match : FEAT_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(song);
-				if(m.matches()) {
-					song = m.group(1);
-					break;
-				}
-			}
-			for(String match : YEAR_MATCH) {
-				Matcher m = Pattern.compile(match).matcher(song);
-				if(m.matches()) {
-					song = m.group(1);
-					break;
-				}
-			}
-
-			return Lists.newArrayList(artist, song);
-		}
-
-		return Lists.newArrayList();
+		return matches;
 	}
 }

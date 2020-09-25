@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetPlaylists();
+		new PatchLoader().resetTracks();
 	}
 
 	private void resetPlaylists()
@@ -111,7 +111,7 @@ public class PatchLoader implements HumanBeats
 	{
 		LOGGER.info("Resetting tracks...");
 		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "50c6be1f6578b50c167a0fad0748168d0fa6f57ac031b7cdcfa9b7893c5c532d")).noCursorTimeout(true).iterator();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.lt("tracks.score", 60))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.score", 0))).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;
@@ -123,7 +123,7 @@ public class PatchLoader implements HumanBeats
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score != null && score < 60)
+					if(score != null && score == 0)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);

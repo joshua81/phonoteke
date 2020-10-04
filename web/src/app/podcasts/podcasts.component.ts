@@ -24,16 +24,9 @@ export class PodcastsComponent implements OnInit {
       window.scrollTo(0, 0);
       this.app.close();
       //this.searchText = '';
-      //this.type = null;
+      this.type = params.get('type') == '' ? null : params.get('type');
       this.loadDocs();
     });
-  }
-
-  setType(type: string) {
-    if(this.type != type) {
-      this.type = type;
-      this.loadDocs();
-    }
   }
 
   scrollDocs() {

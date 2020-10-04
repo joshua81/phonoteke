@@ -35,6 +35,7 @@ import { FooterComponent } from './footer/footer.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: PodcastsComponent},
+      {path: ':type', component: PodcastsComponent},
       {path: 'docs/:id', component: DocComponent},]),
     FormsModule,
     HttpClientModule,

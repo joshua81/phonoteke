@@ -115,55 +115,56 @@ public interface HumanBeats
 		{
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
-				// artist
-				String artist = m.group(1);
-				artist = artist.split("/")[0];
-				artist = artist.split("\\+")[0];
-				artist = artist.split(",")[0];
-				artist = artist.split("&")[0];
-				artist = artist.split(";")[0];
-				artist = artist.replaceAll("=", " ");
-				for(String match2 : FEAT_MATCH) {
-					Matcher m2 = Pattern.compile(match2).matcher(artist);
-					if(m2.matches()) {
-						artist = m2.group(1);
-						break;
-					}
-				}
-				for(String match2 : YEAR_MATCH) {
-					Matcher m2 = Pattern.compile(match2).matcher(artist);
-					if(m2.matches()) {
-						artist = m2.group(1);
-						break;
-					}
-				}
-
-				// song
-				String song = m.group(2);
-				song = song.split("/")[0];
-				song = song.split("\\+")[0];
-				song = song.split(",")[0];
-				song = song.split("&")[0];
-				song = song.split(";")[0];
-				song = song.replaceAll("=", " ");
-				for(String match2 : FEAT_MATCH) {
-					Matcher m2 = Pattern.compile(match2).matcher(song);
-					if(m2.matches()) {
-						song = m2.group(1);
-						break;
-					}
-				}
-				for(String match2 : YEAR_MATCH) {
-					Matcher m2 = Pattern.compile(match2).matcher(song);
-					if(m2.matches()) {
-						song = m2.group(1);
-						break;
-					}
-				}
-
-				matches.add(new String[] {artist, song});
+				matches.add(new String[] {m.group(1), m.group(2)});
+				matches.add(parseTrack(m.group(1),  m.group(2)));
+				matches.add(parseTrack(m.group(2),  m.group(1)));
 			}
 		}
 		return matches;
+	}
+
+	public static String[] parseTrack(String artist, String song)
+	{
+		// artist
+		artist = artist.split("/")[0];
+		artist = artist.split("\\+")[0];
+		artist = artist.split(",")[0];
+		artist = artist.split(";")[0];
+		artist = artist.split("&")[0];
+		artist = artist.toLowerCase().split("\\band\\b")[0];
+		artist = artist.toLowerCase().split("\\bwith\\b")[0];
+		artist = artist.replaceAll("=", " ");
+		for(String match2 : FEAT_MATCH) {
+			Matcher m2 = Pattern.compile(match2).matcher(artist);
+			if(m2.matches()) {
+				artist = m2.group(1);
+				break;
+			}
+		}
+		for(String match2 : YEAR_MATCH) {
+			Matcher m2 = Pattern.compile(match2).matcher(artist);
+			if(m2.matches()) {
+				artist = m2.group(1);
+				break;
+			}
+		}
+
+		// song
+		for(String match2 : FEAT_MATCH) {
+			Matcher m2 = Pattern.compile(match2).matcher(song);
+			if(m2.matches()) {
+				song = m2.group(1);
+				break;
+			}
+		}
+		for(String match2 : YEAR_MATCH) {
+			Matcher m2 = Pattern.compile(match2).matcher(song);
+			if(m2.matches()) {
+				song = m2.group(1);
+				break;
+			}
+		}
+
+		return new String[]{artist, song};
 	}
 }

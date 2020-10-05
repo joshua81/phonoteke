@@ -21,10 +21,8 @@ public interface HumanBeats
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
 	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
 	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
-	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4);
-
-	public static final String YEAR1 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-	public static final List<String> YEAR_MATCH   = Lists.newArrayList(YEAR1);
+	public static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -141,23 +139,9 @@ public interface HumanBeats
 				break;
 			}
 		}
-		for(String match2 : YEAR_MATCH) {
-			Matcher m2 = Pattern.compile(match2).matcher(artist);
-			if(m2.matches()) {
-				artist = m2.group(1);
-				break;
-			}
-		}
 
 		// song
 		for(String match2 : FEAT_MATCH) {
-			Matcher m2 = Pattern.compile(match2).matcher(song);
-			if(m2.matches()) {
-				song = m2.group(1);
-				break;
-			}
-		}
-		for(String match2 : YEAR_MATCH) {
 			Matcher m2 = Pattern.compile(match2).matcher(song);
 			if(m2.matches()) {
 				song = m2.group(1);

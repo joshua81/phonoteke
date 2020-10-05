@@ -14,14 +14,14 @@ import com.mongodb.client.model.Filters;
 public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
-
+	
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetTracks();
+		//new PatchLoader().ledZeppelin();
 	}
-
+	
 	private void resetPlaylists()
 	{
 		LOGGER.info("Resetting playlists...");

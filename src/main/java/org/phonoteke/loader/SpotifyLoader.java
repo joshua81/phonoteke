@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
-import com.google.api.client.util.Lists;
-import com.google.api.client.util.Maps;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -41,6 +43,10 @@ public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
+	private static final String FEAT1 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	private static final String FEAT2 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
+	private static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2);
+	
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
@@ -53,13 +59,17 @@ public class SpotifyLoader implements HumanBeats
 	private static ClientCredentials credentials;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-
+	
+	
+	public static void main(String[] args) {
+		new SpotifyLoader().load("546baa19fbb60dce69f40aed264bc31e560c125a7903d48a8fbbd20664f43181");
+	}
 
 	@Override
 	public void load(String id)
 	{
 		if("playlist".equals(id)) {
-			loadPlaylists(false);
+			loadPlaylists(true);
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
@@ -383,6 +393,13 @@ public class SpotifyLoader implements HumanBeats
 						String spalbum = track.getAlbum().getName();
 						String spalbumid = track.getAlbum().getId();
 						String spsong = track.getName();
+						for(String match : FEAT_MATCH) {
+							Matcher m = Pattern.compile(match).matcher(spsong);
+							if(m.matches()) {
+								spsong = m.group(1);
+								break;
+							}
+						}
 						String trackid = track.getId();
 						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
 						Document page = new Document("spotify", trackid);

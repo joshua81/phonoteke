@@ -60,13 +60,13 @@ public class TwitterLoader implements HumanBeats
 				links = "@radio3tweet #battitiradio3 " + links;
 			}
 			else if("seigradi".equals(source)) {
-				links = "@radio3tweet @deapaola #seigradiradio3 " + links;
+				links = "@radio3tweet #seigradiradio3 " + links;
 			}
 			else if("musicalbox".equals(source)) {
 				links = "@rairadio2 @raffacostantino @_musicalbox #musicalboxradio2 " + links;
 			}
 			else if("stereonotte".equals(source)) {
-				links = "@radio1rai @stereonotte @maxdetomassi @djlelesacchi #stereonotteradio1 " + links;
+				links = "@radio1rai @stereonotte #stereonotteradio1 " + links;
 			}
 			else if("inthemix".equals(source)) {
 				links = "@rairadio2 @djlelesacchi #inthemixradio2 " + links;

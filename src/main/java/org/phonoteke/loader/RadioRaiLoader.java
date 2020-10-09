@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -219,51 +217,8 @@ public class RadioRaiLoader extends AbstractCrawler
 	@Override
 	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-
 		Element content = doc.select("div.aodHtmlDescription").first();
-		if(content != null)
-		{
-			content.select("br").after(TRACKS_NEW_LINE);
-			content.select("p").after(TRACKS_NEW_LINE);
-			content.select("li").after(TRACKS_NEW_LINE);
-			content.select("h1").after(TRACKS_NEW_LINE);
-			content.select("h2").after(TRACKS_NEW_LINE);
-			content.select("h3").after(TRACKS_NEW_LINE);
-			content.select("div").after(TRACKS_NEW_LINE);
-
-			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
-			if("seigradi".equals(source))
-			{
-				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
-				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
-			}
-			for(int i = 0; i < chunks.length; i++)
-			{
-				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title))
-				{
-					for(String p : TRACKS_TRIM)
-					{
-						if(title.toUpperCase().startsWith(p))
-						{
-							title = title.substring(p.length()).trim();
-						}
-					}
-				}
-				if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
-				{
-					String youtube = null;
-					tracks.add(newTrack(title, youtube));
-					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
-				}
-			}
-		}
-		if(CollectionUtils.isEmpty(tracks))
-		{
-			throw new IllegalArgumentException("Empty tracks!");
-		}
-		return tracks;
+		return getTracks(content, source);
 	}
 
 	@Override

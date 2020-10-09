@@ -8,12 +8,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mongodb.client.MongoCollection;
@@ -220,6 +224,80 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 			LOGGER.error("ERROR getUrl() "+ url + ": " + t.getMessage());
 			return null;
 		} 
+	}
+
+	protected List<org.bson.Document> getVideos(Elements elements) 
+	{
+		List<org.bson.Document> tracks = Lists.newArrayList();
+		for(int i = 0; i < elements.size(); i++)
+		{
+			String src = elements.get(i).attr("src");
+			if(src != null && src.contains("youtube.com")) 
+			{
+				String youtube = null;
+				if(src.startsWith("https://www.youtube.com/embed/"))
+				{
+					int ix = "https://www.youtube.com/embed/".length();
+					youtube = src.substring(ix);
+					tracks.add(newTrack(null, youtube));
+					LOGGER.debug("tracks: youtube: " + youtube);
+				}
+				else if(src.startsWith("//www.youtube.com/embed/"))
+				{
+					int ix = "//www.youtube.com/embed/".length();
+					youtube = src.substring(ix);
+					tracks.add(newTrack(null, youtube));
+					LOGGER.debug("tracks: youtube: " + youtube);
+				}
+			}
+		}
+		return tracks;
+	}
+	protected List<org.bson.Document> getTracks(Element content, String source) 
+	{
+		List<org.bson.Document> tracks = Lists.newArrayList();
+		if(content != null)
+		{
+			content.select("br").after(TRACKS_NEW_LINE);
+			content.select("p").after(TRACKS_NEW_LINE);
+			content.select("li").after(TRACKS_NEW_LINE);
+			content.select("h1").after(TRACKS_NEW_LINE);
+			content.select("h2").after(TRACKS_NEW_LINE);
+			content.select("h3").after(TRACKS_NEW_LINE);
+			content.select("div").after(TRACKS_NEW_LINE);
+
+			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			if("seigradi".equals(source))
+			{
+				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
+				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			}
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String title = chunks[i].trim();
+				if(StringUtils.isNotBlank(title))
+				{
+					for(String p : TRACKS_TRIM)
+					{
+						if(title.toUpperCase().startsWith(p))
+						{
+							title = title.substring(p.length()).trim();
+						}
+					}
+				}
+				if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
+				{
+					String youtube = null;
+					tracks.add(newTrack(title, youtube));
+					LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
+				}
+			}
+		}
+		if(CollectionUtils.isEmpty(tracks))
+		{
+			throw new IllegalArgumentException("Empty tracks!");
+		}
+		return tracks;
 	}
 
 	protected static org.bson.Document newTrack(String title, String youtube)

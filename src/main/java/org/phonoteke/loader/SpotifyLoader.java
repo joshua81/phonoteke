@@ -46,7 +46,7 @@ public class SpotifyLoader implements HumanBeats
 	private static final String FEAT1 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 	private static final String FEAT2 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
 	private static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2);
-	
+
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
@@ -59,8 +59,8 @@ public class SpotifyLoader implements HumanBeats
 	private static ClientCredentials credentials;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-	
-	
+
+
 	public static void main(String[] args) {
 		new SpotifyLoader().load("546baa19fbb60dce69f40aed264bc31e560c125a7903d48a8fbbd20664f43181");
 	}
@@ -69,7 +69,7 @@ public class SpotifyLoader implements HumanBeats
 	public void load(String id)
 	{
 		if("playlist".equals(id)) {
-			loadPlaylists(true);
+			loadPlaylists(false);
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
@@ -132,9 +132,16 @@ public class SpotifyLoader implements HumanBeats
 				String id = page.getString("spalbumid");
 				// create new playlist
 				if(id == null) {
-					String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-					String title = page.getString("artist") + " del " + date;
+					String title = page.getString("artist");
 					String description = page.getString("title");
+					if(page.getDate("date") != null) {
+						String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+						title += " del " + date;
+					}
+					else {
+						title += " - " + description;
+					}
+					
 					try
 					{
 						CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();

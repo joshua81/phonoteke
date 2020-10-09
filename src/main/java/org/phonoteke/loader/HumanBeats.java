@@ -9,13 +9,15 @@ import com.google.common.collect.Lists;
 public interface HumanBeats 
 {
 	public static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[–-](.{1,200})";
+	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?) [–-] (.{1,200})";
 	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{0,200})";
 	public static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
 	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
-	public static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[ \\._)–-][ ]{0,}(.{1,100}?)[:–-](.{1,100})";
-	public static final String MATCH7 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
-	public static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7);
+	public static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?) [:–-] (.{1,100})";
+	public static final String MATCH7 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?) [:–-] (.{1,100}?) [:–-] (.{1,200})";
+	public static final String MATCH8 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?) [:–-] (.{1,100}?) \\(.{1,200}\\)";
+	public static final String MATCH9 = "[•*-]{0,1}(.{1,100}?) [:–-] (.{1,100})";
+	public static final List<String> TRACKS_MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7, MATCH8, MATCH9);
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
@@ -58,7 +60,9 @@ public interface HumanBeats
 				new YoutubeLoader().load(subtask);
 			}
 			else if("doc".equals(task)) {
-				new OndarockLoader().load(subtask);
+				new OndarockLoader().load(OndarockLoader.ROCKINONDA);
+				new OndarockLoader().load(OndarockLoader.BLAHBLAHBLAH);
+				new OndarockLoader().load(OndarockLoader.URL);
 			}
 			else if("pod".equals(task)) {
 				new RadioRaiLoader().load(subtask);
@@ -113,7 +117,7 @@ public interface HumanBeats
 		{
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
-				matches.add(new String[] {m.group(1), m.group(2)});
+				//				matches.add(new String[] {m.group(1), m.group(2)});
 				matches.add(parseTrack(m.group(1),  m.group(2)));
 				matches.add(parseTrack(m.group(2),  m.group(1)));
 			}

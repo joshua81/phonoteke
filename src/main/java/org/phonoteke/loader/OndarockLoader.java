@@ -24,10 +24,16 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public class OndarockLoader extends AbstractCrawler
 {
 	public static final String SOURCE = "ondarock";
-	
-	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
-	private static final String URL = "https://www.ondarock.it/";
+	public static final String URL = "https://www.ondarock.it/";
+	public static final String ROCKINONDA = "https://www.ondarock.it/speciali_archivio.php?sezione=10";
+	public static final String BLAHBLAHBLAH = "https://www.ondarock.it/speciali_archivio.php?sezione=17";
 
+	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
+
+	public static void main(String[] args) {
+		//new OndarockLoader().load("https://www.ondarock.it/speciali/rockinonda_frenchtouch.htm");
+		new OndarockLoader().load("https://www.ondarock.it/speciali/blahblahblah_beatles.htm");
+	}
 
 	@Override
 	public void load(String url) 
@@ -57,24 +63,29 @@ public class OndarockLoader extends AbstractCrawler
 	@Override
 	protected String getReview(String url, Document doc) 
 	{
-		Element content = doc.select("div[id=maintext]").first();
-		if(content == null)
-		{
-			content = doc.select("div[id=maintext2]").first();
-		}
-		removeComments(content);
-		removeImages(content);
-		removeScripts(content);
-		removeDivs(content);
-		removeLinks(content);
-		removeIFrames(content);
+		switch (getType(url)) {
+		case podcast:
+			return null;
+		default:
+			Element content = doc.select("div[id=maintext]").first();
+			if(content == null)
+			{
+				content = doc.select("div[id=maintext2]").first();
+			}
+			removeComments(content);
+			removeImages(content);
+			removeScripts(content);
+			removeDivs(content);
+			removeLinks(content);
+			removeIFrames(content);
 
-		String review = content.html();
-		if(StringUtils.isBlank(review) || review.trim().length() < 100)
-		{
-			throw new IllegalArgumentException("Empty review!");
+			String review = content.html();
+			if(StringUtils.isBlank(review) || review.trim().length() < 100)
+			{
+				throw new IllegalArgumentException("Empty review!");
+			}
+			return review;
 		}
-		return review;
 	}
 
 	@Override
@@ -184,7 +195,8 @@ public class OndarockLoader extends AbstractCrawler
 			band = bandElement.html().trim();
 			return band;
 		case podcast:
-			return "Onda Rock";
+			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
+				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
 		default:
 			return null;
 		}
@@ -433,60 +445,15 @@ public class OndarockLoader extends AbstractCrawler
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		switch (getType(url)) {
 		case album:
-			// youtube
 			Elements elements = doc.select("iframe");
-			for(int i = 0; i < elements.size(); i++)
-			{
-				String src = elements.get(i).attr("src");
-				if(src != null && src.contains("youtube.com")) 
-				{
-					String youtube = null;
-					if(src.startsWith("https://www.youtube.com/embed/"))
-					{
-						int ix = "https://www.youtube.com/embed/".length();
-						youtube = src.substring(ix);
-						tracks.add(newTrack(null, youtube));
-						LOGGER.debug("tracks: youtube: " + youtube);
-					}
-					else if(src.startsWith("//www.youtube.com/embed/"))
-					{
-						int ix = "//www.youtube.com/embed/".length();
-						youtube = src.substring(ix);
-						tracks.add(newTrack(null, youtube));
-						LOGGER.debug("tracks: youtube: " + youtube);
-					}
-				}
+			return getVideos(elements);
+		case podcast:
+			Element playlist = doc.select("div[id=boxdiscografia_head]").first();
+			if("playlist".equalsIgnoreCase(playlist.text())) {
+				Element content = doc.select("div[id=boxdiscografia_med]").first();
+				return getTracks(content, SOURCE);
 			}
 			break;
-			//		case podcast:
-			//			// youtube
-			//			elements = doc.select("iframe");
-			//			for(int i = 0; i < elements.size(); i++)
-			//			{
-			//				String src = elements.get(i).attr("src");
-			//				if(src != null && src.contains("youtube.com")) 
-			//				{
-			//					String youtube = null;
-			//					if(src.startsWith("https://www.youtube.com/embed/"))
-			//					{
-			//						int ix = "https://www.youtube.com/embed/".length();
-			//						youtube = src.substring(ix);
-			//						tracks.add(newTrack(null, youtube));
-			//						LOGGER.debug("tracks: youtube: " + youtube);
-			//					}
-			//					else if(src.startsWith("//www.youtube.com/embed/"))
-			//					{
-			//						int ix = "//www.youtube.com/embed/".length();
-			//						youtube = src.substring(ix);
-			//						tracks.add(newTrack(null, youtube));
-			//						LOGGER.debug("tracks: youtube: " + youtube);
-			//					}
-			//				}
-			//			}
-			//			// tracklist
-			//			Element content = doc.select("div[id=boxdiscografia_med]").first();
-			//			tracks.addAll(parseTracks(content));
-			//			break;
 		default:
 			break;
 		}
@@ -563,10 +530,11 @@ public class OndarockLoader extends AbstractCrawler
 		{
 			return TYPE.interview;
 		}
-		//		else if(getUrl(url).startsWith(URL + "speciali"))
-		//		{
-		//			return TYPE.podcast;
-		//		}
+		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
+				getUrl(url).startsWith(URL + "speciali/rockinonda"))
+		{
+			return TYPE.podcast;
+		}
 		return TYPE.unknown;
 	}
 }

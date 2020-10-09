@@ -80,125 +80,123 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 			String source = getSource();
 			TYPE type = getType(url);
 
-			if(!url.endsWith(".htm") && !url.endsWith(".html") && !TYPE.unknown.equals(type))
+			if((url.endsWith(".htm") || url.endsWith(".html")) && !TYPE.unknown.equals(type))
 			{
-				return;
-			}
-
-			try
-			{
-				LOGGER.debug("Parsing page " + url);
-				String id = getId(url);
-				Document doc = Jsoup.parse(html);
-				String artist = getArtist(url, doc);
-				String title = getTitle(url, doc);
-
-				org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("url", url))).iterator().tryNext();
-				if(json == null)
+				try
 				{
-					switch(type)
+					LOGGER.debug("Parsing page " + url);
+					String id = getId(url);
+					Document doc = Jsoup.parse(html);
+					String artist = getArtist(url, doc);
+					String title = getTitle(url, doc);
+
+					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
+							Filters.eq("url", url))).iterator().tryNext();
+					if(json == null)
 					{
-					case album:
-					case podcast:
-						if(type.equals(TYPE.podcast) || !docs.find(Filters.and(Filters.eq("source", source),
-								Filters.eq("type", type.name()),
-								Filters.eq("artist", artist),
-								Filters.eq("title", title))).iterator().hasNext())
+						switch(type)
 						{
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", getAuthors(url, doc)).
-									append("cover", getCover(url, doc)).
-									append("date", getDate(url, doc)).
-									append("description", getDescription(url, doc)).
-									append("genres", getGenres(url, doc)).
-									append("label", getLabel(url, doc)).
-									append("links", getLinks(url, doc)).
-									append("review", getReview(url, doc)).
-									append("source", getSource()).
-									append("vote", getVote(url, doc)).
-									append("year", getYear(url, doc)).
-									append("tracks", getTracks(url, doc)).
-									append("audio", getAudio(url, doc));
+						case album:
+						case podcast:
+							if(type.equals(TYPE.podcast) || !docs.find(Filters.and(Filters.eq("source", source),
+									Filters.eq("type", type.name()),
+									Filters.eq("artist", artist),
+									Filters.eq("title", title))).iterator().hasNext())
+							{
+								json = new org.bson.Document("id", id).
+										append("url", getUrl(url)).
+										append("type", type.name()).
+										append("artist", artist).
+										append("title", title).
+										append("authors", getAuthors(url, doc)).
+										append("cover", getCover(url, doc)).
+										append("date", getDate(url, doc)).
+										append("description", getDescription(url, doc)).
+										append("genres", getGenres(url, doc)).
+										append("label", getLabel(url, doc)).
+										append("links", getLinks(url, doc)).
+										append("review", getReview(url, doc)).
+										append("source", getSource()).
+										append("vote", getVote(url, doc)).
+										append("year", getYear(url, doc)).
+										append("tracks", getTracks(url, doc)).
+										append("audio", getAudio(url, doc));
+							}
+							break;
+						case artist:
+							if(!docs.find(Filters.and(Filters.eq("source", source), 
+									Filters.eq("type", type.name()),
+									Filters.eq("artist", artist))).iterator().hasNext())
+							{
+								json = new org.bson.Document("id", id).
+										append("url", getUrl(url)).
+										append("type", type.name()).
+										append("artist", artist).
+										append("title", title).
+										append("authors", getAuthors(url, doc)).
+										append("cover", getCover(url, doc)).
+										append("date", getDate(url, doc)).
+										append("description", getDescription(url, doc)).
+										append("links", getLinks(url, doc)).
+										append("review", getReview(url, doc)).
+										append("source", getSource());
+							}
+							break;
+						case concert:
+							if(!docs.find(Filters.and(Filters.eq("source", source), 
+									Filters.eq("type", type.name()),
+									Filters.eq("artist", artist),
+									Filters.eq("title", title))).iterator().hasNext())
+							{
+								json = new org.bson.Document("id", id).
+										append("url", getUrl(url)).
+										append("type", type.name()).
+										append("artist", artist).
+										append("title", title).
+										append("authors", getAuthors(url, doc)).
+										append("cover", getCover(url, doc)).
+										append("date", getDate(url, doc)).
+										//									append("description", getDescription(url, doc)).
+										append("links", getLinks(url, doc)).
+										append("review", getReview(url, doc)).
+										append("source", getSource());
+							}
+							break;
+						case interview:
+							if(!docs.find(Filters.and(Filters.eq("source", source), 
+									Filters.eq("type", type.name()),
+									Filters.eq("artist", artist),
+									Filters.eq("title", title))).iterator().hasNext())
+							{
+								json = new org.bson.Document("id", id).
+										append("url", getUrl(url)).
+										append("type", type.name()).
+										append("artist", artist).
+										append("title", title).
+										append("authors", getAuthors(url, doc)).
+										append("cover", getCover(url, doc)).
+										//									append("date", getDate(url, doc)).
+										//									append("description", getDescription(url, doc)).
+										append("links", getLinks(url, doc)).
+										append("review", getReview(url, doc)).
+										append("source", getSource());
+							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case artist:
-						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name()),
-								Filters.eq("artist", artist))).iterator().hasNext())
+						if(json != null)
 						{
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", getAuthors(url, doc)).
-									append("cover", getCover(url, doc)).
-									append("date", getDate(url, doc)).
-									append("description", getDescription(url, doc)).
-									append("links", getLinks(url, doc)).
-									append("review", getReview(url, doc)).
-									append("source", getSource());
+							docs.insertOne(json);
+							LOGGER.info(json.getString("type") + " " + url + " added");
 						}
-						break;
-					case concert:
-						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name()),
-								Filters.eq("artist", artist),
-								Filters.eq("title", title))).iterator().hasNext())
-						{
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", getAuthors(url, doc)).
-									append("cover", getCover(url, doc)).
-									append("date", getDate(url, doc)).
-									//									append("description", getDescription(url, doc)).
-									append("links", getLinks(url, doc)).
-									append("review", getReview(url, doc)).
-									append("source", getSource());
-						}
-						break;
-					case interview:
-						if(!docs.find(Filters.and(Filters.eq("source", source), 
-								Filters.eq("type", type.name()),
-								Filters.eq("artist", artist),
-								Filters.eq("title", title))).iterator().hasNext())
-						{
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", getAuthors(url, doc)).
-									append("cover", getCover(url, doc)).
-									//									append("date", getDate(url, doc)).
-									//									append("description", getDescription(url, doc)).
-									append("links", getLinks(url, doc)).
-									append("review", getReview(url, doc)).
-									append("source", getSource());
-						}
-						break;
-					default:
-						break;
-					}
-					if(json != null)
-					{
-						docs.insertOne(json);
-						LOGGER.info(json.getString("type") + " " + url + " added");
 					}
 				}
-			}
-			catch (Throwable t) 
-			{
-				LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
-				throw new RuntimeException(t);
+				catch (Throwable t) 
+				{
+					LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+					throw new RuntimeException(t);
+				}
 			}
 		}
 	}

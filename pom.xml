@@ -22,12 +22,6 @@
 			<groupId>edu.uci.ics</groupId>
 			<artifactId>crawler4j</artifactId>
 			<version>4.4.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -58,6 +52,12 @@
 			 <groupId>se.michaelthelin.spotify</groupId>
 			 <artifactId>spotify-web-api-java</artifactId>
 			 <version>6.3.0</version>
+			 <exclusions>
+			 	<exclusion>
+			 		<groupId>org.slf4j</groupId>
+			 		<artifactId>slf4j-api</artifactId>
+			 	</exclusion>
+			 </exclusions>
 		</dependency>
         <dependency>
 	        <groupId>com.google.apis</groupId>
@@ -68,6 +68,17 @@
 		    <groupId>me.xdrop</groupId>
 		    <artifactId>fuzzywuzzy</artifactId>
 		    <version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.redouane59.twitter</groupId>
+		  	<artifactId>twittered</artifactId>
+		  	<version>1.11</version>
+		  	<exclusions>
+		  		<exclusion>
+		  			<groupId>org.slf4j</groupId>
+		  			<artifactId>slf4j-api</artifactId>
+		  		</exclusion>
+		  	</exclusions>
 		</dependency>
 	</dependencies>
 

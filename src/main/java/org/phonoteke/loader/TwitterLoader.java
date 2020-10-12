@@ -1,6 +1,10 @@
 package org.phonoteke.loader;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
+import com.github.redouane59.twitter.TwitterClient;
+import com.github.redouane59.twitter.dto.tweet.Tweet;
+import com.github.redouane59.twitter.signature.TwitterCredentials;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
 import com.mongodb.BasicDBObject;
@@ -20,27 +27,46 @@ import com.mongodb.operation.OrderBy;
 public class TwitterLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
+	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
+	private static TwitterClient twitterClient;
+
+
+	public static void main(String args[]) {
+		new TwitterLoader().load(null);
+	}
+
+
+	public TwitterLoader() {
+		try {
+			twitterClient = new TwitterClient(TwitterClient.OBJECT_MAPPER.readValue(new File(CREDENTIALS), TwitterCredentials.class));
+		}
+		catch(IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 
 	@Override
 	public void load(String task)
 	{
 		LOGGER.info("Tweetting podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
+		Date start = new GregorianCalendar(2020,9,11).getTime();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.gt("date", start), Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
 		while(i.hasNext()) 
 		{
 			String links = "";
-			String tweet = "";
+			String msg = "";
 			Document page = i.next();
+			String id = page.getString("id");
 			String artist = page.getString("artist");
 			String title = page.getString("title");
 			String source = page.getString("source");
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			
+
 			if("casabertallot".equals(source)) {
 				links = "@bertallot #casabertallot " + links;
 			}
@@ -75,7 +101,7 @@ public class TwitterLoader implements HumanBeats
 				links = "@rairadio2 @carlopastore #babylonradio2 " + links;
 			}
 			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
-			
+
 			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
 				Set<String> artists = Sets.newHashSet();
 				for(org.bson.Document track : tracks)
@@ -85,11 +111,15 @@ public class TwitterLoader implements HumanBeats
 					}
 				}
 
-				tweet += "\n\n\nLa playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
-				tweet += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
-				tweet += links + "\n";
-				tweet += "https://open.spotify.com/playlist/" + spotify;
-				LOGGER.info(tweet);
+				msg += "La playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
+				msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
+				msg += links + "\n";
+				msg += "https://open.spotify.com/playlist/" + spotify;
+				
+				Tweet tweet = twitterClient.postTweet(msg);
+				page.append("tweet", tweet.getId());
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+				LOGGER.info("Podcast " + id + " tweeted");
 			}
 		}
 	}

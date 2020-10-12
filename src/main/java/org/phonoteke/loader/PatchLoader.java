@@ -14,12 +14,35 @@ import com.mongodb.client.model.Filters;
 public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
-	
+
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		//new PatchLoader().ledZeppelin();
+		new PatchLoader().deleteDoc("e6d7842b2f9ec2662845eda85058083357c719b63d96bd59ed2db255672e97d1");
+	}
+
+	@Override
+	public void load(String task) 
+	{
+		if("resetTracksTitle".equals(task)) {
+			resetTracksTitle();
+		}
+		else if("calculateScore".equals(task)) {
+			calculateScore();
+		}
+		else if("resetTracks".equals(task)) {
+			resetTracks();
+		}
+		else if("replaceSpecialChars".equals(task)) {
+			replaceSpecialChars();
+		}
+		else if("deleteDoc".equals(task)) {
+			deleteDoc(null);
+		}
+		else if("resetPlaylists".equals(task)) {
+			resetPlaylists();
+		}
 	}
 	
 	private void resetPlaylists()
@@ -40,22 +63,12 @@ public class PatchLoader implements HumanBeats
 			}
 		}
 	}
-
-	@Override
-	public void load(String task) 
+	
+	private void deleteDoc(String id)
 	{
-		if("resetTracksTitle".equals(task)) {
-			resetTracksTitle();
-		}
-		else if("calculateScore".equals(task)) {
-			calculateScore();
-		}
-		else if("resetTracks".equals(task)) {
-			resetTracks();
-		}
-		else if("replaceSpecialChars".equals(task)) {
-			replaceSpecialChars();
-		}
+		LOGGER.info("Deleting doc...");
+		docs.deleteOne(Filters.eq("id", id));
+		LOGGER.info("Document " + id + " deleted");	
 	}
 
 	private void resetTracksTitle()
@@ -158,16 +171,19 @@ public class PatchLoader implements HumanBeats
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
+			
 			String title = page.getString("title");
 			title = title.replaceAll("&amp;", "&");
 			title = title.replaceAll("&gt;", ">");
 			title = title.replaceAll("&lt;", "<");
 			page.append("title", title);
+			
 			String artist = page.getString("artist");
 			artist = artist.replaceAll("&amp;", "&");
 			artist = artist.replaceAll("&gt;", ">");
 			artist = artist.replaceAll("&lt;", "<");
 			page.append("artist", artist);
+			
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
 			page.append("score", null);

@@ -69,7 +69,7 @@ public class SpotifyLoader implements HumanBeats
 	public void load(String id)
 	{
 		if("playlist".equals(id)) {
-			loadPlaylists(false);
+			loadPlaylists(true);
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
@@ -141,7 +141,7 @@ public class SpotifyLoader implements HumanBeats
 					else {
 						title += " - " + description;
 					}
-					
+
 					try
 					{
 						CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();

@@ -25,8 +25,6 @@ public class OndarockLoader extends AbstractCrawler
 {
 	public static final String SOURCE = "ondarock";
 	public static final String URL = "https://www.ondarock.it/";
-	public static final String ROCKINONDA = "https://www.ondarock.it/speciali_archivio.php?sezione=10";
-	public static final String BLAHBLAHBLAH = "https://www.ondarock.it/speciali_archivio.php?sezione=17";
 
 	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
 

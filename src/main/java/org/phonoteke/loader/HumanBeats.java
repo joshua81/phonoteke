@@ -24,7 +24,8 @@ public interface HumanBeats
 	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
 	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
 	public static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5);
+	public static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
+	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5,FEAT6);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";

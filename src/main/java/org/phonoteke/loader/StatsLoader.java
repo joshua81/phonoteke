@@ -27,7 +27,7 @@ public class StatsLoader implements HumanBeats
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();
 		//		TreeMap<String, TreeMap<String, Integer>> topCharts = Maps.newTreeMap();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator();
 		int numPodcasts = 0;
 		int numTracks = 0;
 		int numMusicBrainz = 0;

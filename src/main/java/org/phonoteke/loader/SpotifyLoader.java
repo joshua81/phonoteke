@@ -73,9 +73,9 @@ public class SpotifyLoader implements HumanBeats
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
-			MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).noCursorTimeout(true).iterator() :
+			MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).iterator() :
 				docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-						Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).noCursorTimeout(true).iterator();
+						Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
 			while(i.hasNext()) 
 			{ 
 				Document page = i.next();
@@ -101,8 +101,8 @@ public class SpotifyLoader implements HumanBeats
 	private void loadPlaylists(boolean replace)
 	{
 		LOGGER.info("Loading Spotify Playlists...");
-		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).noCursorTimeout(true).iterator() : 
-			docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).noCursorTimeout(true).iterator(); 
+		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator() : 
+			docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).iterator(); 
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();

@@ -35,7 +35,7 @@ public class MusicbrainzLoader implements HumanBeats
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("artistid", null)),
-				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).noCursorTimeout(true).iterator();
+				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).iterator();
 		while(i.hasNext())
 		{
 			Document page = i.next();

@@ -53,7 +53,7 @@ public class TwitterLoader implements HumanBeats
 	{
 		LOGGER.info("Tweetting podcasts...");
 		Date start = new GregorianCalendar(2020,9,11).getTime();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.gt("date", start), Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).noCursorTimeout(true).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.gt("date", start), Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 
 		{
 			String links = "";

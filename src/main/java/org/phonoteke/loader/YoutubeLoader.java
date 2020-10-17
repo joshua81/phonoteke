@@ -52,7 +52,7 @@ public class YoutubeLoader implements HumanBeats
 			LOGGER.info("Loading Youtube...");
 			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), 
 					Filters.or(Filters.exists("tracks.youtube", false),Filters.eq("tracks.youtube", null)))).
-					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).noCursorTimeout(true).iterator();
+					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator();
 			while(i.hasNext())
 			{
 				org.bson.Document page = i.next();

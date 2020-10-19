@@ -25,7 +25,7 @@ html, body {
 .navbar {
     padding: 0px;
     height: 40px;
-    background: rgba(233, 240, 242, 1);
+    background: #FFFFFF;
     opacity: 0.9;
 }
 
@@ -46,8 +46,7 @@ a:hover {
 }
   
 h1 {
-    color: #18A2B8;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     margin-top: 3px;
     margin-bottom: 3px;
@@ -55,7 +54,7 @@ h1 {
   
 h2 {
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     margin-top: 3px;
     margin-bottom: 3px;
 }

@@ -8,12 +8,6 @@
   cursor: pointer;
 }
 
-.songtify {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-
 .songkick {
   display: inline-block;
   content: url("/images/songkick.png");
@@ -24,32 +18,26 @@
   content: url("/images/spotify.png");
 }
 
-h2.vote {
+.vote {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
   border-radius: 50%;
   border-style: solid;
   border-width: 2px;
   width: 30px;
   height: 30px;
-  background: #FFFFFF;
+  background: #18A2B8;
 
-  color: #000000;
-  text-align: center;
-  padding-top: 7px;
-  margin: 0px;
-}
-
-div.vote {
-  border-radius: 50%;
-  border-style: solid;
-  border-width: 2px;
-  width: 30px;
-  height: 30px;
-  background: #FFFFFF;
-
-  color: #000000;
+  color: #FFFFFF;
   text-align: center;
   padding-top: 4px;
   margin: 0px;
+}
+
+h2.vote {
+  padding-top: 7px;
 }
 
 .star {
@@ -57,7 +45,7 @@ div.vote {
   mask: url("/images/star.svg");
   width: 20px;
   height: 18px;
-  background: #000000;
+  background: #FFFFFF;
 }
 
 div.cover {

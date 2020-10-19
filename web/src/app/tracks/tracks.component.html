@@ -3,13 +3,12 @@
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" (click)="app.toggleSpotify('track', track.spotify)"/>
-                <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold">{{track.title.charAt(0)}}</h1>
+                <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold"></h1>
             </div>
             <div class="ml-2 w-100">
-                <div *ngIf="track.spotify == null" [innerHTML]="track.title"></div>
-                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.title"></div>
-                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.album"></div>
-                <div *ngIf="track.spotify" class="text-truncate-1" [innerHTML]="track.artist"></div>
+                <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
+                <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
+                <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
             </div>
             <img *ngIf="track.artistid" class="icon songkick ml-2" src="{{track.coverM}}" (click)="app.loadEvents(track.artistid)"/>
         </div>

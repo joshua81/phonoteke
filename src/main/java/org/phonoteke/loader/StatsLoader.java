@@ -20,6 +20,10 @@ public class StatsLoader implements HumanBeats
 	
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
+	
+	public static void main(String[] args) {
+		new StatsLoader().load(null);
+	}
 
 	@Override
 	public void load(String task)

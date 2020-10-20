@@ -1,10 +1,12 @@
 <doc-menu *ngIf="doc"></doc-menu>
 <div *ngIf="doc" class="container w-max p-0 mt-2">
-    <!-- cover -->
-    <div class="d-flex flex-row justify-content-center p-2 mb-2">
-      <div class="cover mr-2">
+  <div class="bg-white p-2">
+    <div class="d-flex flex-row justify-content-center">
+      <div class="cover">
+        <!-- cover -->
         <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
         <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
+
         <!-- vote -->
         <div class="songtify">
           <h2 *ngIf="doc.type == 'album' && doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
@@ -12,6 +14,7 @@
             <span class="star"></span>
           </div>
         </div>
+
         <!-- player -->
         <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row justify-content-center align-items-center p-2">
           <div class="player-button ml-2" (click)="backward($event)">
@@ -28,32 +31,36 @@
       </div>
     </div>
 
-    <!-- content -->
-    <div class="bg-white p-2">
-      <!-- info -->
-      <div class="text-center w-100 mb-3">
-        <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-        <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-        <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
-        <h3 *ngIf="doc.authors" class="text-muted mx-auto mb-2">di {{doc.authors}}</h3>
-      </div>
-
-      <!-- spotify + songkick -->
-      <div class="d-flex flex-row justify-content-center mt-3 mb-3">
-        <img *ngIf="doc.spalbumid" class="icon spotify ml-1 mr-1" (click)="app.toggleSpotify(doc.type, doc.spalbumid)"/>
-        <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
-        <a class="ml-1 mr-1" href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a>
-      </div>
-
-      <!-- content -->
-      <p *ngIf="doc.review" class="text-justify" [innerHTML]="doc.review"></p>
-      <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
-      
-      <!-- videos + links -->
-      <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks" type="videos" label="Video"></app-video>
-      <app-link [links]="podcasts" type="podcasts" label="Podcast"></app-link>
-      <app-link [links]="links" type="links" label="Link"></app-link>
+    <!-- info -->
+    <div class="text-center w-100 mt-3">
+      <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+      <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+      <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
+      <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
     </div>
+
+    <!-- spotify + songkick -->
+    <div class="d-flex flex-row justify-content-center mt-3">
+      <img *ngIf="doc.spalbumid" class="icon spotify ml-1 mr-1" (click)="app.toggleSpotify(doc.type, doc.spalbumid)"/>
+      <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
+      <a class="ml-1 mr-1" href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a>
+    </div>
+
+    <!-- content -->
+    <p *ngIf="doc.review" class="text-justify mt-3" [innerHTML]="doc.review"></p>
+
+    <!-- tracks -->
+    <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
+
+    <!-- video -->
+    <app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks" type="videos" label="Video"></app-video>
+  </div>
+      
+  <!-- links -->
+  <div class="bg-white p-2 mt-3">
+    <app-link [links]="podcasts" type="podcasts" label="Podcast"></app-link>
+    <app-link [links]="links" type="links" label="Link"></app-link>
+  </div>
     
   <!-- footer -->
   <app-footer></app-footer>

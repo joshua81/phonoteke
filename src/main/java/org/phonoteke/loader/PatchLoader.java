@@ -19,7 +19,6 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().deleteDoc("e6d7842b2f9ec2662845eda85058083357c719b63d96bd59ed2db255672e97d1");
 	}
 
 	@Override

@@ -29,6 +29,8 @@ public class SpreakerLoader extends AbstractCrawler
 	private static final String URL3 = "https://api.spreaker.com/show/2071330/episodes";
 	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
+	private static final String URL6 = "https://api.spreaker.com/show/4505986/episodes";
+	private static final String URL7 = "https://api.spreaker.com/show/2708156/episodes";
 
 
 	@Override
@@ -39,7 +41,9 @@ public class SpreakerLoader extends AbstractCrawler
 			load("rolloverhangover");
 			load("blackalot");
 			load("cassabertallot");
-			load("resetrefresh");	
+			load("resetrefresh");
+			load("playaestas");
+			load("thetuesdaytapes");
 		}
 
 		if("casabertallot".equals(task)) {
@@ -56,6 +60,12 @@ public class SpreakerLoader extends AbstractCrawler
 		}
 		else if("resetrefresh".equals(task)) {
 			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Alessio Bertallot"));
+		}
+		else if("playaestas".equals(task)) {
+			crawl(URL6, "playaestas", "PLAYaestas", Lists.newArrayList("Alessio Bertallot"));
+		}
+		else if("thetuesdaytapes".equals(task)) {
+			crawl(URL7, "thetuesdaytapes", "The Tuesday Tapes", Lists.newArrayList("Fabio De Luca"));
 		}
 	}
 

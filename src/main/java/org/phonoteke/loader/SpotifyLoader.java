@@ -20,7 +20,6 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
-import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.Artist;
@@ -30,6 +29,7 @@ import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.ReplacePlaylistsItemsRequest;
@@ -54,7 +54,6 @@ public class SpotifyLoader implements HumanBeats
 	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
 	private static final SpotifyApi PLAYLIST_API = new SpotifyApi.Builder().setAccessToken(System.getenv("SPOTIFY_TOKEN")).build();
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
-	private static final String VA = "Artisti Vari";
 
 	private static ClientCredentials credentials;
 
@@ -93,6 +92,7 @@ public class SpotifyLoader implements HumanBeats
 				{
 					loadArtist(page);
 				}
+				//				loadArtistDetails(page);
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
@@ -229,7 +229,6 @@ public class SpotifyLoader implements HumanBeats
 		try
 		{
 			login();
-			//			String q = "artist:"+ artist + " album:" + album;
 			String q = artist + " " + album;
 			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
 			Paging<AlbumSimplified> albums = request.execute();
@@ -248,7 +247,7 @@ public class SpotifyLoader implements HumanBeats
 					page.append("score", score);
 					getImages(page, a.getImages());
 
-					if(!VA.equalsIgnoreCase(a.getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(a.getAlbumType()) && !albumsMap.containsKey(score)) {
+					if(!albumsMap.containsKey(score)) {
 						LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 						albumsMap.put(score, page);
 					}
@@ -288,35 +287,58 @@ public class SpotifyLoader implements HumanBeats
 	private Document loadArtist(String artist)
 	{
 		TreeMap<Integer, Document> artistsMap = Maps.newTreeMap();
-		try
-		{
-			login();
-			//			String q = "artist:" + artist;
-			String q = artist;
-			SearchArtistsRequest request = SPOTIFY_API.searchArtists(q).build();
-			Paging<Artist> artists = request.execute();
-			for(int j = 0; j < artists.getItems().length; j++)
+		if(artist != null) {
+			try
 			{
-				Artist a = artists.getItems()[j];
-				String spartist = a.getName();
-				String artistid = a.getId();
-				int score = FuzzySearch.tokenSortRatio(artist, spartist);
-				Document page = new Document("spartistid", artistid);
-				page.append("score", score);
-				getImages(page, a.getImages());
+				login();
+				SearchArtistsRequest request = SPOTIFY_API.searchArtists(artist).build();
+				Paging<Artist> artists = request.execute();
+				for(int j = 0; j < artists.getItems().length; j++)
+				{
+					Artist a = artists.getItems()[j];
+					String spartist = a.getName();
+					String artistid = a.getId();
+					int score = FuzzySearch.tokenSortRatio(artist, spartist);
+					Document page = new Document("spartistid", artistid);
+					page.append("score", score);
+					getImages(page, a.getImages());
 
-				if(!artistsMap.containsKey(score)) {
-					LOGGER.info(artist + " | " + spartist + ": " + score);
-					artistsMap.put(score, page);
+					if(!artistsMap.containsKey(score)) {
+						LOGGER.info(artist + " | " + spartist + ": " + score);
+						artistsMap.put(score, page);
+					}
 				}
 			}
-		}
-		catch (Exception e) 
-		{
-			LOGGER.error("ERROR loading " + artist + ": " + e.getMessage());
-			relogin();
+			catch (Exception e) 
+			{
+				LOGGER.error("ERROR loading " + artist + ": " + e.getMessage());
+				relogin();
+			}
 		}
 		return artistsMap.isEmpty() ?  null : artistsMap.descendingMap().firstEntry().getValue();
+	}
+
+	private void loadArtistDetails(Document page)
+	{
+		String artistId = page.getString("spartistid");
+		if(artistId != null) {
+			try
+			{
+				login();
+				GetArtistRequest request = SPOTIFY_API.getArtist(artistId).build();
+				Artist artist = request.execute();
+				if(artist != null) {
+					String artistid = artist.getId();
+					Document detail = new Document("spartistid", artistid);
+					getImages(detail, artist.getImages());
+				}
+			}
+			catch (Exception e) 
+			{
+				LOGGER.error("ERROR loading " + artistId + ": " + e.getMessage());
+				relogin();
+			}
+		}
 	}
 
 	private void loadTracks(Document page)
@@ -387,8 +409,6 @@ public class SpotifyLoader implements HumanBeats
 				{
 					artist = artist.trim();
 					song = song.trim();
-					LOGGER.info(artist + " - " + song);
-					//			String q = "artist:" + artist + " track: " + song;
 					String q = artist + " " + song;
 					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
 					Paging<Track> tracks = request.execute();
@@ -418,7 +438,7 @@ public class SpotifyLoader implements HumanBeats
 						page.append("score", score);
 						getImages(page, track.getAlbum().getImages());
 
-						if(!VA.equalsIgnoreCase(track.getAlbum().getArtists()[0].getName()) && !AlbumType.COMPILATION.equals(track.getAlbum().getAlbumType()) && !tracksMap.containsKey(score)) {
+						if(!tracksMap.containsKey(score)) {
 							LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
 							tracksMap.put(score, page);
 						}

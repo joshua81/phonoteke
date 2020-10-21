@@ -9,23 +9,27 @@ import com.google.common.collect.Lists;
 public interface HumanBeats 
 {
 	public static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[:–-](.{1,200})";
-	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[\"“”](.{1,100}?)[\"“”](.{0,200})";
+	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
+	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
 	public static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
 	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
-	public static final String MATCH6 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[:–-](.{1,100})";
-	public static final String MATCH7 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[:–-](.{1,100}?)[:–-](.{1,200})";
-	public static final String MATCH8 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[:–-](.{1,100}?)\\(.{1,200}\\)";
-	public static final String MATCH9 = "[•*-]{0,1}(.{1,100}?)[:–-](.{1,100})";
-	public static final List<String> MATCHES = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5, MATCH6, MATCH7, MATCH8, MATCH9);
+	public static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5);
 
-	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,100})";
-	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,100})";
-	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,100})";
-	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,100})";
+	public static final String MATCHS1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS2 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS3 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS4 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
+	public static final String MATCHS5 = "[•*-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100})";
+	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4, MATCHS5);
+	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-");
+
+	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
+	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";
+	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,200})";
+	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,200})";
 	public static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 	public static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
-	public static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5,FEAT6);
+	public static final List<String> FEAT   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5,FEAT6);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -99,11 +103,17 @@ public interface HumanBeats
 	public static boolean isTrack(String title)
 	{
 		title = title.trim();
-		for(String match : MATCHES)
-		{
-			if(title.matches(match))
-			{
+		for(String match : MATCH) {
+			if(title.matches(match)) {
 				return true;
+			}
+		}
+		for(String separator : SEPARATOR) {
+			for(String match : MATCHS) {
+				match = match.replaceAll("SEPARATOR", separator);
+				if(title.matches(match)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -112,12 +122,57 @@ public interface HumanBeats
 	public static List<String[]> parseTrack(String track) 
 	{
 		List<String[]> matches = Lists.newArrayList();
-		for(String match : MATCHES) 
-		{
+		for(String match : MATCH) {
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
 				matches.add(parseArtistSong(m.group(1),  m.group(2)));
 				matches.add(parseArtistSong(m.group(2),  m.group(1)));
+				if(m.group(1).contains("&")) {
+					matches.add(parseArtistSong(m.group(1).split("&")[0],  m.group(2)));
+				}
+				if(m.group(2).contains("&")) {
+					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
+				}
+				if(m.group(1).contains(" and ")) {
+					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
+				}
+				if(m.group(2).contains(" and ")) {
+					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
+				}
+				if(m.group(1).contains(" with ")) {
+					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
+				}
+				if(m.group(2).contains(" with ")) {
+					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
+				}
+			}
+		}
+		for(String separator : SEPARATOR) {
+			for(String match : MATCHS) {
+				match = match.replaceAll("SEPARATOR", separator);
+				Matcher m = Pattern.compile(match).matcher(track);
+				if(m.matches()) {
+					matches.add(parseArtistSong(m.group(1),  m.group(2)));
+					matches.add(parseArtistSong(m.group(2),  m.group(1)));
+					if(m.group(1).contains("&")) {
+						matches.add(parseArtistSong(m.group(1).split("&")[0],  m.group(2)));
+					}
+					if(m.group(2).contains("&")) {
+						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
+					}
+					if(m.group(1).contains(" and ")) {
+						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
+					}
+					if(m.group(2).contains(" and ")) {
+						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
+					}
+					if(m.group(1).contains(" with ")) {
+						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
+					}
+					if(m.group(2).contains(" with ")) {
+						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
+					}
+				}
 			}
 		}
 		return matches;
@@ -130,27 +185,23 @@ public interface HumanBeats
 		artist = artist.split("\\+")[0];
 		artist = artist.split(",")[0];
 		artist = artist.split(";")[0];
-		artist = artist.split("&")[0];
-		artist = artist.toLowerCase().split("\\band\\b")[0];
-		artist = artist.toLowerCase().split("\\bwith\\b")[0];
 		artist = artist.replaceAll("=", " ");
-		for(String match2 : FEAT_MATCH) {
-			Matcher m2 = Pattern.compile(match2).matcher(artist);
-			if(m2.matches()) {
-				artist = m2.group(1);
+		for(String match : FEAT) {
+			Matcher matcher = Pattern.compile(match).matcher(artist);
+			if(matcher.matches()) {
+				artist = matcher.group(1);
 				break;
 			}
 		}
 
 		// song
-		for(String match2 : FEAT_MATCH) {
-			Matcher m2 = Pattern.compile(match2).matcher(song);
-			if(m2.matches()) {
-				song = m2.group(1);
+		for(String match : FEAT) {
+			Matcher matcher = Pattern.compile(match).matcher(song);
+			if(matcher.matches()) {
+				song = matcher.group(1);
 				break;
 			}
 		}
-
 		return new String[]{artist, song};
 	}
 }

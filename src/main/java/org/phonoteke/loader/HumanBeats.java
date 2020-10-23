@@ -8,19 +8,18 @@ import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final String MATCH1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "[•*-]{0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
-	public static final String MATCH3 = "[•*-]{0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
-	public static final String MATCH4 = "[•*-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
-	public static final String MATCH5 = "[•*-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
+	public static final String MATCH1 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
+	public static final String MATCH2 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
+	public static final String MATCH3 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
+	public static final String MATCH4 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
+	public static final String MATCH5 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
 	public static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5);
 
-	public static final String MATCHS1 = "[•*-]{0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS2 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS3 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS4 = "[0-9]{1,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
-	public static final String MATCHS5 = "[•*-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100})";
-	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4, MATCHS5);
+	public static final String MATCHS1 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS2 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS3 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS4 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
+	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4);
 	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-");
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
@@ -29,7 +28,9 @@ public interface HumanBeats
 	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,200})";
 	public static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 	public static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
-	public static final List<String> FEAT   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5,FEAT6);
+	public static final String FEAT7 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	public static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
+	public static final List<String> FEAT   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -195,6 +196,7 @@ public interface HumanBeats
 		}
 
 		// song
+		song = song.replaceAll("=", " ");
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(song);
 			if(matcher.matches()) {

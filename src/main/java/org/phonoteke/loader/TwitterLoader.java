@@ -111,7 +111,7 @@ public class TwitterLoader implements HumanBeats
 					}
 				}
 
-				msg += "La playlist #Spotify di " + artist + " (" + date  + ") - " + title + "\n";
+				msg += "La playlist #Spotify di " + artist + " (" + date  + ")\n";// - " + title + "\n";
 				msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 				msg += links + "\n";
 				msg += "https://open.spotify.com/playlist/" + spotify;

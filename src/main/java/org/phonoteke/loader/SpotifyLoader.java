@@ -43,10 +43,6 @@ public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
-	private static final String FEAT1 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-	private static final String FEAT2 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
-	private static final List<String> FEAT_MATCH   = Lists.newArrayList(FEAT1, FEAT2);
-
 	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
@@ -61,7 +57,7 @@ public class SpotifyLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load("546baa19fbb60dce69f40aed264bc31e560c125a7903d48a8fbbd20664f43181");
+		new SpotifyLoader().load("1ce7bd87c62e6ae787fba67e35c744f5323056e0e5eca12d45135da85922d670");
 	}
 
 	@Override
@@ -92,7 +88,6 @@ public class SpotifyLoader implements HumanBeats
 				{
 					loadArtist(page);
 				}
-				//				loadArtistDetails(page);
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
@@ -420,7 +415,7 @@ public class SpotifyLoader implements HumanBeats
 						String spalbum = track.getAlbum().getName();
 						String spalbumid = track.getAlbum().getId();
 						String spsong = track.getName();
-						for(String match : FEAT_MATCH) {
+						for(String match : HumanBeats.FEAT) {
 							Matcher m = Pattern.compile(match).matcher(spsong);
 							if(m.matches()) {
 								spsong = m.group(1);

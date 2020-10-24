@@ -122,6 +122,7 @@ public interface HumanBeats
 
 	public static List<String[]> parseTrack(String track) 
 	{
+		track = track.trim();
 		List<String[]> matches = Lists.newArrayList();
 		for(String match : MATCH) {
 			Matcher m = Pattern.compile(match).matcher(track);
@@ -187,6 +188,7 @@ public interface HumanBeats
 		artist = artist.split(",")[0];
 		artist = artist.split(";")[0];
 		artist = artist.replaceAll("=", " ");
+		artist = artist.trim();
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(artist);
 			if(matcher.matches()) {
@@ -197,6 +199,7 @@ public interface HumanBeats
 
 		// song
 		song = song.replaceAll("=", " ");
+		song = song.trim();
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(song);
 			if(matcher.matches()) {
@@ -204,6 +207,6 @@ public interface HumanBeats
 				break;
 			}
 		}
-		return new String[]{artist, song};
+		return new String[]{artist.trim(), song.trim()};
 	}
 }

@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
 import { AppComponent } from '../app.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-podcasts',
@@ -16,10 +17,10 @@ export class PodcastsComponent implements OnInit {
   podcasts = [];
   podcastsPage: number = 0;
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private cookieService: CookieService) {}
 
   ngOnInit() {
-    //this.loadUser();
+    this.loadUser();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.app.close();
@@ -67,9 +68,14 @@ export class PodcastsComponent implements OnInit {
     this.podcasts.push.apply(this.podcasts, data);
   }
 
-  /*loadUser() {
+  loadUser() {
     if(this.user == null) {
-      this.http.get('/api/user').subscribe(
+      const options = {
+        headers: new HttpHeaders({
+          'Authorization': 'Bearer ' + this.cookieService.get('spotify-token'),
+        }),
+      };
+      this.http.get('https://api.spotify.com/v1/me', options).subscribe(
         (data: any) => this.userLoaded(data),
         error => this.error = error);
     }
@@ -79,5 +85,5 @@ export class PodcastsComponent implements OnInit {
     if(data) {
       this.user = data.images[0].url;
     }
-  }*/
+  }
 }

@@ -14,7 +14,7 @@ const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/
 const client_id = 'a6c3686d32cb48d4854d88915d3925be';
 const client_secret = '46004c8b1a2b4c778cb9761ace300b6c';
 const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
-const spotify_token = 'spotify-token';
+//const spotify_token = 'spotify-token';
 const songkick_id = '1hOiIfT9pFTkyVkg';
 
 const db = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -75,11 +75,11 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 	res.send(result);
 });
 
-app.get('/api/docs/starred', async(req, res)=>{
+/*app.get('/api/docs/starred', async(req, res)=>{
 	var access_token = req.cookies ? req.cookies[spotify_token] : null;
 	var starred = await findStarred(access_token);
 	res.send(starred);
-});
+});*/
 
 app.get('/api/docs/:id', async(req, res)=>{
 	var result = await findDoc(req.params.id);
@@ -129,18 +129,18 @@ app.get('/api/login/spotify', async(req,res)=>{
 			if (!error && response.statusCode === 200) {
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
-				res.cookie(spotify_token, access_token);
+				res.cookie('spotify-token', access_token);
 			}
 			res.redirect('/');
 		});
 	}
 });
 
-app.get('/api/user', async(req, res)=>{
+/*app.get('/api/user', async(req, res)=>{
 	var access_token = req.cookies ? req.cookies[spotify_token] : null;
 	var user = await findUser(access_token);
 	res.send(user);
-});
+});*/
 
 app.get('/docs/:id', async(req,res)=>{
 	var docs = await findDocSnippet(req.params.id);
@@ -339,7 +339,7 @@ async function findLinks(id) {
 	return result;
 }
 
-async function findUser(access_token) {
+/*async function findUser(access_token) {
 	console.log('User: token=' + access_token);
 	var result = null;
 	if(access_token != null) {
@@ -361,9 +361,9 @@ async function findUser(access_token) {
 		});
 	}
 	return result;
-}
+}*/
 
-async function findStarred(access_token) {
+/*async function findStarred(access_token) {
 	console.log('Starred: token=' + access_token);
 	var result = null;
 	if(access_token != null) {
@@ -392,4 +392,4 @@ async function findStarred(access_token) {
 		}
 	}
 	return result;
-}
+}*/

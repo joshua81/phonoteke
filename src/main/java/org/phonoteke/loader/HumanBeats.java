@@ -30,7 +30,10 @@ public interface HumanBeats
 	public static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
 	public static final String FEAT7 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 	public static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
-	public static final List<String> FEAT   = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
+	public static final List<String> FEAT = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
+	
+	public static final String AKA1 = "(?i)(.{1,100}?) aka (.{1,200})";
+	public static final List<String> AKA = Lists.newArrayList(AKA1);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -193,6 +196,13 @@ public interface HumanBeats
 			Matcher matcher = Pattern.compile(match).matcher(artist);
 			if(matcher.matches()) {
 				artist = matcher.group(1);
+				break;
+			}
+		}
+		for(String match : AKA) {
+			Matcher matcher = Pattern.compile(match).matcher(artist);
+			if(matcher.matches()) {
+				artist = matcher.group(2);
 				break;
 			}
 		}

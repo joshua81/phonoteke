@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
@@ -43,7 +44,7 @@ import { FooterComponent } from './footer/footer.component';
     YouTubePlayerModule,
     CommonModule
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

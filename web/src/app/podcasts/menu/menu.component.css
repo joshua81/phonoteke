@@ -17,26 +17,10 @@
     max-width: 200px;
 }
 
-/*.icon {
+.icon {
     border-radius: 50%;
     background: #FFFFFF;
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
-
-span.spotify {
-    display: inline-block;
-    mask: url("/images/spotify.svg");
-    width: 30px;
-    height: 30px;
-    background: #18A2B8;
-    cursor: pointer;
-}
-
-img.spotify {
-    object-fit: cover;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-}*/

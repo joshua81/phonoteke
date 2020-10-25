@@ -1,13 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row w-max flex-nowrap hscroll">
-    <a class="ml-2 mr-2" [routerLink]="['/']"><img class="logo"></a>
-    <a class="menu-item ml-2 mr-2" [routerLink]="['/podcast']" [ngClass]="{'selected' : docs.type == 'podcast'}"><h2>Podcast</h2></a>
-    <a class="menu-item ml-2 mr-2" [routerLink]="['/album']" [ngClass]="{'selected' : docs.type == 'album'}"><h2>Album</h2></a>
-    <a class="menu-item ml-2 mr-2" [routerLink]="['/artist']" [ngClass]="{'selected' : docs.type == 'artist'}"><h2>Artisti</h2></a>
-    <a class="menu-item ml-2 mr-2" [routerLink]="['/interview']" [ngClass]="{'selected' : docs.type == 'interview'}"><h2>Interviste</h2></a>
-    <a class="menu-item ml-2 mr-auto" [routerLink]="['/concert']" [ngClass]="{'selected' : docs.type == 'concert'}"><h2>Concerti</h2></a>
-    <form class="search ml-2 mr-2">
+    <a class="ml-1 mr-1" [routerLink]="['/']"><img class="logo"></a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/podcast']" [ngClass]="{'selected' : docs.type == 'podcast'}"><h2>Podcast</h2></a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/album']" [ngClass]="{'selected' : docs.type == 'album'}"><h2>Album</h2></a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/artist']" [ngClass]="{'selected' : docs.type == 'artist'}"><h2>Artisti</h2></a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/interview']" [ngClass]="{'selected' : docs.type == 'interview'}"><h2>Interviste</h2></a>
+    <a class="menu-item ml-1 mr-auto" [routerLink]="['/concert']" [ngClass]="{'selected' : docs.type == 'concert'}"><h2>Concerti</h2></a>
+    <form class="search ml-1 mr-1">
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="docs.searchText" (search)="docs.loadDocs()">
     </form>
+    <a *ngIf="docs.user == null" class="ml-1 mr-1" href="/api/login">
+      <img class="icon" src="/images/spotify.png"/>
+    </a>
+    <a *ngIf="docs.user != null" class="ml-1 mr-1">
+      <img class="icon" src="{{docs.user}}">
+    </a>
   </div>
 </nav>

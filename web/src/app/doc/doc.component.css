@@ -59,21 +59,6 @@ img.cover {
   object-fit:cover;
 }
 
-.play {
-  position: absolute;
-  display: inline-block;
-  mask: url("/images/play.svg");
-  width: 30px;
-  height: 30px;
-  margin: 0px;
-  padding: 0px;
-  left: 110px;
-  top: 110px;
-  background: #FFFFFF;
-  opacity: 0.6;
-  cursor: pointer;
-}
-
 .player {
   position: absolute;
   width: 100%;
@@ -81,56 +66,5 @@ img.cover {
   bottom: 0px;
   background: #F57A48;
   opacity: 0.9;
-}
-
-.player-button {
-  width: 18px;
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-}
-
-.player-play {
-  display: inline-block;
-  mask: url("/images/play.svg");
-  width: 18px;
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-  background: #FFFFFF;
-  cursor: pointer;
-}
-
-.player-pause {
-  display: inline-block;
-  mask: url("/images/pause.svg");
-  width: 18px;
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-  background: #FFFFFF;
-  cursor: pointer;
-}
-
-.player-forward {
-  display: inline-block;
-  mask: url("/images/forward.svg");
-  width: 18px;
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-  background: #FFFFFF;
-  cursor: pointer;
-}
-
-.player-backward {
-  display: inline-block;
-  mask: url("/images/backward.svg");
-  width: 18px;
-  height: 20px;
-  margin: 0px;
-  padding: 0px;
-  background: #FFFFFF;
-  cursor: pointer;
 }
 

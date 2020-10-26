@@ -41,7 +41,7 @@
 
     <!-- spotify + songkick -->
     <div class="d-flex flex-row justify-content-center mt-3">
-      <img *ngIf="doc.spalbumid" class="icon spotify ml-1 mr-1" (click)="app.toggleSpotify(doc.type, doc.spalbumid)"/>
+      <img *ngIf="doc.spalbumid" class="icon spotify ml-1 mr-1" (click)="app.play(doc.type == 'podcast' ? 'playlist' : doc.type, doc.spalbumid)"/>
       <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
       <a class="ml-1 mr-1" href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a>
     </div>

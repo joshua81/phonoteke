@@ -3,24 +3,38 @@
 </div>
 
 <!-- Spotify player-->
-<div *ngIf="spotifyUrl" class="d-flex flex-row justify-content-center fixed-bottom">
-  <div class="player-spotify d-flex flex-row align-items-center">
-    <iframe [src]="spotifyUrl" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+<div *ngIf="track" class="d-flex flex-row justify-content-center fixed-bottom">
+  <div class="player-spotify d-flex flex-row align-items-center p-2">
+    <img class="cover" src="{{track.item.album.images[2].url}}"/>
+    <div class="ml-2 w-100">
+      <div class="text-white text-truncate-1">{{track.item.name + ' da '}}<span class="text-white font-weight-bold">{{track.item.album.name}}</span></div>
+      <div class="text-white text-truncate-1">{{'di ' + track.item.artists[0].name}}</div>
+    </div>
+    <div class="player-button ml-2" (click)="previous()">
+      <span class="player-backward"></span>
+    </div>
+    <div class="player-button ml-4 mr-4" (click)="playPause()">
+      <span *ngIf="!track.is_playing" class="player-play"></span>
+      <span *ngIf="track.is_playing" class="player-pause"></span>
+    </div>
+    <div class="player-button mr-2" (click)="next()">
+      <span class="player-forward"></span>
+    </div>
     <div class="icon" (click)="close()"><span class="close"></span></div>
   </div>
 </div>
 
 <!-- Youtube player-->
-<div *ngIf="youtubeUrl" class="d-flex flex-row justify-content-center fixed-bottom">
+<div *ngIf="youtube" class="d-flex flex-row justify-content-center fixed-bottom">
   <div class="player-youtube d-flex flex-row align-items-center">
-    <iframe [src]='youtubeUrl' type="text/html" width="350" height="200" frameborder="0"></iframe>
+    <iframe [src]='youtube' type="text/html" width="350" height="200" frameborder="0"></iframe>
     <div class="icon" (click)="close()"><span class="close"></span></div>
   </div>
 </div>
 
 <!-- Events -->
-<div *ngIf="artist" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
-  <div *ngIf="events && events.length != 0" class="align-self-center overflow-auto modal-box">
+<div *ngIf="events" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
+  <div *ngIf="events.length != 0" class="align-self-center overflow-auto modal-box">
     <div class="list-group">
       <div *ngFor="let event of events" class="p-2 list-group-item">
         <div class="d-flex align-items-center">
@@ -33,7 +47,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="events && events.length == 0" class="align-self-center overflow-auto modal-box">
+  <div *ngIf="events.length == 0" class="align-self-center overflow-auto modal-box">
     <div class="d-flex justify-content-center align-middle">
       <p class="text-white font-weight-bold pt-2">Nessun evento in programma</p>
     </div>

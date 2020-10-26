@@ -4,8 +4,8 @@
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll pt-2">
     <div *ngFor="let track of tracks" class="pr-2">
-      <div *ngIf="track.youtube" class="cover">
-        <img class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}" (click)="app.toggleYoutube(track.youtube)"/>
+      <div *ngIf="track.youtube" class="cover" (click)="app.playYoutube(track.youtube)">
+        <img class="cover" src="{{'https://img.youtube.com/vi/' + track.youtube + '/default.jpg'}}"/>
         <span class="youtube"></span>
       </div>
     </div>

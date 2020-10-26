@@ -86,9 +86,3 @@ img.cover {
   opacity: 0.6;
   cursor: pointer;
 }
-
-.close {
-  bottom: 5px;
-  right: 5px;
-  position: absolute;
-}

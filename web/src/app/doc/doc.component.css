@@ -61,10 +61,15 @@ img.cover {
 
 .player {
   position: absolute;
-  width: 100%;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 2px;
+
+  width: 60px;
   height: 40px;
-  bottom: 0px;
-  background: #F57A48;
-  opacity: 0.9;
+  bottom: 5px;
+  left: 5px;
+  background: #000000;
+  opacity: 0.8;
 }
 

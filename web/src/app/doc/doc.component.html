@@ -17,15 +17,21 @@
 
         <!-- player -->
         <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row justify-content-center align-items-center p-2">
-          <div class="player-button ml-2" (click)="backward($event)">
+          <!--div class="player-button ml-2" (click)="backward($event)">
             <span class="player-backward"></span>
-          </div>
-          <div class="player-button ml-4 mr-4" (click)="playPause($event)">
+          </div-->
+          <div class="player-button" (click)="playPause($event)">
             <span *ngIf="audio == null || audio.paused" class="player-play"></span>
             <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
           </div>
-          <div class="player-button mr-2" (click)="forward($event)">
+          <!--div class="player-button mr-2" (click)="forward($event)">
             <span class="player-forward"></span>
+          </div-->
+        </div>
+        <div *ngIf="doc.type != 'podcast' && doc.spalbumid" class="player d-flex flex-row justify-content-center align-items-center p-2">
+          <div class="player-button" (click)="app.play(doc.type, doc.spalbumid)">
+            <span *ngIf="app.track == null || !app.track.is_playing" class="player-play"></span>
+            <span *ngIf="app.track != null && app.track.is_playing" class="player-pause"></span>
           </div>
         </div>
       </div>
@@ -39,9 +45,8 @@
       <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
     </div>
 
-    <!-- spotify + songkick -->
+    <!-- songkick -->
     <div class="d-flex flex-row justify-content-center mt-3">
-      <img *ngIf="doc.spalbumid" class="icon spotify ml-1 mr-1" (click)="app.play(doc.type == 'podcast' ? 'playlist' : doc.type, doc.spalbumid)"/>
       <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
       <a class="ml-1 mr-1" href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a>
     </div>

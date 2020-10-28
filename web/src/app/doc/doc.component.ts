@@ -14,9 +14,6 @@ export class DocComponent implements OnInit {
   doc = null;
   links = [];
   podcasts = [];
-  audio = null;
-  audioCurrentTime: string = null;
-  audioDuration: string = null;
 
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
@@ -40,12 +37,6 @@ export class DocComponent implements OnInit {
     this.doc = doc;
     this.links = [];
     this.podcasts = [];
-    if(this.audio){
-      this.audio.pause();
-      this.audio = null;
-      this.audioCurrentTime = null;
-      this.audioDuration = null;
-    }
     this.loadLinks();
   }
 
@@ -62,55 +53,5 @@ export class DocComponent implements OnInit {
     this.podcasts = links.filter(function(link: any){
 		  return link.type == 'podcast';
     });
-  }
-
-  close(event: Event){
-    if(this.audio) {
-      this.audio.pause();
-      this.audio = null;
-      this.audioCurrentTime = null;
-      this.audioDuration = null;
-    }
-  }
-
-  playPause(event: Event){
-    if(this.doc.audio != null && this.audio == null) {
-      this.audio = new Audio();
-      this.audio.src = this.doc.audio;
-      this.audio.ontimeupdate = () => {
-        this.audioDuration = this.formatTime(this.audio.duration);
-        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
-      }
-      this.audio.load();
-    }
-
-    if(this.audio.paused){
-      this.audio.play();
-    }
-    else{
-      this.audio.pause();
-    }
-  }
-
-  forward(event: Event){
-    if(!this.audio.paused){
-      this.audio.currentTime += 60.0;
-    }
-  }
-
-  backward(event: Event){
-    if(!this.audio.paused){
-      this.audio.currentTime -= 60.0;
-    }
-  }
-
-  formatTime(seconds: number) {
-    if(!isNaN(seconds)) {
-      var minutes: number = Math.floor(seconds / 60);
-      var mins = (minutes >= 10) ? minutes : "0" + minutes;
-      seconds = Math.floor(seconds % 60);
-      var secs = (seconds >= 10) ? seconds : "0" + seconds;
-      return mins + ":" + secs;
-    }
   }
 }

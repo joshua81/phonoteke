@@ -11,12 +11,17 @@ import { timer } from 'rxjs';
 })
 export class AppComponent {
   youtube: SafeResourceUrl = null;
+
   user = null;
-  device = null;
+  player = null;
+  album = null;
   track = null;
+  timer = null;
+
+  audio = null;
+  
   events = null;
   error = null;
-  timer = null;
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {}
 
@@ -27,124 +32,177 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.get('https://api.spotify.com/v1/me', options).subscribe(
-        (data: any) => this.userLoaded(data),
+        (data: any) => { 
+          if(data) {
+            this.user = data;
+            this.loadDevices();
+          }},
         error => this.error = error);
     }
   }
 
-  userLoaded(data: any) {
-    if(data) {
-      this.user = data;
-      this.timer = timer(0, 3000).subscribe(() => this.playerStatus());
-
-      const token = this.cookieService.get('spotify-token');
+  loadDevices() {
+    const token = this.cookieService.get('spotify-token');
+    if(token != null && token != '') {
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.get('https://api.spotify.com/v1/me/player/devices', options).subscribe(
-        (data: any) => this.deviceLoaded(data),
+        (data: any) => {
+          if(data && data.devices.length > 0) {
+            this.setPlayer(data.devices[0]);
+          }},
         error => this.error = error);
     }
   }
 
-  deviceLoaded(data: any) {
-    if(data && data.devices.length > 0) {
-      this.device = data.devices[0];
+  setPlayer(device: any) {
+    const token = this.cookieService.get('spotify-token');
+    if(token != null && token != '') {
+      var body = {
+        'device_ids': [device.id]
+      };
+      const options = {
+        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+      };
+      this.http.put('https://api.spotify.com/v1/me/player', body, options).subscribe(
+        (data: any) => this.player = device,
+        error => this.error = error);
     }
   }
 
-  play(type: string, id: string) {
+  playSpotify(type: string, id: string) {
     this.close();
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       var body = type != 'track' ? {
         'context_uri': 'spotify:' + type + ':' + id,
         'uris': null,
         'offset': {'position': 0}
       } : {
-          'context_uri': null,
-          'uris': ['spotify:track:' + id],
-          'offset': {'position': 0}
+        'context_uri': null,
+        'uris': ['spotify:track:' + id],
+        'offset': {'position': 0}
       };
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
-      this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.device.id, body, options).subscribe(
-        (data: any) => this.playerStatus(),
+      this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
+      //this.http.put('https://api.spotify.com/v1/me/player/play', body, options).subscribe(
+        (data: any) => this.timer = timer(0, 3000).subscribe(() => this.statusSpotify()),
         error => this.error = error);
     }
   }
 
-  pause() {
+  pauseSpotify() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
-      this.http.put('https://api.spotify.com/v1/me/player/pause', null, options).subscribe(
-        (data: any) => this.playerStatus(),
+      this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
         error => this.error = error);
     }
   }
 
-  playPause() {
+  playPauseSpotify() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       if(this.track.is_playing) {
-        this.pause();
+        this.pauseSpotify();
       }
       else {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
-        this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.device.id, null, options).subscribe(
-          (data: any) => this.playerStatus(),
+        this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
+        //this.http.put('https://api.spotify.com/v1/me/player/play', null, options).subscribe(
           error => this.error = error);
       }
     }
   }
 
-  previous() {
+  previousSpotify() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/previous', null, options).subscribe(
-        (data: any) => this.playerStatus(),
         error => this.error = error);
     }
   }
 
-  next() {
+  nextSpotify() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/next', null, options).subscribe(
-        (data: any) => this.playerStatus(),
         error => this.error = error);
     }
   }
 
-  playerStatus() {
+  statusSpotify() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.device != null) {
+    if(token != null && token != '') {
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.get('https://api.spotify.com/v1/me/player/currently-playing', options).subscribe(
-        (data: any) => this.statusLoaded(data),
+        (data: any) => {
+          if(data) {
+            this.track = data;
+          }},
         error => this.error = error);
     }
   }
 
-  statusLoaded(data: any) {
-    if(data){
-      this.track = data;
+  playPauseAudio(audio: any=null, title: string=null, artist: string=null, cover: string=null){
+    if(this.audio == null) {
+      this.close();
+      this.audio = new Audio();
+      this.audio.src = audio;
+      this.audio.title = title;
+      this.audio.artist = artist;
+      this.audio.cover = cover;
+      /*this.audio.ontimeupdate = () => {
+        this.audioDuration = this.formatTime(this.audio.duration);
+        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
+      }*/
+      this.audio.load();
+    }
+
+    if(this.audio.paused){
+      this.audio.play();
+    }
+    else{
+      this.audio.pause();
     }
   }
+
+  forwardAudio(){
+    if(!this.audio.paused){
+      this.audio.currentTime += 60.0;
+    }
+  }
+
+  backwardAudio(){
+    if(!this.audio.paused){
+      this.audio.currentTime -= 60.0;
+    }
+  }
+
+  /*formatTime(seconds: number) {
+    if(!isNaN(seconds)) {
+      var minutes: number = Math.floor(seconds / 60);
+      var mins = (minutes >= 10) ? minutes : "0" + minutes;
+      seconds = Math.floor(seconds % 60);
+      var secs = (seconds >= 10) ? seconds : "0" + seconds;
+      return mins + ":" + secs;
+    }
+  }*/
 
   playYoutube(track: string){
     if(this.youtube == null) {
@@ -157,20 +215,24 @@ export class AppComponent {
   }
 
   loadEvents(artist: string) {
-    this.close();
+    this.closeEvents();
     this.http.get('/api/events/' + artist).subscribe(
-      (data: any) => this.eventsLoaded(data),
+      (data: any) => {
+        if(data) {
+          this.events = data;
+        }},
       error => this.error = error);
-  }
-
-  eventsLoaded(data: any) {
-    if(data){
-      this.events = data;
-    }
   }
 
   close() {
     this.track = null;
+    //this.timer = null;
+
+    if(this.audio) {
+      this.audio.pause();
+      this.audio = null;
+    }
+
     this.youtube = null;
     this.events = null;
     this.error = null;

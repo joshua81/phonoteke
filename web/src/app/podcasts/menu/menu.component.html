@@ -12,6 +12,6 @@
     <a *ngIf="app.user == null" class="ml-1 mr-1" href="/api/login">
       <img class="icon" src="/images/spotify.png"/>
     </a>
-    <img *ngIf="app.user != null" class="icon ml-1 mr-2" src="{{app.user.images[0].url}}">
+    <img *ngIf="app.user != null" class="icon ml-1 mr-2" src="{{app.user.images[0].url}}" (click)="app.loadDevices()">
   </div>
 </nav>

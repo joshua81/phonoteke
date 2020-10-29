@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {DocComponent} from '../doc.component';
+import { AppComponent } from 'src/app/app.component';
+import { DocComponent } from '../doc.component';
 
 @Component({
   selector: 'doc-menu',
@@ -8,7 +9,7 @@ import {DocComponent} from '../doc.component';
 })
 export class DocMenuComponent implements OnInit {
 
-  constructor(public doc: DocComponent) { }
+  constructor(public app: AppComponent, public doc: DocComponent) { }
 
   ngOnInit() {}
 }

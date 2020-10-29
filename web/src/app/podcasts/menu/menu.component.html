@@ -9,9 +9,11 @@
     <form class="search ml-1 mr-1">
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="docs.searchText" (search)="docs.loadDocs()">
     </form>
-    <a *ngIf="app.user == null" class="ml-1 mr-1" href="/api/login">
-      <img class="icon" src="/images/spotify.png"/>
+    <a *ngIf="app.player == null" class="ml-1 mr-1" href="/api/login">
+      <img class="speaker disabled"/>
     </a>
-    <img *ngIf="app.user != null" class="icon ml-1 mr-2" src="{{app.user.images[0].url}}" (click)="app.loadDevices()">
+    <a *ngIf="app.player != null" class="ml-1 mr-1" (click)="app.loadDevices()">
+      <img class="speaker">
+    </a>
   </div>
 </nav>

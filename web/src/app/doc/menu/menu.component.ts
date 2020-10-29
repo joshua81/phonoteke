@@ -8,7 +8,7 @@ import {DocComponent} from '../doc.component';
 })
 export class DocMenuComponent implements OnInit {
 
-  constructor(public component: DocComponent) { }
+  constructor(public doc: DocComponent) { }
 
   ngOnInit() {}
 }

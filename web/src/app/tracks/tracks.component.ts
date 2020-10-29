@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AppComponent } from '../app.component';
+import {DocComponent} from '../doc/doc.component';
 
 @Component({
   selector: 'app-tracks',
@@ -9,7 +10,7 @@ import { AppComponent } from '../app.component';
 export class TracksComponent implements OnInit {
   @Input() tracks = null;
 
-  constructor(public app: AppComponent) {}
+  constructor(public app: AppComponent, public doc: DocComponent) {}
 
   ngOnInit() {
   }

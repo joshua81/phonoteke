@@ -71,25 +71,28 @@ export class AppComponent {
     }
   }
 
-  playSpotify(type: string, id: string) {
+  playSpotify(type: string, id: string, pos: number=0) {
     this.close();
+    type = type == 'podcast' ? 'playlist' : type;
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '') {
       var body = type != 'track' ? {
         'context_uri': 'spotify:' + type + ':' + id,
         'uris': null,
-        'offset': {'position': 0}
+        'offset': {'position': pos}
       } : {
         'context_uri': null,
         'uris': ['spotify:track:' + id],
-        'offset': {'position': 0}
+        'offset': {'position': pos}
       };
       const options = {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
-      //this.http.put('https://api.spotify.com/v1/me/player/play', body, options).subscribe(
-        (data: any) => this.timer = timer(0, 3000).subscribe(() => this.statusSpotify()),
+        (data: any) => {
+          this.album = id;
+          this.timer = timer(0, 3000).subscribe(() => this.statusSpotify());
+        },
         error => this.error = error);
     }
   }
@@ -116,7 +119,6 @@ export class AppComponent {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
         this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
-        //this.http.put('https://api.spotify.com/v1/me/player/play', null, options).subscribe(
           error => this.error = error);
       }
     }
@@ -225,8 +227,9 @@ export class AppComponent {
   }
 
   close() {
+    this.album = null;
     this.track = null;
-    //this.timer = null;
+    this.timer = null;
 
     if(this.audio) {
       this.audio.pause();
@@ -240,6 +243,10 @@ export class AppComponent {
 
   closeEvents(){
     this.events = null;
+    this.error = null;
+  }
+
+  closeAlert(){
     this.error = null;
   }
 

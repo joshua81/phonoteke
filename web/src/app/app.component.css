@@ -47,31 +47,16 @@
     background: #18A2B8;
 }
 
-.icon {
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    cursor: pointer;
-
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
-
-.close {
-    display: inline-block;
-    mask: url("/images/close.svg");
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
-    cursor: pointer;
-}
-
 img.cover {
     width: 60px;
+    min-width: 60px;
     height: 60px;
+    min-height: 60px;
+}
+
+.alert {
+    width: 100%;
+    max-width: 800px;
+    height: 40px;
+    max-height: 40px;
 }

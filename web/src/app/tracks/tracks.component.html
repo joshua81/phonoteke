@@ -2,7 +2,7 @@
     <div *ngFor="let track of tracks" class="mb-2">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
-                <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" (click)="app.playSpotify('track', track.spotify)"/>
+                <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" (click)="app.playSpotify(doc.doc.type, doc.doc.spalbumid)"/>
                 <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold"></h1>
             </div>
             <div class="ml-2 w-100">

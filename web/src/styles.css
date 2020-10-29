@@ -103,6 +103,13 @@ h3 {
     -webkit-box-orient: vertical;
 }
 
+.close {
+    position: absolute;
+    top: 0px;
+    right: 8px;
+    cursor: pointer;
+}
+
 /********** buttons **********/
 
 img.logo {
@@ -194,6 +201,28 @@ img.stereonotte {
     content: url("/images/stereonotte.png");
     width: 30px;
     height: 30px;
+}
+
+img.speaker {
+    border-radius: 50%;
+    content: url("/images/speaker.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.spotify {
+    border-radius: 50%;
+    content: url("/images/spotify.png");
+    width: 30px;
+    height: 30px;
+}
+
+img.close-button {
+    border-radius: 50%;
+    content: url("/images/close.png");
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
 }
 
 .player-button {

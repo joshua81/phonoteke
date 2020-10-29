@@ -42,7 +42,9 @@
     <div class="player-button mr-2" (click)="forwardAudio()">
       <span class="player-forward"></span>
     </div>
-    <div class="icon" (click)="close()"><span class="close"></span></div>
+    <div class="close" aria-label="Close" (click)="close()">
+      <span class="text-white" aria-hidden="true">&times;</span>
+    </div>
   </div>
 </div>
 
@@ -50,7 +52,9 @@
 <div *ngIf="youtube" class="d-flex flex-row justify-content-center fixed-bottom">
   <div class="player-youtube d-flex flex-row align-items-center">
     <iframe [src]='youtube' type="text/html" width="350" height="200" frameborder="0"></iframe>
-    <div class="icon" (click)="close()"><span class="close"></span></div>
+    <div class="close" aria-label="Close" (click)="close()">
+      <span class="text-white" aria-hidden="true">&times;</span>
+    </div>
   </div>
 </div>
 
@@ -73,5 +77,15 @@
     <div class="d-flex justify-content-center align-middle">
       <p class="text-white font-weight-bold pt-2">Nessun evento in programma</p>
     </div>
+  </div>
+</div>
+
+<!-- Alert -->
+<div *ngIf="error != null" class="d-flex flex-row justify-content-center fixed-bottom">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{error}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 </div>

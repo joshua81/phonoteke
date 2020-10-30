@@ -83,7 +83,7 @@
 <!-- Alert -->
 <div *ngIf="error != null" class="d-flex flex-row justify-content-center fixed-bottom">
   <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <p>{{error.error.message}}</p>
+    <p>{{error}}</p>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
       <span aria-hidden="true">&times;</span>
     </button>

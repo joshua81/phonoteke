@@ -37,7 +37,7 @@ export class AppComponent {
             this.user = data;
             this.loadDevices();
           }},
-        error => this.error = error);
+        error => this.error = 'Errore login Spotify: ' + error.error.message);
     }
   }
 
@@ -52,7 +52,7 @@ export class AppComponent {
           if(data && data.devices.length > 0) {
             this.setPlayer(data.devices[0]);
           }},
-        error => this.error = error);
+        error => this.error = 'Errore caricamento device Spotify: ' + error.error.message);
     }
   }
 
@@ -67,7 +67,7 @@ export class AppComponent {
       };
       this.http.put('https://api.spotify.com/v1/me/player', body, options).subscribe(
         (data: any) => this.player = device,
-        error => this.error = error);
+        error => this.error = 'Errore selezione device Spotify: ' + error.error.message);
     }
   }
 
@@ -93,7 +93,7 @@ export class AppComponent {
           this.album = id;
           this.timer = timer(0, 3000).subscribe(() => this.statusSpotify());
         },
-        error => this.error = error);
+        error => this.error = 'Errore Play player Spotify: ' + error.error.message);
     }
   }
 
@@ -104,7 +104,8 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
-        error => this.error = error);
+        (data: any) => {},
+        error => this.error = 'Errore Pause player Spotify: ' + error.error.message);
     }
   }
 
@@ -119,7 +120,8 @@ export class AppComponent {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
         this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
-          error => this.error = error);
+          (data: any) => {},
+          error => this.error = 'Errore Pause player Spotify: ' + error.error.message);
       }
     }
   }
@@ -131,7 +133,8 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/previous', null, options).subscribe(
-        error => this.error = error);
+        (data: any) => {},
+        error => this.error = 'Errore Prev player Spotify: ' + error.error.message);
     }
   }
 
@@ -142,7 +145,8 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/next', null, options).subscribe(
-        error => this.error = error);
+        (data: any) => {},
+        error => this.error = 'Errore Next player Spotify: ' + error.error.message);
     }
   }
 
@@ -157,7 +161,7 @@ export class AppComponent {
           if(data) {
             this.track = data;
           }},
-        error => this.error = error);
+        error => this.error = 'Errore stato player Spotify: ' + error.error.message);
     }
   }
 

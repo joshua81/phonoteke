@@ -117,16 +117,38 @@ app.get('/api/login/spotify', async(req,res)=>{
 				},
 				json: true
 		};
-
 		request.post(options, function(error, response, body) {
 			if (!error && response.statusCode === 200) {
 				var access_token = body.access_token;
 				var refresh_token = body.refresh_token;
 				res.cookie('spotify-token', access_token);
+				res.cookie('spotify-refresh-token', refresh_token);
 			}
 			res.redirect('/');
 		});
 	}
+});
+
+app.get('/api/login/refresh', async(req,res)=>{
+	var options = {
+		url: 'https://accounts.spotify.com/api/token',
+		form: {
+			refresh_token: req.cookies('spotify-refresh-token'),
+			grant_type: 'refresh_token'
+		},
+		headers: {
+			'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
+		},
+		json: true
+	};
+	request.post(options, function(error, response, body) {
+		if (!error && response.statusCode === 200) {
+			var access_token = body.access_token;
+			var refresh_token = body.refresh_token;
+			res.cookie('spotify-token', access_token);
+			res.cookie('spotify-refresh-token', refresh_token);
+		}
+	});
 });
 
 app.get('/docs/:id', async(req,res)=>{

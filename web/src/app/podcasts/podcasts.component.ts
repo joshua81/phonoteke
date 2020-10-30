@@ -18,7 +18,7 @@ export class PodcastsComponent implements OnInit {
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.app.login();
+    this.app.loadDevices();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.app.close();

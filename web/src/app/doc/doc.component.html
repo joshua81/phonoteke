@@ -19,7 +19,7 @@
             <span *ngIf="app.audio == null || app.audio.paused" class="player-play"></span>
             <span *ngIf="app.audio != null && !app.audio.paused" class="player-pause"></span>
           </div>
-          <div *ngIf="doc.type != 'podcast' && doc.spalbumid" class="player-button" (click)="app.playSpotify(doc.type, doc.spalbumid)">
+          <div *ngIf="doc.type != 'podcast' && doc.spalbumid" class="player-button" (click)="app.playPauseSpotify(doc.type, doc.spalbumid)">
             <span *ngIf="app.track == null || !app.track.is_playing" class="player-play"></span>
             <span *ngIf="app.track != null && app.track.is_playing" class="player-pause"></span>
           </div>

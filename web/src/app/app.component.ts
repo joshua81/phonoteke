@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { timer } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,11 +12,10 @@ import { timer } from 'rxjs';
 export class AppComponent {
   youtube: SafeResourceUrl = null;
 
-  user = null;
   player = null;
   album = null;
   track = null;
-  timer = null;
+  timer: Subscription = null;
 
   audio = null;
   
@@ -25,19 +24,12 @@ export class AppComponent {
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {}
 
-  login() {
+  refreshToken() {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.user == null) {
-      const options = {
-        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-      };
-      this.http.get('https://api.spotify.com/v1/me', options).subscribe(
-        (data: any) => { 
-          if(data) {
-            this.user = data;
-            this.loadDevices();
-          }},
-        error => this.error = 'Errore login Spotify: ' + error.error.message);
+    if(token != null && token != '') {
+      this.http.get('/api/login/refresh').subscribe(
+        (data: any) => {},
+        error => this.error = 'Errore refresh token');
     }
   }
 
@@ -51,8 +43,12 @@ export class AppComponent {
         (data: any) => {
           if(data && data.devices.length > 0) {
             this.setPlayer(data.devices[0]);
-          }},
-        error => this.error = 'Errore caricamento device Spotify: ' + error.error.message);
+          }
+          else {
+            this.error = 'Nessun device trovato. Apri Spotify sul device che stai utilizzando.';
+          }
+        },
+        error => this.error = 'Errore caricamento device Spotify');
     }
   }
 
@@ -67,61 +63,70 @@ export class AppComponent {
       };
       this.http.put('https://api.spotify.com/v1/me/player', body, options).subscribe(
         (data: any) => this.player = device,
-        error => this.error = 'Errore selezione device Spotify: ' + error.error.message);
+        error => this.error = 'Errore selezione device Spotify');
     }
   }
 
-  playSpotify(type: string, id: string, pos: number=0) {
-    this.close();
-    type = type == 'podcast' ? 'playlist' : type;
+  playPauseSpotify(type: string=null, id: string=null, pos: number=0) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '') {
-      var body = type != 'track' ? {
-        'context_uri': 'spotify:' + type + ':' + id,
-        'uris': null,
-        'offset': {'position': pos}
-      } : {
-        'context_uri': null,
-        'uris': ['spotify:track:' + id],
-        'offset': {'position': pos}
-      };
-      const options = {
-        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-      };
-      this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
-        (data: any) => {
-          this.album = id;
-          this.timer = timer(0, 3000).subscribe(() => this.statusSpotify());
-        },
-        error => this.error = 'Errore Play player Spotify: ' + error.error.message);
-    }
-  }
-
-  pauseSpotify() {
-    const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '') {
-      const options = {
-        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-      };
-      this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
-        (data: any) => {},
-        error => this.error = 'Errore Pause player Spotify: ' + error.error.message);
-    }
-  }
-
-  playPauseSpotify() {
-    const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '') {
-      if(this.track.is_playing) {
-        this.pauseSpotify();
+      // pause
+      if(this.track != null && this.track.is_playing && (id == null || this.album == id)) {
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
+          (data: any) => {this.statusSpotify()},
+          error => this.error = 'Errore player Spotify (Pause)');
       }
-      else {
+      // play
+      else if(this.track != null && !this.track.is_playing && (id == null || this.album == id)) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
         this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
-          (data: any) => {},
+          (data: any) => {this.statusSpotify()},
           error => this.error = 'Errore Pause player Spotify: ' + error.error.message);
+      }
+      // play an other album
+      else {
+        type = type == 'podcast' ? 'playlist' : type;
+        const token = this.cookieService.get('spotify-token');
+        if(token != null && token != '') {
+          var body = type != 'track' ? {
+            'context_uri': 'spotify:' + type + ':' + id,
+            'uris': null,
+            'offset': {'position': pos}
+          } : {
+            'context_uri': null,
+            'uris': ['spotify:track:' + id],
+            'offset': {'position': pos}
+          };
+          const options = {
+            headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+          };
+          this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
+            (data: any) => {
+              this.album = id;
+              this.statusSpotify();
+              this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
+            },
+            error => this.error = 'Errore player Spotify (Play)');
+        }
+      }
+    }
+  }
+
+  stopSpotify() {
+    const token = this.cookieService.get('spotify-token');
+    if(token != null && token != '') {
+      if(this.track != null && this.track.is_playing) {
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
+          (data: any) => {},
+          error => this.error = 'Errore player Spotify (Pause)');
       }
     }
   }
@@ -133,8 +138,8 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/previous', null, options).subscribe(
-        (data: any) => {},
-        error => this.error = 'Errore Prev player Spotify: ' + error.error.message);
+        (data: any) => {this.statusSpotify()},
+        error => this.error = 'Errore player Spotify (Prev)');
     }
   }
 
@@ -145,8 +150,8 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.post('https://api.spotify.com/v1/me/player/next', null, options).subscribe(
-        (data: any) => {},
-        error => this.error = 'Errore Next player Spotify: ' + error.error.message);
+        (data: any) => {this.statusSpotify()},
+        error => this.error = 'Errore player Spotify (Next)');
     }
   }
 
@@ -161,7 +166,10 @@ export class AppComponent {
           if(data) {
             this.track = data;
           }},
-        error => this.error = 'Errore stato player Spotify: ' + error.error.message);
+        error => {
+          this.refreshToken();
+          this.error = 'Errore lettura stato player Spotify';
+        });
     }
   }
 
@@ -200,7 +208,7 @@ export class AppComponent {
     }
   }
 
-  /*formatTime(seconds: number) {
+  formatTime(seconds: number) {
     if(!isNaN(seconds)) {
       var minutes: number = Math.floor(seconds / 60);
       var mins = (minutes >= 10) ? minutes : "0" + minutes;
@@ -208,7 +216,7 @@ export class AppComponent {
       var secs = (seconds >= 10) ? seconds : "0" + seconds;
       return mins + ":" + secs;
     }
-  }*/
+  }
 
   playYoutube(track: string){
     if(this.youtube == null) {
@@ -231,23 +239,27 @@ export class AppComponent {
   }
 
   close() {
+    // spotify
+    this.stopSpotify();
     this.album = null;
     this.track = null;
-    this.timer = null;
+    if(this.timer) {
+      this.timer.unsubscribe();
+      this.timer = null;
+    }
 
+    // podcast player
     if(this.audio) {
       this.audio.pause();
       this.audio = null;
     }
 
+    // youtube
     this.youtube = null;
-    this.events = null;
-    this.error = null;
   }
 
   closeEvents(){
     this.events = null;
-    this.error = null;
   }
 
   closeAlert(){

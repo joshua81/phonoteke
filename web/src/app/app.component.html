@@ -20,7 +20,9 @@
     <div class="player-button mr-2" (click)="nextSpotify()">
       <span class="player-forward"></span>
     </div>
-    <div class="icon" (click)="close()"><span class="close"></span></div>
+    <div class="close" aria-label="Close" (click)="close()">
+      <span class="text-white" aria-hidden="true">&times;</span>
+    </div>
   </div>
 </div>
 

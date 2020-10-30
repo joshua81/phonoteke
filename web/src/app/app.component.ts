@@ -77,7 +77,10 @@ export class AppComponent {
         };
         this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
           (data: any) => {this.statusSpotify()},
-          error => this.error = 'Errore player Spotify (Pause)');
+          error => {
+            this.refreshToken();
+            this.error = 'Errore player Spotify (Pause)';
+          });
       }
       // play
       else if(this.track != null && !this.track.is_playing && (id == null || this.album == id)) {
@@ -86,7 +89,10 @@ export class AppComponent {
         };
         this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
           (data: any) => {this.statusSpotify()},
-          error => this.error = 'Errore Pause player Spotify: ' + error.error.message);
+          error => {
+            this.refreshToken();
+            this.error = 'Errore player Spotify (Play)';
+          });
       }
       // play an other album
       else {
@@ -111,7 +117,10 @@ export class AppComponent {
               this.statusSpotify();
               this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
             },
-            error => this.error = 'Errore player Spotify (Play)');
+            error => {
+              this.refreshToken();
+              this.error = 'Errore player Spotify (Play)';
+            });
         }
       }
     }
@@ -126,7 +135,10 @@ export class AppComponent {
         };
         this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
           (data: any) => {},
-          error => this.error = 'Errore player Spotify (Pause)');
+          error => {
+            this.refreshToken();
+            this.error = 'Errore player Spotify (Pause)';
+          });
       }
     }
   }
@@ -139,7 +151,10 @@ export class AppComponent {
       };
       this.http.post('https://api.spotify.com/v1/me/player/previous', null, options).subscribe(
         (data: any) => {this.statusSpotify()},
-        error => this.error = 'Errore player Spotify (Prev)');
+        error => {
+          this.refreshToken();
+          this.error = 'Errore player Spotify (Prev)';
+        });
     }
   }
 
@@ -151,7 +166,10 @@ export class AppComponent {
       };
       this.http.post('https://api.spotify.com/v1/me/player/next', null, options).subscribe(
         (data: any) => {this.statusSpotify()},
-        error => this.error = 'Errore player Spotify (Next)');
+        error => {
+          this.refreshToken();
+          this.error = 'Errore player Spotify (Next)'
+        });
     }
   }
 

@@ -71,5 +71,6 @@ img.cover {
   left: 5px;
   background: #000000;
   opacity: 0.8;
+  cursor: pointer;
 }
 

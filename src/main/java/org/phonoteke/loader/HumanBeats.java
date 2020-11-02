@@ -138,16 +138,16 @@ public interface HumanBeats
 				if(m.group(2).contains("&")) {
 					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
 				}
-				if(m.group(1).contains(" and ")) {
+				if(m.group(1).toLowerCase().contains(" and ")) {
 					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
 				}
-				if(m.group(2).contains(" and ")) {
+				if(m.group(2).toLowerCase().contains(" and ")) {
 					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
 				}
-				if(m.group(1).contains(" with ")) {
+				if(m.group(1).toLowerCase().contains(" with ")) {
 					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
 				}
-				if(m.group(2).contains(" with ")) {
+				if(m.group(2).toLowerCase().contains(" with ")) {
 					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
 				}
 			}
@@ -165,16 +165,16 @@ public interface HumanBeats
 					if(m.group(2).contains("&")) {
 						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
 					}
-					if(m.group(1).contains(" and ")) {
+					if(m.group(1).toLowerCase().contains(" and ")) {
 						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
 					}
-					if(m.group(2).contains(" and ")) {
+					if(m.group(2).toLowerCase().contains(" and ")) {
 						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
 					}
-					if(m.group(1).contains(" with ")) {
+					if(m.group(1).toLowerCase().contains(" with ")) {
 						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
 					}
-					if(m.group(2).contains(" with ")) {
+					if(m.group(2).toLowerCase().contains(" with ")) {
 						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
 					}
 				}
@@ -191,6 +191,8 @@ public interface HumanBeats
 		artist = artist.split(",")[0];
 		artist = artist.split(";")[0];
 		artist = artist.replaceAll("=", " ");
+		artist = artist.replaceAll("\\[\\]", " ");
+		artist = artist.replaceAll("\\]\\[", " ");
 		artist = artist.trim();
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(artist);
@@ -209,6 +211,8 @@ public interface HumanBeats
 
 		// song
 		song = song.replaceAll("=", " ");
+		artist = artist.replaceAll("\\[\\]", " ");
+		artist = artist.replaceAll("\\]\\[", " ");
 		song = song.trim();
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(song);

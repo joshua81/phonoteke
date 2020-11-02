@@ -133,7 +133,7 @@ app.get('/api/login/refresh', async(req,res)=>{
 	var options = {
 		url: 'https://accounts.spotify.com/api/token',
 		form: {
-			refresh_token: req.cookies('spotify-refresh-token'),
+			refresh_token: req.cookies['spotify-refresh-token'],
 			grant_type: 'refresh_token'
 		},
 		headers: {
@@ -147,6 +147,10 @@ app.get('/api/login/refresh', async(req,res)=>{
 			var refresh_token = body.refresh_token;
 			res.cookie('spotify-token', access_token);
 			res.cookie('spotify-refresh-token', refresh_token);
+			res.send('OK');
+		}
+		else {
+			res.status(response.statusCode).send(body);
 		}
 	});
 });

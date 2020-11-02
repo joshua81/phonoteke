@@ -71,7 +71,7 @@ export class AppComponent {
               this.setPlayer(data.devices[0]);
             }
             else {
-              this.error = 'Nessun device trovato. Apri Spotify sul device che stai utilizzando.';
+              this.error = 'Nessun device trovato. Apri Spotify.';
             }
           },
           error => this.error = 'Errore caricamento device Spotify');

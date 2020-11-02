@@ -12,7 +12,7 @@
 
 .cc {
   display: inline-block;
-  mask: url("/images/cc.svg");
+  mask: url("/images/cc.svg") no-repeat;
   width: 20px;
   height: 20px;
   margin-top: 5px;
@@ -23,7 +23,7 @@
 
 .mail {
   display: inline-block;
-  mask: url("/images/mail.svg");
+  mask: url("/images/mail.svg") no-repeat;
   width: 20px;
   height: 20px;
   margin-top: 5px;
@@ -34,7 +34,7 @@
 
 .linkedin {
   display: inline-block;
-  mask: url("/images/linkedin.svg");
+  mask: url("/images/linkedin.svg") no-repeat;
   width: 17px;
   height: 20px;
   margin-top: 5px;
@@ -45,7 +45,7 @@
 
 .github {
   display: inline-block;
-  mask: url("/images/github.svg");
+  mask: url("/images/github.svg") no-repeat;
   width: 20px;
   height: 20px;
   margin-top: 5px;
@@ -56,7 +56,7 @@
 
 .twitter {
   display: inline-block;
-  mask: url("/images/twitter.svg");
+  mask: url("/images/twitter.svg") no-repeat;
   width: 20px;
   height: 20px;
   margin-top: 5px;

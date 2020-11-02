@@ -234,7 +234,7 @@ img.close-button {
   
 .player-play {
     display: inline-block;
-    mask: url("/images/play.svg");
+    mask: url("/images/play.svg") no-repeat;
     width: 18px;
     height: 20px;
     margin: 0px;
@@ -245,7 +245,7 @@ img.close-button {
   
 .player-pause {
     display: inline-block;
-    mask: url("/images/pause.svg");
+    mask: url("/images/pause.svg") no-repeat;
     width: 18px;
     height: 20px;
     margin: 0px;
@@ -256,7 +256,7 @@ img.close-button {
   
 .player-forward {
     display: inline-block;
-    mask: url("/images/forward.svg");
+    mask: url("/images/forward.svg") no-repeat;
     width: 18px;
     height: 20px;
     margin: 0px;
@@ -267,7 +267,7 @@ img.close-button {
   
 .player-backward {
     display: inline-block;
-    mask: url("/images/backward.svg");
+    mask: url("/images/backward.svg") no-repeat;
     width: 18px;
     height: 20px;
     margin: 0px;

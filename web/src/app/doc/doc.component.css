@@ -42,7 +42,7 @@ h2.vote {
 
 .star {
   display: inline-block;
-  mask: url("/images/star.svg");
+  mask: url("/images/star.svg") no-repeat;
   width: 20px;
   height: 18px;
   background: #FFFFFF;

@@ -22,7 +22,7 @@
 
 .previous {
   display: inline-block;
-  mask: url("/images/previous.svg");
+  mask: url("/images/previous.svg") no-repeat;
   width: 10px;
   height: 15px;
   margin-top: 8px;
@@ -51,7 +51,7 @@
 
 .next {
   display: inline-block;
-  mask: url("/images/next.svg");
+  mask: url("/images/next.svg") no-repeat;
   width: 10px;
   height: 15px;
   margin-top: 8px;
@@ -75,7 +75,7 @@ img.cover {
 .youtube {
   position: absolute;
   display: inline-block;
-  mask: url("/images/youtube.svg");
+  mask: url("/images/youtube.svg") no-repeat;
   width: 30px;
   height: 30px;
   margin: 0px;

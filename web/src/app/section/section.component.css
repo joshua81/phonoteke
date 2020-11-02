@@ -6,7 +6,7 @@
 
 .previous {
   display: inline-block;
-  mask: url("/images/previous.svg");
+  mask: url("/images/previous.svg") no-repeat;
   width: 10px;
   height: 15px;
   margin-top: 2px;
@@ -24,7 +24,7 @@
 
 .next {
   display: inline-block;
-  mask: url("/images/next.svg");
+  mask: url("/images/next.svg") no-repeat;
   width: 10px;
   height: 15px;
   margin-top: 2px;

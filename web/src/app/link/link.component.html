@@ -1,5 +1,5 @@
 <div *ngIf="links && links.length != 0" class="link mt-3">
-  <div *ngIf="app.isDesktop()" class="backward" (click)="previous()">
+  <div *ngIf="app.isDesktop" class="backward" (click)="previous()">
     <span class="previous"></span>
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
@@ -17,7 +17,7 @@
       </div>
   </div>
   </div>
-  <div *ngIf="app.isDesktop()" class="forward" (click)="next()">
+  <div *ngIf="app.isDesktop" class="forward" (click)="next()">
     <span class="next"></span>
   </div>
 </div>

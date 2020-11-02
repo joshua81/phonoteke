@@ -10,6 +10,7 @@ import { Observable, Subscription, timer } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  isDesktop: boolean = false;
   youtube: SafeResourceUrl = null;
 
   player = null;
@@ -23,6 +24,30 @@ export class AppComponent {
   error = null;
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {}
+  
+  ngOnInit() {
+    var hasTouchScreen = false;
+    if (window.navigator.maxTouchPoints > 0) { 
+      hasTouchScreen = true;
+    } 
+    else if (window.navigator.msMaxTouchPoints > 0) {
+      hasTouchScreen = true;
+    } 
+    else {
+      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+      if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouchScreen = !!mQ.matches;
+      }
+      else {
+        // Only as a last resort, fall back to user agent sniffing
+        var ua: string = window.navigator.userAgent;
+        hasTouchScreen = (
+          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
+          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
+      }
+    }
+    this.isDesktop = !hasTouchScreen;
+  }
 
   refreshToken() {
     const token = this.cookieService.get('spotify-token');
@@ -34,21 +59,23 @@ export class AppComponent {
   }
 
   loadDevices() {
-    const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '') {
-      const options = {
-        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-      };
-      this.http.get('https://api.spotify.com/v1/me/player/devices', options).subscribe(
-        (data: any) => {
-          if(data && data.devices.length > 0) {
-            this.setPlayer(data.devices[0]);
-          }
-          else {
-            this.error = 'Nessun device trovato. Apri Spotify sul device che stai utilizzando.';
-          }
-        },
-        error => this.error = 'Errore caricamento device Spotify');
+    if(this.isDesktop) {
+      const token = this.cookieService.get('spotify-token');
+      if(token != null && token != '') {
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        this.http.get('https://api.spotify.com/v1/me/player/devices', options).subscribe(
+          (data: any) => {
+            if(data && data.devices.length > 0) {
+              this.setPlayer(data.devices[0]);
+            }
+            else {
+              this.error = 'Nessun device trovato. Apri Spotify sul device che stai utilizzando.';
+            }
+          },
+          error => this.error = 'Errore caricamento device Spotify');
+      }
     }
   }
 
@@ -69,7 +96,7 @@ export class AppComponent {
 
   playPauseSpotify(type: string=null, id: string=null, pos: number=0) {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '') {
+    if(token != null && token != '' && this.player != null) {
       // pause
       if(this.track != null && this.track.is_playing && (id == null || this.album == id)) {
         const options = {
@@ -282,29 +309,5 @@ export class AppComponent {
 
   closeAlert(){
     this.error = null;
-  }
-
-  isDesktop() {
-    var hasTouchScreen = false;
-    if (window.navigator.maxTouchPoints > 0) { 
-      hasTouchScreen = true;
-    } 
-    else if (window.navigator.msMaxTouchPoints > 0) {
-      hasTouchScreen = true;
-    } 
-    else {
-      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
-      if (mQ && mQ.media === "(pointer:coarse)") {
-        hasTouchScreen = !!mQ.matches;
-      }
-      else {
-        // Only as a last resort, fall back to user agent sniffing
-        var ua: string = window.navigator.userAgent;
-        hasTouchScreen = (
-          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
-          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
-      }
-    }
-    return !hasTouchScreen;
   }
 }

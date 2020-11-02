@@ -1,5 +1,5 @@
 <div *ngIf="tracks && tracks.length != 0" class="video mt-3">
-  <div *ngIf="app.isDesktop()" class="backward" (click)="previous()">
+  <div *ngIf="app.isDesktop" class="backward" (click)="previous()">
     <span class="previous"></span>
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll pt-2">
@@ -10,7 +10,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="app.isDesktop()" class="forward" (click)="next()">
+  <div *ngIf="app.isDesktop" class="forward" (click)="next()">
     <span class="next"></span>
   </div>
 </div>

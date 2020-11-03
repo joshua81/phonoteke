@@ -10,11 +10,14 @@
       <h3 class="text-center text-truncate-1" [innerHTML]="doc.doc.artist"></h3>
       <h2 class="text-center text-truncate-1" [innerHTML]="doc.doc.title"></h2>
     </div>
-    <a *ngIf="app.isDesktop && app.player == null" class="ml-1 mr-2" href="/api/login">
-      <img class="speaker disabled"/>
-    </a>
-    <a *ngIf="app.player != null" class="ml-1 mr-2" (click)="app.loadDevices()">
-      <img class="speaker">
-    </a>
+    <div *ngIf="app.isDesktop" class="ml-1 mr-2">
+      <a *ngIf="app.player == null" href="/api/login">
+        <img class="speaker disabled"/>
+      </a>
+      <a *ngIf="app.player != null" (click)="app.loadDevices()">
+        <img class="speaker">
+      </a>
+    </div>
+    <div *ngIf="!app.isDesktop" class="ml-1 mr-2" [ngStyle]="{'width':'30px'}"></div>
   </div>
 </nav>

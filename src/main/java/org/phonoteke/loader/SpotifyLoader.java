@@ -208,7 +208,8 @@ public class SpotifyLoader implements HumanBeats
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
 			append("coverS", spotify.getString("coverS")).
-			append("score", spotify.getInteger("score"));
+			append("score", spotify.getInteger("score")).
+			append("artistid", null);
 		}
 		else
 		{
@@ -270,7 +271,8 @@ public class SpotifyLoader implements HumanBeats
 			append("coverL", spotify.getString("coverL")).
 			append("coverM", spotify.getString("coverM")).
 			append("coverS", spotify.getString("coverS")).
-			append("score", spotify.getInteger("score"));
+			append("score", spotify.getInteger("score")).
+			append("artistid", null);
 		}
 		else
 		{
@@ -365,7 +367,8 @@ public class SpotifyLoader implements HumanBeats
 							append("coverM", spotify.getString("coverM")).
 							append("coverS", spotify.getString("coverS")).
 							append("title", spotify.getString("artist") + " - " + spotify.getString("track")).
-							append("score", spotify.getInteger("score"));
+							append("score", spotify.getInteger("score")).
+							append("artistid", null);
 						}
 						else
 						{
@@ -402,7 +405,9 @@ public class SpotifyLoader implements HumanBeats
 				String song = chunk[1];
 				if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
 				{
+					artist = artist.replaceAll("&nbsp;", " ");
 					artist = artist.trim();
+					song = song.replaceAll("&nbsp;", " ");
 					song = song.trim();
 					String q = artist + " " + song;
 					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();

@@ -31,7 +31,7 @@ public interface HumanBeats
 	public static final String FEAT7 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
 	public static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
 	public static final List<String> FEAT = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
-	
+
 	public static final String AKA1 = "(?i)(.{1,100}?) aka (.{1,200})";
 	public static final List<String> AKA = Lists.newArrayList(AKA1);
 
@@ -125,6 +125,7 @@ public interface HumanBeats
 
 	public static List<String[]> parseTrack(String track) 
 	{
+		track = track.replaceAll("&nbsp;", " ");
 		track = track.trim();
 		List<String[]> matches = Lists.newArrayList();
 		for(String match : MATCH) {

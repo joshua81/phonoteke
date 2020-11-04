@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -51,9 +51,12 @@ export class AppComponent {
 
   refreshToken() {
     const token = this.cookieService.get('spotify-token');
+    console.log('Old token: ' + token);
     if(token != null && token != '') {
       this.http.get('/api/login/refresh').subscribe(
-        (data: any) => {},
+        (data: any) => {
+          console.log('New token: ' + this.cookieService.get('spotify-token'));
+        },
         error => this.error = 'Errore refresh token');
     }
   }
@@ -213,7 +216,7 @@ export class AppComponent {
           }},
         error => {
           this.refreshToken();
-          this.error = 'Errore lettura stato player Spotify';
+          //this.error = 'Errore lettura stato player Spotify';
         });
     }
   }

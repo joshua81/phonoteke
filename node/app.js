@@ -142,12 +142,11 @@ app.get('/api/login/refresh', async(req,res)=>{
 		json: true
 	};
 	request.post(options, function(error, response, body) {
+		console.log('Refresh: %j', body);
 		if (!error && response.statusCode === 200) {
 			var access_token = body.access_token;
-			var refresh_token = body.refresh_token;
 			res.cookie('spotify-token', access_token);
-			res.cookie('spotify-refresh-token', refresh_token);
-			res.send('OK');
+			res.send();
 		}
 		else {
 			res.status(response.statusCode).send(body);

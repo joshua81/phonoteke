@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row align-items-center w-max">
-    <a class="ml-2 mr-1" [routerLink]="['/']">
-      <!--span class="previous"></span-->
+    <a class="button ml-2 mr-1" (click)="back()">
+      <span class="previous"></span>
       <!--img class="logo"-->
-      <img *ngIf="doc.doc.coverM == null" class="cover" src="{{doc.doc.cover}}"/>
-      <img *ngIf="doc.doc.coverM != null" class="cover" src="{{doc.doc.coverM}}"/>
+      <!--img *ngIf="doc.doc.coverM == null" class="cover" src="{{doc.doc.cover}}"/>
+      <img *ngIf="doc.doc.coverM != null" class="cover" src="{{doc.doc.coverM}}"/-->
     </a>
     <div class="w-100">
       <h3 class="text-center text-truncate-1" [innerHTML]="doc.doc.artist"></h3>

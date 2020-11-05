@@ -7,3 +7,20 @@ img.cover {
 .disabled {
     filter: grayscale(100%);
 }
+
+.button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+  
+.previous {
+    display: inline-block;
+    mask: url("/images/previous.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin-top: 8px;
+    margin-left: 0px;
+    background: #000000;
+    cursor: pointer;
+  }

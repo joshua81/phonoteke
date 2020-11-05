@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common'
 import { AppComponent } from 'src/app/app.component';
 import { DocComponent } from '../doc.component';
 
@@ -9,7 +10,11 @@ import { DocComponent } from '../doc.component';
 })
 export class DocMenuComponent implements OnInit {
 
-  constructor(public app: AppComponent, public doc: DocComponent) { }
+  constructor(private location: Location, public app: AppComponent, public doc: DocComponent) { }
 
   ngOnInit() {}
+
+  back(): void {
+    this.location.back()
+  }
 }

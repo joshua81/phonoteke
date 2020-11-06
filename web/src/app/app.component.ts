@@ -77,7 +77,10 @@ export class AppComponent {
               this.error = 'Nessun device trovato. Apri Spotify.';
             }
           },
-          error => this.error = 'Errore caricamento device Spotify');
+          error => {
+            this.refreshToken();
+            this.error = 'Errore caricamento device Spotify';
+          });
       }
     }
   }
@@ -93,7 +96,10 @@ export class AppComponent {
       };
       this.http.put('https://api.spotify.com/v1/me/player', body, options).subscribe(
         (data: any) => this.player = device,
-        error => this.error = 'Errore selezione device Spotify');
+        error => {
+          this.refreshToken();
+          this.error = 'Errore selezione device Spotify';
+      });
     }
   }
 

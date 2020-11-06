@@ -3,7 +3,6 @@
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" (click)="app.playPauseSpotify(doc.doc.type, doc.doc.spalbumid)"/>
-                <h1 *ngIf="track.spotify == null" class="cover text-uppercase text-white font-weight-bold"></h1>
             </div>
             <div class="ml-2 w-100">
                 <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>

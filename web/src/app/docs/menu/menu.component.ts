@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {PodcastsComponent} from '../podcasts.component';
+import { DocsComponent } from '../docs.component';
 import { AppComponent } from '../../app.component';
 
 @Component({
@@ -7,9 +7,9 @@ import { AppComponent } from '../../app.component';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class PodcastsMenuComponent implements OnInit {
+export class DocsMenuComponent implements OnInit {
 
-  constructor(public app: AppComponent, public docs: PodcastsComponent) { }
+  constructor(public app: AppComponent, public docs: DocsComponent) { }
 
   ngOnInit() {}
 }

@@ -1,0 +1,72 @@
+.fill { 
+    min-height: calc(100vh - 135px);
+}
+
+.backward {
+    width: 40px;
+    height: 20px;
+    cursor: pointer;
+}
+  
+.previous {
+    display: inline-block;
+    mask: url("/images/previous.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin-top: 2px;
+    margin-left: 20px;
+    background: #18A2B8;
+    cursor: pointer;
+}
+  
+.forward {
+    width: 40px;
+    height: 20px;
+    background: none;
+    cursor: pointer;
+}
+  
+.next {
+    display: inline-block;
+    mask: url("/images/next.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin-top: 2px;
+    margin-left: 20px;
+    background: #18A2B8;
+    cursor: pointer;
+}
+  
+div.cover {
+    width: 190px;
+    position: relative;
+}
+  
+a.cover {
+    width: 190px;
+    height: 190px;
+}
+  
+img.cover {
+    width: 190px;
+    height: 190px;
+    object-fit:cover;
+}
+  
+.card {
+    border-style: none;
+}
+  
+.card-body {
+    position: relative;
+    width: 190px;
+    height: 140px;
+}
+  
+.card-footer {
+    border-style: none;
+    background: none;
+    position: absolute;
+    bottom: 0px;
+}
+  

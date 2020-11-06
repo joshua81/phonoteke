@@ -5,15 +5,15 @@ import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-podcasts',
-  templateUrl: './podcasts.component.html',
-  styleUrls: ['./podcasts.component.css']
+  templateUrl: './docs.component.html',
+  styleUrls: ['./docs.component.css']
 })
-export class PodcastsComponent implements OnInit {
+export class DocsComponent implements OnInit {
   public type: string = null;
   error = null;
   searchText: string = '';
-  podcasts = [];
-  podcastsPage: number = 0;
+  docs = [];
+  page: number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
@@ -28,40 +28,37 @@ export class PodcastsComponent implements OnInit {
   }
 
   scrollDocs() {
-    var page: number = 0;
-    this.podcastsPage++;
-    page = this.podcastsPage;
+    this.page++;
   
     if(this.type == null) {
-      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.error = error);
     }
     else {
-      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.error = error);
     }
   }
 
   loadDocs() {
-    var page: number = 0;
-    this.podcastsPage = 0;
-    this.podcasts = [];
+    this.page = 0;
+    this.docs = [];
 
     if(this.type == null) {
-      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText).subscribe(
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.error = error);
     }
     else {
-      this.http.get('/api/docs?p=' + page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.error = error);
     }
   }
 
   docsLoaded(data: any) {
-    this.podcasts.push.apply(this.podcasts, data);
+    this.docs.push.apply(this.docs, data);
   }
 }

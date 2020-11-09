@@ -15,6 +15,7 @@ export class AppComponent {
 
   player = null;
   album = null;
+  tracks = [];
   track = null;
   timer: Subscription = null;
 
@@ -105,11 +106,16 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(type: string=null, id: string=null, pos: number=0) {
+  playPauseSpotify(type: string=null, album: string=null, pos: number=0, tracks=[]) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
+      var trackNumber: number = this.track == null ? -1 : 
+        tracks.map(track => track.spotify).
+        filter(spotify => spotify != null).
+        indexOf(this.track.item.id);
+
       // pause
-      if(this.track != null && this.track.is_playing && (id == null || this.album == id)) {
+      if(this.track != null && this.track.is_playing && (album == null || (this.album == album && trackNumber == pos))) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -121,7 +127,7 @@ export class AppComponent {
           });
       }
       // play
-      else if(this.track != null && !this.track.is_playing && (id == null || this.album == id)) {
+      else if(this.track != null && !this.track.is_playing && (album == null || (this.album == album && trackNumber == pos))) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -132,18 +138,18 @@ export class AppComponent {
             this.error = 'Errore player Spotify (Play)';
           });
       }
-      // play an other album
+      // play an other album or track
       else {
         type = type == 'podcast' ? 'playlist' : type;
         const token = this.cookieService.get('spotify-token');
         if(token != null && token != '') {
           var body = type != 'track' ? {
-            'context_uri': 'spotify:' + type + ':' + id,
+            'context_uri': 'spotify:' + type + ':' + album,
             'uris': null,
             'offset': {'position': pos}
           } : {
             'context_uri': null,
-            'uris': ['spotify:track:' + id],
+            'uris': ['spotify:track:' + album],
             'offset': {'position': pos}
           };
           const options = {
@@ -151,8 +157,8 @@ export class AppComponent {
           };
           this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
             (data: any) => {
-              this.album = id;
-              this.statusSpotify();
+              this.album = album;
+              this.tracks = tracks;
               this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
             },
             error => {
@@ -164,10 +170,18 @@ export class AppComponent {
     }
   }
 
-  stopSpotify() {
+  closeSpotify() {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '') {
       if(this.track != null && this.track.is_playing) {
+        this.album = null;
+        this.tracks = [];
+        this.track = null;
+        if(this.timer) {
+          this.timer.unsubscribe();
+          this.timer = null;
+        }
+
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -175,7 +189,7 @@ export class AppComponent {
           (data: any) => {},
           error => {
             this.refreshToken();
-            this.error = 'Errore player Spotify (Pause)';
+            this.error = 'Errore player Spotify (Close)';
           });
       }
     }
@@ -296,15 +310,6 @@ export class AppComponent {
   }
 
   close() {
-    // spotify
-    this.stopSpotify();
-    this.album = null;
-    this.track = null;
-    if(this.timer) {
-      this.timer.unsubscribe();
-      this.timer = null;
-    }
-
     // podcast player
     if(this.audio) {
       this.audio.pause();
@@ -313,6 +318,11 @@ export class AppComponent {
 
     // youtube
     this.youtube = null;
+
+    // spotify + events + alerts
+    this.closeSpotify();
+    this.closeEvents();
+    this.closeAlert();
   }
 
   closeEvents(){

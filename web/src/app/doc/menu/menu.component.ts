@@ -15,6 +15,7 @@ export class DocMenuComponent implements OnInit {
   ngOnInit() {}
 
   back(): void {
+    this.app.close();
     this.location.back()
   }
 }

@@ -34,15 +34,20 @@
       <div class="text-white text-truncate-1 font-weight-bold">{{audio.title}}</div>
       <div class="text-white text-truncate-1">{{'di ' + audio.artist}}</div>
     </div>
-    <div class="player-button ml-2" (click)="backwardAudio()">
-      <span class="player-backward"></span>
-    </div>
-    <div class="player-button ml-4 mr-4" (click)="playPauseAudio()">
-      <span *ngIf="audio == null || audio.paused" class="player-play"></span>
-      <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
-    </div>
-    <div class="player-button mr-2" (click)="forwardAudio()">
-      <span class="player-forward"></span>
+    <div class="ml-2 mr-2">
+      <div class="d-flex flex-row align-items-center">
+        <div class="player-button" (click)="backwardAudio()">
+          <span class="player-backward"></span>
+        </div>
+        <div class="player-button ml-4 mr-4" (click)="playPauseAudio()">
+          <span *ngIf="audio == null || audio.paused" class="player-play"></span>
+          <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+        </div>
+        <div class="player-button" (click)="forwardAudio()">
+          <span class="player-forward"></span>
+        </div>
+      </div>
+      <p class="text-white text-center w-100 mt-2 mb-0">{{audioCurrentTime + ' / ' + audioDuration}}</p>
     </div>
     <div class="close" aria-label="Close" (click)="close()">
       <span class="text-white" aria-hidden="true">&times;</span>

@@ -19,6 +19,8 @@ export class AppComponent {
   timer: Subscription = null;
 
   audio = null;
+  audioDuration = "";
+  audioCurrentTime = "";
   
   events = null;
   error = null;
@@ -235,10 +237,10 @@ export class AppComponent {
       this.audio.title = title;
       this.audio.artist = artist;
       this.audio.cover = cover;
-      /*this.audio.ontimeupdate = () => {
+      this.audio.ontimeupdate = () => {
         this.audioDuration = this.formatTime(this.audio.duration);
         this.audioCurrentTime = this.formatTime(this.audio.currentTime);
-      }*/
+      }
       this.audio.load();
     }
 
@@ -270,6 +272,7 @@ export class AppComponent {
       var secs = (seconds >= 10) ? seconds : "0" + seconds;
       return mins + ":" + secs;
     }
+    return "";
   }
 
   playYoutube(track: string){

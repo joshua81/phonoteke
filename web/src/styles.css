@@ -217,6 +217,14 @@ img.spotify {
     height: 30px;
 }
 
+img.equalizer {
+    border-radius: 50%;
+    content: url("/images/equalizer.png");
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
 img.close-button {
     border-radius: 50%;
     content: url("/images/close.png");

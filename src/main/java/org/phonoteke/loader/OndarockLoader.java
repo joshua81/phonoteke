@@ -30,7 +30,7 @@ public class OndarockLoader extends AbstractCrawler
 
 	public static void main(String[] args) {
 		//new OndarockLoader().load("https://www.ondarock.it/speciali/rockinonda_frenchtouch.htm");
-		new OndarockLoader().load("https://www.ondarock.it/speciali/blahblahblah_beatles.htm");
+		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-grantleephillips-lightningshowusyourstuff.htm");
 	}
 
 	@Override

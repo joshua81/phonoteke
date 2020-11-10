@@ -299,8 +299,10 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 
 	protected static org.bson.Document newTrack(String title, String youtube)
 	{
-		title = title.replaceAll("&nbsp;", " ");
-		title = title.trim();
+		if(StringUtils.isNoneEmpty(title)) {
+			title = title.replaceAll("&nbsp;", " ");
+			title = title.trim();
+		}
 		return new org.bson.Document("titleOrig", title).
 				append("title", title).
 				append("youtube", youtube);

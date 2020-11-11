@@ -188,8 +188,8 @@ export class AppComponent {
         this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
           (data: any) => {},
           error => {
-            this.refreshToken();
-            this.error = 'Errore player Spotify (Close)';
+            //this.refreshToken();
+            //this.error = 'Errore player Spotify (Close)';
           });
       }
     }

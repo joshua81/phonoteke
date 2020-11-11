@@ -9,7 +9,7 @@
                 <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
-                <!--img *ngIf="track.artistid" class="icon songkick ml-2" src="{{track.coverM}}" (click)="app.loadEvents(track.artistid)"/-->
+                <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
             </div>
             <img *ngIf="app.track != null && app.track.item.id == track.spotify" class="equalizer ml-2" />
         </div>

@@ -29,27 +29,7 @@ export class AppComponent {
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {}
   
   ngOnInit() {
-    var hasTouchScreen = false;
-    if (window.navigator.maxTouchPoints > 0) { 
-      hasTouchScreen = true;
-    } 
-    else if (window.navigator.msMaxTouchPoints > 0) {
-      hasTouchScreen = true;
-    } 
-    else {
-      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
-      if (mQ && mQ.media === "(pointer:coarse)") {
-        hasTouchScreen = !!mQ.matches;
-      }
-      else {
-        // Only as a last resort, fall back to user agent sniffing
-        var ua: string = window.navigator.userAgent;
-        hasTouchScreen = (
-          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
-          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
-      }
-    }
-    this.isDesktop = !hasTouchScreen;
+    this.isDesktop = !AppComponent.hasTouchScreen();
   }
 
   refreshToken() {
@@ -237,8 +217,8 @@ export class AppComponent {
         (data: any) => {
           if(data) {
             this.track = data;
-            this.duration = this.formatTime(this.track.item.duration_ms/1000);
-            this.currentTime = this.formatTime(this.track.progress_ms/1000);
+            this.duration = AppComponent.formatTime(this.track.item.duration_ms/1000);
+            this.currentTime = AppComponent.formatTime(this.track.progress_ms/1000);
           }},
         error => {
           this.refreshToken();
@@ -256,8 +236,8 @@ export class AppComponent {
       this.audio.artist = artist;
       this.audio.cover = cover;
       this.audio.ontimeupdate = () => {
-        this.duration = this.formatTime(this.audio.duration);
-        this.currentTime = this.formatTime(this.audio.currentTime);
+        this.duration = AppComponent.formatTime(this.audio.duration);
+        this.currentTime = AppComponent.formatTime(this.audio.currentTime);
       }
       this.audio.load();
     }
@@ -280,17 +260,6 @@ export class AppComponent {
     if(!this.audio.paused){
       this.audio.currentTime -= 60.0;
     }
-  }
-
-  formatTime(seconds: number) {
-    if(!isNaN(seconds)) {
-      var minutes: number = Math.floor(seconds / 60);
-      var mins = (minutes >= 10) ? minutes : "0" + minutes;
-      seconds = Math.floor(seconds % 60);
-      var secs = (seconds >= 10) ? seconds : "0" + seconds;
-      return mins + ":" + secs;
-    }
-    return "";
   }
 
   playYoutube(track: string){
@@ -337,5 +306,44 @@ export class AppComponent {
 
   closeAlert(){
     this.error = null;
+  }
+
+  static formatTime(seconds: number) {
+    if(!isNaN(seconds)) {
+      var minutes: number = Math.floor(seconds / 60);
+      var mins = (minutes >= 10) ? minutes : "0" + minutes;
+      seconds = Math.floor(seconds % 60);
+      var secs = (seconds >= 10) ? seconds : "0" + seconds;
+      return mins + ":" + secs;
+    }
+    return "";
+  }
+
+  static formatDate(date: Date) {
+    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(); 
+  }
+
+  static hasTouchScreen() {
+    var hasTouchScreen = false;
+    if (window.navigator.maxTouchPoints > 0) { 
+      hasTouchScreen = true;
+    } 
+    else if (window.navigator.msMaxTouchPoints > 0) {
+      hasTouchScreen = true;
+    } 
+    else {
+      var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+      if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouchScreen = !!mQ.matches;
+      }
+      else {
+        // Only as a last resort, fall back to user agent sniffing
+        var ua: string = window.navigator.userAgent;
+        hasTouchScreen = (
+          /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(ua) ||
+          /\b(Android|Windows Phone|iPad|iPod)\b/i.test(ua));
+      }
+    }
+    return hasTouchScreen;
   }
 }

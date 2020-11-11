@@ -171,17 +171,17 @@ export class AppComponent {
   }
 
   closeSpotify() {
+    this.album = null;
+    this.tracks = [];
+    this.track = null;
+    if(this.timer) {
+      this.timer.unsubscribe();
+      this.timer = null;
+    }
+
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '') {
-      if(this.track != null && this.track.is_playing) {
-        this.album = null;
-        this.tracks = [];
-        this.track = null;
-        if(this.timer) {
-          this.timer.unsubscribe();
-          this.timer = null;
-        }
-
+      if(this.player) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };

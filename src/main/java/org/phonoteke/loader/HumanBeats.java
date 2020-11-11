@@ -8,17 +8,17 @@ import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final String MATCH1 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
-	public static final String MATCH3 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
-	public static final String MATCH4 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
-	public static final String MATCH5 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
+	public static final String MATCH1 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
+	public static final String MATCH2 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
+	public static final String MATCH3 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
+	public static final String MATCH4 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
+	public static final String MATCH5 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
 	public static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5);
 
-	public static final String MATCHS1 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS2 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS3 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS4 = "[•*-]{0,1}[0-9]{0,2}[ ]{0,}[\\._)–-]{0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
+	public static final String MATCHS1 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS2 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS3 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS4 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
 	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4);
 	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-");
 
@@ -131,25 +131,25 @@ public interface HumanBeats
 		for(String match : MATCH) {
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
-				matches.add(parseArtistSong(m.group(1),  m.group(2)));
-				matches.add(parseArtistSong(m.group(2),  m.group(1)));
-				if(m.group(1).contains("&")) {
-					matches.add(parseArtistSong(m.group(1).split("&")[0],  m.group(2)));
-				}
+				matches.add(parseArtistSong(m.group(2),  m.group(3)));
+				matches.add(parseArtistSong(m.group(3),  m.group(2)));
 				if(m.group(2).contains("&")) {
-					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
+					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
 				}
-				if(m.group(1).toLowerCase().contains(" and ")) {
-					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
+				if(m.group(3).contains("&")) {
+					matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
 				}
 				if(m.group(2).toLowerCase().contains(" and ")) {
-					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
+					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(3)));
 				}
-				if(m.group(1).toLowerCase().contains(" with ")) {
-					matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
+				if(m.group(3).toLowerCase().contains(" and ")) {
+					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\band\\b")[0],  m.group(2)));
 				}
 				if(m.group(2).toLowerCase().contains(" with ")) {
-					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
+					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(3)));
+				}
+				if(m.group(3).toLowerCase().contains(" with ")) {
+					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
 				}
 			}
 		}
@@ -158,25 +158,25 @@ public interface HumanBeats
 				match = match.replaceAll("SEPARATOR", separator);
 				Matcher m = Pattern.compile(match).matcher(track);
 				if(m.matches()) {
-					matches.add(parseArtistSong(m.group(1),  m.group(2)));
-					matches.add(parseArtistSong(m.group(2),  m.group(1)));
-					if(m.group(1).contains("&")) {
-						matches.add(parseArtistSong(m.group(1).split("&")[0],  m.group(2)));
-					}
+					matches.add(parseArtistSong(m.group(2),  m.group(3)));
+					matches.add(parseArtistSong(m.group(3),  m.group(2)));
 					if(m.group(2).contains("&")) {
-						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(1)));
+						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
 					}
-					if(m.group(1).toLowerCase().contains(" and ")) {
-						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\band\\b")[0],  m.group(2)));
+					if(m.group(3).contains("&")) {
+						matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
 					}
 					if(m.group(2).toLowerCase().contains(" and ")) {
-						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(1)));
+						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(3)));
 					}
-					if(m.group(1).toLowerCase().contains(" with ")) {
-						matches.add(parseArtistSong(m.group(1).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
+					if(m.group(3).toLowerCase().contains(" and ")) {
+						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\band\\b")[0],  m.group(2)));
 					}
 					if(m.group(2).toLowerCase().contains(" with ")) {
-						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(1)));
+						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(3)));
+					}
+					if(m.group(3).toLowerCase().contains(" with ")) {
+						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
 					}
 				}
 			}

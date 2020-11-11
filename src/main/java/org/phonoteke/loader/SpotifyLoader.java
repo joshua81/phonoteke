@@ -57,7 +57,7 @@ public class SpotifyLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load("87060ad631c2bc1fcdbeb4d758337f1298a988dd23889740452f3dd98a696323");
+		new SpotifyLoader().load("34dce2485d8db844a9ffb826bb4bf46428b21a43af59ffed83aed7598f06e0f4");
 	}
 
 	@Override

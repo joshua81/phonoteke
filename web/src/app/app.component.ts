@@ -20,8 +20,8 @@ export class AppComponent {
   timer: Subscription = null;
 
   audio = null;
-  audioDuration = "";
-  audioCurrentTime = "";
+  duration = "";
+  currentTime = "";
   
   events = null;
   error = null;
@@ -174,6 +174,8 @@ export class AppComponent {
     this.album = null;
     this.tracks = [];
     this.track = null;
+    this.duration = "";
+    this.currentTime = "";
     if(this.timer) {
       this.timer.unsubscribe();
       this.timer = null;
@@ -235,6 +237,8 @@ export class AppComponent {
         (data: any) => {
           if(data) {
             this.track = data;
+            this.duration = this.formatTime(this.track.item.duration_ms/1000);
+            this.currentTime = this.formatTime(this.track.progress_ms/1000);
           }},
         error => {
           this.refreshToken();
@@ -252,8 +256,8 @@ export class AppComponent {
       this.audio.artist = artist;
       this.audio.cover = cover;
       this.audio.ontimeupdate = () => {
-        this.audioDuration = this.formatTime(this.audio.duration);
-        this.audioCurrentTime = this.formatTime(this.audio.currentTime);
+        this.duration = this.formatTime(this.audio.duration);
+        this.currentTime = this.formatTime(this.audio.currentTime);
       }
       this.audio.load();
     }
@@ -314,6 +318,8 @@ export class AppComponent {
     if(this.audio) {
       this.audio.pause();
       this.audio = null;
+      this.duration = "";
+      this.currentTime = "";
     }
 
     // youtube

@@ -10,6 +10,7 @@
       <div class="text-white text-truncate-1">{{track.item.name + ' da '}}<span class="text-white font-weight-bold">{{track.item.album.name}}</span></div>
       <div class="text-white text-truncate-1">{{'di ' + track.item.artists[0].name}}</div>
     </div>
+    <div class="text-white text-center">{{currentTime + '/' + duration}}</div>
     <div class="player-button ml-2" (click)="previousSpotify()">
       <span class="player-backward"></span>
     </div>
@@ -34,18 +35,16 @@
       <div class="text-white text-truncate-1 font-weight-bold">{{audio.title}}</div>
       <div class="text-white text-truncate-1">{{'di ' + audio.artist}}</div>
     </div>
-    <div class="text-white text-center">{{audioCurrentTime + '/' + audioDuration}}</div>
-    <div class="d-flex flex-row align-items-center ml-2">
-      <div class="player-button" (click)="backwardAudio()">
-        <span class="player-backward"></span>
-      </div>
-      <div class="player-button ml-4 mr-4" (click)="playPauseAudio()">
-        <span *ngIf="audio == null || audio.paused" class="player-play"></span>
-        <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
-      </div>
-      <div class="player-button mr-2" (click)="forwardAudio()">
-        <span class="player-forward"></span>
-      </div>
+    <div class="text-white text-center">{{currentTime + '/' + duration}}</div>
+    <div class="player-button ml-2" (click)="backwardAudio()">
+      <span class="player-backward"></span>
+    </div>
+    <div class="player-button ml-4 mr-4" (click)="playPauseAudio()">
+      <span *ngIf="audio == null || audio.paused" class="player-play"></span>
+      <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+    </div>
+    <div class="player-button mr-2" (click)="forwardAudio()">
+      <span class="player-forward"></span>
     </div>
     <div class="close" aria-label="Close" (click)="close()">
       <span class="text-white" aria-hidden="true">&times;</span>

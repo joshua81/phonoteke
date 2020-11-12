@@ -10,14 +10,6 @@
       <h3 class="text-center text-truncate-1" [innerHTML]="doc.doc.artist"></h3>
       <h2 class="text-center text-truncate-1" [innerHTML]="doc.doc.title"></h2>
     </div>
-    <div *ngIf="app.isDesktop" class="ml-1 mr-2">
-      <a *ngIf="app.player == null" href="/api/login">
-        <img class="spotify disabled"/>
-      </a>
-      <a *ngIf="app.player != null" (click)="app.loadDevices()">
-        <img class="spotify">
-      </a>
-    </div>
-    <div *ngIf="!app.isDesktop" class="ml-1 mr-2" [ngStyle]="{'width':'30px'}"></div>
+    <div class="ml-1 mr-2" [ngStyle]="{'width':'30px'}"></div>
   </div>
 </nav>

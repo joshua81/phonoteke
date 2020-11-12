@@ -12,10 +12,6 @@
     border-bottom: 4px solid #18A2B8;
 }
 
-.disabled {
-    filter: grayscale(100%);
-}
-
 .search {
     min-width: 200px;
     max-width: 200px;

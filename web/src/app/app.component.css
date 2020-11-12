@@ -60,3 +60,7 @@ img.cover {
     height: 40px;
     max-height: 40px;
 }
+
+.disabled {
+    filter: grayscale(100%);
+}

@@ -15,13 +15,9 @@ export class TracksComponent implements OnInit {
   ngOnInit() {
   }
 
-  playPauseSpotify(type: string, albumid: string, track: string) {
+  playPauseSpotify(type: string, albumid: string, track: any) {
     if(track != null) {
-      var pos: number = this.tracks.
-        map(track => track.spotify).
-        filter(spotify => spotify != null).
-        indexOf(track);
-      this.app.playPauseSpotify(type, albumid, pos, this.tracks);
+      this.app.playPauseSpotify(type, albumid, track, this.tracks);
     }
   }
 }

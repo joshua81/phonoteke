@@ -86,16 +86,27 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(type: string=null, album: string=null, pos: number=0, tracks=[]) {
+  playPauseSpotify(type: string=null, album: string=null, track: any=null, tracks=[]) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
-      var trackNumber: number = this.track == null ? -1 : 
-        tracks.map(track => track.spotify).
-        filter(spotify => spotify != null).
-        indexOf(this.track.item.id);
+      var currentPos: number = -1;
+      var newPos: number = 0;
+
+      if(this.album == album && this.track != null && track != null) {
+        this.tracks = tracks;
+        currentPos = this.tracks.
+          map(track => track.spotify).
+          filter(spotify => spotify != null).
+          indexOf(this.track.spotify);
+
+        newPos = this.tracks.
+          map(track => track.spotify).
+          filter(spotify => spotify != null).
+          indexOf(track.spotify);
+      }
 
       // pause
-      if(this.track != null && this.track.is_playing && (album == null || (this.album == album && trackNumber == pos))) {
+      if(currentPos == newPos && this.track.is_playing) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -107,7 +118,7 @@ export class AppComponent {
           });
       }
       // play
-      else if(this.track != null && !this.track.is_playing && (album == null || (this.album == album && trackNumber == pos))) {
+      else if(currentPos == newPos && !this.track.is_playing) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -118,27 +129,39 @@ export class AppComponent {
             this.error = 'Errore player Spotify (Play)';
           });
       }
-      // play an other album or track
+      // play an other album or playlist
       else {
+        if(this.timer) {
+          this.timer.unsubscribe();
+          this.timer = null;
+        }
+        this.album = album;
+        if(track != null) {
+          this.tracks = tracks;
+          newPos = this.tracks.
+            map(track => track.spotify).
+            filter(spotify => spotify != null).
+            indexOf(track.spotify);
+        }
+
         type = type == 'podcast' ? 'playlist' : type;
         const token = this.cookieService.get('spotify-token');
         if(token != null && token != '') {
           var body = type != 'track' ? {
             'context_uri': 'spotify:' + type + ':' + album,
             'uris': null,
-            'offset': {'position': pos}
+            'offset': {'position': newPos}
           } : {
             'context_uri': null,
             'uris': ['spotify:track:' + album],
-            'offset': {'position': pos}
+            'offset': {'position': newPos}
           };
           const options = {
             headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
           };
           this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
             (data: any) => {
-              this.album = album;
-              this.tracks = tracks;
+              this.statusSpotify();
               this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
             },
             error => {

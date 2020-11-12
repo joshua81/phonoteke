@@ -12,10 +12,10 @@
     </div>
     <div *ngIf="app.isDesktop" class="ml-1 mr-2">
       <a *ngIf="app.player == null" href="/api/login">
-        <img class="speaker disabled"/>
+        <img class="spotify disabled"/>
       </a>
       <a *ngIf="app.player != null" (click)="app.loadDevices()">
-        <img class="speaker">
+        <img class="spotify">
       </a>
     </div>
     <div *ngIf="!app.isDesktop" class="ml-1 mr-2" [ngStyle]="{'width':'30px'}"></div>

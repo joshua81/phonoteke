@@ -10,10 +10,10 @@
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="docs.searchText" (search)="docs.loadDocs()">
     </form>
     <a *ngIf="app.isDesktop && app.player == null" class="ml-1 mr-2" href="/api/login">
-      <img class="speaker disabled"/>
+      <img class="spotify disabled"/>
     </a>
     <a *ngIf="app.player != null" class="ml-1 mr-2" (click)="app.loadDevices()">
-      <img class="speaker">
+      <img class="spotify">
     </a>
   </div>
 </nav>

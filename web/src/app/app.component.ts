@@ -86,7 +86,7 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(type: string=null, album: string=null, track: any=null, tracks=[]) {
+  playPauseSpotify(type: string=null, album: string=null, track=null, tracks=[]) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
       var currentPos: number = -1;
@@ -106,7 +106,7 @@ export class AppComponent {
       }
 
       // pause
-      if(currentPos == newPos && this.track.is_playing) {
+      if(this.track != null && this.track.is_playing && (album == null || currentPos == newPos)) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -118,7 +118,7 @@ export class AppComponent {
           });
       }
       // play
-      else if(currentPos == newPos && !this.track.is_playing) {
+      else if(this.track != null && !this.track.is_playing && (album == null || currentPos == newPos)) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };

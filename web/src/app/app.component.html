@@ -3,7 +3,7 @@
 </div>
 
 <!-- Spotify player-->
-<div *ngIf="track" class="d-flex flex-row justify-content-center fixed-bottom">
+<div *ngIf="track" class="w-max ml-auto mr-auto fixed-bottom">
   <div class="player-spotify d-flex flex-row align-items-center p-2">
     <img class="cover" src="{{track.item.album.images[2].url}}"/>
     <div class="ml-2 w-100">
@@ -28,7 +28,7 @@
 </div>
 
 <!-- Podcast player-->
-<div *ngIf="audio" class="d-flex flex-row justify-content-center fixed-bottom">
+<div *ngIf="audio" class="w-max ml-auto mr-auto fixed-bottom">
   <div class="player-spotify d-flex flex-row align-items-center p-2">
     <img class="cover" src="{{audio.cover}}"/>
     <div class="ml-2 w-100">
@@ -53,8 +53,8 @@
 </div>
 
 <!-- Youtube player-->
-<div *ngIf="youtube" class="d-flex flex-row justify-content-center fixed-bottom">
-  <div class="player-youtube d-flex flex-row align-items-center">
+<div *ngIf="youtube" class="d-flex flex-row justify-content-center w-max ml-auto mr-auto fixed-bottom">
+  <div class="player-youtube">
     <iframe [src]='youtube' type="text/html" width="350" height="200" frameborder="0"></iframe>
     <div class="close" aria-label="Close" (click)="close()">
       <span class="text-white" aria-hidden="true">&times;</span>

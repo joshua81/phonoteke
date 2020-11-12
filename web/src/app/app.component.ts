@@ -92,17 +92,20 @@ export class AppComponent {
       var currentPos: number = -1;
       var newPos: number = 0;
 
-      if(this.album == album && this.track != null && track != null) {
+      if(this.album == album && this.track != null) {
         this.tracks = tracks;
         currentPos = this.tracks.
           map(track => track.spotify).
           filter(spotify => spotify != null).
           indexOf(this.track.spotify);
 
-        newPos = this.tracks.
-          map(track => track.spotify).
-          filter(spotify => spotify != null).
-          indexOf(track.spotify);
+        newPos = currentPos;
+        if(track != null) {
+          newPos = this.tracks.
+            map(track => track.spotify).
+            filter(spotify => spotify != null).
+            indexOf(track.spotify);
+        }
       }
 
       // pause

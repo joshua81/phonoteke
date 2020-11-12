@@ -61,6 +61,14 @@ img.cover {
     max-height: 40px;
 }
 
+.login {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    right: 10px;
+    bottom: 10px;
+}
+
 .disabled {
     filter: grayscale(100%);
 }

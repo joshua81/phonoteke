@@ -65,7 +65,7 @@
 <!-- Spotify login -->
 <div *ngIf="isDesktop" class="login">
   <a *ngIf="player == null" href="/api/login">
-    <img class="spotify disabled"/>
+    <img class="spotify login disabled"/>
   </a>
   <a *ngIf="player != null" (click)="loadDevices()">
     <img class="spotify">
@@ -73,23 +73,23 @@
 </div>
 
 <!-- Events -->
-<div *ngIf="events" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
-  <div *ngIf="events.length != 0" class="align-self-center overflow-auto modal-box">
+<div *ngIf="events" class="d-flex justify-content-center events-bg" (click)="closeEvents()">
+  <div *ngIf="events.length != 0" class="align-self-center overflow-auto events">
     <div class="list-group">
       <div *ngFor="let event of events" class="p-2 list-group-item">
         <div class="d-flex align-items-center">
           <div class="w-100">
-            <div class="text-white font-weight-bold">{{event.displayName}}</div>
-            <div class="text-white">{{event.start.date}} {{event.location.city}}</div>
-            <div class="text-white">{{event.venue.displayName}}</div>
+            <div class="font-weight-bold">{{event.displayName}}</div>
+            <div>{{event.start.date}} {{event.location.city}}</div>
+            <div>{{event.venue.displayName}}</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div *ngIf="events.length == 0" class="align-self-center overflow-auto modal-box">
-    <div class="d-flex justify-content-center align-middle">
-      <p class="text-white font-weight-bold pt-2">Nessun evento in programma</p>
+  <div *ngIf="events.length == 0" class="align-self-center overflow-auto events">
+    <div class="d-flex flex-row justify-content-center align-items-center">
+      <div class="font-weight-bold mt-3 mb-3">Nessun concerto in programma</div>
     </div>
   </div>
 </div>

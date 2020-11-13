@@ -1,22 +1,22 @@
-.modal-bg {
+.events-bg {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 30;
-    background: rgba(0, 0, 0, 0.75);
     cursor: pointer;
 }
 
-.modal-box {
+.events {
     width: 80vw;
-    max-width: 600px;
+    max-width: 400px;
     max-height: 80vh;
-    z-index: 40;
+    border-radius: 5px;
     border-style: solid;
-    border-width: 1px;
-    border-color: white;
+    border-width: 2px;
+    border-color: #000000;
+    background-color: #FFFFFF;
 }
 
 .list-group-item {
@@ -67,6 +67,13 @@ img.cover {
     height: 30px;
     right: 10px;
     bottom: 10px;
+}
+
+img.login {
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #FFFFFF;
 }
 
 .disabled {

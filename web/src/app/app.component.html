@@ -65,7 +65,7 @@
 <!-- Spotify login -->
 <div *ngIf="isDesktop" class="login">
   <a *ngIf="player == null" href="/api/login">
-    <img class="spotify login disabled"/>
+    <img class="spotify disabled"/>
   </a>
   <a *ngIf="player != null" (click)="loadDevices()">
     <img class="spotify">

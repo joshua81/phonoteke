@@ -11,3 +11,8 @@
     </form>
   </div>
 </nav>
+<!--div *ngIf="docs.type == 'podcast'" class="d-flex flex-row w-max flex-nowrap hscroll justify-content-center ml-auto mr-auto p-2">
+  <div *ngFor="let source of docs.sources" class="ml-2 mr-2" [ngClass]="{'source-selected' : docs.source == source}" (click)="toggleSource(source)">
+    <img class="{{source}}"/>
+  </div>
+</div-->

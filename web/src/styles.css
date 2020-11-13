@@ -117,6 +117,7 @@ img.logo {
     content: url("/images/logo.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.ondarock {
@@ -124,6 +125,7 @@ img.ondarock {
     content: url("/images/ondarock.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.musicalbox {
@@ -131,6 +133,7 @@ img.musicalbox {
     content: url("/images/musicalbox.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.inthemix {
@@ -138,6 +141,7 @@ img.inthemix {
     content: url("/images/inthemix.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.babylon {
@@ -145,6 +149,7 @@ img.babylon {
     content: url("/images/babylon.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.battiti {
@@ -152,6 +157,7 @@ img.battiti {
     content: url("/images/battiti.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.seigradi {
@@ -159,6 +165,7 @@ img.seigradi {
     content: url("/images/seigradi.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.casabertallot {
@@ -166,6 +173,7 @@ img.casabertallot {
     content: url("/images/casabertallot.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.rolloverhangover {
@@ -173,6 +181,7 @@ img.rolloverhangover {
     content: url("/images/rolloverhangover.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.blackalot {
@@ -180,6 +189,7 @@ img.blackalot {
     content: url("/images/blackalot.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.cassabertallot {
@@ -187,6 +197,7 @@ img.cassabertallot {
     content: url("/images/cassabertallot.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.resetrefresh {
@@ -194,6 +205,7 @@ img.resetrefresh {
     content: url("/images/resetrefresh.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.stereonotte {
@@ -201,6 +213,7 @@ img.stereonotte {
     content: url("/images/stereonotte.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.speaker {
@@ -208,6 +221,7 @@ img.speaker {
     content: url("/images/speaker.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.spotify {
@@ -215,6 +229,7 @@ img.spotify {
     content: url("/images/spotify.png");
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 img.equalizer {
@@ -238,6 +253,7 @@ img.close-button {
     height: 20px;
     margin: 0px;
     padding: 0px;
+    cursor: pointer;
 }
   
 .player-play {

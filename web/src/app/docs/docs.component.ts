@@ -9,7 +9,6 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./docs.component.css']
 })
 export class DocsComponent implements OnInit {
-  error = null;
   searchText: string = '';
   docs = [];
   sources = [];
@@ -34,12 +33,12 @@ export class DocsComponent implements OnInit {
     if(this.type == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(data),
-        error => this.error = error);
+        error => this.app.error = error);
     }
     else {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
         (data: any) => this.docsLoaded(data),
-        error => this.error = error);
+        error => this.app.error = error);
     }
   }
 
@@ -49,20 +48,21 @@ export class DocsComponent implements OnInit {
     if(this.type == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
         (data: any) => this.docsLoaded(data),
-        error => this.error = error);
+        error => this.app.error = error);
     }
     else {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
         (data: any) => this.docsLoaded(data),
-        error => this.error = error);
+        error => this.app.error = error);
     }
   }
 
   loadSources() {
-    this.sources = [];
-    this.http.get('/api/docs/sources').subscribe(
-      (data: any) => this.sources.push.apply(this.sources, data),
-      error => this.error = error);
+    if(this.sources.length == 0) {
+      this.http.get('/api/docs/sources').subscribe(
+        (data: any) => this.sources.push.apply(this.sources, data),
+        error => this.app.error = error);
+    }
   }
 
   docsLoaded(data: any) {

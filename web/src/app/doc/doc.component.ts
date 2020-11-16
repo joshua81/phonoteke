@@ -9,7 +9,6 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./doc.component.css']
 })
 export class DocComponent implements OnInit {
-  error = null;
   id: string = null;
   doc = null;
   links = [];
@@ -29,7 +28,7 @@ export class DocComponent implements OnInit {
   loadDoc() {
     this.http.get('/api/docs/' + this.id).subscribe(
       (data: any) => this.setDoc(data[0]),
-      error => this.error = error);
+      error => this.app.error = error);
   }
 
   setDoc(doc: any) {
@@ -42,7 +41,7 @@ export class DocComponent implements OnInit {
   loadLinks() {
     this.http.get('/api/docs/' + this.id + '/links').subscribe(
       (data: any) => this.setLinks(data),
-      error => this.error = error);
+      error => this.app.error = error);
   }
 
   setLinks(links: any) {

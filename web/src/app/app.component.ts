@@ -30,6 +30,7 @@ export class AppComponent {
   
   ngOnInit() {
     this.isDesktop = !AppComponent.hasTouchScreen();
+    this.loadDevices();
   }
 
   refreshToken() {
@@ -47,7 +48,7 @@ export class AppComponent {
   loadDevices() {
     if(this.isDesktop) {
       const token = this.cookieService.get('spotify-token');
-      if(token != null && token != '') {
+      if(token != null && token != '' && this.player == null) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };

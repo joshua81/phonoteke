@@ -20,12 +20,10 @@ export class DocsComponent implements OnInit {
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.app.loadDevices();
+    this.loadSources();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
-      this.app.close();
       this.type = params.get('type') == '' ? null : params.get('type');
-      this.loadSources();
       this.loadDocs();
     });
   }

@@ -21,7 +21,6 @@ export class DocComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
-      this.app.close();
       this.id = params.get('id');
       this.loadDoc();
     });

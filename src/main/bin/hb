@@ -28,6 +28,10 @@ do
 		node app.js
 		shift
 		;;
+	"logs")
+		gcloud app logs tail -s default
+		shift
+		;;
 	*)
 	 	cd $HOME/workspace/phonoteke/target
 	 	java -cp phonoteke-1.1-SNAPSHOT.jar:lib/*.jar org.phonoteke.loader.HumanBeats $1

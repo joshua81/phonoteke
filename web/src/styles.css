@@ -12,6 +12,12 @@
 html, body {
     height: 100%;
     background: rgba(233, 240, 242, 1);
+    /*background-image: url("/images/wallpaper.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;*/
 }
 
 .container-fluid {

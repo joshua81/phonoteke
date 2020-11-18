@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().replaceSpecialChars();
+		new PatchLoader().resetTracks();
 	}
 
 	@Override

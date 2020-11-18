@@ -57,7 +57,7 @@ public class SpotifyLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load("9acffcf9f1b28dc1c6adf1ec773c8a48dd867a0217a86d31d05559f632d5ab52");
+		new SpotifyLoader().load("62a3bd6ddc94343e74f98b1da2fc357f8ec3a5f5f35e68ad0833c132b77b7128");
 	}
 
 	@Override
@@ -350,7 +350,6 @@ public class SpotifyLoader implements HumanBeats
 				String spotifyId = track.getString("spotify");
 				if(spotifyId == null)
 				{
-					LOGGER.debug("Loading track " + title);
 					try
 					{
 						login();
@@ -412,6 +411,9 @@ public class SpotifyLoader implements HumanBeats
 					String q = artist + " " + song;
 					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
 					Paging<Track> tracks = request.execute();
+					if(tracks.getItems().length == 0) {
+						LOGGER.info("Not found: " + artist + " - " + song);
+					}
 					for(int i = 0; i < tracks.getItems().length; i++)
 					{
 						Track track = tracks.getItems()[i];
@@ -439,7 +441,7 @@ public class SpotifyLoader implements HumanBeats
 						getImages(page, track.getAlbum().getImages());
 
 						if(!tracksMap.containsKey(score)) {
-							LOGGER.info(artist + " - " + song + " | " + spartist + " - " + spsong + ": " + score);
+							LOGGER.info("Found: " + artist + " - " + song + " | " + spartist + " - " + spsong + " | score: " + score);
 							tracksMap.put(score, page);
 						}
 					}

@@ -1,14 +1,13 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 mt-3">
     <div *ngFor="let track of tracks" class="mb-2">
-        <div class="d-flex flex-row align-items-center m-0">
+        <div *ngIf="track.spotify" class="d-flex flex-row align-items-center m-0">
             <div class="cover" (click)="playPauseSpotify(track)">
-                <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}"/>
-                <span *ngIf="app.player && track.spotify != null" class="player-play"></span>
+                <img class="cover" src="{{track.coverM}}"/>
+                <span *ngIf="app.player" class="player-play"></span>
             </div>
             <div class="ml-2 w-100">
-                <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
-                <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
-                <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
+                <div class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
+                <div class="text-truncate-1">{{'di ' + track.artist}}</div>
                 <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
             </div>
             <img *ngIf="app.track != null && app.track.item.id == track.spotify" class="equalizer ml-2" />

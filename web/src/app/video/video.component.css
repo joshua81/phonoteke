@@ -14,6 +14,10 @@
   left: 0px;
   top: 35px;
   z-index: 10;
+  opacity: 0;
+}
+.backward:hover {
+  opacity: 1;
 }
 
 .previous {
@@ -39,6 +43,10 @@
   right: 0px;
   top: 35px;
   z-index: 10;
+  opacity: 0;
+}
+.forward:hover {
+  opacity: 1;
 }
 
 .next {

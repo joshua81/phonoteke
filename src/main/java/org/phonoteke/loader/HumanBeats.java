@@ -8,17 +8,17 @@ import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final String MATCH1 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
-	public static final String MATCH3 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
-	public static final String MATCH4 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
-	public static final String MATCH5 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
+	public static final String MATCH1 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
+	public static final String MATCH2 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
+	public static final String MATCH3 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
+	public static final String MATCH4 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
+	public static final String MATCH5 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
 	public static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5);
 
-	public static final String MATCHS1 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS2 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS3 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS4 = "([•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
+	public static final String MATCHS1 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS2 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS3 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
+	public static final String MATCHS4 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
 	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4);
 	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-");
 

@@ -13,9 +13,8 @@ export class AppComponent {
   isDesktop: boolean = false;
   youtube: SafeResourceUrl = null;
 
+  doc = null;
   player = null;
-  album = null;
-  tracks = [];
   track = null;
   timer: Subscription = null;
 
@@ -87,22 +86,21 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(type: string=null, album: string=null, track=null, tracks=[]) {
+  playPauseSpotify(doc: any=null, track=null) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
       var currentPos: number = -1;
       var newPos: number = 0;
 
-      if(this.album == album && this.track != null) {
-        this.tracks = tracks;
-        currentPos = this.tracks.
+      if(this.doc != null && doc != null && this.doc.spalbumid == doc.spalbumid && this.track != null) {
+        currentPos = this.doc.tracks.
           map(track => track.spotify).
           filter(spotify => spotify != null).
           indexOf(this.track.spotify);
 
         newPos = currentPos;
         if(track != null) {
-          newPos = this.tracks.
+          newPos = this.doc.tracks.
             map(track => track.spotify).
             filter(spotify => spotify != null).
             indexOf(track.spotify);
@@ -110,7 +108,7 @@ export class AppComponent {
       }
 
       // pause
-      if(this.track != null && this.track.is_playing && (album == null || currentPos == newPos)) {
+      if(this.track != null && this.track.is_playing && (doc == null || currentPos == newPos)) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -122,7 +120,7 @@ export class AppComponent {
           });
       }
       // play
-      else if(this.track != null && !this.track.is_playing && (album == null || currentPos == newPos)) {
+      else if(this.track != null && !this.track.is_playing && (doc == null || currentPos == newPos)) {
         const options = {
           headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
         };
@@ -139,25 +137,24 @@ export class AppComponent {
           this.timer.unsubscribe();
           this.timer = null;
         }
-        this.album = album;
+        this.doc = doc;
         if(track != null) {
-          this.tracks = tracks;
-          newPos = this.tracks.
+          newPos = this.doc.tracks.
             map(track => track.spotify).
             filter(spotify => spotify != null).
             indexOf(track.spotify);
         }
 
-        type = type == 'podcast' ? 'playlist' : type;
+        var type = doc.type == 'podcast' ? 'playlist' : doc.type;
         const token = this.cookieService.get('spotify-token');
         if(token != null && token != '') {
           var body = type != 'track' ? {
-            'context_uri': 'spotify:' + type + ':' + album,
+            'context_uri': 'spotify:' + type + ':' + doc.spalbumid,
             'uris': null,
             'offset': {'position': newPos}
           } : {
             'context_uri': null,
-            'uris': ['spotify:track:' + album],
+            'uris': ['spotify:track:' + doc.spalbumid],
             'offset': {'position': newPos}
           };
           const options = {
@@ -178,8 +175,6 @@ export class AppComponent {
   }
 
   closeSpotify() {
-    this.album = null;
-    this.tracks = [];
     this.track = null;
     this.duration = "";
     this.currentTime = "";
@@ -254,14 +249,15 @@ export class AppComponent {
     }
   }
 
-  playPauseAudio(audio: any=null, title: string=null, artist: string=null, cover: string=null){
-    if(this.audio == null || this.audio.src != audio) {
+  playPauseAudio(doc: any=null){
+    if(doc != null && (this.audio == null || this.audio.src != doc.audio)) {
       this.close();
+      this.doc = doc;
       this.audio = new Audio();
-      this.audio.src = audio;
-      this.audio.title = title;
-      this.audio.artist = artist;
-      this.audio.cover = cover;
+      this.audio.src = doc.audio;
+      this.audio.title = doc.title;
+      this.audio.artist = doc.artist;
+      this.audio.cover = doc.cover;
       this.audio.ontimeupdate = () => {
         this.duration = AppComponent.formatTime(this.audio.duration);
         this.currentTime = AppComponent.formatTime(this.audio.currentTime);
@@ -318,13 +314,13 @@ export class AppComponent {
       this.currentTime = "";
     }
 
-    // youtube
-    this.youtube = null;
-
     // spotify + events + alerts
     this.closeSpotify();
     this.closeEvents();
     this.closeAlert();
+
+    this.youtube = null;
+    this.doc = null;
   }
 
   closeEvents(){

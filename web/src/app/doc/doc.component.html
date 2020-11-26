@@ -15,17 +15,17 @@
 
         <!-- player -->
         <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row justify-content-center align-items-center p-2"
-          (click)="app.playPauseAudio(doc.audio, doc.title, doc.artist, doc.cover)">
+          (click)="app.playPauseAudio(doc)">
           <div class="player-button">
             <span *ngIf="app.audio == null || app.audio.src != doc.audio || app.audio.paused" class="player-play"></span>
             <span *ngIf="app.audio != null && app.audio.src == doc.audio && !app.audio.paused" class="player-pause"></span>
           </div>
         </div>
         <div *ngIf="doc.type != 'podcast' && doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
-          (click)="app.playPauseSpotify(doc.type, doc.spalbumid)">
+          (click)="app.playPauseSpotify(doc)">
           <div class="player-button">
-            <span *ngIf="app.track == null || app.album != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
-            <span *ngIf="app.track != null && app.album == doc.spalbumid && app.track.is_playing" class="player-pause"></span>
+            <span *ngIf="app.track == null || app.doc.spalbumid != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
+            <span *ngIf="app.track != null && app.doc.spalbumid == doc.spalbumid && app.track.is_playing" class="player-pause"></span>
           </div>
         </div>
       </div>

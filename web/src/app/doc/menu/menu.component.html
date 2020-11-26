@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row align-items-center w-max">
-    <div class="button d-flex flex-row justify-content-center align-items-center ml-1 mr-1" (click)="back()">
-      <span class="previous"></span>
-    </div>
-    <div class="button d-flex flex-row justify-content-center align-items-center ml-1 mr-1" (click)="back()">
+    <div class="d-flex flex-row ml-1 mr-1" (click)="back()">
+      <div class="button d-flex flex-row justify-content-center align-items-center">
+        <span class="previous"></span>
+      </div>
       <img *ngIf="doc.doc.coverM == null" class="cover" src="{{doc.doc.cover}}"/>
       <img *ngIf="doc.doc.coverM != null" class="cover" src="{{doc.doc.coverM}}"/>
     </div>
@@ -11,6 +11,6 @@
       <h3 class="text-center text-truncate-1" [innerHTML]="doc.doc.artist"></h3>
       <h2 class="text-center text-truncate-1" [innerHTML]="doc.doc.title"></h2>
     </div>
-    <div class="ml-1 mr-1" [ngStyle]="{'width':'72px'}"></div>
+    <div class="ml-1 mr-1" [ngStyle]="{'width':'66px'}"></div>
   </div>
 </nav>

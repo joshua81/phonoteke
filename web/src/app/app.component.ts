@@ -255,7 +255,7 @@ export class AppComponent {
   }
 
   playPauseAudio(audio: any=null, title: string=null, artist: string=null, cover: string=null){
-    if(this.audio == null) {
+    if(this.audio == null || this.audio.src != audio) {
       this.close();
       this.audio = new Audio();
       this.audio.src = audio;

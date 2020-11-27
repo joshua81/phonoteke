@@ -206,6 +206,14 @@ img.cassabertallot {
     cursor: pointer;
 }
 
+img.thetuesdaytapes {
+    border-radius: 50%;
+    content: url("/images/thetuesdaytapes.png");
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
 img.resetrefresh {
     border-radius: 50%;
     content: url("/images/resetrefresh.png");
@@ -239,11 +247,9 @@ img.spotify {
 }
 
 img.equalizer {
-    border-radius: 50%;
-    content: url("/images/equalizer.png");
+    content: url("/images/equalizer.gif");
     width: 20px;
     height: 20px;
-    cursor: pointer;
 }
 
 img.close-button {

@@ -17,9 +17,14 @@
     max-width: 200px;
 }
 
-.source-selected {
+/*img:hover {
+    -webkit-transform: scale(1.6) rotate(0.01deg);
+    transform: scale(1.6) rotate(0.01deg);
+}*/
+
+/*.source-selected {
     border-radius: 50%;
-    border-style: solid;
-    border-width: 4px;
-    border-color: #18A2B8;
-}
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}*/

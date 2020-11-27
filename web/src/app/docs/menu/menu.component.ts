@@ -12,8 +12,4 @@ export class DocsMenuComponent implements OnInit {
   constructor(public app: AppComponent, public docs: DocsComponent) { }
 
   ngOnInit() {}
-
-  toggleSource(source: string) {
-    this.docs.source = this.docs.source == source ? null : source;
-  }
 }

@@ -19,10 +19,11 @@ export class DocsComponent implements OnInit {
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    //this.loadSources();
+    this.loadSources();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.type = params.get('type') == '' ? null : params.get('type');
+      this.source = params.get('source') == '' ? null : params.get('source');
       this.loadDocs();
     });
   }
@@ -35,8 +36,13 @@ export class DocsComponent implements OnInit {
         (data: any) => this.docsLoaded(data),
         error => this.app.error = error);
     }
-    else {
+    else if(this.source == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.app.error = error);
+    }
+    else {
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type + '&s=' + this.source).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.app.error = error);
     }
@@ -50,8 +56,13 @@ export class DocsComponent implements OnInit {
         (data: any) => this.docsLoaded(data),
         error => this.app.error = error);
     }
-    else {
+    else if(this.source == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
+        (data: any) => this.docsLoaded(data),
+        error => this.app.error = error);
+    }
+    else {
+      this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type + '&s=' + this.source).subscribe(
         (data: any) => this.docsLoaded(data),
         error => this.app.error = error);
     }

@@ -47,32 +47,32 @@ app.use(express.static('web'));
 app.use(cookieParser());
 
 app.get('/api/docs', async(req, res)=>{
-	var result = await findDocs(req.query.t, req.query.p, req.query.q);
+	var result = await findDocs(req.query.t, req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/docs/albums', async(req, res)=>{
-	var result = await findDocs('album', req.query.p, req.query.q);
+	var result = await findDocs('album', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/docs/artists', async(req, res)=>{
-	var result = await findDocs('artist', req.query.p, req.query.q);
+	var result = await findDocs('artist', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/docs/concerts', async(req, res)=>{
-	var result = await findDocs('concert', req.query.p, req.query.q);
+	var result = await findDocs('concert', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/docs/interviews', async(req, res)=>{
-	var result = await findDocs('interview', req.query.p, req.query.q);
+	var result = await findDocs('interview', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/docs/podcasts', async(req, res)=>{
-	var result = await findDocs('podcast', req.query.p, req.query.q);
+	var result = await findDocs('podcast', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
@@ -250,31 +250,37 @@ async function findDoc(id) {
 	return result;
 }
 
-async function findDocs(t, p, q) {
+async function findDocs(t, p, q, s) {
 	var result = null;
-	if(q) {
-		console.log('Docs: page=' + p + ', query=' + q + ', type=' + t);
-		var page = Number(p) > 0 ? Number(p) : 0;
-		var query = q;
-		query = '.*' + query + '.*';
-		query = query.split(' ').join('.*');
-		if(t) {
-			result = await db.find({$and: [{'type': t}, {$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	var nql = null;
+
+	console.log('Docs: page=' + p + ', query=' + q + ', type=' + t + ', source=' + s);
+	var page = Number(p) > 0 ? Number(p) : 0;
+	if(q != null && t != null) {
+		q = '.*' + q + '.*';
+		q = q.split(' ').join('.*');
+		if(s == null) {
+			nql = {$and: [{'type': t}, {$or: [{'artist': {'$regex': q, '$options' : 'i'}}, {'title': {'$regex': q, '$options' : 'i'}}, {'tracks.title': {'$regex': q, '$options' : 'i'}}]}]};
 		}
 		else {
-			result = await db.find({$and: [{$or: [{'artist': {'$regex': query, '$options' : 'i'}}, {'title': {'$regex': query, '$options' : 'i'}}, {'tracks.title': {'$regex': query, '$options' : 'i'}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			nql = {$and: [{'type': t}, {'source': s}, {$or: [{'artist': {'$regex': q, '$options' : 'i'}}, {'title': {'$regex': q, '$options' : 'i'}}, {'tracks.title': {'$regex': q, '$options' : 'i'}}]}]};
 		}
 	}
-	else {
-		console.log('Docs: page=' + p + ', type=' + t);
-		var page = Number(p) > 0 ? Number(p) : 0;
-		if(t) {
-			result = await db.find({'type': t}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	else if(q != null && t == null) {
+		q = '.*' + q + '.*';
+		q = q.split(' ').join('.*');
+		nql = {$and: [{$or: [{'artist': {'$regex': q, '$options' : 'i'}}, {'title': {'$regex': q, '$options' : 'i'}}, {'tracks.title': {'$regex': q, '$options' : 'i'}}]}]};
+	}
+	else if(q == null && t != null) {
+		if(s == null) {
+			nql = {'type': t};
 		}
 		else {
-			result = await db.find().project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+			nql = {$and: [{'type': t}, {'source': s}]};
 		}
 	}
+	
+	result = await db.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 	return result;
 }
 

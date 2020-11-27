@@ -34,8 +34,9 @@ import { FooterComponent } from './footer/footer.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: DocsComponent},
+      {path: 'docs/:id', component: DocComponent},
       {path: ':type', component: DocsComponent},
-      {path: 'docs/:id', component: DocComponent},]),
+      {path: ':type/:source', component: DocsComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

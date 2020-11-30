@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common'
+import { Router, NavigationEnd } from '@angular/router'
 import { AppComponent } from 'src/app/app.component';
 import { DocComponent } from '../doc.component';
 
@@ -9,12 +10,24 @@ import { DocComponent } from '../doc.component';
   styleUrls: ['./menu.component.css']
 })
 export class DocMenuComponent implements OnInit {
+  private history: string[] = [];
 
-  constructor(private location: Location, public app: AppComponent, public doc: DocComponent) { }
+  constructor(private router: Router, private location: Location, public app: AppComponent, public doc: DocComponent) { 
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.history.push(event.urlAfterRedirects)
+      }
+    })
+  }
 
   ngOnInit() {}
 
   back(): void {
-    this.location.back()
+    this.history.pop();
+    if (this.history.length > 0) {
+      this.location.back();
+    } else {
+      this.router.navigateByUrl('/');
+    }
   }
 }

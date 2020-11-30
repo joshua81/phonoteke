@@ -15,15 +15,15 @@ export class DocComponent implements OnInit {
   podcasts = [];
 
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
-
-  ngOnInit() {
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.id = params.get('id');
       this.loadDoc();
     });
   }
+
+  ngOnInit() {}
 
   loadDoc() {
     this.http.get('/api/docs/' + this.id).subscribe(

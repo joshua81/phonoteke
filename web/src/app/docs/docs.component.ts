@@ -16,9 +16,7 @@ export class DocsComponent implements OnInit {
   source: string = null;
   page: number = 0;
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {}
-
-  ngOnInit() {
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
     this.loadSources();
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
@@ -27,6 +25,8 @@ export class DocsComponent implements OnInit {
       this.loadDocs();
     });
   }
+
+  ngOnInit() {}
 
   scrollDocs() {
     this.page++;

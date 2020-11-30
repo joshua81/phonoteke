@@ -62,12 +62,10 @@
     max-height: 40px;
 }
 
-.login {
-    position: fixed;
+.icon {
     width: 34px;
     height: 34px;
-    right: 10px;
-    bottom: 10px;
+    background: #FFFFFF;
 
     border-radius: 50%;
     border-style: solid;

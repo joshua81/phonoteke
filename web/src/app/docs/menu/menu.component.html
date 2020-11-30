@@ -1,24 +1,28 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
   <div class="d-flex flex-row w-max flex-nowrap hscroll">
     <a class="ml-2 mr-1" [routerLink]="['/']"><img class="logo"></a>
-    <a class="menu-item ml-1 mr-1" [routerLink]="['/podcast']" [ngClass]="{'selected' : docs.type == 'podcast'}"><h2>Podcast</h2></a>
-    <!--div class="btn-group ml-1 mr-1">
-      <a class="menu-item" [routerLink]="['/podcast']" [ngClass]="{'selected' : docs.type == 'podcast'}"><h2>Podcast</h2></a>
-      <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="sr-only">Toggle Dropdown</span>
+    <div class="btn-group ml-1 mr-1">
+      <a class="menu-item" [routerLink]="['/podcast']" [ngClass]="{'selected' : docs.type == 'podcast'}">
+        <h2>Podcast</h2>
+      </a>
+      <button class="btn dropdown-toggle" data-toggle="dropdown" (click)="app.toggleSources(docs.sources)">
+        <span class="caret"></span>
       </button>
-    </div-->
-    <a class="menu-item ml-1 mr-1" [routerLink]="['/album']" [ngClass]="{'selected' : docs.type == 'album'}"><h2>Album</h2></a>
-    <a class="menu-item ml-1 mr-1" [routerLink]="['/artist']" [ngClass]="{'selected' : docs.type == 'artist'}"><h2>Artisti</h2></a>
-    <a class="menu-item ml-1 mr-1" [routerLink]="['/interview']" [ngClass]="{'selected' : docs.type == 'interview'}"><h2>Interviste</h2></a>
-    <a class="menu-item ml-1 mr-auto" [routerLink]="['/concert']" [ngClass]="{'selected' : docs.type == 'concert'}"><h2>Concerti</h2></a>
+    </div>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/album']" [ngClass]="{'selected' : docs.type == 'album'}">
+      <h2>Album</h2>
+    </a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/artist']" [ngClass]="{'selected' : docs.type == 'artist'}">
+      <h2>Artisti</h2>
+    </a>
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/interview']" [ngClass]="{'selected' : docs.type == 'interview'}">
+      <h2>Interviste</h2>
+    </a>
+    <a class="menu-item ml-1 mr-auto" [routerLink]="['/concert']" [ngClass]="{'selected' : docs.type == 'concert'}">
+      <h2>Concerti</h2>
+    </a>
     <form class="search ml-1 mr-1">
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="docs.searchText" (search)="docs.loadDocs()">
     </form>
   </div>
 </nav>
-<div *ngIf="docs.type == 'podcast' && docs.sources.length > 0" class="d-flex flex-row w-max flex-nowrap hscroll justify-content-center ml-auto mr-auto p-2">
-  <a *ngFor="let source of docs.sources" class="ml-2 mr-2" [routerLink]="['/podcast/' + source]">
-    <img class="{{source}}" /> <!--[ngClass]="{'source-selected' : docs.source == source}" /-->
-  </a>
-</div>

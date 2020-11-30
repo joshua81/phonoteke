@@ -9,6 +9,11 @@
     display: none;
 }
 
+.btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 html, body {
     height: 100%;
     background: rgba(233, 240, 242, 1);
@@ -246,6 +251,14 @@ img.spotify {
     cursor: pointer;
 }
 
+img.podcast {
+    border-radius: 50%;
+    content: url("/images/podcast.png");
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
 img.equalizer {
     content: url("/images/equalizer.gif");
     width: 20px;
@@ -261,7 +274,7 @@ img.close-button {
 }
 
 .player-button {
-    width: 18px;
+    width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;
@@ -271,7 +284,7 @@ img.close-button {
 .player-play {
     display: inline-block;
     mask: url("/images/play.svg") no-repeat;
-    width: 18px;
+    width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;
@@ -282,7 +295,7 @@ img.close-button {
 .player-pause {
     display: inline-block;
     mask: url("/images/pause.svg") no-repeat;
-    width: 18px;
+    width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;
@@ -293,7 +306,7 @@ img.close-button {
 .player-forward {
     display: inline-block;
     mask: url("/images/forward.svg") no-repeat;
-    width: 18px;
+    width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;
@@ -304,7 +317,7 @@ img.close-button {
 .player-backward {
     display: inline-block;
     mask: url("/images/backward.svg") no-repeat;
-    width: 18px;
+    width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;

@@ -77,7 +77,20 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 });
 
 app.get('/api/docs/sources', async(req, res)=>{
-	var result = await db.distinct("source");
+	var result = [{"source": "babylon", "desc": "Babylon"},
+	{"source": "battiti", "desc": "Battiti"},
+	{"source": "blackalot", "desc": "Black a Lot"},
+	{"source": "casabertallot", "desc": "Casa Bertallot"},
+	{"source": "cassabertallot", "desc": "Cassa Bertallot"},
+	{"source": "inthemix", "desc": "In the Mix"},
+	{"source": "musicalbox", "desc": "Musicalbox"},
+	//{"source": "ondarock", "desc": "Babylon"},
+	//{"source": "playaestas", "desc": "Babylon"},
+	{"source": "resetrefresh", "desc": "Reset Refresh"},
+	{"source": "rolloverhangover", "desc": "Rollover Hangover"},
+	{"source": "seigradi", "desc": "Sei Gradi"},
+	{"source": "stereonotte", "desc": "Stereo Notte"},
+	{"source": "thetuesdaytapes", "desc": "The Tuesday Tapes"}];
 	res.send(result);
 });
 

@@ -23,6 +23,7 @@ export class AppComponent {
   currentTime = "";
   
   events = null;
+  sources = null;
   error = null;
 
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {}
@@ -329,6 +330,10 @@ export class AppComponent {
 
   closeAlert(){
     this.error = null;
+  }
+
+  toggleSources(sources=null){
+    this.sources = this.sources == null ? sources : null;
   }
 
   static formatTime(seconds: number) {

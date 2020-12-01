@@ -83,6 +83,7 @@ app.get('/api/docs/sources', async(req, res)=>{
 	{"source": "casabertallot", "desc": "Casa Bertallot"},
 	{"source": "cassabertallot", "desc": "Cassa Bertallot"},
 	{"source": "inthemix", "desc": "In the Mix"},
+	{"source": "jazztracks", "desc": "Jazz Tracks"},
 	{"source": "musicalbox", "desc": "Musicalbox"},
 	//{"source": "ondarock", "desc": "Babylon"},
 	//{"source": "playaestas", "desc": "Babylon"},

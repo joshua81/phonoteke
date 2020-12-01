@@ -30,6 +30,7 @@ public class SpreakerLoader extends AbstractCrawler
 	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
 	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
 	private static final String URL6 = "https://api.spreaker.com/show/2708156/episodes";
+	private static final String URL7 = "https://api.spreaker.com/show/4380252/episodes";
 
 
 	@Override
@@ -42,6 +43,7 @@ public class SpreakerLoader extends AbstractCrawler
 			load("cassabertallot");
 			load("resetrefresh");
 			load("thetuesdaytapes");
+			load("jazztracks");
 		}
 
 		if("casabertallot".equals(task)) {
@@ -61,6 +63,9 @@ public class SpreakerLoader extends AbstractCrawler
 		}
 		else if("thetuesdaytapes".equals(task)) {
 			crawl(URL6, "thetuesdaytapes", "The Tuesday Tapes", Lists.newArrayList("Fabio De Luca"));
+		}
+		else if("jazztracks".equals(task)) {
+			crawl(URL7, "jazztracks", "Jazz Tracks", Lists.newArrayList("Danilo Di Termini"));
 		}
 	}
 

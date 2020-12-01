@@ -235,6 +235,14 @@ img.stereonotte {
     cursor: pointer;
 }
 
+img.jazztracks {
+    border-radius: 50%;
+    content: url("/images/jazztracks.png");
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
 img.speaker {
     border-radius: 50%;
     content: url("/images/speaker.png");

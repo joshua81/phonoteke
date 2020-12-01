@@ -151,6 +151,12 @@ public interface HumanBeats
 				if(m.group(3).toLowerCase().contains(" with ")) {
 					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
 				}
+				if(m.group(2).toLowerCase().contains(" e ")) {
+					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\be\\b")[0],  m.group(3)));
+				}
+				if(m.group(3).toLowerCase().contains(" e ")) {
+					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\be\\b")[0],  m.group(2)));
+				}
 			}
 		}
 		for(String separator : SEPARATOR) {
@@ -177,6 +183,12 @@ public interface HumanBeats
 					}
 					if(m.group(3).toLowerCase().contains(" with ")) {
 						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
+					}
+					if(m.group(2).toLowerCase().contains(" e ")) {
+						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\be\\b")[0],  m.group(3)));
+					}
+					if(m.group(3).toLowerCase().contains(" e ")) {
+						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\be\\b")[0],  m.group(2)));
 					}
 				}
 			}
@@ -233,6 +245,6 @@ public interface HumanBeats
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 		// removes non-printable characters from Unicode
 		text = text.replaceAll("\\p{C}", "");
-		return text.trim();
+		return text.toLowerCase().trim();
 	}
 }

@@ -192,9 +192,9 @@ public class OndarockLoader extends AbstractCrawler
 			bandElement = intestazioneElement.select("h2").first();
 			band = bandElement.html().trim();
 			return band;
-		case podcast:
-			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
-				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
+//		case podcast:
+//			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
+//				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
 		default:
 			return null;
 		}
@@ -528,11 +528,11 @@ public class OndarockLoader extends AbstractCrawler
 		{
 			return TYPE.interview;
 		}
-		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
-				getUrl(url).startsWith(URL + "speciali/rockinonda"))
-		{
-			return TYPE.podcast;
-		}
+//		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
+//				getUrl(url).startsWith(URL + "speciali/rockinonda"))
+//		{
+//			return TYPE.podcast;
+//		}
 		return TYPE.unknown;
 	}
 }

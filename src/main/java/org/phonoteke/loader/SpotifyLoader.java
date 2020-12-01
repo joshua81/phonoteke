@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.neovisionaries.i18n.CountryCode;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
@@ -57,7 +58,7 @@ public class SpotifyLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load("62a3bd6ddc94343e74f98b1da2fc357f8ec3a5f5f35e68ad0833c132b77b7128");
+		new SpotifyLoader().load("b969015ad0c4f9960c4c0c9da09c183d61766625ed7dec9e836a6a4005874bbe");
 	}
 
 	@Override
@@ -409,7 +410,7 @@ public class SpotifyLoader implements HumanBeats
 					song = song.replaceAll("&nbsp;", " ");
 					song = song.trim();
 					String q = artist + " " + song;
-					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).build();
+					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).market(CountryCode.IT).build();
 					Paging<Track> tracks = request.execute();
 					if(tracks.getItems().length == 0) {
 						LOGGER.info("Not found: " + artist + " - " + song);

@@ -100,6 +100,10 @@ public class TwitterLoader implements HumanBeats
 			else if("babylon".equals(source)) {
 				links = "@rairadio2 @carlopastore #babylonradio2 " + links;
 			}
+			else if("jazztracks".equals(source)) {
+				links = "@daniloddt #jazztracks " + links;
+			}
+
 			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
 
 			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {

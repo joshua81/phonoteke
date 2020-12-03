@@ -11,6 +11,8 @@
       <h3 class="text-center text-truncate-1" [innerHTML]="doc.doc.artist"></h3>
       <h2 class="text-center text-truncate-1" [innerHTML]="doc.doc.title"></h2>
     </div>
-    <div class="ml-1 mr-1" [ngStyle]="{'width':'60px'}"></div>
+    <div class="d-flex flex-row ml-1 mr-1">
+      <div [ngStyle]="{'width':'60px'}"></div>
+    </div>
   </div>
 </nav>

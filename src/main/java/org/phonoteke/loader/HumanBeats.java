@@ -42,6 +42,7 @@ public interface HumanBeats
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	public static final int SLEEP_TIME = 2000;
 	public static final int THRESHOLD = 90;
+	public static final int TRACKS_SIZE = 5;
 
 	public enum TYPE {
 		artist,

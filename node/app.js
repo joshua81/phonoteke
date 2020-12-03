@@ -85,8 +85,6 @@ app.get('/api/docs/sources', async(req, res)=>{
 	{"source": "inthemix", "desc": "In the Mix"},
 	{"source": "jazztracks", "desc": "Jazz Tracks"},
 	{"source": "musicalbox", "desc": "Musicalbox"},
-	//{"source": "ondarock", "desc": "Babylon"},
-	//{"source": "playaestas", "desc": "Babylon"},
 	{"source": "resetrefresh", "desc": "Reset Refresh"},
 	{"source": "rolloverhangover", "desc": "Rollover Hangover"},
 	{"source": "seigradi", "desc": "Sei Gradi"},

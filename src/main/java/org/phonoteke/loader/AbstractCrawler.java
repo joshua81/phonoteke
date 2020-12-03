@@ -17,6 +17,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
@@ -290,11 +291,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 				}
 			}
 		}
-		if(CollectionUtils.isEmpty(tracks))
-		{
-			throw new IllegalArgumentException("Empty tracks!");
-		}
-		return tracks;
+		return checkTracks(tracks);
 	}
 
 	protected static org.bson.Document newTrack(String title, String youtube)
@@ -306,6 +303,12 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 		return new org.bson.Document("titleOrig", title).
 				append("title", title).
 				append("youtube", youtube);
+	}
+
+	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
+	{
+		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= TRACKS_SIZE, "Number of tracks less than 5");
+		return tracks;
 	}
 
 	//---------------------------------

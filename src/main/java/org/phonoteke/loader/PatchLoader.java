@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetTracks();
+		new PatchLoader().deleteEmptyPlaylists();
 	}
 
 	@Override
@@ -40,30 +40,36 @@ public class PatchLoader implements HumanBeats
 		else if("deleteDoc".equals(task)) {
 			deleteDoc(null);
 		}
-		else if("resetPlaylists".equals(task)) {
-			resetPlaylists();
+		else if("deleteEmptyPlaylist".equals(task)) {
+			deleteEmptyPlaylists();
 		}
 	}
-	
-	private void resetPlaylists()
+
+	private void deleteEmptyPlaylists()
 	{
-		LOGGER.info("Resetting playlists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator();
+		LOGGER.info("Deleting empty playlists...");
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.size("tracks", 1), Filters.size("tracks", 2), Filters.size("tracks", 3), Filters.size("tracks", 4)))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
-			Integer score = page.getInteger("score");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(score < 70 || tracks.size() < 5)
-			{
-				page.put("spalbumid", null);
-				//docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-				LOGGER.info("Document " + id + " updated");	
-			}
+			docs.deleteOne(Filters.eq("id", id));
+			LOGGER.info("Document " + id + " deleted. Tracks size "+ tracks.size());	
+		}
+
+		LOGGER.info("Deleting dismissed playlists...");
+		i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.eq("source", "ondarock"), Filters.eq("source", "playaestas")))).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			String source = page.getString("source");
+			docs.deleteOne(Filters.eq("id", id));
+			LOGGER.info("Document " + id + " deleted. Source "+ source);	
 		}
 	}
-	
+
 	private void deleteDoc(String id)
 	{
 		LOGGER.info("Deleting doc...");
@@ -171,19 +177,19 @@ public class PatchLoader implements HumanBeats
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
-			
+
 			String title = page.getString("title");
 			title = title.replaceAll("&amp;", "&");
 			title = title.replaceAll("&gt;", ">");
 			title = title.replaceAll("&lt;", "<");
 			page.append("title", title);
-			
+
 			String artist = page.getString("artist");
 			artist = artist.replaceAll("&amp;", "&");
 			artist = artist.replaceAll("&gt;", ">");
 			artist = artist.replaceAll("&lt;", "<");
 			page.append("artist", artist);
-			
+
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
 			page.append("score", null);

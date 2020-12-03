@@ -65,7 +65,7 @@ public class SpotifyLoader implements HumanBeats
 	public void load(String id)
 	{
 		if("playlist".equals(id)) {
-			loadPlaylists(true);
+			createPlaylists();
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
@@ -94,11 +94,10 @@ public class SpotifyLoader implements HumanBeats
 		}
 	}
 
-	private void loadPlaylists(boolean replace)
+	private void createPlaylists()
 	{
 		LOGGER.info("Loading Spotify Playlists...");
-		MongoCursor<Document> i = replace ? docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator() : 
-			docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).iterator(); 
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -145,6 +144,7 @@ public class SpotifyLoader implements HumanBeats
 						AddItemsToPlaylistRequest itemsRequest = PLAYLIST_API.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						itemsRequest.execute();
 						page.append("spalbumid", playlist.getId());
+						page.append("dirty", false);
 						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
 					}
 					catch (Exception e) 
@@ -157,6 +157,7 @@ public class SpotifyLoader implements HumanBeats
 					try {
 						ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req.execute();
+						page.append("dirty", false);
 						LOGGER.info("Playlist " + id + " updated");
 					}
 					catch (Exception e) 
@@ -386,6 +387,7 @@ public class SpotifyLoader implements HumanBeats
 			}
 			score = score/tracks.size();
 			page.append("score", score);
+			page.append("dirty", true);
 		}
 	}
 

@@ -79,4 +79,8 @@ export class DocsComponent implements OnInit {
   docsLoaded(data: any) {
     this.docs.push.apply(this.docs, data);
   }
+
+  formatDate(date: string) {
+    return AppComponent.formatDate(date);
+  }
 }

@@ -52,4 +52,8 @@ export class DocComponent implements OnInit {
 		  return link.type == 'podcast';
     });
   }
+
+  formatDate(date: string) {
+    return AppComponent.formatDate(date);
+  }
 }

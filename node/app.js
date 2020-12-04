@@ -292,7 +292,7 @@ async function findDocs(t, p, q, s) {
 		}
 	}
 	
-	result = await db.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	result = await db.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 	return result;
 }
 
@@ -336,7 +336,7 @@ async function findLinks(id) {
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		result = await db.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, spartistid: 1}).sort({"type":1, "date":-1}).toArray();
+		result = await db.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1}).sort({"type":1, "date":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

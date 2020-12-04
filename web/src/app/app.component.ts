@@ -367,8 +367,8 @@ export class AppComponent {
     return "";
   }
 
-  static formatDate(date: Date) {
-    return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(); 
+  static formatDate(date: string) {
+    return date.substring(0, 10); 
   }
 
   static hasTouchScreen() {

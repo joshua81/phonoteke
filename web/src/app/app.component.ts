@@ -29,6 +29,7 @@ export class AppComponent {
   events = null;
   sources = null;
   error = null;
+  loading = false;
 
   constructor(private router: Router, private location: Location, private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {
     this.isDesktop = !AppComponent.hasTouchScreen();
@@ -60,8 +61,7 @@ export class AppComponent {
       this.http.get('/api/login/refresh').subscribe(
         (data: any) => {
           console.log('New token: ' + this.cookieService.get('spotify-token'));
-        },
-        error => this.error = 'Errore refresh token');
+        });
     }
   }
 
@@ -83,7 +83,6 @@ export class AppComponent {
           },
           error => {
             this.refreshToken();
-            this.error = 'Errore caricamento device Spotify';
           });
       }
     }
@@ -102,7 +101,6 @@ export class AppComponent {
         (data: any) => this.player = device,
         error => {
           this.refreshToken();
-          this.error = 'Errore selezione device Spotify';
       });
     }
   }
@@ -137,7 +135,6 @@ export class AppComponent {
           (data: any) => {this.statusSpotify()},
           error => {
             this.refreshToken();
-            this.error = 'Errore player Spotify (Pause)';
           });
       }
       // play
@@ -149,7 +146,6 @@ export class AppComponent {
           (data: any) => {this.statusSpotify()},
           error => {
             this.refreshToken();
-            this.error = 'Errore player Spotify (Play)';
           });
       }
       // play an other album or playlist
@@ -188,7 +184,6 @@ export class AppComponent {
             },
             error => {
               this.refreshToken();
-              this.error = 'Errore player Spotify (Play)';
             });
         }
       }
@@ -213,8 +208,7 @@ export class AppComponent {
         this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
           (data: any) => {},
           error => {
-            //this.refreshToken();
-            //this.error = 'Errore player Spotify (Close)';
+            this.refreshToken();
           });
       }
     }
@@ -230,7 +224,6 @@ export class AppComponent {
         (data: any) => {this.statusSpotify()},
         error => {
           this.refreshToken();
-          this.error = 'Errore player Spotify (Prev)';
         });
     }
   }
@@ -245,7 +238,6 @@ export class AppComponent {
         (data: any) => {this.statusSpotify()},
         error => {
           this.refreshToken();
-          this.error = 'Errore player Spotify (Next)'
         });
     }
   }
@@ -265,7 +257,6 @@ export class AppComponent {
           }},
         error => {
           this.refreshToken();
-          //this.error = 'Errore lettura stato player Spotify';
         });
     }
   }
@@ -318,12 +309,13 @@ export class AppComponent {
 
   loadEvents(artist: string) {
     this.closeEvents();
+    this.loading = true;
     this.http.get('/api/events/' + artist).subscribe(
       (data: any) => {
+        this.loading = false;
         if(data) {
           this.events = data;
-        }},
-      error => this.error = error);
+        }});
   }
 
   close() {

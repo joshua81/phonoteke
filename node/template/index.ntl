@@ -29,6 +29,6 @@
         <div class="spinner-grow" role="status"></div>
       </div>
     </app-root>
-  <script src="runtime-es2015.cdfb0ddb511f65fdc0a0.js" type="module"></script><script src="runtime-es5.cdfb0ddb511f65fdc0a0.js" nomodule defer></script><script src="polyfills-es5.44547b4d4a23c72d0f9c.js" nomodule defer></script><script src="polyfills-es2015.ffa9bb4e015925544f91.js" type="module"></script><script src="main-es2015.0eb902e55cc7ff6aef03.js" type="module"></script><script src="main-es5.0eb902e55cc7ff6aef03.js" nomodule defer></script></body>
+  <script src="runtime-es2015.cdfb0ddb511f65fdc0a0.js" type="module"></script><script src="runtime-es5.cdfb0ddb511f65fdc0a0.js" nomodule defer></script><script src="polyfills-es5.44547b4d4a23c72d0f9c.js" nomodule defer></script><script src="polyfills-es2015.ffa9bb4e015925544f91.js" type="module"></script><script src="main-es2015.3bd01c1fdaa1c910b55d.js" type="module"></script><script src="main-es5.3bd01c1fdaa1c910b55d.js" nomodule defer></script></body>
 </html>
 

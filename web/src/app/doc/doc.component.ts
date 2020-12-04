@@ -26,9 +26,12 @@ export class DocComponent implements OnInit {
   ngOnInit() {}
 
   loadDoc() {
+    this.app.loading = true;
     this.http.get('/api/docs/' + this.id).subscribe(
-      (data: any) => this.setDoc(data[0]),
-      error => this.app.error = error);
+      (data: any) => {
+        this.app.loading = false;
+        this.setDoc(data[0]);
+      });
   }
 
   setDoc(doc: any) {
@@ -39,9 +42,12 @@ export class DocComponent implements OnInit {
   }
 
   loadLinks() {
+    this.app.loading = true;
     this.http.get('/api/docs/' + this.id + '/links').subscribe(
-      (data: any) => this.setLinks(data),
-      error => this.app.error = error);
+      (data: any) => {
+        this.app.loading = false;
+        this.setLinks(data);
+      });
   }
 
   setLinks(links: any) {

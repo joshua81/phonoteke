@@ -33,46 +33,49 @@ export class DocsComponent implements OnInit {
   
     if(this.type == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => this.docsLoaded(data));
     }
     else if(this.source == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => this.docsLoaded(data));
     }
     else {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type + '&s=' + this.source).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => this.docsLoaded(data));
     }
   }
 
   loadDocs() {
     this.page = 0;
     this.docs = [];
+    this.app.loading = true;
     if(this.type == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => {
+          this.app.loading = false;
+          this.docsLoaded(data);
+        });
     }
     else if(this.source == null) {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => {
+          this.app.loading = false;
+          this.docsLoaded(data);
+        });
     }
     else {
       this.http.get('/api/docs?p=' + this.page + '&q=' + this.searchText + '&t=' + this.type + '&s=' + this.source).subscribe(
-        (data: any) => this.docsLoaded(data),
-        error => this.app.error = error);
+        (data: any) => {
+          this.app.loading = false;
+          this.docsLoaded(data);
+        });
     }
   }
 
   loadSources() {
     if(this.sources.length == 0) {
       this.http.get('/api/docs/sources').subscribe(
-        (data: any) => this.sources.push.apply(this.sources, data),
-        error => this.app.error = error);
+        (data: any) => this.sources.push.apply(this.sources, data));
     }
   }
 

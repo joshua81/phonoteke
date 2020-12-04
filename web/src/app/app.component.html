@@ -76,9 +76,19 @@
   </a>
 </div>
 
+<!-- Error -->
+<div *ngIf="error" class="d-flex flex-row justify-content-center w-max ml-auto mr-auto fixed-bottom">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <p class="text-center">{{error}}</p>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+
 <!-- Events -->
-<div *ngIf="events" class="d-flex justify-content-center events-bg" (click)="closeEvents()">
-  <div *ngIf="events.length != 0" class="align-self-center overflow-auto events">
+<div *ngIf="events" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
+  <div *ngIf="events.length != 0" class="align-self-center overflow-auto modal-content">
     <div class="list-group">
       <div *ngFor="let event of events" class="p-2 list-group-item">
         <div class="d-flex align-items-center">
@@ -91,26 +101,16 @@
       </div>
     </div>
   </div>
-  <div *ngIf="events.length == 0" class="align-self-center overflow-auto events">
+  <div *ngIf="events.length == 0" class="align-self-center overflow-auto modal-content">
     <div class="d-flex flex-row justify-content-center align-items-center">
       <div class="font-weight-bold mt-3 mb-3">Nessun concerto in programma</div>
     </div>
   </div>
 </div>
 
-<!-- Error -->
-<!--div *ngIf="error" class="d-flex flex-row justify-content-center w-max ml-auto mr-auto fixed-bottom">
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <p class="text-center">{{error}}</p>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-</div-->
-
 <!-- Sources -->
-<div *ngIf="sources" class="d-flex justify-content-center events-bg" (click)="toggleSources()">
-  <div class="align-self-center overflow-auto events">
+<div *ngIf="sources" class="d-flex justify-content-center modal-bg" (click)="toggleSources()">
+  <div class="align-self-center overflow-auto modal-content">
     <div class="list-group">
       <div *ngFor="let source of sources" class="list-group-item">
         <a class="w-100" [routerLink]="['/podcast/' + source.source]">
@@ -121,5 +121,12 @@
         </a>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="loading" class="d-flex justify-content-center modal-bg">
+  <div class="align-self-center overflow-auto">
+    <div class="spinner-grow" role="status"></div>
   </div>
 </div>

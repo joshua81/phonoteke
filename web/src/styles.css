@@ -16,13 +16,7 @@
 
 html, body {
     height: 100%;
-    background: rgba(233, 240, 242, 1);
-    /*background-image: url("/images/wallpaper.jpg");
-    height: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;*/
+    background: rgba(233,240,242,1);
 }
 
 .container-fluid {
@@ -119,6 +113,25 @@ h3 {
     top: 0px;
     right: 8px;
     cursor: pointer;
+}
+
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2000;
+    background-color: rgb(233,240,242,0.5);
+    cursor: pointer;
+}
+
+.modal-content {
+    width: 80vw;
+    max-width: 400px;
+    max-height: 80vh;
+    border-radius: 5px;
+    background-color: #FFFFFF;
 }
 
 /********** buttons **********/

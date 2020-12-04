@@ -23,7 +23,6 @@
         </div>
     </div>      
 </div>
-<div *ngIf="docs && docs.length == 0" 
-    class="d-flex justify-content-center align-items-center fill">
+<div *ngIf="!app.loading && docs && docs.length == 0" class="d-flex justify-content-center align-items-center fill">
     <div class="font-weight-bold">Nessun risultato trovato</div>
 </div>

@@ -29,4 +29,8 @@ export class LinkComponent implements OnInit {
       slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
     }
   }
+
+  formatDate(date: string) {
+    return AppComponent.formatDate(date);
+  }
 }

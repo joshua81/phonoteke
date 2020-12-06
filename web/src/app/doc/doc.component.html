@@ -37,7 +37,7 @@
       <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
       <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
       <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}
-        <span *ngIf="doc.type == 'podcast'" class="text-muted">{{' (' + formatDate(doc.date) + ')'}}</span>
+        <span *ngIf="doc.type == 'podcast'" class="text-muted">{{' | ' + formatDate(doc.date)}}</span>
       </h3>
     </div>
 

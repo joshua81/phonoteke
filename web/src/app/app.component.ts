@@ -359,8 +359,13 @@ export class AppComponent {
     return "";
   }
 
-  static formatDate(date: string) {
-    return date.substring(0, 10); 
+  static formatDate(str: string) {
+    var date: Date = new Date(str);
+    return AppComponent.lpad(date.getDate()) + "-" + AppComponent.lpad(date.getMonth() + 1) + "-" + AppComponent.lpad(date.getFullYear())
+  }
+
+  static lpad(n: number){
+    return n <= 9 ? ("0" + n) : n;
   }
 
   static hasTouchScreen() {

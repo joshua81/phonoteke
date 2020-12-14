@@ -33,12 +33,13 @@
 
     <!-- info -->
     <div class="text-center w-100 mt-3">
-      <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+      <div class="d-flex flex-row justify-content-center">
+        <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+        <h3 *ngIf="doc.type == 'podcast'" class="ml-1">{{' | ' + formatDate(doc.date)}}</h3>
+      </div>
       <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
       <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
-      <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}
-        <span *ngIf="doc.type == 'podcast'" class="text-muted">{{' | ' + formatDate(doc.date)}}</span>
-      </h3>
+      <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
     </div>
 
     <!-- songkick + spotify + source -->

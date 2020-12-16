@@ -71,7 +71,7 @@ public class TwitterLoader implements HumanBeats
 				links = "@bertallot #casabertallot " + links;
 			}
 			else if("cassabertallot".equals(source)) {
-				links = "@bertallot #cassabertallot " + links;
+				links = "@bertallot @albiscotti #cassabertallot " + links;
 			}
 			else if("rolloverhangover".equals(source)) {
 				links = "@bertallot #rolloverhangover " + links;
@@ -80,7 +80,7 @@ public class TwitterLoader implements HumanBeats
 				links = "@bertallot #blackalot " + links;
 			}
 			else if("resetrefresh".equals(source)) {
-				links = "@bertallot #resetrefresh " + links;
+				links = "@bertallot @flikkarina #resetrefresh " + links;
 			}
 			else if("battiti".equals(source)) {
 				links = "@radio3tweet #battitiradio3 " + links;
@@ -103,9 +103,11 @@ public class TwitterLoader implements HumanBeats
 			else if("jazztracks".equals(source)) {
 				links = "@daniloddt #jazztracks " + links;
 			}
+			else if("thetuesdaytapes".equals(source)) {
+				links = "@bertallot @thetuesdaytapes #thetuesdaytapes " + links;
+			}
 
-			String date = new SimpleDateFormat("yyyy.MM.dd").format(page.getDate("date"));
-
+			String date = new SimpleDateFormat("dd.MM.yyyy").format(page.getDate("date"));
 			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
 				Set<String> artists = Sets.newHashSet();
 				for(org.bson.Document track : tracks)
@@ -115,11 +117,11 @@ public class TwitterLoader implements HumanBeats
 					}
 				}
 
-				msg += "La playlist #Spotify di " + artist + " (" + date  + ")\n";// - " + title + "\n";
+				msg += "La playlist #Spotify di " + artist + " del " + date  + "\n";// - " + title + "\n";
 				msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 				msg += links + "\n";
 				msg += "https://open.spotify.com/playlist/" + spotify;
-				
+
 				Tweet tweet = twitterClient.postTweet(msg);
 				page.append("tweet", tweet.getId());
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 

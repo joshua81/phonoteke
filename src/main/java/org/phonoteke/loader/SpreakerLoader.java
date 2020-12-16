@@ -58,7 +58,7 @@ public class SpreakerLoader extends AbstractCrawler
 			crawl(URL4, "cassabertallot", "Cassa Bertallot", Lists.newArrayList("Albi Scotti", "Marco Rigamonti"));
 		}
 		else if("resetrefresh".equals(task)) {
-			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Alessio Bertallot"));
+			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Federica Linke"));
 		}
 		else if("thetuesdaytapes".equals(task)) {
 			crawl(URL6, "thetuesdaytapes", "The Tuesday Tapes", Lists.newArrayList("Fabio De Luca"));

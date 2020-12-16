@@ -64,7 +64,7 @@ public interface HumanBeats
 				new SpotifyLoader().load(subtask);
 			}
 			else if("tw".equals(task)) {
-				new TwitterLoader().load(subtask);
+				new SocialNetworkLoader().load(subtask);
 			}
 			else if("yt".equals(task)) {
 				new YoutubeLoader().load(subtask);

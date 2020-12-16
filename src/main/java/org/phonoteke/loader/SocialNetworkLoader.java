@@ -1,7 +1,8 @@
 package org.phonoteke.loader;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -9,6 +10,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -24,26 +30,27 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
-public class TwitterLoader implements HumanBeats
+public class SocialNetworkLoader implements HumanBeats
 {
-	private static final Logger LOGGER = LogManager.getLogger(TwitterLoader.class);
+	private static final Logger LOGGER = LogManager.getLogger(SocialNetworkLoader.class);
 	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 	private static TwitterClient twitterClient;
+	private static HttpClient httpClient = HttpClients.createDefault();
 
 
 	public static void main(String args[]) {
-		new TwitterLoader().load(null);
+		new SocialNetworkLoader().load(null);
 	}
 
 
-	public TwitterLoader() {
+	public SocialNetworkLoader() {
 		try {
 			twitterClient = new TwitterClient(TwitterClient.OBJECT_MAPPER.readValue(new File(CREDENTIALS), TwitterCredentials.class));
 		}
-		catch(IOException e) {
+		catch(Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
@@ -122,11 +129,35 @@ public class TwitterLoader implements HumanBeats
 				msg += links + "\n";
 				msg += "https://open.spotify.com/playlist/" + spotify;
 
-				Tweet tweet = twitterClient.postTweet(msg);
-				page.append("tweet", tweet.getId());
+				writeToTwitter(page, msg);
+				writeToTelegram(page, msg);
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-				LOGGER.info("Podcast " + id + " tweeted");
 			}
+		}
+	}
+
+	private void writeToTwitter(Document page, String msg) {
+		String id = page.getString("id");
+		Tweet tweet = twitterClient.postTweet(msg);
+		page.append("tweet", tweet.getId());
+		LOGGER.info("Podcast " + id + " tweeted");
+	}
+
+	private void writeToTelegram(Document page, String msg) {
+		try {
+			String id = page.getString("id");
+			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
+			HttpResponse response = httpClient.execute(new HttpGet(url));
+			int status = response.getStatusLine().getStatusCode();
+			if(HttpStatus.SC_OK == status) {
+				LOGGER.info("Podcast " + id + " sent to Telegram channel @beatzhuman");
+			}
+			else {
+				LOGGER.error("Error while sending message to Telegram channel @beatzhuman. HTTP status " + status);
+			}
+		}
+		catch(Exception e) {
+			LOGGER.error(e.getMessage(),  e);
 		}
 	}
 }

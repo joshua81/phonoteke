@@ -28,15 +28,15 @@ public class OndarockLoader extends AbstractCrawler
 
 	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
 
+	
 	public static void main(String[] args) {
-		//new OndarockLoader().load("https://www.ondarock.it/speciali/rockinonda_frenchtouch.htm");
-		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-grantleephillips-lightningshowusyourstuff.htm");
+		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-anebrun-howbeautyholdsthehandof%20sorrow.htm");
 	}
 
 	@Override
 	public void load(String url) 
 	{
-		url = url == null ? OndarockLoader.URL : url;
+		url = url == null ? OndarockLoader.URL : (OndarockLoader.URL + url);
 		crawl(url);
 	}
 

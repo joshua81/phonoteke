@@ -254,7 +254,7 @@ public class SpotifyLoader implements HumanBeats
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage());
+			LOGGER.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage(), e);
 			relogin();
 		}
 		return albumsMap.isEmpty() ?  null : albumsMap.descendingMap().firstEntry().getValue();
@@ -379,7 +379,7 @@ public class SpotifyLoader implements HumanBeats
 					}
 					catch (Exception e) 
 					{
-						LOGGER.error("ERROR loading " + title + ": " + e.getMessage());
+						LOGGER.error("ERROR loading " + title + ": " + e.getMessage(), e);
 						relogin();
 					}
 				}

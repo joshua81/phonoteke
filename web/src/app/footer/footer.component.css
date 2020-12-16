@@ -21,28 +21,6 @@
   cursor: pointer;
 }
 
-.mail {
-  display: inline-block;
-  mask: url("/images/mail.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
-  background: #18A2B8;
-  cursor: pointer;
-}
-
-.linkedin {
-  display: inline-block;
-  mask: url("/images/linkedin.svg") no-repeat;
-  width: 17px;
-  height: 20px;
-  margin-top: 5px;
-  margin-left: 6px;
-  background: #18A2B8;
-  cursor: pointer;
-}
-
 .github {
   display: inline-block;
   mask: url("/images/github.svg") no-repeat;
@@ -57,6 +35,17 @@
 .twitter {
   display: inline-block;
   mask: url("/images/twitter.svg") no-repeat;
+  width: 20px;
+  height: 20px;
+  margin-top: 5px;
+  margin-left: 5px;
+  background: #18A2B8;
+  cursor: pointer;
+}
+
+.telegram {
+  display: inline-block;
+  mask: url("/images/telegram.svg") no-repeat;
   width: 20px;
   height: 20px;
   margin-top: 5px;

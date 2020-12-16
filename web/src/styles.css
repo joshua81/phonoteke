@@ -32,6 +32,9 @@ html, body {
     height: 40px;
     background: #FFFFFF;
     opacity: 0.9;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #C8C8C8;
 }
 
 .hscroll {

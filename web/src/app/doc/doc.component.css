@@ -1,3 +1,10 @@
+.section {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #C8C8C8;
+  background-color: #FFFFFF;
+}
+
 .icon {
   border-radius: 50%;
   background: #FFFFFF;

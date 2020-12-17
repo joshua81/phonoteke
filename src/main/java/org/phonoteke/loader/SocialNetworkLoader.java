@@ -63,94 +63,111 @@ public class SocialNetworkLoader implements HumanBeats
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.gt("date", start), Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 
 		{
-			String links = "";
-			String msg = "";
 			Document page = i.next();
 			String id = page.getString("id");
-			String artist = page.getString("artist");
-			String title = page.getString("title");
-			String source = page.getString("source");
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-
-			if("casabertallot".equals(source)) {
-				links = "@bertallot #casabertallot " + links;
-			}
-			else if("cassabertallot".equals(source)) {
-				links = "@bertallot @albiscotti #cassabertallot " + links;
-			}
-			else if("rolloverhangover".equals(source)) {
-				links = "@bertallot #rolloverhangover " + links;
-			}
-			else if("blackalot".equals(source)) {
-				links = "@bertallot #blackalot " + links;
-			}
-			else if("resetrefresh".equals(source)) {
-				links = "@bertallot @flikkarina #resetrefresh " + links;
-			}
-			else if("battiti".equals(source)) {
-				links = "@radio3tweet #battitiradio3 " + links;
-			}
-			else if("seigradi".equals(source)) {
-				links = "@radio3tweet #seigradiradio3 " + links;
-			}
-			else if("musicalbox".equals(source)) {
-				links = "@rairadio2 @raffacostantino @_musicalbox #musicalboxradio2 " + links;
-			}
-			else if("stereonotte".equals(source)) {
-				links = "@radio1rai @stereonotte #stereonotteradio1 " + links;
-			}
-			else if("inthemix".equals(source)) {
-				links = "@rairadio2 @djlelesacchi #inthemixradio2 " + links;
-			}
-			else if("babylon".equals(source)) {
-				links = "@rairadio2 @carlopastore #babylonradio2 " + links;
-			}
-			else if("jazztracks".equals(source)) {
-				links = "@daniloddt #jazztracks " + links;
-			}
-			else if("thetuesdaytapes".equals(source)) {
-				links = "@bertallot @thetuesdaytapes #thetuesdaytapes " + links;
-			}
-
-			String date = new SimpleDateFormat("dd.MM.yyyy").format(page.getDate("date"));
 			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
-				Set<String> artists = Sets.newHashSet();
-				for(org.bson.Document track : tracks)
-				{
-					if(track.getInteger("score") >= 70) {
-						artists.add(track.getString("artist"));
-					}
-				}
-
-				msg += "La playlist #Spotify di " + artist + " del " + date  + "\n";// - " + title + "\n";
-				msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
-				msg += links + "\n";
-				msg += "https://open.spotify.com/playlist/" + spotify;
-
-				writeToTwitter(page, msg);
-				writeToTelegram(page, msg);
+				sendTweet(page);
+				sendTelegram(page);
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
 	}
 
-	private void writeToTwitter(Document page, String msg) {
+	private void sendTweet(Document page) {
 		String id = page.getString("id");
+		String artist = page.getString("artist");
+		String source = page.getString("source");
+		String spotify = page.getString("spalbumid");
+		List<org.bson.Document> tracks = page.get("tracks", List.class);
+		String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+
+		Set<String> artists = Sets.newHashSet();
+		for(org.bson.Document track : tracks) {
+			if(track.getInteger("score") >= 70) {
+				artists.add(track.getString("artist"));
+			}
+		}
+
+		String links = "";
+		if("casabertallot".equals(source)) {
+			links = "@bertallot #casabertallot " + links;
+		}
+		else if("cassabertallot".equals(source)) {
+			links = "@bertallot @albiscotti #cassabertallot " + links;
+		}
+		else if("rolloverhangover".equals(source)) {
+			links = "@bertallot #rolloverhangover " + links;
+		}
+		else if("blackalot".equals(source)) {
+			links = "@bertallot #blackalot " + links;
+		}
+		else if("resetrefresh".equals(source)) {
+			links = "@bertallot @flikkarina #resetrefresh " + links;
+		}
+		else if("battiti".equals(source)) {
+			links = "@radio3tweet #battitiradio3 " + links;
+		}
+		else if("seigradi".equals(source)) {
+			links = "@radio3tweet #seigradiradio3 " + links;
+		}
+		else if("musicalbox".equals(source)) {
+			links = "@rairadio2 @raffacostantino @_musicalbox #musicalboxradio2 " + links;
+		}
+		else if("stereonotte".equals(source)) {
+			links = "@radio1rai @stereonotte #stereonotteradio1 " + links;
+		}
+		else if("inthemix".equals(source)) {
+			links = "@rairadio2 @djlelesacchi #inthemixradio2 " + links;
+		}
+		else if("babylon".equals(source)) {
+			links = "@rairadio2 @carlopastore #babylonradio2 " + links;
+		}
+		else if("jazztracks".equals(source)) {
+			links = "@daniloddt #jazztracks " + links;
+		}
+		else if("thetuesdaytapes".equals(source)) {
+			links = "@bertallot @thetuesdaytapes #thetuesdaytapes " + links;
+		}
+
+		String msg = "La playlist #Spotify di " + artist + " (" + date  + ")\n";
+		msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
+		msg += links + "\n";
+		msg += "https://open.spotify.com/playlist/" + spotify;
+
 		Tweet tweet = twitterClient.postTweet(msg);
 		page.append("tweet", tweet.getId());
-		LOGGER.info("Podcast " + id + " tweeted");
+		LOGGER.info("Podcast " + id + " sent to Twitter");
 	}
 
-	private void writeToTelegram(Document page, String msg) {
+	private void sendTelegram(Document page) {
 		try {
 			String id = page.getString("id");
-			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
+			String artist = page.getString("artist");
+			String title = page.getString("title");
+			String spotify = page.getString("spalbumid");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+
+			Set<String> artists = Sets.newHashSet();
+			for(org.bson.Document track : tracks) {
+				if(track.getInteger("score") >= 70) {
+					artists.add(track.getString("artist"));
+				}
+			}
+
+			String msg = "La playlist Spotify di *" + artist + "* (" + date  + ")\n";
+			msg += "*" + title + "*\n";
+			msg += artists +"\n";
+			msg += "https://open.spotify.com/playlist/" + spotify;
+
+			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
 			HttpResponse response = httpClient.execute(new HttpGet(url));
 			int status = response.getStatusLine().getStatusCode();
 			if(HttpStatus.SC_OK == status) {
-				LOGGER.info("Podcast " + id + " sent to Telegram channel @beatzhuman");
+				LOGGER.info("Podcast " + id + " sent to Telegram");
 			}
 			else {
 				LOGGER.error("Error while sending message to Telegram channel @beatzhuman. HTTP status " + status);

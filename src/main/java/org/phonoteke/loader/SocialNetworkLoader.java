@@ -158,9 +158,8 @@ public class SocialNetworkLoader implements HumanBeats
 				}
 			}
 
-			String msg = "La playlist Spotify di *" + artist + "* (" + date  + ")\n";
-			msg += "*" + title + "*\n";
-			msg += artists +"\n";
+			String msg = "La playlist Spotify di *" + artist + "* (" + date  + ") - *" + title + "*\n";
+			msg += "con: " + artists +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);

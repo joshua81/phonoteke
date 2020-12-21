@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().replaceSpecialChars();
+		new PatchLoader().deleteEmptyPlaylists();
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class PatchLoader implements HumanBeats
 	private void deleteEmptyPlaylists()
 	{
 		LOGGER.info("Deleting empty playlists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.size("tracks", 1), Filters.size("tracks", 2), Filters.size("tracks", 3), Filters.size("tracks", 4)))).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.size("tracks", 5))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();

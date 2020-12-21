@@ -1,6 +1,7 @@
 package org.phonoteke.loader;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -11,9 +12,9 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,6 @@ public class SocialNetworkLoader implements HumanBeats
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 	private static TwitterClient twitterClient;
-	private static HttpClient httpClient = HttpClients.createDefault();
 
 
 	public static void main(String args[]) {
@@ -64,14 +64,12 @@ public class SocialNetworkLoader implements HumanBeats
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
-			String id = page.getString("id");
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
 			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
 				sendTweet(page);
 				sendTelegram(page);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
 	}
@@ -139,10 +137,14 @@ public class SocialNetworkLoader implements HumanBeats
 
 		Tweet tweet = twitterClient.postTweet(msg);
 		page.append("tweet", tweet.getId());
+		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		LOGGER.info("Podcast " + id + " sent to Twitter");
 	}
 
 	private void sendTelegram(Document page) {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = null;
+
 		try {
 			String id = page.getString("id");
 			String artist = page.getString("artist");
@@ -163,7 +165,7 @@ public class SocialNetworkLoader implements HumanBeats
 			msg += "https://open.spotify.com/playlist/" + spotify;
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
-			HttpResponse response = httpClient.execute(new HttpGet(url));
+			response = httpClient.execute(new HttpGet(url));
 			int status = response.getStatusLine().getStatusCode();
 			if(HttpStatus.SC_OK == status) {
 				LOGGER.info("Podcast " + id + " sent to Telegram");
@@ -174,6 +176,22 @@ public class SocialNetworkLoader implements HumanBeats
 		}
 		catch(Exception e) {
 			LOGGER.error(e.getMessage(),  e);
+		}
+		finally {
+			if(response != null) {
+				try {
+					response.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+			if(httpClient != null) {
+				try {
+					httpClient.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
 		}
 	}
 }

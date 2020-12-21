@@ -42,7 +42,7 @@ public interface HumanBeats
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	public static final int SLEEP_TIME = 2000;
 	public static final int THRESHOLD = 90;
-	public static final int TRACKS_SIZE = 5;
+	public static final int TRACKS_SIZE = 6;
 
 	public enum TYPE {
 		artist,
@@ -134,10 +134,10 @@ public interface HumanBeats
 			if(m.matches()) {
 				matches.add(parseArtistSong(m.group(2),  m.group(3)));
 				matches.add(parseArtistSong(m.group(3),  m.group(2)));
-				if(m.group(2).contains("&")) {
+				if(!m.group(2).startsWith("&") && m.group(2).contains("&")) {
 					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
 				}
-				if(m.group(3).contains("&")) {
+				if(!m.group(3).startsWith("&") && m.group(3).contains("&")) {
 					matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
 				}
 				if(m.group(2).toLowerCase().contains(" and ")) {
@@ -167,10 +167,10 @@ public interface HumanBeats
 				if(m.matches()) {
 					matches.add(parseArtistSong(m.group(2),  m.group(3)));
 					matches.add(parseArtistSong(m.group(3),  m.group(2)));
-					if(m.group(2).contains("&")) {
+					if(!m.group(2).startsWith("&") && m.group(2).contains("&")) {
 						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
 					}
-					if(m.group(3).contains("&")) {
+					if(!m.group(3).startsWith("&") && m.group(3).contains("&")) {
 						matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
 					}
 					if(m.group(2).toLowerCase().contains(" and ")) {
@@ -200,10 +200,10 @@ public interface HumanBeats
 	public static String[] parseArtistSong(String artist, String song)
 	{
 		// artist
-		artist = artist.split("/")[0];
-		artist = artist.split("\\+")[0];
-		artist = artist.split(",")[0];
-		artist = artist.split(";")[0];
+		artist = !artist.startsWith("/") ?  artist.split("/")[0] : artist;
+		artist = !artist.startsWith("+") ? artist.split("\\+")[0] : artist;
+		artist = !artist.startsWith(",") ?  artist.split(",")[0] : artist;
+		artist = !artist.startsWith(";") ?  artist.split(";")[0] : artist;
 		artist = artist.replaceAll("=", " ");
 		artist = artist.replaceAll("\\[\\]", " ");
 		artist = artist.replaceAll("\\]\\[", " ");

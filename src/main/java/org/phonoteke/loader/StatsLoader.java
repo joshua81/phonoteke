@@ -81,7 +81,7 @@ public class StatsLoader implements HumanBeats
 					}
 				}
 
-				if(tracks.size() < 5) {
+				if(tracks.size() == 5) {
 					LOGGER.info(page.get("source") + ": " + page.get("id") + " (tracks " + tracks.size() + ")");
 				}
 			}

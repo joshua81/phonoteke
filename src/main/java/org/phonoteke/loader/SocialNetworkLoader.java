@@ -130,7 +130,7 @@ public class SocialNetworkLoader implements HumanBeats
 			links = "@bertallot @thetuesdaytapes #thetuesdaytapes " + links;
 		}
 
-		String msg = "La playlist #Spotify di " + artist + " (" + date  + ")\n";
+		String msg = "The " + artist + " (" + date  + ") #Spotify playlist\n";
 		msg += (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
 		msg += links + "\n";
 		msg += "https://open.spotify.com/playlist/" + spotify;
@@ -160,8 +160,8 @@ public class SocialNetworkLoader implements HumanBeats
 				}
 			}
 
-			String msg = "La playlist Spotify di *" + artist + "* (" + date  + ") - *" + title + "*\n";
-			msg += "con: " + artists +"\n";
+			String msg = "The *" + artist + " - " + title + "* (" + date  + ") Spotify playlist\n";
+			msg += "with " + artists +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);

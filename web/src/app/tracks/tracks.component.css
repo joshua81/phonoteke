@@ -1,18 +1,3 @@
-.player-play {
-    position: absolute;
-    display: inline-block;
-    mask: url("/images/play.svg") no-repeat;
-    width: 12px;
-    height: 12px;
-    margin: 0px;
-    padding: 0px;
-    left: 25px;
-    top: 25px;
-    background: #FFFFFF;
-    opacity: 0.6;
-    cursor: pointer;
-}
-
 div.cover {
     position: relative;
     width: 62px;
@@ -24,11 +9,9 @@ div.cover {
     border-color: #9c9c9c;
     border-style: solid;
     object-fit:cover;
-    cursor: pointer;
 }
 
 img.cover {
     width: 60px;
     height: 60px;
-    cursor: pointer;
 }

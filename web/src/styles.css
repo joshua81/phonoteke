@@ -147,121 +147,8 @@ img.logo {
     cursor: pointer;
 }
 
-img.ondarock {
+img.source {
     border-radius: 50%;
-    content: url("/images/ondarock.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.musicalbox {
-    border-radius: 50%;
-    content: url("/images/musicalbox.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.inthemix {
-    border-radius: 50%;
-    content: url("/images/inthemix.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.babylon {
-    border-radius: 50%;
-    content: url("/images/babylon.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.battiti {
-    border-radius: 50%;
-    content: url("/images/battiti.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.seigradi {
-    border-radius: 50%;
-    content: url("/images/seigradi.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.casabertallot {
-    border-radius: 50%;
-    content: url("/images/casabertallot.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.rolloverhangover {
-    border-radius: 50%;
-    content: url("/images/rolloverhangover.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.blackalot {
-    border-radius: 50%;
-    content: url("/images/blackalot.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.cassabertallot {
-    border-radius: 50%;
-    content: url("/images/cassabertallot.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.thetuesdaytapes {
-    border-radius: 50%;
-    content: url("/images/thetuesdaytapes.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.resetrefresh {
-    border-radius: 50%;
-    content: url("/images/resetrefresh.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.stereonotte {
-    border-radius: 50%;
-    content: url("/images/stereonotte.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.jazztracks {
-    border-radius: 50%;
-    content: url("/images/jazztracks.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.speaker {
-    border-radius: 50%;
-    content: url("/images/speaker.png");
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -287,14 +174,6 @@ img.equalizer {
     content: url("/images/equalizer.gif");
     width: 20px;
     height: 20px;
-}
-
-img.close-button {
-    border-radius: 50%;
-    content: url("/images/close.png");
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
 }
 
 .player-button {

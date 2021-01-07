@@ -19,28 +19,28 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().deleteEmptyPlaylists();
+		new PatchLoader().deleteDoc("22713bd04bf91bd65b1eedd6e658217b4c567a7c78d27f8feee0c9841901b2df");
 	}
 
 	@Override
-	public void load(String task) 
+	public void load(String... args) 
 	{
-		if("resetTracksTitle".equals(task)) {
+		if("resetTracksTitle".equals(args[0])) {
 			resetTracksTitle();
 		}
-		else if("calculateScore".equals(task)) {
+		else if("calculateScore".equals(args[0])) {
 			calculateScore();
 		}
-		else if("resetTracks".equals(task)) {
+		else if("resetTracks".equals(args[0])) {
 			resetTracks();
 		}
-		else if("replaceSpecialChars".equals(task)) {
+		else if("replaceSpecialChars".equals(args[0])) {
 			replaceSpecialChars();
 		}
-		else if("deleteDoc".equals(task)) {
+		else if("deleteDoc".equals(args[0])) {
 			deleteDoc(null);
 		}
-		else if("deleteEmptyPlaylist".equals(task)) {
+		else if("deleteEmptyPlaylist".equals(args[0])) {
 			deleteEmptyPlaylists();
 		}
 	}
@@ -75,6 +75,19 @@ public class PatchLoader implements HumanBeats
 		LOGGER.info("Deleting doc...");
 		docs.deleteOne(Filters.eq("id", id));
 		LOGGER.info("Document " + id + " deleted");	
+	}
+
+	private void deleteDocs()
+	{
+		LOGGER.info("Deleting docs...");
+		MongoCursor<Document> i = docs.find(Filters.eq("source", "worldwidefm")).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			docs.deleteOne(Filters.eq("id", id));
+			LOGGER.info("Document " + id + " deleted");
+		}
 	}
 
 	private void resetTracksTitle()

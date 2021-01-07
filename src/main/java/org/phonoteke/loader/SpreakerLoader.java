@@ -33,9 +33,9 @@ public class SpreakerLoader extends AbstractCrawler
 
 
 	@Override
-	public void load(String task) 
+	public void load(String... args) 
 	{
-		if(task == null) {
+		if(args.length == 0) {
 			load("casabertallot");
 			load("rolloverhangover");
 			load("blackalot");
@@ -44,26 +44,25 @@ public class SpreakerLoader extends AbstractCrawler
 			load("thetuesdaytapes");
 			load("jazztracks");
 		}
-
-		if("casabertallot".equals(task)) {
+		else if("casabertallot".equals(args[0])) {
 			crawl(URL1, "casabertallot", "Casa Bertallot", Lists.newArrayList("Alessio Bertallot"));
 		}
-		else if("rolloverhangover".equals(task)) {
+		else if("rolloverhangover".equals(args[0])) {
 			crawl(URL2, "rolloverhangover", "Rollover Hangover", Lists.newArrayList("Rocco Fusco"));
 		}
-		else if("blackalot".equals(task)) {
+		else if("blackalot".equals(args[0])) {
 			crawl(URL3, "blackalot", "Black A Lot", Lists.newArrayList("Michele Gas"));
 		}
-		else if("cassabertallot".equals(task)) {
+		else if("cassabertallot".equals(args[0])) {
 			crawl(URL4, "cassabertallot", "Cassa Bertallot", Lists.newArrayList("Albi Scotti", "Marco Rigamonti"));
 		}
-		else if("resetrefresh".equals(task)) {
+		else if("resetrefresh".equals(args[0])) {
 			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Federica Linke"));
 		}
-		else if("thetuesdaytapes".equals(task)) {
+		else if("thetuesdaytapes".equals(args[0])) {
 			crawl(URL6, "thetuesdaytapes", "The Tuesday Tapes", Lists.newArrayList("Fabio De Luca"));
 		}
-		else if("jazztracks".equals(task)) {
+		else if("jazztracks".equals(args[0])) {
 			crawl(URL7, "jazztracks", "Jazz Tracks", Lists.newArrayList("Danilo Di Termini"));
 		}
 	}

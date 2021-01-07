@@ -22,11 +22,11 @@ public class StatsLoader implements HumanBeats
 
 	
 	public static void main(String[] args) {
-		new StatsLoader().load(null);
+		new StatsLoader().load();
 	}
 
 	@Override
-	public void load(String task)
+	public void load(String... args)
 	{
 		LOGGER.info("Calculating stats...");
 		TreeMap<Integer, Integer> scoreStats = Maps.newTreeMap();

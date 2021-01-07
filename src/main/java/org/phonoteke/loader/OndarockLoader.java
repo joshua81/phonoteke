@@ -28,15 +28,15 @@ public class OndarockLoader extends AbstractCrawler
 
 	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
 
-	
+
 	public static void main(String[] args) {
 		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-anebrun-howbeautyholdsthehandof%20sorrow.htm");
 	}
 
 	@Override
-	public void load(String url) 
+	public void load(String... args) 
 	{
-		url = url == null ? OndarockLoader.URL : (OndarockLoader.URL + url);
+		String url = args.length == 0 ? OndarockLoader.URL : (OndarockLoader.URL + args[0]);
 		crawl(url);
 	}
 
@@ -44,6 +44,14 @@ public class OndarockLoader extends AbstractCrawler
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
 		return url.getURL().toLowerCase().startsWith(URL);
+	}
+
+	@Override
+	public void visit(Page page) 
+	{
+		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
+			super.visit(page);
+		}
 	}
 
 	@Override
@@ -192,9 +200,9 @@ public class OndarockLoader extends AbstractCrawler
 			bandElement = intestazioneElement.select("h2").first();
 			band = bandElement.html().trim();
 			return band;
-//		case podcast:
-//			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
-//				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
+			//		case podcast:
+			//			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
+			//				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
 		default:
 			return null;
 		}
@@ -528,11 +536,11 @@ public class OndarockLoader extends AbstractCrawler
 		{
 			return TYPE.interview;
 		}
-//		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
-//				getUrl(url).startsWith(URL + "speciali/rockinonda"))
-//		{
-//			return TYPE.podcast;
-//		}
+		//		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
+		//				getUrl(url).startsWith(URL + "speciali/rockinonda"))
+		//		{
+		//			return TYPE.podcast;
+		//		}
 		return TYPE.unknown;
 	}
 }

@@ -42,7 +42,7 @@ public class SocialNetworkLoader implements HumanBeats
 
 
 	public static void main(String args[]) {
-		new SocialNetworkLoader().load(null);
+		new SocialNetworkLoader().load();
 	}
 
 
@@ -56,7 +56,7 @@ public class SocialNetworkLoader implements HumanBeats
 	}
 
 	@Override
-	public void load(String task)
+	public void load(String... args)
 	{
 		LOGGER.info("Tweetting podcasts...");
 		Date start = new GregorianCalendar(2020,9,11).getTime();

@@ -45,7 +45,7 @@ public class YoutubeLoader implements HumanBeats
 	}
 
 	@Override
-	public void load(String task)
+	public void load(String... args)
 	{
 		try
 		{

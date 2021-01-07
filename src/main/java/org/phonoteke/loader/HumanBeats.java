@@ -1,5 +1,6 @@
 package org.phonoteke.loader;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +57,7 @@ public interface HumanBeats
 	public static void main(String[] args) {
 		if(args.length > 0) {
 			String task = args[0].split(":")[0];
-			String subtask = args[0].split(":").length == 1 ? null : args[0].split(":")[1];
+			String[] subtask = Arrays.copyOfRange(args[0].split(":"), 1, args[0].split(":").length);
 			if("mb".equals(task)) {
 				new MusicbrainzLoader().load(subtask);
 			}
@@ -83,27 +84,34 @@ public interface HumanBeats
 				new PatchLoader().load(subtask);
 			}
 			else {
-				System.out.println("Usage:");
-				System.out.println("- compile (compiles sources)");
-				System.out.println("- deploy (deploys to GCloud)");
-				System.out.println("- test (deploys test)");
-				System.out.println("- mb (loads Music Brainz)");
-				System.out.println("- sp (loads Spotify)");
-				System.out.println("- sp:playlist (loads Spotify playlists)");
-				System.out.println("- tw (loads Twitter)");
-				System.out.println("- yt (loads Youtube)");
-				System.out.println("- doc (loads documents)");
-				System.out.println("- pod (loads podcasts)");
-				System.out.println("- stats (loads stats)");
-				System.out.println("- patch:resetTracksTitle (patches db)");
-				System.out.println("- patch:calculateScore (patches db)");
-				System.out.println("- patch:resetTracks (patches db)");
-				System.out.println("- patch:replaceSpecialChars (patches db)");
+				printHelp();
 			}
+		}
+		else {
+			printHelp();
 		}
 	}
 
-	public void load(String task);
+	public static void printHelp() {
+		System.out.println("Usage:");
+		System.out.println("- compile (compiles sources)");
+		System.out.println("- deploy (deploys to GCloud)");
+		System.out.println("- test (deploys test)");
+		System.out.println("- mb (loads Music Brainz)");
+		System.out.println("- sp (loads Spotify)");
+		System.out.println("- sp:playlist (loads Spotify playlists)");
+		System.out.println("- tw (loads Twitter)");
+		System.out.println("- yt (loads Youtube)");
+		System.out.println("- doc (loads documents)");
+		System.out.println("- pod (loads podcasts)");
+		System.out.println("- stats (loads stats)");
+		System.out.println("- patch:resetTracksTitle (patches db)");
+		System.out.println("- patch:calculateScore (patches db)");
+		System.out.println("- patch:resetTracks (patches db)");
+		System.out.println("- patch:replaceSpecialChars (patches db)");
+	}
+
+	public void load(String... args);
 
 	public static boolean isTrack(String title)
 	{

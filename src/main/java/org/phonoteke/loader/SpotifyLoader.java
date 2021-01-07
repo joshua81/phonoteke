@@ -29,7 +29,6 @@ import com.wrapper.spotify.model_objects.specification.Image;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
-import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
@@ -44,38 +43,38 @@ public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 
-	private static final SpotifyApi SPOTIFY_API = new SpotifyApi.Builder()
-			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
-			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
-			.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
-	private static final ClientCredentialsRequest SPOTIFY_LOGIN = SPOTIFY_API.clientCredentials().build();
-	private static final SpotifyApi PLAYLIST_API = new SpotifyApi.Builder().setAccessToken(System.getenv("SPOTIFY_TOKEN")).build();
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
 
-	private static ClientCredentials credentials;
-
+	private ClientCredentials credentials;
+	private SpotifyApi spotify;
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load("b969015ad0c4f9960c4c0c9da09c183d61766625ed7dec9e836a6a4005874bbe");
+		new SpotifyLoader().load();
 	}
 
 	@Override
-	public void load(String id)
+	public void load(String... args)
 	{
-		if("playlist".equals(id)) {
+		if(args.length == 2 && "playlist".equals(args[0])) {
+			LOGGER.info("Creating Spotify playlist...");
+			spotify = new SpotifyApi.Builder().setAccessToken(args[1]).build();
 			createPlaylists();
 		}
 		else {
 			LOGGER.info("Loading Spotify...");
-			MongoCursor<Document> i = id != null ? docs.find(Filters.eq("id", id)).iterator() :
+			spotify = new SpotifyApi.Builder()
+					.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
+					.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
+					.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
+			MongoCursor<Document> i =  args.length == 1 ? docs.find(Filters.eq("id", args[0])).iterator() :
 				docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 						Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
 			while(i.hasNext()) 
 			{ 
 				Document page = i.next();
-				id = page.getString("id"); 
+				String id = page.getString("id"); 
 				String type = page.getString("type");
 				if("album".equals(type))
 				{
@@ -96,7 +95,6 @@ public class SpotifyLoader implements HumanBeats
 
 	private void createPlaylists()
 	{
-		LOGGER.info("Loading Spotify Playlists...");
 		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
 		while(i.hasNext()) 
 		{ 
@@ -139,9 +137,9 @@ public class SpotifyLoader implements HumanBeats
 
 					try
 					{
-						CreatePlaylistRequest playlistRequest = PLAYLIST_API.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
+						CreatePlaylistRequest playlistRequest = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 						Playlist playlist = playlistRequest.execute();
-						AddItemsToPlaylistRequest itemsRequest = PLAYLIST_API.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+						AddItemsToPlaylistRequest itemsRequest = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						itemsRequest.execute();
 						page.append("spalbumid", playlist.getId());
 						page.append("dirty", false);
@@ -155,7 +153,7 @@ public class SpotifyLoader implements HumanBeats
 				// update existing playlist
 				else {
 					try {
-						ReplacePlaylistsItemsRequest req = PLAYLIST_API.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+						ReplacePlaylistsItemsRequest req = spotify.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req.execute();
 						page.append("dirty", false);
 						LOGGER.info("Playlist " + id + " updated");
@@ -182,8 +180,8 @@ public class SpotifyLoader implements HumanBeats
 			Thread.sleep(SLEEP_TIME);
 			if(credentials == null)
 			{
-				credentials = SPOTIFY_LOGIN.execute();
-				SPOTIFY_API.setAccessToken(credentials.getAccessToken());
+				credentials = spotify.clientCredentials().build().execute();
+				spotify.setAccessToken(credentials.getAccessToken());
 				LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
 			}
 		} 
@@ -228,7 +226,7 @@ public class SpotifyLoader implements HumanBeats
 		{
 			login();
 			String q = artist + " " + album;
-			SearchAlbumsRequest request = SPOTIFY_API.searchAlbums(q).build();
+			SearchAlbumsRequest request = spotify.searchAlbums(q).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
 			{
@@ -290,7 +288,7 @@ public class SpotifyLoader implements HumanBeats
 			try
 			{
 				login();
-				SearchArtistsRequest request = SPOTIFY_API.searchArtists(artist).build();
+				SearchArtistsRequest request = spotify.searchArtists(artist).build();
 				Paging<Artist> artists = request.execute();
 				for(int j = 0; j < artists.getItems().length; j++)
 				{
@@ -324,7 +322,7 @@ public class SpotifyLoader implements HumanBeats
 			try
 			{
 				login();
-				GetArtistRequest request = SPOTIFY_API.getArtist(artistId).build();
+				GetArtistRequest request = spotify.getArtist(artistId).build();
 				Artist artist = request.execute();
 				if(artist != null) {
 					String artistid = artist.getId();
@@ -412,7 +410,7 @@ public class SpotifyLoader implements HumanBeats
 					song = song.replaceAll("&nbsp;", " ");
 					song = song.trim();
 					String q = artist + " " + song;
-					SearchTracksRequest request = SPOTIFY_API.searchTracks(q).market(CountryCode.IT).build();
+					SearchTracksRequest request = spotify.searchTracks(q).market(CountryCode.IT).build();
 					Paging<Track> tracks = request.execute();
 					if(tracks.getItems().length == 0) {
 						LOGGER.info("Not found: " + artist + " - " + song);

@@ -81,7 +81,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 			String source = getSource();
 			TYPE type = getType(url);
 
-			if((url.endsWith(".htm") || url.endsWith(".html")) && !TYPE.unknown.equals(type))
+			if(!TYPE.unknown.equals(type))
 			{
 				try
 				{

@@ -30,11 +30,11 @@ public class MusicbrainzLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new MusicbrainzLoader().load(null);
+		new MusicbrainzLoader().load(args);
 	}
 
 	@Override
-	public void load(String task) 
+	public void load(String... args) 
 	{
 		LOGGER.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = docs.find(Filters.or(

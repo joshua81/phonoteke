@@ -43,51 +43,50 @@ public class RadioRaiLoader extends AbstractCrawler
 	}
 
 	@Override
-	public void load(String task) 
+	public void load(String... args) 
 	{
-		if(task == null) {
+		if(args.length == 0) {
 			load("musicalbox");
 			load("battiti");
 			load("seigradi");
 			load("stereonotte");
 		}
-
-		if("babylon".equals(task))
+		else if("babylon".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Babylon";
 			RadioRaiLoader.source = "babylon";
 			RadioRaiLoader.authors = Lists.newArrayList("Carlo Pastore");
 			crawl(BABYLON);
 		}
-		else if("musicalbox".equals(task))
+		else if("musicalbox".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Musicalbox";
 			RadioRaiLoader.source = "musicalbox";
 			RadioRaiLoader.authors = Lists.newArrayList("Raffaele Costantino");
 			crawl(MUSICALBOX);
 		}
-		else if("inthemix".equals(task))
+		else if("inthemix".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Inthemix";
 			RadioRaiLoader.source = "inthemix";
 			RadioRaiLoader.authors = Lists.newArrayList("Lele Sacchi");
 			crawl(INTHEMIX);
 		}
-		else if("battiti".equals(task))
+		else if("battiti".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Battiti";
 			RadioRaiLoader.source = "battiti";
 			RadioRaiLoader.authors = Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore");
 			crawl(BATTITI);
 		}
-		else if("seigradi".equals(task))
+		else if("seigradi".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Sei Gradi";
 			RadioRaiLoader.source = "seigradi";
 			RadioRaiLoader.authors = Lists.newArrayList("Luca Damiani");
 			crawl(SEIGRADI);
 		}
-		else if("stereonotte".equals(task))
+		else if("stereonotte".equals(args[0]))
 		{
 			RadioRaiLoader.artist = "Stereonotte";
 			RadioRaiLoader.source = "stereonotte";
@@ -99,14 +98,20 @@ public class RadioRaiLoader extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : URLS)
-		{
-			if(url.getURL().toLowerCase().startsWith(u))
-			{
+		for(String u : URLS) {
+			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void visit(Page page) 
+	{
+		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
+			super.visit(page);
+		}
 	}
 
 	@Override

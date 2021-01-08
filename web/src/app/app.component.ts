@@ -293,7 +293,7 @@ export class AppComponent {
         left += obj.offsetLeft;
       } while (obj = obj.offsetParent);
     }
-    var perc = (e.screenX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
+    var perc = (e.clientX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
     var currentTime = Math.floor(this.track.item.duration_ms * perc);
 
     const token = this.cookieService.get('spotify-token');
@@ -317,7 +317,7 @@ export class AppComponent {
         left += obj.offsetLeft;
       } while (obj = obj.offsetParent);
     }
-    var perc = (e.screenX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
+    var perc = (e.clientX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
     this.audio.currentTime = Math.floor(this.audio.duration * perc);
   }
 

@@ -261,6 +261,9 @@ export class AppComponent {
     }
   }
 
+  setCurrentTimeSpotify(e: any){
+  }
+
   playPauseAudio(doc: any=null){
     if(doc != null && (this.audio == null || this.audio.src != doc.audio)) {
       this.close();

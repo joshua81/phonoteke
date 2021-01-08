@@ -261,9 +261,6 @@ export class AppComponent {
     }
   }
 
-  setCurrentTimeSpotify(e: any){
-  }
-
   playPauseAudio(doc: any=null){
     if(doc != null && (this.audio == null || this.audio.src != doc.audio)) {
       this.close();
@@ -288,6 +285,30 @@ export class AppComponent {
     }
   }
 
+  setCurrentTimeSpotify(e: any){
+    var obj = e.target;
+    var left = 0;
+    if (obj.offsetParent) {
+      do {
+        left += obj.offsetLeft;
+      } while (obj = obj.offsetParent);
+    }
+    var perc = (e.screenX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
+    var currentTime = Math.floor(this.track.item.duration_ms * perc);
+
+    const token = this.cookieService.get('spotify-token');
+    if(token != null && token != '') {
+      const options = {
+        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+      };
+      this.http.put('https://api.spotify.com/v1/me/player/seek?position_ms=' + currentTime, null, options).subscribe(
+        (data: any) => {this.statusSpotify()},
+        error => {
+          this.refreshToken();
+        });
+    }
+  }
+
   setCurrentTimeAudio(e: any){
     var obj = e.target;
     var left = 0;
@@ -297,7 +318,7 @@ export class AppComponent {
       } while (obj = obj.offsetParent);
     }
     var perc = (e.screenX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
-    this.audio.currentTime = this.audio.duration * perc;
+    this.audio.currentTime = Math.floor(this.audio.duration * perc);
   }
 
   playYoutube(track: string){

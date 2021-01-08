@@ -285,16 +285,16 @@ export class AppComponent {
     }
   }
 
-  forwardAudio(){
-    if(!this.audio.paused){
-      this.audio.currentTime += 60.0;
+  setCurrentTimeAudio(e: any){
+    var obj = e.target;
+    var left = 0;
+    if (obj.offsetParent) {
+      do {
+        left += obj.offsetLeft;
+      } while (obj = obj.offsetParent);
     }
-  }
-
-  backwardAudio(){
-    if(!this.audio.paused){
-      this.audio.currentTime -= 60.0;
-    }
+    var perc = (e.screenX-left)/(e.target.childElementCount == 1 ? e.target.clientWidth : e.target.parentElement.clientWidth);
+    this.audio.currentTime = this.audio.duration * perc;
   }
 
   playYoutube(track: string){

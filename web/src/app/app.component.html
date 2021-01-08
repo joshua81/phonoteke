@@ -38,17 +38,17 @@
     <div class="ml-2 w-100">
       <div class="text-white text-truncate-1 font-weight-bold">{{audio.title}}</div>
       <div class="text-white text-truncate-1">{{'di ' + audio.artist}}</div>
-    </div>
-    <div class="text-white text-center">{{currentTime + '/' + duration}}</div>
-    <div class="player-button ml-2" (click)="backwardAudio()">
-      <span class="player-backward"></span>
-    </div>
-    <div class="player-button ml-4 mr-4" (click)="playPauseAudio()">
-      <span *ngIf="audio == null || audio.paused" class="player-play"></span>
-      <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
-    </div>
-    <div class="player-button mr-2" (click)="forwardAudio()">
-      <span class="player-forward"></span>
+      <div class="d-flex flex-row align-items-center">
+        <div class="text-white">{{currentTime}}</div>
+        <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeAudio($event)">
+          <div class="progress-bar bg-warning" role="progressbar" [style.width.%]="[100*audio.currentTime/audio.duration]"></div>
+        </div>
+        <div class="text-white">{{duration}}</div>
+        <div class="player-button ml-2" (click)="playPauseAudio()">
+          <span *ngIf="audio == null || audio.paused" class="player-play"></span>
+          <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+        </div>
+      </div>
     </div>
     <div class="close" aria-label="Close" (click)="close()">
       <span class="text-white" aria-hidden="true">&times;</span>

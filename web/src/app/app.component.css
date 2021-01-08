@@ -55,3 +55,7 @@
 .disabled {
     filter: grayscale(100%);
 }
+
+.progress {
+    cursor: pointer;
+}

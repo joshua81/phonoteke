@@ -177,8 +177,8 @@ img.equalizer {
 }
 
 .player-button {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     margin: 0px;
     padding: 0px;
     cursor: pointer;
@@ -187,8 +187,8 @@ img.equalizer {
 .player-play {
     display: inline-block;
     mask: url("/images/play.svg") no-repeat;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;
@@ -198,8 +198,8 @@ img.equalizer {
 .player-pause {
     display: inline-block;
     mask: url("/images/pause.svg") no-repeat;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;
@@ -209,8 +209,8 @@ img.equalizer {
 .player-forward {
     display: inline-block;
     mask: url("/images/forward.svg") no-repeat;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;
@@ -220,8 +220,8 @@ img.equalizer {
 .player-backward {
     display: inline-block;
     mask: url("/images/backward.svg") no-repeat;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;

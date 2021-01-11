@@ -35,6 +35,7 @@ public class SocialNetworkLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SocialNetworkLoader.class);
 	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
+	private static final int SCORE = 80;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
@@ -67,7 +68,7 @@ public class SocialNetworkLoader implements HumanBeats
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(spotify != null && score >= 70 && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= 5) {
+			if(spotify != null && score >= SCORE && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= HumanBeats.TRACKS_SIZE) {
 				sendTweet(page);
 				sendTelegram(page);
 			}
@@ -84,7 +85,7 @@ public class SocialNetworkLoader implements HumanBeats
 
 		Set<String> artists = Sets.newHashSet();
 		for(org.bson.Document track : tracks) {
-			if(track.getInteger("score") >= 70) {
+			if(track.getInteger("score") >= SCORE) {
 				artists.add(track.getString("artist"));
 			}
 		}

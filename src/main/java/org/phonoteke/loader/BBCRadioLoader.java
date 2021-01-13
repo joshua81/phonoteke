@@ -38,15 +38,12 @@ public class BBCRadioLoader extends AbstractCrawler
 	public void load(String... args) 
 	{
 		crawl(GILLES_PETERSON);
-		//		for(int i = 2; i <= 10; i++) {
-		//			crawl(GILLES_PETERSON + "?page" + i);
-		//		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(GILLES_PETERSON) && url.getURL().substring((URL + "programmes/").length()).length() == 8;
+		return page.getWebURL().getURL().startsWith(GILLES_PETERSON);
 	}
 
 	@Override
@@ -104,6 +101,7 @@ public class BBCRadioLoader extends AbstractCrawler
 			cal.setTime(date);
 			year = cal.get(Calendar.YEAR);
 		}
+		Preconditions.checkArgument(year >= 2020);
 		return year;
 	}
 
@@ -143,7 +141,7 @@ public class BBCRadioLoader extends AbstractCrawler
 			Iterator<Element> i = content.iterator();
 			while(i.hasNext()) {
 				Element track = i.next();
-				String title = track.select("h3").first().text();
+				String title = track.select("h3").first() != null ? track.select("h3").first().text() : track.select("h4").first().text();
 				title += " - " + track.select("p").first().text();
 				tracks.add(newTrack(title, null));
 				LOGGER.debug("track: " + title);

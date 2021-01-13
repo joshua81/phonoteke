@@ -16,9 +16,9 @@ import com.google.common.collect.Lists;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class WorldWideFM extends AbstractCrawler
+public class WorldWideFMLoader extends AbstractCrawler
 {
-	private static final Logger LOGGER = LogManager.getLogger(WorldWideFM.class);
+	private static final Logger LOGGER = LogManager.getLogger(WorldWideFMLoader.class);
 
 	private static final String URL = "https://worldwidefm.net/";
 
@@ -28,7 +28,7 @@ public class WorldWideFM extends AbstractCrawler
 
 
 	public static void main(String[] args) {
-		new WorldWideFM().load();
+		new WorldWideFMLoader().load();
 	}
 
 	@Override

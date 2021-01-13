@@ -252,6 +252,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 		}
 		return tracks;
 	}
+	
 	protected List<org.bson.Document> getTracks(Element content, String source) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();

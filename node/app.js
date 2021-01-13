@@ -79,6 +79,7 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 app.get('/api/docs/sources', async(req, res)=>{
 	var result = [{"source": "babylon", "desc": "Babylon"},
 	{"source": "battiti", "desc": "Battiti"},
+	{"source": "bbcradio6gillespeterson", "desc": "BBC Radio 6 - Gilles Peterson"},
 	{"source": "blackalot", "desc": "Black a Lot"},
 	{"source": "casabertallot", "desc": "Casa Bertallot"},
 	{"source": "cassabertallot", "desc": "Cassa Bertallot"},

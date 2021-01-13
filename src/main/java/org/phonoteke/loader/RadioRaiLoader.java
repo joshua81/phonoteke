@@ -31,7 +31,7 @@ public class RadioRaiLoader extends AbstractCrawler
 	private static final String BATTITI = "https://www.raiplayradio.it/programmi/battiti/";
 	private static final String SEIGRADI = "https://www.raiplayradio.it/programmi/seigradi/";
 	private static final String STEREONOTTE = "https://www.raiplayradio.it/programmi/stereonotte/";
-	private static final List<String> URLS = Lists.newArrayList(	BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, STEREONOTTE, URL_AUDIO);
+	private static final List<String> URLS = Lists.newArrayList(BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, STEREONOTTE, URL_AUDIO);
 
 	private static String artist;
 	private static String source;

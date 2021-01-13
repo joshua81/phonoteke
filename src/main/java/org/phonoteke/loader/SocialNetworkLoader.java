@@ -10,7 +10,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -61,14 +60,17 @@ public class SocialNetworkLoader implements HumanBeats
 	{
 		LOGGER.info("Tweetting podcasts...");
 		Date start = new GregorianCalendar(2020,9,11).getTime();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.gt("date", start), Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
+		MongoCursor<Document> i = docs.find(Filters.and(
+				Filters.eq("type", "podcast"), 
+				Filters.ne("source", BBCRadioLoader.SOURCE), 
+				Filters.gt("date", start), 
+				Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(spotify != null && score >= SCORE && CollectionUtils.isNotEmpty(tracks) && tracks.size() >= HumanBeats.TRACKS_SIZE) {
+			if(spotify != null && score >= SCORE) {
 				sendTweet(page);
 				sendTelegram(page);
 			}

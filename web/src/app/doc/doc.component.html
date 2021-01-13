@@ -14,7 +14,7 @@
         </div>
 
         <!-- player -->
-        <div *ngIf="doc.type == 'podcast'" class="player d-flex flex-row justify-content-center align-items-center p-2"
+        <div *ngIf="doc.type == 'podcast' && doc.audio" class="player d-flex flex-row justify-content-center align-items-center p-2"
           (click)="app.playPauseAudio(doc)">
           <div class="player-button">
             <span *ngIf="app.audio == null || app.audio.src != doc.audio || app.audio.paused" class="player-play"></span>

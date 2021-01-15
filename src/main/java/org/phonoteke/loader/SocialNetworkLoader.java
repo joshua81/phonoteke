@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +34,7 @@ public class SocialNetworkLoader implements HumanBeats
 	private static final Logger LOGGER = LogManager.getLogger(SocialNetworkLoader.class);
 	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
 	private static final int SCORE = 80;
+	private static final int WEEKS = 1;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
@@ -59,7 +59,7 @@ public class SocialNetworkLoader implements HumanBeats
 	public void load(String... args)
 	{
 		LOGGER.info("Tweetting podcasts...");
-		Date start = new GregorianCalendar(2020,9,11).getTime();
+		LocalDateTime start = LocalDateTime.now().minusWeeks(WEEKS).withHour(0).withMinute(0).withSecond(0);
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"), 
 				Filters.ne("source", BBCRadioLoader.SOURCE), 

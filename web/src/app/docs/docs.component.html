@@ -14,7 +14,7 @@
                   <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
                   <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
                   <h3 class="card-footer text-muted text-lowercase p-0">{{doc.type}}
-                    <span *ngIf="doc.type == 'podcast'" class="text-muted">{{' | ' + formatDate(doc.date)}}</span>
+                    <span *ngIf="doc.date" class="text-muted">{{' | ' + formatDate(doc.date)}}</span>
                   </h3>
                 </div>
               </div>

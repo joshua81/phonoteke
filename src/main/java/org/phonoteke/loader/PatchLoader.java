@@ -19,7 +19,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().deleteDoc("22713bd04bf91bd65b1eedd6e658217b4c567a7c78d27f8feee0c9841901b2df");
+		new PatchLoader().renamePodcasts();
 	}
 
 	@Override
@@ -87,6 +87,20 @@ public class PatchLoader implements HumanBeats
 			String id = page.getString("id");
 			docs.deleteOne(Filters.eq("id", id));
 			LOGGER.info("Document " + id + " deleted");
+		}
+	}
+	
+	private void renamePodcasts()
+	{
+		LOGGER.info("Renaming podcasts...");
+		MongoCursor<Document> i = docs.find(Filters.eq("source", "bbcradio3jorjasmith")).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			page.append("artist", "Jorja Smith at Radio3");
+			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			LOGGER.info("Document " + id + " updated");
 		}
 	}
 

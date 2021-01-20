@@ -77,14 +77,18 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 });
 
 app.get('/api/docs/sources', async(req, res)=>{
-	var result = [{"source": "babylon", "desc": "Babylon"},
+	var result = [
+	{"source": "bbcradio6arloparks", "desc": "Arlo Parks at Radio6"},
+	{"source": "babylon", "desc": "Babylon"},
 	{"source": "battiti", "desc": "Battiti"},
-	{"source": "bbcradio6gillespeterson", "desc": "BBC Radio 6 - Gilles Peterson"},
 	{"source": "blackalot", "desc": "Black a Lot"},
 	{"source": "casabertallot", "desc": "Casa Bertallot"},
 	{"source": "cassabertallot", "desc": "Cassa Bertallot"},
+	{"source": "bbcradio6gillespeterson", "desc": "Gilles Peterson at Radio6"},
 	{"source": "inthemix", "desc": "In the Mix"},
 	{"source": "jazztracks", "desc": "Jazz Tracks"},
+	{"source": "bbcradio3jorjasmith", "desc": "Jorja Smith at Radio3"},
+	{"source": "bbcradio6loylecarner", "desc": "Loyle Carner at Radio6"},
 	{"source": "musicalbox", "desc": "Musicalbox"},
 	{"source": "resetrefresh", "desc": "Reset Refresh"},
 	{"source": "rolloverhangover", "desc": "Rollover Hangover"},

@@ -28,6 +28,11 @@ public class BBCRadioLoader extends AbstractCrawler
 	public static final String GILLES_PETERSON_SOURCE = "bbcradio6gillespeterson";
 	public static final String JORJA_SMITH = "https://www.bbc.co.uk/programmes/m000r6g5/episodes/guide";
 	public static final String JORJA_SMITH_SOURCE = "bbcradio3jorjasmith";
+	public static final String ARLO_PARKS = "https://www.bbc.co.uk/programmes/p093cs9d/episodes/guide";
+	public static final String ARLO_PARKS_SOURCE = "bbcradio6arloparks";
+	public static final String LOYLE_CARNER = "https://www.bbc.co.uk/programmes/p08w4x7g/episodes/guide";
+	public static final String LOYLE_CARNER_SOURCE = "bbcradio6loylecarner";
+
 
 	private static String pageUrl;
 	private static String artist;
@@ -36,7 +41,7 @@ public class BBCRadioLoader extends AbstractCrawler
 
 
 	public static void main(String[] args) {
-		new BBCRadioLoader().load(JORJA_SMITH_SOURCE);
+		new BBCRadioLoader().load(LOYLE_CARNER_SOURCE);
 	}
 
 	@Override
@@ -45,6 +50,8 @@ public class BBCRadioLoader extends AbstractCrawler
 		if(args.length == 0) {
 			load(GILLES_PETERSON_SOURCE);
 			load(JORJA_SMITH_SOURCE);
+			load(ARLO_PARKS_SOURCE);
+			load(LOYLE_CARNER);
 		}
 		else if(GILLES_PETERSON_SOURCE.equals(args[0]))
 		{
@@ -61,6 +68,22 @@ public class BBCRadioLoader extends AbstractCrawler
 			BBCRadioLoader.source = JORJA_SMITH_SOURCE;
 			BBCRadioLoader.authors = Lists.newArrayList("Jorja Smith");
 			crawl(JORJA_SMITH);
+		}
+		else if(ARLO_PARKS_SOURCE.equals(args[0]))
+		{
+			BBCRadioLoader.pageUrl = ARLO_PARKS;
+			BBCRadioLoader.artist = "Arlo Parks at Radio6";
+			BBCRadioLoader.source = ARLO_PARKS_SOURCE;
+			BBCRadioLoader.authors = Lists.newArrayList("Arlo Parks");
+			crawl(ARLO_PARKS);
+		}
+		else if(LOYLE_CARNER_SOURCE.equals(args[0]))
+		{
+			BBCRadioLoader.pageUrl = LOYLE_CARNER;
+			BBCRadioLoader.artist = "Loyle Carner at Radio6";
+			BBCRadioLoader.source = LOYLE_CARNER_SOURCE;
+			BBCRadioLoader.authors = Lists.newArrayList("Loyle Carner");
+			crawl(LOYLE_CARNER);
 		}
 	}
 
@@ -151,7 +174,7 @@ public class BBCRadioLoader extends AbstractCrawler
 		{
 			title = content.attr("content").trim();
 		}
-		Preconditions.checkArgument(title.contains(artist));
+		//Preconditions.checkArgument(title.contains(artist));
 		LOGGER.debug("title: " + title);
 		return title;
 	}

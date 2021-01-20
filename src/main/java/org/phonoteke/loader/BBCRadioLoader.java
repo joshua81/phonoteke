@@ -25,25 +25,49 @@ public class BBCRadioLoader extends AbstractCrawler
 
 	public static final String URL = "https://www.bbc.co.uk/";
 	public static final String GILLES_PETERSON = "https://www.bbc.co.uk/programmes/b01fm4ss/episodes/guide";
-	public static final String ARTIST = "BBC Radio 6 - Gilles Peterson";
-	public static final String SOURCE = "bbcradio6gillespeterson";
-	public static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
+	public static final String GILLES_PETERSON_SOURCE = "bbcradio6gillespeterson";
+	public static final String JORJA_SMITH = "https://www.bbc.co.uk/programmes/m000r6g5/episodes/guide";
+	public static final String JORJA_SMITH_SOURCE = "bbcradio3jorjasmith";
+
+	private static String pageUrl;
+	private static String artist;
+	private static String source;
+	private static List<String> authors;
 
 
 	public static void main(String[] args) {
-		new BBCRadioLoader().load();
+		new BBCRadioLoader().load(JORJA_SMITH_SOURCE);
 	}
 
 	@Override
 	public void load(String... args) 
 	{
-		crawl(GILLES_PETERSON);
+		if(args.length == 0) {
+			load(GILLES_PETERSON_SOURCE);
+			load(JORJA_SMITH_SOURCE);
+		}
+		else if(GILLES_PETERSON_SOURCE.equals(args[0]))
+		{
+			BBCRadioLoader.pageUrl = GILLES_PETERSON;
+			BBCRadioLoader.artist = "Gilles Peterson at Radio6";
+			BBCRadioLoader.source = GILLES_PETERSON_SOURCE;
+			BBCRadioLoader.authors = Lists.newArrayList("Gilles Peterson");
+			crawl(GILLES_PETERSON);
+		}
+		else if(JORJA_SMITH_SOURCE.equals(args[0]))
+		{
+			BBCRadioLoader.pageUrl = JORJA_SMITH;
+			BBCRadioLoader.artist = "Tearjerker with Jorja Smith";
+			BBCRadioLoader.source = JORJA_SMITH_SOURCE;
+			BBCRadioLoader.authors = Lists.newArrayList("Jorja Smith");
+			crawl(JORJA_SMITH);
+		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(GILLES_PETERSON);
+		return page.getWebURL().getURL().startsWith(pageUrl);
 	}
 
 	@Override
@@ -55,19 +79,19 @@ public class BBCRadioLoader extends AbstractCrawler
 	@Override
 	protected String getSource() 
 	{
-		return SOURCE;
+		return source;
 	}
 
 	@Override
 	protected String getArtist(String url, Document doc) 
 	{
-		return ARTIST;
+		return artist;
 	}
 
 	@Override
 	protected List<String> getAuthors(String url, Document doc) 
 	{
-		return AUTHORS;
+		return authors;
 	}
 
 	@Override
@@ -127,7 +151,7 @@ public class BBCRadioLoader extends AbstractCrawler
 		{
 			title = content.attr("content").trim();
 		}
-		Preconditions.checkArgument(title.startsWith("BBC Radio 6 Music - Gilles Peterson"));
+		Preconditions.checkArgument(title.contains(artist));
 		LOGGER.debug("title: " + title);
 		return title;
 	}

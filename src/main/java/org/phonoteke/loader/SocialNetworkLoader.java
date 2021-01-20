@@ -21,8 +21,8 @@ import org.bson.Document;
 import com.github.redouane59.twitter.TwitterClient;
 import com.github.redouane59.twitter.dto.tweet.Tweet;
 import com.github.redouane59.twitter.signature.TwitterCredentials;
-import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -62,7 +62,9 @@ public class SocialNetworkLoader implements HumanBeats
 		LocalDateTime start = LocalDateTime.now().minusWeeks(WEEKS).withHour(0).withMinute(0).withSecond(0);
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"), 
-				Filters.ne("source", BBCRadioLoader.SOURCE), 
+				Filters.nin("source", Lists.newArrayList(
+						BBCRadioLoader.GILLES_PETERSON_SOURCE, 
+						BBCRadioLoader.JORJA_SMITH_SOURCE)),
 				Filters.gt("date", start), 
 				Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 

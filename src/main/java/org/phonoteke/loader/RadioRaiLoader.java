@@ -7,25 +7,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class RadioRaiLoader extends AbstractCrawler
+public class RadioRaiLoader extends PodcastLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(RadioRaiLoader.class);
-
 	private static final String URL = "https://www.raiplayradio.it/";
 	private static final String URL_AUDIO = "https://www.raiplayradio.it/audio";
 	private static final String RAI = "rai";
@@ -37,17 +32,9 @@ public class RadioRaiLoader extends AbstractCrawler
 	public static final String SEIGRADI = "seigradi";
 	public static final String STEREONOTTE = "stereonotte";
 
-	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
-
-	private static String url;
-	private static String title;
-	private static String artist;
-	private static String source;
-	private static List<String> authors;
-
 
 	public static void main(String[] args) {
-		new RadioRaiLoader().load("musicalbox");
+		new RadioRaiLoader().load(MUSICALBOX);
 	}
 
 	@Override

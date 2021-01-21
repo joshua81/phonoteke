@@ -7,25 +7,20 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public class BBCRadioLoader extends AbstractCrawler
+public class BBCRadioLoader extends PodcastLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(BBCRadioLoader.class);
-
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
@@ -33,14 +28,6 @@ public class BBCRadioLoader extends AbstractCrawler
 	public static final String JORJA_SMITH = "bbcradio3jorjasmith";
 	public static final String ARLO_PARKS = "bbcradio6arloparks";
 	public static final String LOYLE_CARNER = "bbcradio6loylecarner";
-
-	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
-
-	private static String url;
-	private static String title;
-	private static String artist;
-	private static String source;
-	private static List<String> authors;
 
 
 	public static void main(String[] args) {

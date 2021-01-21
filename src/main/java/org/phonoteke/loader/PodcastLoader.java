@@ -2,13 +2,23 @@ package org.phonoteke.loader;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
 
-public class PodcastLoader implements HumanBeats 
+public class PodcastLoader extends AbstractCrawler
 {
-	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
+	protected static final Logger LOGGER = LogManager.getLogger(PodcastLoader.class);
+
+	protected static String url;
+	protected static String title;
+	protected static String artist;
+	protected static String source;
+	protected static List<String> authors;
+	
+	protected MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
 
 	public static void main(String[] args) {
 		new PodcastLoader().load();

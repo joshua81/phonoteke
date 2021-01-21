@@ -10,20 +10,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class SpreakerLoader extends AbstractCrawler
+public class SpreakerLoader extends PodcastLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(SpreakerLoader.class);
 	private static final String SPREAKER = "spreaker";
 
 	public static final String CASABERTALLOT = "casabertallot";
@@ -33,14 +29,6 @@ public class SpreakerLoader extends AbstractCrawler
 	public static final String RESETREFRESH = "resetrefresh";
 	public static final String THETUESDAYTAPES = "thetuesdaytapes";
 	public static final String JAZZTRACKS = "jazztracks";
-
-	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
-
-	private static String url;
-	private static String title;
-	private static String artist;
-	private static String source;
-	private static List<String> authors;
 
 
 	@Override

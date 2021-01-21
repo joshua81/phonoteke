@@ -267,7 +267,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 			content.select("div").after(TRACKS_NEW_LINE);
 
 			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
-			if("seigradi".equals(source))
+			if(RadioRaiLoader.SEIGRADI.equals(source))
 			{
 				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
 				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);

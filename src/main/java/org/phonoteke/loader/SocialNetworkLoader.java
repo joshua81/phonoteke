@@ -24,6 +24,7 @@ import com.github.redouane59.twitter.TwitterClient;
 import com.github.redouane59.twitter.dto.tweet.Tweet;
 import com.github.redouane59.twitter.signature.TwitterCredentials;
 import com.google.api.client.util.Sets;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
@@ -113,12 +114,8 @@ public class SocialNetworkLoader implements HumanBeats
 
 	private String  sendTweet(String show, String title, String date, List<String> artists, List<String> twitter, String spotify) {
 		artists = artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5);
-		String artistsStr = "";
-		if(CollectionUtils.isNotEmpty(artists)) {
-			for(String a : artists) {
-				artistsStr += a + " ";
-			}
-		}
+		String artistsStr = artists.toString().substring(1, artists.size()-1);
+		
 		String twitterStr = "";
 		if(CollectionUtils.isNotEmpty(twitter)) {
 			for(String t : twitter) {
@@ -140,13 +137,7 @@ public class SocialNetworkLoader implements HumanBeats
 		CloseableHttpResponse response = null;
 
 		try {
-			String artistsStr = "";
-			if(CollectionUtils.isNotEmpty(artists)) {
-				for(String a : artists) {
-					artistsStr += a + " ";
-				}
-			}
-
+			String artistsStr = artists.toString().substring(1, artists.size()-1);
 			String msg = "La playlist spotify del nuovo episodio di *" + show + " - " + title + "* (" + date  + ")\n";
 			msg += "con " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
@@ -154,12 +145,7 @@ public class SocialNetworkLoader implements HumanBeats
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
 			response = httpClient.execute(new HttpGet(url));
 			int status = response.getStatusLine().getStatusCode();
-			if(HttpStatus.SC_OK == status) {
-				LOGGER.info("Podcast " + show + " - " + title + " sent to Telegram");
-			}
-			else {
-				LOGGER.error("Error while sending message to Telegram channel @beatzhuman. HTTP status " + status);
-			}
+			Preconditions.checkArgument(HttpStatus.SC_OK == status, "Error while sending message to Telegram channel @beatzhuman. HTTP status " + status);
 		}
 		catch(Exception e) {
 			LOGGER.error(e.getMessage(),  e);

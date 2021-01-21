@@ -39,10 +39,10 @@ public class BBCRadioLoader extends PodcastLoader
 		{
 			org.bson.Document show = i.next();
 			BBCRadioLoader.url = show.getString("url");
-			BBCRadioLoader.title = show.getString("title");
+			BBCRadioLoader.artist = show.getString("title");
 			BBCRadioLoader.source = show.getString("source");
 			BBCRadioLoader.authors = show.get("authors", List.class);
-			LOGGER.info("Crawling " + BBCRadioLoader.title);
+			LOGGER.info("Crawling " + BBCRadioLoader.artist);
 			crawl(url);
 		}
 	}

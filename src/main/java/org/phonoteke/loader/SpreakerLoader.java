@@ -40,10 +40,10 @@ public class SpreakerLoader extends PodcastLoader
 		{
 			org.bson.Document show = i.next();
 			SpreakerLoader.url = show.getString("url");
-			SpreakerLoader.title = show.getString("title");
+			SpreakerLoader.artist = show.getString("title");
 			SpreakerLoader.source = show.getString("source");
 			SpreakerLoader.authors = show.get("authors", List.class);
-			LOGGER.info("Crawling " + SpreakerLoader.title);
+			LOGGER.info("Crawling " + SpreakerLoader.artist);
 			crawl(url);
 		}
 	}

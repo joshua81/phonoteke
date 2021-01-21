@@ -31,7 +31,7 @@ public class RadioRaiLoader extends PodcastLoader
 	public static final String BATTITI = "battiti";
 	public static final String SEIGRADI = "seigradi";
 	public static final String STEREONOTTE = "stereonotte";
-
+	
 
 	@Override
 	public void load(String... args) 
@@ -42,10 +42,10 @@ public class RadioRaiLoader extends PodcastLoader
 		{
 			org.bson.Document show = i.next();
 			RadioRaiLoader.url = show.getString("url");
-			RadioRaiLoader.title = show.getString("title");
+			RadioRaiLoader.artist = show.getString("title");
 			RadioRaiLoader.source = show.getString("source");
 			RadioRaiLoader.authors = show.get("authors", List.class);
-			LOGGER.info("Crawling " + RadioRaiLoader.title);
+			LOGGER.info("Crawling " + RadioRaiLoader.artist);
 			crawl(url);
 		}
 	}

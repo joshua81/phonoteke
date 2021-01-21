@@ -13,7 +13,6 @@ public class PodcastLoader extends AbstractCrawler
 	protected static final Logger LOGGER = LogManager.getLogger(PodcastLoader.class);
 
 	protected static String url;
-	protected static String title;
 	protected static String artist;
 	protected static String source;
 	protected static List<String> authors;

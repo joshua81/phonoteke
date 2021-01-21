@@ -21,7 +21,7 @@ public interface HumanBeats
 	public static final String MATCHS3 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
 	public static final String MATCHS4 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
 	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4);
-	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-");
+	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-", ",");
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";

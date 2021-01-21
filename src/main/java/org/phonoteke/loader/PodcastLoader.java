@@ -21,7 +21,7 @@ public class PodcastLoader extends AbstractCrawler
 	protected MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
 
 	public static void main(String[] args) {
-		new PodcastLoader().load();
+		new PodcastLoader().load(BBCRadioLoader.GILLES_PETERSON);
 	}
 
 	public void initShows() {

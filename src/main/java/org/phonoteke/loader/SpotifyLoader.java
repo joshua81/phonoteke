@@ -57,20 +57,14 @@ public class SpotifyLoader implements HumanBeats
 	@Override
 	public void load(String... args)
 	{
-		if(args.length == 2 && "playlist".equals(args[0])) {
-			LOGGER.info("Creating Spotify playlist...");
-			spotify = new SpotifyApi.Builder().setAccessToken(args[1]).build();
-			createPlaylists();
-		}
-		else {
+		if(args.length == 0) {
 			LOGGER.info("Loading Spotify...");
 			spotify = new SpotifyApi.Builder()
 					.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 					.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
 					.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
-			MongoCursor<Document> i =  args.length == 1 ? docs.find(Filters.eq("id", args[0])).iterator() :
-				docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-						Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
+			MongoCursor<Document> i = docs.find(Filters.or(Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
+					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
 			while(i.hasNext()) 
 			{ 
 				Document page = i.next();
@@ -90,6 +84,11 @@ public class SpotifyLoader implements HumanBeats
 				}
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
+		}
+		else {
+			LOGGER.info("Creating Spotify playlist...");
+			spotify = new SpotifyApi.Builder().setAccessToken(args[0]).build();
+			createPlaylists();
 		}
 	}
 

@@ -30,10 +30,6 @@ public class BBCRadioLoader extends PodcastLoader
 	public static final String LOYLE_CARNER = "bbcradio6loylecarner";
 
 
-	public static void main(String[] args) {
-		new BBCRadioLoader().load();
-	}
-
 	@Override
 	public void load(String... args) 
 	{

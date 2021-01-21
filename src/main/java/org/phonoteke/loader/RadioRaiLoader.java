@@ -33,10 +33,6 @@ public class RadioRaiLoader extends PodcastLoader
 	public static final String STEREONOTTE = "stereonotte";
 
 
-	public static void main(String[] args) {
-		new RadioRaiLoader().load(MUSICALBOX);
-	}
-
 	@Override
 	public void load(String... args) 
 	{

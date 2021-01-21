@@ -74,9 +74,7 @@ public interface HumanBeats
 				new OndarockLoader().load(subtask);
 			}
 			else if("pod".equals(task)) {
-				new BBCRadioLoader().load(subtask);
-				new RadioRaiLoader().load(subtask);
-				new SpreakerLoader().load(subtask);
+				new PodcastLoader().load(subtask);
 			}
 			else if("stats".equals(task)) {
 				new StatsLoader().load(subtask);

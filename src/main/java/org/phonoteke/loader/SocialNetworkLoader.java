@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -37,6 +38,7 @@ public class SocialNetworkLoader implements HumanBeats
 	private static final int WEEKS = 1;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
+	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
 
 	private static TwitterClient twitterClient;
 
@@ -63,8 +65,10 @@ public class SocialNetworkLoader implements HumanBeats
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"), 
 				Filters.nin("source", Lists.newArrayList(
-						BBCRadioLoader.GILLES_PETERSON_SOURCE, 
-						BBCRadioLoader.JORJA_SMITH_SOURCE)),
+						BBCRadioLoader.GILLES_PETERSON, 
+						BBCRadioLoader.JORJA_SMITH,
+						BBCRadioLoader.ARLO_PARKS, 
+						BBCRadioLoader.LOYLE_CARNER)),
 				Filters.gt("date", start), 
 				Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 
@@ -95,49 +99,17 @@ public class SocialNetworkLoader implements HumanBeats
 		}
 
 		String links = "";
-		if("casabertallot".equals(source)) {
-			links = "@bertallot #casabertallot " + links;
-		}
-		else if("cassabertallot".equals(source)) {
-			links = "@bertallot @albiscotti #cassabertallot " + links;
-		}
-		else if("rolloverhangover".equals(source)) {
-			links = "@bertallot #rolloverhangover " + links;
-		}
-		else if("blackalot".equals(source)) {
-			links = "@bertallot #blackalot " + links;
-		}
-		else if("resetrefresh".equals(source)) {
-			links = "@bertallot @flikkarina #resetrefresh " + links;
-		}
-		else if("battiti".equals(source)) {
-			links = "@radio3tweet #battitiradio3 " + links;
-		}
-		else if("seigradi".equals(source)) {
-			links = "@radio3tweet #seigradiradio3 " + links;
-		}
-		else if("musicalbox".equals(source)) {
-			links = "@rairadio2 @raffacostantino @_musicalbox #musicalboxradio2 " + links;
-		}
-		else if("stereonotte".equals(source)) {
-			links = "@radio1rai @stereonotte #stereonotteradio1 " + links;
-		}
-		else if("inthemix".equals(source)) {
-			links = "@rairadio2 @djlelesacchi #inthemixradio2 " + links;
-		}
-		else if("babylon".equals(source)) {
-			links = "@rairadio2 @carlopastore #babylonradio2 " + links;
-		}
-		else if("jazztracks".equals(source)) {
-			links = "@daniloddt #jazztracks " + links;
-		}
-		else if("thetuesdaytapes".equals(source)) {
-			links = "@bertallot @thetuesdaytapes #thetuesdaytapes " + links;
+		org.bson.Document show = shows.find(Filters.and(Filters.eq("source", source))).iterator().next();
+		List<String> twitter = show.get("twitter", List.class);
+		if(CollectionUtils.isNotEmpty(twitter)) {
+			for(String tweet : twitter) {
+				links += tweet + " ";
+			}
 		}
 
 		String msg = "La playlist #spotify del nuovo episodio di " + artist + " (" + date  + ")\n";
 		msg += "con " + (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
-		msg += links + "\n";
+		msg += links.trim() + "\n";
 		msg += "https://open.spotify.com/playlist/" + spotify;
 
 		Tweet tweet = twitterClient.postTweet(msg);

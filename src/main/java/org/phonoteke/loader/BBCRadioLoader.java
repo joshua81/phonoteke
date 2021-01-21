@@ -15,6 +15,9 @@ import org.jsoup.select.Elements;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -23,74 +26,48 @@ public class BBCRadioLoader extends AbstractCrawler
 {
 	private static final Logger LOGGER = LogManager.getLogger(BBCRadioLoader.class);
 
-	public static final String URL = "https://www.bbc.co.uk/";
-	public static final String GILLES_PETERSON = "https://www.bbc.co.uk/programmes/b01fm4ss/episodes/guide";
-	public static final String GILLES_PETERSON_SOURCE = "bbcradio6gillespeterson";
-	public static final String JORJA_SMITH = "https://www.bbc.co.uk/programmes/m000r6g5/episodes/guide";
-	public static final String JORJA_SMITH_SOURCE = "bbcradio3jorjasmith";
-	public static final String ARLO_PARKS = "https://www.bbc.co.uk/programmes/p093cs9d/episodes/guide";
-	public static final String ARLO_PARKS_SOURCE = "bbcradio6arloparks";
-	public static final String LOYLE_CARNER = "https://www.bbc.co.uk/programmes/p08w4x7g/episodes/guide";
-	public static final String LOYLE_CARNER_SOURCE = "bbcradio6loylecarner";
+	private static final String URL = "https://www.bbc.co.uk/";
+	private static final String BBC = "bbc";
 
+	public static final String GILLES_PETERSON = "bbcradio6gillespeterson";
+	public static final String JORJA_SMITH = "bbcradio3jorjasmith";
+	public static final String ARLO_PARKS = "bbcradio6arloparks";
+	public static final String LOYLE_CARNER = "bbcradio6loylecarner";
 
-	private static String pageUrl;
+	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
+
+	private static String url;
+	private static String title;
 	private static String artist;
 	private static String source;
 	private static List<String> authors;
 
 
 	public static void main(String[] args) {
-		new BBCRadioLoader().load(LOYLE_CARNER_SOURCE);
+		new BBCRadioLoader().load();
 	}
 
 	@Override
 	public void load(String... args) 
 	{
-		if(args.length == 0) {
-			load(GILLES_PETERSON_SOURCE);
-			load(JORJA_SMITH_SOURCE);
-			load(ARLO_PARKS_SOURCE);
-			load(LOYLE_CARNER);
-		}
-		else if(GILLES_PETERSON_SOURCE.equals(args[0]))
+		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", BBC))).iterator() : 
+			shows.find(Filters.and(Filters.eq("type", BBC), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
 		{
-			BBCRadioLoader.pageUrl = GILLES_PETERSON;
-			BBCRadioLoader.artist = "Gilles Peterson at Radio6";
-			BBCRadioLoader.source = GILLES_PETERSON_SOURCE;
-			BBCRadioLoader.authors = Lists.newArrayList("Gilles Peterson");
-			crawl(GILLES_PETERSON);
-		}
-		else if(JORJA_SMITH_SOURCE.equals(args[0]))
-		{
-			BBCRadioLoader.pageUrl = JORJA_SMITH;
-			BBCRadioLoader.artist = "Tearjerker with Jorja Smith";
-			BBCRadioLoader.source = JORJA_SMITH_SOURCE;
-			BBCRadioLoader.authors = Lists.newArrayList("Jorja Smith");
-			crawl(JORJA_SMITH);
-		}
-		else if(ARLO_PARKS_SOURCE.equals(args[0]))
-		{
-			BBCRadioLoader.pageUrl = ARLO_PARKS;
-			BBCRadioLoader.artist = "Arlo Parks at Radio6";
-			BBCRadioLoader.source = ARLO_PARKS_SOURCE;
-			BBCRadioLoader.authors = Lists.newArrayList("Arlo Parks");
-			crawl(ARLO_PARKS);
-		}
-		else if(LOYLE_CARNER_SOURCE.equals(args[0]))
-		{
-			BBCRadioLoader.pageUrl = LOYLE_CARNER;
-			BBCRadioLoader.artist = "Loyle Carner at Radio6";
-			BBCRadioLoader.source = LOYLE_CARNER_SOURCE;
-			BBCRadioLoader.authors = Lists.newArrayList("Loyle Carner");
-			crawl(LOYLE_CARNER);
+			org.bson.Document show = i.next();
+			BBCRadioLoader.url = show.getString("url");
+			BBCRadioLoader.title = show.getString("title");
+			BBCRadioLoader.source = show.getString("source");
+			BBCRadioLoader.authors = show.get("authors", List.class);
+			LOGGER.info("Crawling " + BBCRadioLoader.title);
+			crawl(url);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(pageUrl);
+		return page.getWebURL().getURL().startsWith(BBCRadioLoader.url);
 	}
 
 	@Override
@@ -174,7 +151,6 @@ public class BBCRadioLoader extends AbstractCrawler
 		{
 			title = content.attr("content").trim();
 		}
-		//Preconditions.checkArgument(title.contains(artist));
 		LOGGER.debug("title: " + title);
 		return title;
 	}

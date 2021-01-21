@@ -13,6 +13,7 @@ import ch.qos.logback.classic.Logger;
 public class MongoDB 
 {
 	private MongoCollection<org.bson.Document> docs;
+	private MongoCollection<org.bson.Document> shows;
 
 	public MongoDB() {
 		try
@@ -23,6 +24,7 @@ public class MongoDB
 			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
 			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
+			shows = db.getCollection("shows");
 		} 
 		catch (Throwable t) 
 		{
@@ -33,5 +35,10 @@ public class MongoDB
 	public MongoCollection<org.bson.Document> getDocs()
 	{
 		return docs;
+	}
+	
+	public MongoCollection<org.bson.Document> getShows()
+	{
+		return shows;
 	}
 }

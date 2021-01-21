@@ -17,84 +17,78 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 public class SpreakerLoader extends AbstractCrawler
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpreakerLoader.class);
+	private static final String SPREAKER = "spreaker";
 
-	private static final String URL1 = "https://api.spreaker.com/show/896299/episodes";
-	private static final String URL2 = "https://api.spreaker.com/show/1977676/episodes";
-	private static final String URL3 = "https://api.spreaker.com/show/2071330/episodes";
-	private static final String URL4 = "https://api.spreaker.com/show/1501820/episodes";
-	private static final String URL5 = "https://api.spreaker.com/show/2013495/episodes";
-	private static final String URL6 = "https://api.spreaker.com/show/2708156/episodes";
-	private static final String URL7 = "https://api.spreaker.com/show/4380252/episodes";
+	public static final String CASABERTALLOT = "casabertallot";
+	public static final String ROLLOVERHANGOVER = "rolloverhangover";
+	public static final String BLACKALOT = "blackalot";
+	public static final String CASSABERTALLOT = "cassabertallot";
+	public static final String RESETREFRESH = "resetrefresh";
+	public static final String THETUESDAYTAPES = "thetuesdaytapes";
+	public static final String JAZZTRACKS = "jazztracks";
+
+	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
+
+	private static String url;
+	private static String title;
+	private static String artist;
+	private static String source;
+	private static List<String> authors;
 
 
 	@Override
 	public void load(String... args) 
 	{
-		if(args.length == 0) {
-			load("casabertallot");
-			load("rolloverhangover");
-			load("blackalot");
-			load("cassabertallot");
-			load("resetrefresh");
-			load("thetuesdaytapes");
-			load("jazztracks");
-		}
-		else if("casabertallot".equals(args[0])) {
-			crawl(URL1, "casabertallot", "Casa Bertallot", Lists.newArrayList("Alessio Bertallot"));
-		}
-		else if("rolloverhangover".equals(args[0])) {
-			crawl(URL2, "rolloverhangover", "Rollover Hangover", Lists.newArrayList("Rocco Fusco"));
-		}
-		else if("blackalot".equals(args[0])) {
-			crawl(URL3, "blackalot", "Black A Lot", Lists.newArrayList("Michele Gas"));
-		}
-		else if("cassabertallot".equals(args[0])) {
-			crawl(URL4, "cassabertallot", "Cassa Bertallot", Lists.newArrayList("Albi Scotti", "Marco Rigamonti"));
-		}
-		else if("resetrefresh".equals(args[0])) {
-			crawl(URL5, "resetrefresh", "Reset Refresh", Lists.newArrayList("Federica Linke"));
-		}
-		else if("thetuesdaytapes".equals(args[0])) {
-			crawl(URL6, "thetuesdaytapes", "The Tuesday Tapes", Lists.newArrayList("Fabio De Luca"));
-		}
-		else if("jazztracks".equals(args[0])) {
-			crawl(URL7, "jazztracks", "Jazz Tracks", Lists.newArrayList("Danilo Di Termini"));
+		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
+			shows.find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
+		{
+			org.bson.Document show = i.next();
+			SpreakerLoader.url = show.getString("url");
+			SpreakerLoader.title = show.getString("title");
+			SpreakerLoader.source = show.getString("source");
+			SpreakerLoader.authors = show.get("authors", List.class);
+			LOGGER.info("Crawling " + SpreakerLoader.title);
+			crawl(url);
 		}
 	}
 
-	private void crawl(String baseurl, String source, String artist, List<String> authors)
+	@Override
+	protected void crawl(String url)
 	{
 		try
 		{
-			HttpURLConnection con = (HttpURLConnection)new URL(baseurl).openConnection();
+			HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
 			JsonObject gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
 			int pages = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("last_page").getAsInt();
 			for(int page = 1; page <= pages; page++)
 			{
-				con = (HttpURLConnection)new URL(baseurl + "?page=" + page).openConnection();
+				con = (HttpURLConnection)new URL(url + "?page=" + page).openConnection();
 				gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
 				JsonArray results = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("results").getAsJsonArray();
 				results.forEach(item -> {
 					JsonObject doc = (JsonObject)item;
-					String url = doc.get("site_url").getAsString();
+					String pageUrl = doc.get("site_url").getAsString();
 					TYPE type = TYPE.podcast;
 
-					LOGGER.debug("Parsing page " + url);
-					String id = getId(url);
+					LOGGER.debug("Parsing page " + pageUrl);
+					String id = getId(pageUrl);
 					String title = doc.get("title").getAsString();
 
 					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", url))).iterator().tryNext();
+							Filters.eq("url", pageUrl))).iterator().tryNext();
 					if(json == null)
 					{
 						try {
 							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
+									append("url", getUrl(pageUrl)).
 									append("type", type.name()).
 									append("artist", artist).
 									append("title", title).
@@ -113,10 +107,10 @@ public class SpreakerLoader extends AbstractCrawler
 									append("audio", doc.get("download_url").getAsString());
 
 							docs.insertOne(json);
-							LOGGER.info(json.getString("type") + " " + url + " added");
+							LOGGER.info(json.getString("type") + " " + pageUrl + " added");
 						}
 						catch(Exception e) {
-							LOGGER.error("ERROR parsing page " + url + ": " + e.getMessage());
+							LOGGER.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 						}
 					}
 				});
@@ -124,7 +118,7 @@ public class SpreakerLoader extends AbstractCrawler
 		}
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR parsing page " + baseurl + ": " + t.getMessage());
+			LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}

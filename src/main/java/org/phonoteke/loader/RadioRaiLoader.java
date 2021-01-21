@@ -15,6 +15,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.google.common.collect.Lists;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -25,14 +28,19 @@ public class RadioRaiLoader extends AbstractCrawler
 
 	private static final String URL = "https://www.raiplayradio.it/";
 	private static final String URL_AUDIO = "https://www.raiplayradio.it/audio";
-	private static final String BABYLON = "https://www.raiplayradio.it/programmi/babylon/";
-	private static final String MUSICALBOX = "https://www.raiplayradio.it/programmi/musicalbox/";
-	private static final String INTHEMIX = "https://www.raiplayradio.it/programmi/radio2inthemix/";
-	private static final String BATTITI = "https://www.raiplayradio.it/programmi/battiti/";
-	private static final String SEIGRADI = "https://www.raiplayradio.it/programmi/seigradi/";
-	private static final String STEREONOTTE = "https://www.raiplayradio.it/programmi/stereonotte/";
-	private static final List<String> URLS = Lists.newArrayList(BABYLON, MUSICALBOX, INTHEMIX, BATTITI, SEIGRADI, STEREONOTTE, URL_AUDIO);
+	private static final String RAI = "rai";
 
+	public static final String BABYLON = "babylon";
+	public static final String MUSICALBOX = "musicalbox";
+	public static final String INTHEMIX = "inthemix";
+	public static final String BATTITI = "battiti";
+	public static final String SEIGRADI = "seigradi";
+	public static final String STEREONOTTE = "stereonotte";
+
+	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
+
+	private static String url;
+	private static String title;
 	private static String artist;
 	private static String source;
 	private static List<String> authors;
@@ -45,60 +53,24 @@ public class RadioRaiLoader extends AbstractCrawler
 	@Override
 	public void load(String... args) 
 	{
-		if(args.length == 0) {
-			load("musicalbox");
-			load("battiti");
-			load("seigradi");
-			load("stereonotte");
-		}
-		else if("babylon".equals(args[0]))
+		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", RAI))).iterator() : 
+			shows.find(Filters.and(Filters.eq("type", RAI), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
 		{
-			RadioRaiLoader.artist = "Babylon";
-			RadioRaiLoader.source = "babylon";
-			RadioRaiLoader.authors = Lists.newArrayList("Carlo Pastore");
-			crawl(BABYLON);
-		}
-		else if("musicalbox".equals(args[0]))
-		{
-			RadioRaiLoader.artist = "Musicalbox";
-			RadioRaiLoader.source = "musicalbox";
-			RadioRaiLoader.authors = Lists.newArrayList("Raffaele Costantino");
-			crawl(MUSICALBOX);
-		}
-		else if("inthemix".equals(args[0]))
-		{
-			RadioRaiLoader.artist = "Inthemix";
-			RadioRaiLoader.source = "inthemix";
-			RadioRaiLoader.authors = Lists.newArrayList("Lele Sacchi");
-			crawl(INTHEMIX);
-		}
-		else if("battiti".equals(args[0]))
-		{
-			RadioRaiLoader.artist = "Battiti";
-			RadioRaiLoader.source = "battiti";
-			RadioRaiLoader.authors = Lists.newArrayList("Nicola Catalano", "Ghighi Di Paola", "Giovanna Scandale", "Antonia Tessitore");
-			crawl(BATTITI);
-		}
-		else if("seigradi".equals(args[0]))
-		{
-			RadioRaiLoader.artist = "Sei Gradi";
-			RadioRaiLoader.source = "seigradi";
-			RadioRaiLoader.authors = Lists.newArrayList("Luca Damiani");
-			crawl(SEIGRADI);
-		}
-		else if("stereonotte".equals(args[0]))
-		{
-			RadioRaiLoader.artist = "Stereonotte";
-			RadioRaiLoader.source = "stereonotte";
-			RadioRaiLoader.authors = Lists.newArrayList("Francesco Adinolfi", "Max De Tomassi", "Lele Sacchi", "Luca Sapio", "Mauro Zanda");
-			crawl(STEREONOTTE);
+			org.bson.Document show = i.next();
+			RadioRaiLoader.url = show.getString("url");
+			RadioRaiLoader.title = show.getString("title");
+			RadioRaiLoader.source = show.getString("source");
+			RadioRaiLoader.authors = show.get("authors", List.class);
+			LOGGER.info("Crawling " + RadioRaiLoader.title);
+			crawl(url);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : URLS) {
+		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
 			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}
@@ -191,7 +163,7 @@ public class RadioRaiLoader extends AbstractCrawler
 	@Override
 	protected String getDescription(String url, Document doc) 
 	{
-		if("seigradi".equals(source))
+		if(SEIGRADI.equals(source))
 		{
 			return getTitle(url, doc);
 		}

@@ -14,10 +14,12 @@ const client_secret = '46004c8b1a2b4c778cb9761ace300b6c';
 const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
 const songkick_id = '1hOiIfT9pFTkyVkg';
 
-var db = null;
+var docs = null;
+var shows = null;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-	db = client.db("mbeats").collection("docs");
+	docs = client.db("mbeats").collection("docs");
+	shows = client.db("mbeats").collection("shows");
 	console.log("Successfully Connected to MongoDB");
 	app.listen(PORT, () => {
 		console.log(`App listening on port ${PORT}`);
@@ -77,24 +79,7 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 });
 
 app.get('/api/docs/sources', async(req, res)=>{
-	var result = [
-	{"source": "bbcradio6arloparks", "desc": "Arlo Parks at Radio6"},
-	{"source": "babylon", "desc": "Babylon"},
-	{"source": "battiti", "desc": "Battiti"},
-	{"source": "blackalot", "desc": "Black a Lot"},
-	{"source": "casabertallot", "desc": "Casa Bertallot"},
-	{"source": "cassabertallot", "desc": "Cassa Bertallot"},
-	{"source": "bbcradio6gillespeterson", "desc": "Gilles Peterson at Radio6"},
-	{"source": "inthemix", "desc": "In the Mix"},
-	{"source": "jazztracks", "desc": "Jazz Tracks"},
-	{"source": "bbcradio3jorjasmith", "desc": "Jorja Smith at Radio3"},
-	{"source": "bbcradio6loylecarner", "desc": "Loyle Carner at Radio6"},
-	{"source": "musicalbox", "desc": "Musicalbox"},
-	{"source": "resetrefresh", "desc": "Reset Refresh"},
-	{"source": "rolloverhangover", "desc": "Rollover Hangover"},
-	{"source": "seigradi", "desc": "Sei Gradi"},
-	{"source": "stereonotte", "desc": "Stereo Notte"},
-	{"source": "thetuesdaytapes", "desc": "The Tuesday Tapes"}];
+	var result = await shows.find().project({source: 1, title: 1}).sort({"title":1}).toArray();
 	res.send(result);
 });
 
@@ -207,7 +192,7 @@ module.exports = app;
 
 async function findDocSnippet(id) {
 	console.log('Docs: id=' + id);
-	var result = await db.find({'id': id}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).toArray();
+	var result = await docs.find({'id': id}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).toArray();
 	if(result && result[0]) {
 		// reset 'na' values
 		const doc = result[0];
@@ -238,7 +223,7 @@ async function findDocSnippet(id) {
 
 async function findDoc(id) {
 	console.log('Docs: id=' + id);
-	var result = await db.find({'id': id}).toArray();
+	var result = await docs.find({'id': id}).toArray();
 	if(result && result[0]) {
 		// reset 'na' values
 		const doc = result[0];
@@ -297,7 +282,7 @@ async function findDocs(t, p, q, s) {
 		}
 	}
 	
-	result = await db.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
 	return result;
 }
 
@@ -327,7 +312,7 @@ async function findEvents(id) {
 async function findLinks(id) {
 	console.log('Links: id=' + id);
 	var result = null;
-	const doc = await db.find({'id': id}).toArray();
+	const doc = await docs.find({'id': id}).toArray();
 	if(doc && doc[0]) {
 		var artists = [];
 		if(typeof(doc[0].spartistid) != 'undefined' && doc[0].spartistid != null && doc[0].spartistid != 'na') {
@@ -341,7 +326,7 @@ async function findLinks(id) {
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		result = await db.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1}).sort({"type":1, "date":-1}).toArray();
+		result = await docs.find({$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1}).sort({"type":1, "date":-1}).toArray();
 		result = result.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

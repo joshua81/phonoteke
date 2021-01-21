@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -77,15 +78,15 @@ public class SocialNetworkLoader implements HumanBeats
 			Integer score = page.getInteger("score");
 			String spotify = page.getString("spalbumid");
 			if(spotify != null && score >= SCORE) {
-				sendTweet(page);
-				sendTelegram(page);
+				notify(page);
 			}
 		}
 	}
 
-	private void sendTweet(Document page) {
+	private void notify(Document page) {
 		String id = page.getString("id");
-		String artist = page.getString("artist");
+		String podcast = page.getString("artist");
+		String title = page.getString("title");
 		String source = page.getString("source");
 		String spotify = page.getString("spalbumid");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
@@ -98,54 +99,63 @@ public class SocialNetworkLoader implements HumanBeats
 			}
 		}
 
-		String links = "";
 		org.bson.Document show = shows.find(Filters.and(Filters.eq("source", source))).iterator().next();
 		List<String> twitter = show.get("twitter", List.class);
+
+		String tweet = sendTweet(podcast, title, date, Lists.newArrayList(artists), twitter, spotify);
+		page.append("tweet", tweet);
+		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		LOGGER.info("Podcast " + id + " sent to Twitter");
+
+		sendTelegram(podcast, title, date, Lists.newArrayList(artists), spotify);
+		LOGGER.info("Podcast " + id + " sent to Telegram");
+	}
+
+	private String  sendTweet(String show, String title, String date, List<String> artists, List<String> twitter, String spotify) {
+		artists = artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5);
+		String artistsStr = "";
+		if(CollectionUtils.isNotEmpty(artists)) {
+			for(String a : artists) {
+				artistsStr += a + " ";
+			}
+		}
+		String twitterStr = "";
 		if(CollectionUtils.isNotEmpty(twitter)) {
-			for(String tweet : twitter) {
-				links += tweet + " ";
+			for(String t : twitter) {
+				twitterStr += t + " ";
 			}
 		}
 
-		String msg = "La playlist #spotify del nuovo episodio di " + artist + " (" + date  + ")\n";
-		msg += "con " + (artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5)) +"\n";
-		msg += links.trim() + "\n";
+		String msg = "La playlist #spotify del nuovo episodio di " + show + " (" + date  + ")\n";
+		msg += "con " + artistsStr.trim() +"\n";
+		msg += StringUtils.isBlank(twitterStr) ? "" : (twitterStr.trim() + "\n");
 		msg += "https://open.spotify.com/playlist/" + spotify;
 
 		Tweet tweet = twitterClient.postTweet(msg);
-		page.append("tweet", tweet.getId());
-		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		LOGGER.info("Podcast " + id + " sent to Twitter");
+		return tweet.getId();
 	}
 
-	private void sendTelegram(Document page) {
+	private void sendTelegram(String show, String title, String date, List<String> artists, String spotify) {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;
 
 		try {
-			String id = page.getString("id");
-			String artist = page.getString("artist");
-			String title = page.getString("title");
-			String spotify = page.getString("spalbumid");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-
-			Set<String> artists = Sets.newHashSet();
-			for(org.bson.Document track : tracks) {
-				if(track.getInteger("score") >= 70) {
-					artists.add(track.getString("artist"));
+			String artistsStr = "";
+			if(CollectionUtils.isNotEmpty(artists)) {
+				for(String a : artists) {
+					artistsStr += a + " ";
 				}
 			}
 
-			String msg = "La playlist spotify del nuovo episodio di *" + artist + " - " + title + "* (" + date  + ")\n";
-			msg += "con " + artists +"\n";
+			String msg = "La playlist spotify del nuovo episodio di *" + show + " - " + title + "* (" + date  + ")\n";
+			msg += "con " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
 			response = httpClient.execute(new HttpGet(url));
 			int status = response.getStatusLine().getStatusCode();
 			if(HttpStatus.SC_OK == status) {
-				LOGGER.info("Podcast " + id + " sent to Telegram");
+				LOGGER.info("Podcast " + show + " - " + title + " sent to Telegram");
 			}
 			else {
 				LOGGER.error("Error while sending message to Telegram channel @beatzhuman. HTTP status " + status);

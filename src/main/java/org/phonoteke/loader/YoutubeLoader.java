@@ -14,6 +14,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -26,20 +27,26 @@ public class YoutubeLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 
+	private static final String MATCH1 = "(?i)(.{1,100})[\\(\\[]Official(.{1,10})Video[\\)\\]]";
+	private static final String MATCH2 = "(?i)(.{1,100})[\\(\\[]Video(.{1,10})Ufficiale[\\)\\]]";
+	private static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2);
+
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 	private YouTube youtube = null;
 
 
+	public static void main(String[] args) {
+		new YoutubeLoader().load();
+	}
+
 	public YoutubeLoader()
 	{
-		try 
-		{
+		try {
 			youtube = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
 				public void initialize(HttpRequest request) throws IOException {}
 			}).setApplicationName("humanbeats").build();
 		}
-		catch (Throwable t) 
-		{
+		catch (Throwable t) {
 			LOGGER.error("ERROR YoutubeLoader: " + t.getMessage());
 		}
 	}
@@ -47,21 +54,24 @@ public class YoutubeLoader implements HumanBeats
 	@Override
 	public void load(String... args)
 	{
-		try
+		LOGGER.info("Loading Youtube...");
+		MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), 
+				Filters.or(Filters.exists("tracks.youtube", false),Filters.eq("tracks.youtube", null)))).
+				sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator();
+		while(i.hasNext())
 		{
-			LOGGER.info("Loading Youtube...");
-			MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", TYPE.podcast.name()), 
-					Filters.or(Filters.exists("tracks.youtube", false),Filters.eq("tracks.youtube", null)))).
-					sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator();
-			while(i.hasNext())
-			{
-				org.bson.Document page = i.next();
+			org.bson.Document page = i.next();
+			String id = page.getString("id");
+			try {
 				loadTracks(page);
+			} 
+			catch (IOException e) {
+				LOGGER.error("ERROR YoutubeLoader: " + e.getMessage());
+				return;
 			}
-		}
-		catch(IOException e)
-		{
-			LOGGER.error("ERROR YoutubeLoader: " + e.getMessage());
+			finally {
+				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			}
 		}
 	}
 
@@ -72,12 +82,12 @@ public class YoutubeLoader implements HumanBeats
 		{
 			String title = track.getString("title");
 			String youtube = track.getString("youtube");
-			if(youtube == null)
+			String spotify = track.getString("spotify");
+			if(youtube == null && spotify != null && !NA.equals(spotify))
 			{
 				youtube = getYoutubeId(title);
 				track.put("youtube", youtube);
 				LOGGER.info(id + ", title: " + title + ", youtube: " + youtube);
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			}
 		}
 	}
@@ -110,13 +120,16 @@ public class YoutubeLoader implements HumanBeats
 				String id = searchResult.getId().getVideoId();
 				String title = searchResult.getSnippet().getTitle();
 				int score = FuzzySearch.tokenSetRatio(track, title);
-				LOGGER.info(track + ", " + title + " (score: " + score + ")");
-				if(score >= THRESHOLD)
-				{
-					return id;
+				if(score >= THRESHOLD) {
+					LOGGER.info(track + ", " + title + " (youtube: " + id + ", score: " + score + ")");
+					for(String match : MATCH) {
+						if(title.matches(match)) {
+							return id;
+						}
+					}
 				}
 			}
 		}
-		return null;
+		return NA;
 	}
 }

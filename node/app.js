@@ -246,6 +246,9 @@ async function findDoc(id) {
 				if(track.artistid == 'na') {
 					track.artistid = null;
 				}
+				if(track.youtube == 'na') {
+					track.youtube = null;
+				}
 			});
 		}
 	}

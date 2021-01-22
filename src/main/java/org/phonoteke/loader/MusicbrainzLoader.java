@@ -188,7 +188,6 @@ public class MusicbrainzLoader implements HumanBeats
 				String mbartist = getRecordingArtist(release);
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
-
 				if(score >= THRESHOLD && scoreTitle >= THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);

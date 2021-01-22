@@ -63,7 +63,7 @@ public class SpotifyLoader implements HumanBeats
 					.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 					.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
 					.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
-			
+
 			MongoCursor<Document> i = docs.find(Filters.or(
 					Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
@@ -364,12 +364,24 @@ public class SpotifyLoader implements HumanBeats
 							append("coverS", spotify.getString("coverS")).
 							append("title", spotify.getString("artist") + " - " + spotify.getString("track")).
 							append("score", spotify.getInteger("score")).
-							append("artistid", null);
+							append("artistid", null).
+							append("youtube", null);
 						}
 						else
 						{
 							track.append("spotify", NA).
-							append("score", 0);
+							append("artist", null).
+							append("album", null).
+							append("track", null).
+							append("spartistid", null).
+							append("spalbumid", null).
+							append("coverL", null).
+							append("coverM", null).
+							append("coverS", null).
+							append("title", track.getString("titleOrig")).
+							append("score", 0).
+							append("artistid", NA).
+							append("youtube", NA);
 						}
 					}
 					catch (Exception e) 

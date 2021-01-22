@@ -113,9 +113,9 @@ public class SocialNetworkLoader implements HumanBeats
 	}
 
 	private String  sendTweet(String show, String title, String date, List<String> artists, List<String> twitter, String spotify) {
-		artists = artists.size() <= 5 ? artists : Lists.newArrayList(artists).subList(0, 5);
-		String artistsStr = artists.toString().substring(1, artists.size()-1);
-		
+		artists = artists.size() <= TRACKS_SIZE ? artists : Lists.newArrayList(artists).subList(0, 5);
+		String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
+
 		String twitterStr = "";
 		if(CollectionUtils.isNotEmpty(twitter)) {
 			for(String t : twitter) {
@@ -137,7 +137,7 @@ public class SocialNetworkLoader implements HumanBeats
 		CloseableHttpResponse response = null;
 
 		try {
-			String artistsStr = artists.toString().substring(1, artists.size()-1);
+			String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
 			String msg = "La playlist spotify del nuovo episodio di *" + show + " - " + title + "* (" + date  + ")\n";
 			msg += "con " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;

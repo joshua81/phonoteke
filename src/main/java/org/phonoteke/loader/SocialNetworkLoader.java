@@ -113,7 +113,7 @@ public class SocialNetworkLoader implements HumanBeats
 	}
 
 	private String  sendTweet(String show, String title, String date, List<String> artists, List<String> twitter, String spotify) {
-		artists = artists.size() <= TRACKS_SIZE ? artists : Lists.newArrayList(artists).subList(0, 5);
+		artists = artists.size() <= TRACKS_SIZE ? artists : Lists.newArrayList(artists).subList(0, TRACKS_SIZE);
 		String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
 
 		String twitterStr = "";
@@ -123,8 +123,8 @@ public class SocialNetworkLoader implements HumanBeats
 			}
 		}
 
-		String msg = "La playlist #spotify del nuovo episodio di " + show + " (" + date  + ")\n";
-		msg += "con " + artistsStr.trim() +"\n";
+		String msg = "The #spotify playlist of the new episode of " + show + " (" + date  + ")\n";
+		msg += "with " + artistsStr.trim() +"\n";
 		msg += StringUtils.isBlank(twitterStr) ? "" : (twitterStr.trim() + "\n");
 		msg += "https://open.spotify.com/playlist/" + spotify;
 
@@ -138,8 +138,8 @@ public class SocialNetworkLoader implements HumanBeats
 
 		try {
 			String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
-			String msg = "La playlist spotify del nuovo episodio di *" + show + " - " + title + "* (" + date  + ")\n";
-			msg += "con " + artistsStr.trim() +"\n";
+			String msg = "The spotify playlist of the new episode of *" + show + " - " + title + "* (" + date  + ")\n";
+			msg += "with " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);

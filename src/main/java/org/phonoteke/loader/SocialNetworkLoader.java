@@ -65,12 +65,7 @@ public class SocialNetworkLoader implements HumanBeats
 		LOGGER.info("Tweetting podcasts...");
 		LocalDateTime start = LocalDateTime.now().minusWeeks(WEEKS).withHour(0).withMinute(0).withSecond(0);
 		MongoCursor<Document> i = docs.find(Filters.and(
-				Filters.eq("type", "podcast"), 
-				Filters.nin("source", Lists.newArrayList(
-						BBCRadioLoader.GILLES_PETERSON, 
-						BBCRadioLoader.JORJA_SMITH,
-						BBCRadioLoader.ARLO_PARKS, 
-						BBCRadioLoader.LOYLE_CARNER)),
+				Filters.eq("type", "podcast"),
 				Filters.gt("date", start), 
 				Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 

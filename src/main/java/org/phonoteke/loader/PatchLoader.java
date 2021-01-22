@@ -1,5 +1,6 @@
 package org.phonoteke.loader;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,12 +15,13 @@ import com.mongodb.client.model.Filters;
 public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
-
+	private static final int YEAR = 2021;
+	
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		new PatchLoader().renamePodcasts();
+		new PatchLoader().resetTracks();
 	}
 
 	@Override
@@ -156,8 +158,11 @@ public class PatchLoader implements HumanBeats
 	private void resetTracks()
 	{
 		LOGGER.info("Resetting tracks...");
-		//		MongoCursor<Document> i = docs.find(Filters.eq("id", "50c6be1f6578b50c167a0fad0748168d0fa6f57ac031b7cdcfa9b7893c5c532d")).iterator();
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.score", 0))).iterator();
+		LocalDateTime start = LocalDateTime.now().withYear(YEAR).withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
+		MongoCursor<Document> i = docs.find(Filters.and(
+				Filters.eq("type", "podcast"), 
+				Filters.eq("tracks.score", 0),
+				Filters.gt("date", start))).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;

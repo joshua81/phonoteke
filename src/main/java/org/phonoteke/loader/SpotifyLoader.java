@@ -2,6 +2,7 @@ package org.phonoteke.loader;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -124,12 +125,9 @@ public class SpotifyLoader implements HumanBeats
 				if(id == null) {
 					String title = page.getString("artist");
 					String description = page.getString("title");
-					if(page.getDate("date") != null) {
-						String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
-						title += " del " + date;
-					}
-					else {
-						title += " - " + description;
+					Date date = page.getDate("date");
+					if(date != null) {
+						title += " (" + new SimpleDateFormat("dd-MM-yyyy").format(date) + ")";
 					}
 
 					try

@@ -83,11 +83,17 @@ public class YoutubeLoader implements HumanBeats
 			String title = track.getString("title");
 			String youtube = track.getString("youtube");
 			String spotify = track.getString("spotify");
-			if(youtube == null && spotify != null && !NA.equals(spotify))
+			Integer score = track.getInteger("score");
+			if(youtube == null)
 			{
-				youtube = getYoutubeId(title);
-				track.put("youtube", youtube);
-				LOGGER.info(id + ", title: " + title + ", youtube: " + youtube);
+				if(!NA.equals(spotify) && score != null && score >= THRESHOLD) {
+					youtube = getYoutubeId(title);
+					track.put("youtube", youtube);
+					LOGGER.info("title: " + title + ", youtube: " + youtube);
+				}
+				else {
+					youtube = NA;
+				}
 			}
 		}
 	}
@@ -121,7 +127,6 @@ public class YoutubeLoader implements HumanBeats
 				String title = searchResult.getSnippet().getTitle();
 				int score = FuzzySearch.tokenSetRatio(track, title);
 				if(score >= THRESHOLD) {
-					LOGGER.info(track + ", " + title + " (youtube: " + id + ", score: " + score + ")");
 					for(String match : MATCH) {
 						if(title.matches(match)) {
 							return id;

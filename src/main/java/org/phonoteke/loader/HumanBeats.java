@@ -133,38 +133,15 @@ public interface HumanBeats
 
 	public static List<String[]> parseTrack(String track) 
 	{
-		track = track.replaceAll("&nbsp;", " ");
-		track = track.trim();
+		track = cleanText(track);
 		List<String[]> matches = Lists.newArrayList();
 		for(String match : MATCH) {
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
 				matches.add(parseArtistSong(m.group(2),  m.group(3)));
 				matches.add(parseArtistSong(m.group(3),  m.group(2)));
-				if(!m.group(2).startsWith("&") && m.group(2).contains("&")) {
-					matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
-				}
-				if(!m.group(3).startsWith("&") && m.group(3).contains("&")) {
-					matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
-				}
-				if(m.group(2).toLowerCase().contains(" and ")) {
-					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(3)));
-				}
-				if(m.group(3).toLowerCase().contains(" and ")) {
-					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\band\\b")[0],  m.group(2)));
-				}
-				if(m.group(2).toLowerCase().contains(" with ")) {
-					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(3)));
-				}
-				if(m.group(3).toLowerCase().contains(" with ")) {
-					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
-				}
-				if(m.group(2).toLowerCase().contains(" e ")) {
-					matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\be\\b")[0],  m.group(3)));
-				}
-				if(m.group(3).toLowerCase().contains(" e ")) {
-					matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\be\\b")[0],  m.group(2)));
-				}
+				matches.addAll(parseArtistSongChunks(m.group(2),  m.group(3)));
+				matches.addAll(parseArtistSongChunks(m.group(3),  m.group(2)));
 			}
 		}
 		for(String separator : SEPARATOR) {
@@ -174,31 +151,49 @@ public interface HumanBeats
 				if(m.matches()) {
 					matches.add(parseArtistSong(m.group(2),  m.group(3)));
 					matches.add(parseArtistSong(m.group(3),  m.group(2)));
-					if(!m.group(2).startsWith("&") && m.group(2).contains("&")) {
-						matches.add(parseArtistSong(m.group(2).split("&")[0],  m.group(3)));
-					}
-					if(!m.group(3).startsWith("&") && m.group(3).contains("&")) {
-						matches.add(parseArtistSong(m.group(3).split("&")[0],  m.group(2)));
-					}
-					if(m.group(2).toLowerCase().contains(" and ")) {
-						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\band\\b")[0],  m.group(3)));
-					}
-					if(m.group(3).toLowerCase().contains(" and ")) {
-						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\band\\b")[0],  m.group(2)));
-					}
-					if(m.group(2).toLowerCase().contains(" with ")) {
-						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\bwith\\b")[0],  m.group(3)));
-					}
-					if(m.group(3).toLowerCase().contains(" with ")) {
-						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\bwith\\b")[0],  m.group(2)));
-					}
-					if(m.group(2).toLowerCase().contains(" e ")) {
-						matches.add(parseArtistSong(m.group(2).toLowerCase().split("\\be\\b")[0],  m.group(3)));
-					}
-					if(m.group(3).toLowerCase().contains(" e ")) {
-						matches.add(parseArtistSong(m.group(3).toLowerCase().split("\\be\\b")[0],  m.group(2)));
-					}
+					matches.addAll(parseArtistSongChunks(m.group(2),  m.group(3)));
+					matches.addAll(parseArtistSongChunks(m.group(3),  m.group(2)));
 				}
+			}
+		}
+		return matches;
+	}
+
+	public static List<String[]> parseArtistSongChunks(String artist, String song) {
+		List<String[]> matches = Lists.newArrayList();
+		if(!artist.startsWith("&") && artist.contains("&")) {
+			for(String chunk : artist.split("&")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith(" and ") && artist.toLowerCase().contains(" and ")) {
+			for(String chunk : artist.split("\\band\\b")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith(" with ") && artist.toLowerCase().contains(" with ")) {
+			for(String chunk : artist.split("\\bwith\\b")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith(" e ") && artist.toLowerCase().contains(" e ")) {
+			for(String chunk : artist.split("\\be\\b")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith("/") && artist.contains("/")) {
+			for(String chunk : artist.split("/")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith("+") && artist.contains("+")) {
+			for(String chunk : artist.split("\\+")) {
+				matches.add(parseArtistSong(chunk, song));
+			}
+		}
+		if(!artist.startsWith(";") && artist.contains(";")) {
+			for(String chunk : artist.split(";")) {
+				matches.add(parseArtistSong(chunk, song));
 			}
 		}
 		return matches;
@@ -207,10 +202,7 @@ public interface HumanBeats
 	public static String[] parseArtistSong(String artist, String song)
 	{
 		// artist
-		artist = !artist.startsWith("/") ?  artist.split("/")[0] : artist;
-		artist = !artist.startsWith("+") ? artist.split("\\+")[0] : artist;
-		artist = !artist.startsWith(",") ?  artist.split(",")[0] : artist;
-		artist = !artist.startsWith(";") ?  artist.split(";")[0] : artist;
+		artist = !artist.startsWith(",") ? artist.split(",")[0] : artist;
 		artist = artist.replaceAll("=", " ");
 		artist = artist.replaceAll("\\[\\]", " ");
 		artist = artist.replaceAll("\\]\\[", " ");
@@ -247,8 +239,8 @@ public interface HumanBeats
 
 	public static String cleanText(String text) 
 	{
-		// strips off all non-ASCII characters
-		//text = text.replaceAll("[^\\x00-\\x7F]", "");
+		// replaces all the HTML white spaces
+		text = text.replaceAll("&nbsp;", " ");
 		// erases all the ASCII control characters
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 		// removes non-printable characters from Unicode

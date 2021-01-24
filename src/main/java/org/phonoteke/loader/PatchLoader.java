@@ -16,7 +16,8 @@ public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 	private static final int YEAR = 2021;
-	
+	private static final int SCORE = 40;
+
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
@@ -91,7 +92,7 @@ public class PatchLoader implements HumanBeats
 			LOGGER.info("Document " + id + " deleted");
 		}
 	}
-	
+
 	private void renamePodcasts()
 	{
 		LOGGER.info("Renaming podcasts...");
@@ -161,7 +162,7 @@ public class PatchLoader implements HumanBeats
 		LocalDateTime start = LocalDateTime.now().withYear(YEAR).withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"), 
-				Filters.eq("tracks.score", 0),
+				Filters.lt("tracks.score", SCORE),
 				Filters.gt("date", start))).iterator();
 		while(i.hasNext()) 
 		{
@@ -174,7 +175,7 @@ public class PatchLoader implements HumanBeats
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score != null && score == 0)
+					if(score != null && score < SCORE)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);

@@ -43,7 +43,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
-
+	private static final int SCORE = 40;
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
 
 	private ClientCredentials credentials;
@@ -448,7 +448,7 @@ public class SpotifyLoader implements HumanBeats
 						page.append("score", score);
 						getImages(page, track.getAlbum().getImages());
 
-						if(!tracksMap.containsKey(score)) {
+						if(score >= SCORE && !tracksMap.containsKey(score)) {
 							LOGGER.info("Found: " + artist + " - " + song + " | " + spartist + " - " + spsong + " | score: " + score);
 							tracksMap.put(score, page);
 						}

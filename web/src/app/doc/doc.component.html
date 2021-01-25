@@ -42,13 +42,15 @@
       <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
     </div>
 
-    <!-- songkick + spotify + source -->
+    <!-- source + spotify + songkick -->
     <div *ngIf="doc.artistid || doc.spalbumid" class="d-flex flex-row justify-content-center mt-3">
-      <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
+      <!--a class="ml-1 mr-1" href="{{doc.url}}" target="_blank">
+        <img class="source" src="{{'/images/' + doc.source + '.png'}}" />
+      </a-->
       <a *ngIf="doc.spalbumid" class="ml-1 mr-1" href="{{'https://open.spotify.com/' + (doc.type == 'podcast' ? 'playlist' : 'album') + '/' + doc.spalbumid}}" target="_blank">
         <img class="spotify"/>
       </a>
-      <!--a class="ml-1 mr-1" href="{{doc.url}}" target="_blank"><img class="{{doc.source}}"/></a-->
+      <img *ngIf="doc.artistid" class="icon songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"/>
     </div>
 
     <!-- content -->

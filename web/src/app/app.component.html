@@ -4,15 +4,14 @@
 
 <!-- Spotify player-->
 <div *ngIf="track" class="w-max ml-auto mr-auto fixed-bottom">
-  <div class="player-spotify d-flex flex-row align-items-center p-2">
+  <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="['/docs/' + doc.id]">
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
-    <div class="ml-2 w-100">
-      <div class="text-white text-truncate-1">{{track.item.name + ' da '}}<span class="text-white font-weight-bold">{{track.item.album.name}}</span></div>
-      <div class="text-white text-truncate-1">{{'di ' + track.item.artists[0].name}}</div>
+    <div class="p-2 w-100">
+      <!--span class="text-white font-weight-bold">{{track.item.album.name}}</span-->
+      <div class="text-white text-truncate-1">{{track.item.name + ' di ' + track.item.artists[0].name}}</div>
       <div class="d-flex flex-row align-items-center">
-        <!--div class="text-white text-center">{{currentTime + '/' + duration}}</div-->
         <div class="player-button" (click)="previousSpotify()">
           <span class="player-backward"></span>
         </div>
@@ -36,13 +35,12 @@
 
 <!-- Podcast player-->
 <div *ngIf="audio" class="w-max ml-auto mr-auto fixed-bottom">
-  <div class="player-spotify d-flex flex-row align-items-center p-2">
+  <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="['/docs/' + doc.id]">
       <img class="cover" src="{{audio.cover}}"/>
     </a>
-    <div class="ml-2 w-100">
-      <div class="text-white text-truncate-1 font-weight-bold">{{audio.title}}</div>
-      <div class="text-white text-truncate-1">{{'di ' + audio.artist}}</div>
+    <div class="p-2 w-100">
+      <div class="text-white text-truncate-1">{{audio.title + ' di ' + audio.artist}}</div>
       <div class="d-flex flex-row align-items-center">
         <div class="text-white">{{currentTime}}</div>
         <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeAudio($event)">

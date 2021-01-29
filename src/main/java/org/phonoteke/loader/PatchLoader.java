@@ -16,7 +16,6 @@ public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 	private static final int YEAR = 2021;
-	private static final int SCORE = 40;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 

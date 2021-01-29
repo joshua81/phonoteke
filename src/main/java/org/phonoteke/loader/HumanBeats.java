@@ -2,26 +2,23 @@ package org.phonoteke.loader;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final String MATCH1 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?),(.{1,200})";
-	public static final String MATCH2 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[\"](.{1,100}?)[\"](.{0,200})";
-	public static final String MATCH3 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[“”](.{1,100}?)[“”](.{0,200})";
-	public static final String MATCH4 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[‘’](.{1,100}?)[‘’](.{0,200})";
-	public static final String MATCH5 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)['](.{1,100}?)['](.{0,200})";
-	public static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2, MATCH3, MATCH4, MATCH5);
+	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/");
 
-	public static final String MATCHS1 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?),(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS2 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS3 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)[SEPARATOR](.{1,200})";
-	public static final String MATCHS4 = "([0-9]{0,2}[:•*-]{0,1}[0-9]{0,2}[\\._)–-]{0,1}){0,1}(.{1,100}?)[SEPARATOR](.{1,100}?)\\(.{1,200}\\)";
-	public static final List<String> MATCHS = Lists.newArrayList(MATCHS1, MATCHS2, MATCHS3, MATCHS4);
-	public static final List<String> SEPARATOR = Lists.newArrayList(">", ":", "–", "-", ",");
+	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
+	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\|(.{1,200})";
+	public static final String MATCH3 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})";
+	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2, MATCH3);
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";
@@ -43,6 +40,7 @@ public interface HumanBeats
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	public static final int SLEEP_TIME = 2000;
 	public static final int THRESHOLD = 90;
+	public static final int SCORE = 60;
 	public static final int TRACKS_SIZE = 6;
 
 	public enum TYPE {
@@ -114,99 +112,49 @@ public interface HumanBeats
 
 	public static boolean isTrack(String title)
 	{
-		title = title.trim();
-		for(String match : MATCH) {
+		title = cleanText(title);
+		for(String s : SEPARATORS) {
+			title = title.replaceAll(s, "|");
+		}
+		for(String match : MATCHS) {
 			if(title.matches(match)) {
 				return true;
-			}
-		}
-		for(String separator : SEPARATOR) {
-			for(String match : MATCHS) {
-				match = match.replaceAll("SEPARATOR", separator);
-				if(title.matches(match)) {
-					return true;
-				}
 			}
 		}
 		return false;
 	}
 
-	public static List<String[]> parseTrack(String track) 
+	public static Set<String> parseTrack(String track) 
 	{
 		track = cleanText(track);
-		List<String[]> matches = Lists.newArrayList();
-		for(String match : MATCH) {
+		for(String s : SEPARATORS) {
+			track = track.replaceAll(s, "|");
+		}
+
+		Set<String> matches = Sets.newHashSet();
+		for(String match : MATCHS) {
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
-				matches.add(parseArtistSong(m.group(2),  m.group(3)));
-				matches.add(parseArtistSong(m.group(3),  m.group(2)));
-				matches.addAll(parseArtistSongChunks(m.group(2),  m.group(3)));
-				matches.addAll(parseArtistSongChunks(m.group(3),  m.group(2)));
-			}
-		}
-		for(String separator : SEPARATOR) {
-			for(String match : MATCHS) {
-				match = match.replaceAll("SEPARATOR", separator);
-				Matcher m = Pattern.compile(match).matcher(track);
-				if(m.matches()) {
-					matches.add(parseArtistSong(m.group(2),  m.group(3)));
-					matches.add(parseArtistSong(m.group(3),  m.group(2)));
-					matches.addAll(parseArtistSongChunks(m.group(2),  m.group(3)));
-					matches.addAll(parseArtistSongChunks(m.group(3),  m.group(2)));
+				track = m.group(2)+ "|" + m.group(3);
+				List<String> chunks = Arrays.asList(track.split("\\|"));
+				for(int i = 1; i < chunks.size(); i++) {
+					String artist = String.join(" ", chunks.subList(0, i));
+					for(int j = i+1; j <= chunks.size(); j++) {
+						String song = String.join(" ", chunks.subList(i, j));
+						if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
+							matches.add(parseArtistSong(artist, song));
+						}
+					}
 				}
 			}
 		}
 		return matches;
 	}
 
-	public static List<String[]> parseArtistSongChunks(String artist, String song) {
-		List<String[]> matches = Lists.newArrayList();
-		if(!artist.startsWith("&") && artist.contains("&")) {
-			for(String chunk : artist.split("&")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith(" and ") && artist.toLowerCase().contains(" and ")) {
-			for(String chunk : artist.split("\\band\\b")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith(" with ") && artist.toLowerCase().contains(" with ")) {
-			for(String chunk : artist.split("\\bwith\\b")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith(" e ") && artist.toLowerCase().contains(" e ")) {
-			for(String chunk : artist.split("\\be\\b")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith("/") && artist.contains("/")) {
-			for(String chunk : artist.split("/")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith("+") && artist.contains("+")) {
-			for(String chunk : artist.split("\\+")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		if(!artist.startsWith(";") && artist.contains(";")) {
-			for(String chunk : artist.split(";")) {
-				matches.add(parseArtistSong(chunk, song));
-			}
-		}
-		return matches;
-	}
-
-	public static String[] parseArtistSong(String artist, String song)
+	public static String parseArtistSong(String artist, String song)
 	{
 		// artist
-		artist = !artist.startsWith(",") ? artist.split(",")[0] : artist;
-		artist = artist.replaceAll("=", " ");
-		artist = artist.replaceAll("\\[\\]", " ");
-		artist = artist.replaceAll("\\]\\[", " ");
-		artist = artist.trim();
+		artist = cleanText(artist);
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(artist);
 			if(matcher.matches()) {
@@ -223,10 +171,7 @@ public interface HumanBeats
 		}
 
 		// song
-		song = song.replaceAll("=", " ");
-		artist = artist.replaceAll("\\[\\]", " ");
-		artist = artist.replaceAll("\\]\\[", " ");
-		song = song.trim();
+		song = cleanText(song);
 		for(String match : FEAT) {
 			Matcher matcher = Pattern.compile(match).matcher(song);
 			if(matcher.matches()) {
@@ -234,13 +179,26 @@ public interface HumanBeats
 				break;
 			}
 		}
-		return new String[]{cleanText(artist), cleanText(song)};
+		for(String match : AKA) {
+			Matcher matcher = Pattern.compile(match).matcher(song);
+			if(matcher.matches()) {
+				song = matcher.group(2);
+				break;
+			}
+		}
+		return cleanText(artist) + " " + cleanText(song);
 	}
 
 	public static String cleanText(String text) 
 	{
-		// replaces all the HTML white spaces
+		// replaces AND, WITH, &, E characters
+		text = text.replaceAll("&", " ");
+		text = text.replaceAll("\\band\\b", " ");
+		text = text.replaceAll("\\bwith\\b", " ");
+		text = text.replaceAll("\\be\\b", " ");
+		// replaces all the HTML and non-HTML white spaces
 		text = text.replaceAll("&nbsp;", " ");
+		text = text.replaceAll("\\s+", " ");
 		// erases all the ASCII control characters
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 		// removes non-printable characters from Unicode

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +44,6 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class SpotifyLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
-	private static final int SCORE = 40;
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
 
 	private ClientCredentials credentials;
@@ -398,29 +398,21 @@ public class SpotifyLoader implements HumanBeats
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		List<String[]> chunks = HumanBeats.parseTrack(title);
+		Set<String> chunks = HumanBeats.parseTrack(title);
 		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
 		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}
 
-	private TreeMap<Integer, Document> loadTrack(List<String[]> chunks) throws Exception
+	private TreeMap<Integer, Document> loadTrack(Set<String> titles) throws Exception
 	{
 		TreeMap<Integer, Document> tracksMap = Maps.newTreeMap();
-		if(CollectionUtils.isNotEmpty(chunks)) {
-			for(String[] chunk : chunks) {
-				String artist = chunk[0];
-				String song = chunk[1];
-				if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song))
-				{
-					artist = artist.replaceAll("&nbsp;", " ");
-					artist = artist.trim();
-					song = song.replaceAll("&nbsp;", " ");
-					song = song.trim();
-					String q = artist + " " + song;
-					SearchTracksRequest request = spotify.searchTracks(q).market(CountryCode.IT).build();
+		if(CollectionUtils.isNotEmpty(titles)) {
+			for(String title : titles) {
+				if(StringUtils.isNotBlank(title)) {
+					SearchTracksRequest request = spotify.searchTracks(title).market(CountryCode.IT).build();
 					Paging<Track> tracks = request.execute();
 					if(tracks.getItems().length == 0) {
-						LOGGER.info("Not found: " + artist + " - " + song);
+						LOGGER.info("Not found: " + title);
 					}
 					for(int i = 0; i < tracks.getItems().length; i++)
 					{
@@ -438,7 +430,7 @@ public class SpotifyLoader implements HumanBeats
 							}
 						}
 						String trackid = track.getId();
-						int score = FuzzySearch.tokenSortRatio(artist + " " + song, spartist + " " + spsong);
+						int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
 						Document page = new Document("spotify", trackid);
 						page.append("artist", spartist);
 						page.append("spartistid", spartistid);
@@ -449,7 +441,7 @@ public class SpotifyLoader implements HumanBeats
 						getImages(page, track.getAlbum().getImages());
 
 						if(score >= SCORE && !tracksMap.containsKey(score)) {
-							LOGGER.info("Found: " + artist + " - " + song + " | " + spartist + " - " + spsong + " | score: " + score);
+							LOGGER.info("Found: " + title + " | " + spartist + " - " + spsong + " | score: " + score);
 							tracksMap.put(score, page);
 						}
 					}

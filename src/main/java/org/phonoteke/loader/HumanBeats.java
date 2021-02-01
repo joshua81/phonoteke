@@ -16,9 +16,8 @@ public interface HumanBeats
 	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/");
 
 	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
-	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\|(.{1,200})";
-	public static final String MATCH3 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})";
-	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2, MATCH3);
+	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
+	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
 	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";

@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -128,7 +127,6 @@ public class SocialNetworkLoader implements HumanBeats
 		msg += "with " + artistsStr.trim() +"\n";
 		msg += StringUtils.isBlank(twitterStr) ? "" : (twitterStr.trim() + "\n");
 		msg += "https://open.spotify.com/playlist/" + spotify;
-		msg = StringEscapeUtils.escapeHtml(msg);
 
 		Tweet tweet = twitterClient.postTweet(msg);
 		Preconditions.checkNotNull(tweet.getId(), "Error while sending message to Twitter");
@@ -144,7 +142,6 @@ public class SocialNetworkLoader implements HumanBeats
 			String msg = "The spotify playlist of the new episode of *" + show + " - " + title + "* (" + date  + ")\n";
 			msg += "with " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
-			msg = StringEscapeUtils.escapeHtml(msg);
 
 			String url = "https://api.telegram.org/bot" + System.getenv("TELEGRAM_KEY") + "/sendMessage?chat_id=@beatzhuman&parse_mode=markdown&text=" + URLEncoder.encode(msg, StandardCharsets.UTF_8);
 			response = httpClient.execute(new HttpGet(url));

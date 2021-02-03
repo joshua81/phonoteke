@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,12 +48,15 @@ public class SpotifyLoader implements HumanBeats
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
 
 	private ClientCredentials credentials;
-	private SpotifyApi spotify;
+	private SpotifyApi spotify = new SpotifyApi.Builder()
+			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
+			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
+			.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		new SpotifyLoader().load();
+		new SpotifyLoader().deletePlaylists();
 	}
 
 	@Override
@@ -60,11 +64,6 @@ public class SpotifyLoader implements HumanBeats
 	{
 		if(args.length == 0) {
 			LOGGER.info("Loading Spotify...");
-			spotify = new SpotifyApi.Builder()
-					.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
-					.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
-					.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
-
 			MongoCursor<Document> i = docs.find(Filters.or(
 					Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
@@ -84,10 +83,40 @@ public class SpotifyLoader implements HumanBeats
 				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
+		else if("delete".equals(args[0])) {
+			LOGGER.info("Deleting Spotify playlists...");
+			deletePlaylists();
+		}
 		else {
 			LOGGER.info("Creating Spotify playlist...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[0]).build();
 			createPlaylists();
+		}
+	}
+
+	private void deletePlaylists()
+	{
+		MongoCursor<Document> i = docs.find(Filters.eq("type", "podcast")).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			String spalbumid = page.getString("spalbumid");
+			if(spalbumid != null) {
+				AtomicInteger tracksnum = new AtomicInteger(0);
+				List<org.bson.Document> tracks = page.get("tracks", List.class);
+				tracks.forEach(t -> {
+					if(t.getString("spotify") != null && !NA.equals(t.getString("spotify"))) {
+						tracksnum.incrementAndGet();
+					}
+				});
+				if(tracksnum.get() < TRACKS_SIZE) {
+					spotify.unfollowPlaylist(spalbumid);
+					page.append("spalbumid", null);
+					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+					LOGGER.info("Playlist " + id + " deleted");
+				}
+			}
 		}
 	}
 
@@ -118,45 +147,40 @@ public class SpotifyLoader implements HumanBeats
 				}
 			}
 
-			if(CollectionUtils.isNotEmpty(uris))
+			if(CollectionUtils.isNotEmpty(uris) && uris.size() >= TRACKS_SIZE)
 			{
 				String id = page.getString("spalbumid");
-				// create new playlist
-				if(id == null) {
-					String title = page.getString("artist");
-					String description = page.getString("title");
-					Date date = page.getDate("date");
-					if(date != null) {
-						title += " (" + new SimpleDateFormat("dd-MM-yyyy").format(date) + ")";
-					}
+				try
+				{
+					// create new playlist
+					if(id == null) {
+						String title = page.getString("artist");
+						String description = page.getString("title");
+						Date date = page.getDate("date");
+						if(date != null) {
+							title += " (" + new SimpleDateFormat("dd-MM-yyyy").format(date) + ")";
+						}
 
-					try
-					{
 						CreatePlaylistRequest playlistRequest = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 						Playlist playlist = playlistRequest.execute();
+						id = playlist.getId();
 						AddItemsToPlaylistRequest itemsRequest = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						itemsRequest.execute();
-						page.append("spalbumid", playlist.getId());
+						page.append("spalbumid", id);
 						page.append("dirty", false);
-						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + playlist.getId() + " created");
+						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");
 					}
-					catch (Exception e) 
-					{
-						LOGGER.error("ERROR creating playlist " + title + ": " + e.getMessage());
-					}
-				}
-				// update existing playlist
-				else {
-					try {
+					// update existing playlist
+					else {
 						ReplacePlaylistsItemsRequest req = spotify.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req.execute();
 						page.append("dirty", false);
 						LOGGER.info("Playlist " + id + " updated");
 					}
-					catch (Exception e) 
-					{
-						LOGGER.error("ERROR updating playlist " + id + ": " + e.getMessage());
-					}
+				}
+				catch (Exception e) 
+				{
+					LOGGER.error("ERROR creating/updating playlist " + id + ": " + e.getMessage());
 				}
 			}
 		}

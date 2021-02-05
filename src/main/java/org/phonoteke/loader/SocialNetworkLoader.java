@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -85,12 +84,11 @@ public class SocialNetworkLoader implements HumanBeats
 
 	private void notify(Document page) {
 		String id = page.getString("id");
-		String podcast = page.getString("artist");
-		String title = page.getString("title");
 		String source = page.getString("source");
 		String spotify = page.getString("spalbumid");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		String date = new SimpleDateFormat("dd-MM-yyyy").format(page.getDate("date"));
+		String title = page.getString("artist") + " - " + page.getString("title");
+		title = HumanBeats.format(title, page.getDate("date"));
 
 		Set<String> artists = Sets.newHashSet();
 		for(org.bson.Document track : tracks) {
@@ -102,16 +100,16 @@ public class SocialNetworkLoader implements HumanBeats
 		org.bson.Document show = shows.find(Filters.and(Filters.eq("source", source))).iterator().next();
 		List<String> twitter = show.get("twitter", List.class);
 
-		String tweet = sendTweet(podcast, title, date, Lists.newArrayList(artists), twitter, spotify);
+		String tweet = sendTweet(title, Lists.newArrayList(artists), twitter, spotify);
 		page.append("tweet", tweet);
 		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		LOGGER.info("Podcast " + id + " sent to Twitter");
 
-		sendTelegram(podcast, title, date, Lists.newArrayList(artists), spotify);
+		sendTelegram(title, Lists.newArrayList(artists), spotify);
 		LOGGER.info("Podcast " + id + " sent to Telegram");
 	}
 
-	private String  sendTweet(String show, String title, String date, List<String> artists, List<String> twitter, String spotify) {
+	private String  sendTweet(String title, List<String> artists, List<String> twitter, String spotify) {
 		artists = artists.size() <= TRACKS_SIZE ? artists : Lists.newArrayList(artists).subList(0, TRACKS_SIZE);
 		String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
 
@@ -122,7 +120,7 @@ public class SocialNetworkLoader implements HumanBeats
 			}
 		}
 
-		String msg = "The #spotify playlist of the new episode of " + show + " (" + date  + ")\n";
+		String msg = "The #spotify playlist of the new episode of " + title + "\n";
 		msg += "with " + artistsStr.trim() +"\n";
 		msg += StringUtils.isBlank(twitterStr) ? "" : (twitterStr.trim() + "\n");
 		msg += "https://open.spotify.com/playlist/" + spotify;
@@ -132,13 +130,13 @@ public class SocialNetworkLoader implements HumanBeats
 		return tweet.getId();
 	}
 
-	private void sendTelegram(String show, String title, String date, List<String> artists, String spotify) {
+	private void sendTelegram(String title, List<String> artists, String spotify) {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;
 
 		try {
 			String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
-			String msg = "The spotify playlist of the new episode of *" + show + " - " + title + "* (" + date  + ")\n";
+			String msg = "The spotify playlist of the new episode of *" + title + "*\n";
 			msg += "with " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 

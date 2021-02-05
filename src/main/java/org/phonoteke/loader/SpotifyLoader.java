@@ -225,9 +225,7 @@ public class SpotifyLoader implements HumanBeats
 						String title = page.getString("artist");
 						String description = page.getString("title");
 						Date date = page.getDate("date");
-						if(date != null) {
-							title += " (" + new SimpleDateFormat("dd-MM-yyyy").format(date) + ")";
-						}
+						title = HumanBeats.format(title, date);
 						CreatePlaylistRequest req = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 						Playlist playlist = req.execute();
 						id = playlist.getId();

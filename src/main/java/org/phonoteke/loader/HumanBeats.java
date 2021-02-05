@@ -1,6 +1,8 @@
 package org.phonoteke.loader;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -9,6 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.api.client.util.Sets;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public interface HumanBeats 
@@ -203,5 +206,11 @@ public interface HumanBeats
 		// removes non-printable characters from Unicode
 		text = text.replaceAll("\\p{C}", "");
 		return text.toLowerCase().trim();
+	}
+
+	public static String format(String title, Date date) {
+		Preconditions.checkNotNull(title);
+		
+		return date == null ? title.trim() : (title.trim() + " Ep." + new SimpleDateFormat("yyyy.MM.dd").format(date));
 	}
 }

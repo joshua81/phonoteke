@@ -66,20 +66,19 @@ public class SocialNetworkLoader implements HumanBeats
 		LocalDateTime start = LocalDateTime.now().minusWeeks(WEEKS).withHour(0).withMinute(0).withSecond(0);
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"),
-				Filters.gt("date", start), 
+				Filters.gt("date", start),
+				Filters.ne("spalbumid", null),
+				Filters.gte("score", SCORE),
 				Filters.eq("tweet", null))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
-			Integer score = page.getInteger("score");
-			String spotify = page.getString("spalbumid");
-			if(spotify != null && score >= SCORE) {
-				try {
-					notify(page);
-				}
-				catch(Exception e) {
-					LOGGER.error(e.getMessage());
-				}
+			String id = page.getString("id");
+			try {
+				notify(page);
+			}
+			catch(Exception e) {
+				LOGGER.error("Error twitting podcast " + id + ": "+ e.getMessage());
 			}
 		}
 	}

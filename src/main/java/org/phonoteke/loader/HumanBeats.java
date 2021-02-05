@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/");
+	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/");
 
 	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
 	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";

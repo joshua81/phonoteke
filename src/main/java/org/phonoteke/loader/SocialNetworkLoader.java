@@ -87,7 +87,7 @@ public class SocialNetworkLoader implements HumanBeats
 		String source = page.getString("source");
 		String spotify = page.getString("spalbumid");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		String title = page.getString("artist") + " - " + page.getString("title");
+		String title = page.getString("artist");
 		title = HumanBeats.format(title, page.getDate("date"));
 
 		Set<String> artists = Sets.newHashSet();

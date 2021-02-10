@@ -15,13 +15,12 @@ import com.mongodb.client.model.Filters;
 public class PatchLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
-	private static final int YEAR = 2021;
 
 	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetTracks();
+		new PatchLoader().resetTracks(2019);
 	}
 
 	@Override
@@ -34,7 +33,8 @@ public class PatchLoader implements HumanBeats
 			calculateScore();
 		}
 		else if("resetTracks".equals(args[0])) {
-			resetTracks();
+			int year = Integer.parseInt(args[1]);
+			resetTracks(year);
 		}
 		else if("replaceSpecialChars".equals(args[0])) {
 			replaceSpecialChars();
@@ -155,14 +155,16 @@ public class PatchLoader implements HumanBeats
 		}
 	}
 
-	private void resetTracks()
+	private void resetTracks(int year)
 	{
-		LOGGER.info("Resetting tracks...");
-		LocalDateTime start = LocalDateTime.now().withYear(YEAR).withDayOfYear(1).withHour(0).withMinute(0).withSecond(0);
+		LOGGER.info("Resetting " + year + " tracks...");
+		LocalDateTime start = LocalDateTime.now().withYear(year).withMonth(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+		LocalDateTime end = LocalDateTime.now().withYear(year).withMonth(12).withDayOfMonth(31).withHour(23).withMinute(59).withSecond(59);
 		MongoCursor<Document> i = docs.find(Filters.and(
 				Filters.eq("type", "podcast"), 
 				Filters.lt("tracks.score", SCORE),
-				Filters.gt("date", start))).iterator();
+				Filters.gt("date", start),
+				Filters.lt("date", end))).iterator();
 		while(i.hasNext()) 
 		{
 			boolean update = false;

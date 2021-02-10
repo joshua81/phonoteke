@@ -3,6 +3,7 @@ package org.phonoteke.loader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -10,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.api.client.util.Sets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -133,18 +133,20 @@ public interface HumanBeats
 			track = track.replaceAll(s, "|");
 		}
 
-		Set<String> matches = Sets.newHashSet();
+		Set<String> matches = new LinkedHashSet<String>();
 		for(String match : MATCHS) {
 			Matcher m = Pattern.compile(match).matcher(track);
 			if(m.matches()) {
 				track = m.group(2)+ "|" + m.group(3);
 				List<String> chunks = Arrays.asList(track.split("\\|"));
 				for(int i = 1; i < chunks.size(); i++) {
-					String artist = String.join(" ", chunks.subList(0, i));
-					for(int j = i+1; j <= chunks.size(); j++) {
-						String song = String.join(" ", chunks.subList(i, j));
-						if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
-							matches.add(parseArtistSong(artist, song));
+					for(int k = 1; k <= i; k++) {
+						String artist = String.join(" ", chunks.subList(0, k));
+						for(int j = i+1; j <= chunks.size(); j++) {
+							String song = String.join(" ", chunks.subList(i, j));
+							if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
+								matches.add(parseArtistSong(artist, song));
+							}
 						}
 					}
 				}
@@ -196,7 +198,7 @@ public interface HumanBeats
 		// replaces AND, WITH, &, E characters
 		text = text.replaceAll("&", " ");
 		text = text.replaceAll("\\band\\b", " ");
-		text = text.replaceAll("\\bwith\\b", " ");
+//		text = text.replaceAll("\\bwith\\b", " ");
 		text = text.replaceAll("\\be\\b", " ");
 		// replaces all the HTML and non-HTML white spaces
 		text = text.replaceAll("&nbsp;", " ");
@@ -210,7 +212,7 @@ public interface HumanBeats
 
 	public static String format(String title, Date date) {
 		Preconditions.checkNotNull(title);
-		
+
 		return date == null ? title.trim() : (title.trim() + " Ep." + new SimpleDateFormat("yyyy.MM.dd").format(date));
 	}
 }

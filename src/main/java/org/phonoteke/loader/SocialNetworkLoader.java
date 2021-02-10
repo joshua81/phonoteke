@@ -120,7 +120,7 @@ public class SocialNetworkLoader implements HumanBeats
 			}
 		}
 
-		String msg = "The #spotify playlist of the new episode of " + title + "\n";
+		String msg = "The #spotify playlist of " + title + "\n";
 		msg += "with " + artistsStr.trim() +"\n";
 		msg += StringUtils.isBlank(twitterStr) ? "" : (twitterStr.trim() + "\n");
 		msg += "https://open.spotify.com/playlist/" + spotify;
@@ -136,7 +136,7 @@ public class SocialNetworkLoader implements HumanBeats
 
 		try {
 			String artistsStr = artists.toString().substring(1, artists.toString().length()-1);
-			String msg = "The spotify playlist of the new episode of *" + title + "*\n";
+			String msg = "The spotify playlist of *" + title + "*\n";
 			msg += "with " + artistsStr.trim() +"\n";
 			msg += "https://open.spotify.com/playlist/" + spotify;
 

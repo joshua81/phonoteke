@@ -16,10 +16,10 @@ import com.google.common.collect.Lists;
 
 public interface HumanBeats 
 {
-	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/");
+	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+", "\\band\\b", "\\bwith\\b", "\\be\\b");
 
-	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
-	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
+	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
+	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
 	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
 
 	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
@@ -195,11 +195,6 @@ public interface HumanBeats
 
 	public static String cleanText(String text) 
 	{
-		// replaces AND, WITH, &, E characters
-		text = text.replaceAll("&", " ");
-		text = text.replaceAll("\\band\\b", " ");
-//		text = text.replaceAll("\\bwith\\b", " ");
-		text = text.replaceAll("\\be\\b", " ");
 		// replaces all the HTML and non-HTML white spaces
 		text = text.replaceAll("&nbsp;", " ");
 		text = text.replaceAll("\\s+", " ");

@@ -260,19 +260,18 @@ public class SpotifyLoader implements HumanBeats
 
 	private void login()
 	{
-		try 
+		if(credentials == null)
 		{
-			Thread.sleep(SLEEP_TIME);
-			if(credentials == null)
+			try 
 			{
 				credentials = spotify.clientCredentials().build().execute();
 				spotify.setAccessToken(credentials.getAccessToken());
 				LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
+			} 
+			catch (Exception e) 
+			{
+				LOGGER.error("ERROR connecting to Spotify: " + e.getMessage());
 			}
-		} 
-		catch (Exception e) 
-		{
-			LOGGER.error("ERROR connecting to Spotify: " + e.getMessage());
 		}
 	}
 
@@ -535,6 +534,7 @@ public class SpotifyLoader implements HumanBeats
 							tracksMap.put(score, page);
 						}
 					}
+					Thread.sleep(100);
 				}
 			}
 		}

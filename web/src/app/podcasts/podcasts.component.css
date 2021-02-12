@@ -1,7 +1,23 @@
 .fill { 
     min-height: calc(100vh - 135px);
 }
+
+div.cover-menu {
+    width: 80px;
+    position: relative;
+}
   
+a.cover-menu {
+    width: 78px;
+    height: 78px;
+}
+  
+img.cover-menu {
+    width: 78px;
+    height: 78px;
+    object-fit:cover;
+}
+
 div.cover {
     width: 190px;
     position: relative;

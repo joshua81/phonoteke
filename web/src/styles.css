@@ -227,3 +227,61 @@ img.equalizer {
     background: #FFFFFF;
     cursor: pointer;
 }
+
+.backward {
+    border-radius: 50%;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    background: #FFFFFF;
+    cursor: pointer;
+    position: absolute;
+    left: 0px;
+    top: calc(50% - 15px);
+    z-index: 10;
+    opacity: 0;
+  }
+.backward:hover {
+    opacity: 1;
+}
+  
+.previous {
+    display: inline-block;
+    mask: url("/images/previous.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin-top: 8px;
+    margin-left: 8px;
+    background: #000000;
+    cursor: pointer;
+}
+  
+.forward {
+    border-radius: 50%;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    background: #FFFFFF;
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    top: calc(50% - 15px);
+    z-index: 10;
+    opacity: 0;
+}
+.forward:hover {
+    opacity: 1;
+}
+  
+.next {
+    display: inline-block;
+    mask: url("/images/next.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin-top: 8px;
+    margin-left: 12px;
+    background: #000000;
+    cursor: pointer;
+}

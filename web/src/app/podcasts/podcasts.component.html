@@ -1,6 +1,24 @@
 <app-menu></app-menu>
+<div class="container w-max" [ngStyle]="{'position': 'relative'}">
+  <div *ngIf="app.isDesktop" class="backward" (click)="previous()">
+    <span class="previous"></span>
+  </div>
+  <div id="sources" class="d-flex flex-row flex-nowrap hscroll mt-2">
+    <div *ngFor="let source of sources" class="mr-2">
+      <div class="cover-menu card">
+        <a class="cover-menu" [routerLink]="['/podcasts/' + source.source]">
+          <img class="cover-menu card-img-top" src="{{'/images/' + source.source + '.png'}}" loading="lazy"/>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="app.isDesktop" class="forward" (click)="next()">
+    <span class="next"></span>
+  </div>
+</div>
+
 <div *ngIf="docs && docs.length != 0" class="fill">
-    <div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-2">
+    <div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-4">
         <div infinite-scroll (scrolled)="scrollDocs()">
           <div class="d-flex flex-wrap justify-content-center">
             <div *ngFor="let doc of docs" class="m-1">
@@ -24,6 +42,6 @@
     </div>      
 </div>
 
-<div *ngIf="!app.loading && docs && docs.length == 0" class="d-flex justify-content-center align-items-center fill">
-    <div class="font-weight-bold">No albums found</div>
-</div>
+<div *ngIf="!app.loading && source != null && docs && docs.length == 0" class="d-flex justify-content-center align-items-center fill">
+  <div class="font-weight-bold">No episodes found</div>
+</div>   

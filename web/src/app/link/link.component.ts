@@ -17,16 +17,16 @@ export class LinkComponent implements OnInit {
   ngOnInit() {}
 
   next() {
-    this.scrollLinks++;
     var slider = document.querySelector('#' + this.type);
-    slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
+    if(slider.scrollLeft + slider.clientWidth < slider.scrollWidth) {
+      slider.scrollTo(slider.scrollLeft + slider.clientWidth, 0);
+    }
   }
 
   previous() {
-    if(this.scrollLinks > 0) {
-      this.scrollLinks--;
-      var slider = document.querySelector('#' + this.type);
-      slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scrollLinks), 0);
+    var slider = document.querySelector('#' + this.type);
+    if(slider.scrollLeft > 0) {
+      slider.scrollTo(slider.scrollLeft - slider.clientWidth, 0);
     }
   }
 

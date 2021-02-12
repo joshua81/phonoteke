@@ -1,0 +1,14 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
+  <div class="d-flex flex-row w-max flex-nowrap hscroll">
+    <!--a class="ml-1 mr-1" [routerLink]="['/']"><img class="logo"></a-->
+    <a class="menu-item ml-1 mr-1" [routerLink]="['/podcasts']" [ngClass]="{'selected' : type == 'podcasts'}">
+      <h2>Podcasts</h2>
+    </a>
+    <a class="menu-item ml-1 mr-auto" [routerLink]="['/albums']" [ngClass]="{'selected' : type == 'albums'}">
+      <h2>Albums</h2>
+    </a>
+    <form class="search ml-1 mr-1">
+      <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
+    </form>
+  </div>
+</nav>

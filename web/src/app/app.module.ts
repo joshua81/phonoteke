@@ -9,8 +9,9 @@ import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
 import { AppComponent } from './app.component';
-import { DocsMenuComponent } from './docs/menu/menu.component';
 import { DocsComponent } from './docs/docs.component';
+import { MenuComponent } from './menu/menu.component';
+import { PodcastsComponent } from './podcasts/podcasts.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { TracksComponent } from './tracks/tracks.component';
@@ -21,8 +22,9 @@ import { FooterComponent } from './footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
-    DocsMenuComponent,
+    MenuComponent,
     DocsComponent,
+    PodcastsComponent,
     DocMenuComponent,
     DocComponent,
     TracksComponent,
@@ -33,10 +35,11 @@ import { FooterComponent } from './footer/footer.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: DocsComponent},
+      {path: '', component: PodcastsComponent},
       {path: 'docs/:id', component: DocComponent},
-      {path: ':type', component: DocsComponent},
-      {path: ':type/:source', component: DocsComponent}]),
+      {path: 'albums', component: DocsComponent},
+      {path: 'podcasts', component: PodcastsComponent},
+      {path: 'podcasts/:source', component: PodcastsComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

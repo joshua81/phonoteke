@@ -10,23 +10,22 @@ export class VideoComponent implements OnInit {
   @Input() type: string;
   @Input() label: string;
   @Input() tracks = [];
-  scroll: number = 0;
 
   constructor(public app: AppComponent) {}
 
   ngOnInit() {}
 
   next() {
-    this.scroll++;
     var slider = document.querySelector('#videos');
-    slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scroll), 0);
+    if(slider.scrollLeft + slider.clientWidth < slider.scrollWidth) {
+      slider.scrollTo(slider.scrollLeft + slider.clientWidth, 0);
+    }
   }
 
   previous() {
-    if(this.scroll > 0) {
-      this.scroll--;
-      var slider = document.querySelector('#videos');
-      slider.scrollTo((126 * Math.floor(slider.clientWidth / 126) * this.scroll), 0);
+    var slider = document.querySelector('#videos');
+    if(slider.scrollLeft > 0) {
+      slider.scrollTo(slider.scrollLeft - slider.clientWidth, 0);
     }
   }
 }

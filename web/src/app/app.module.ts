@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 
 import { AppComponent } from './app.component';
-import { DocsComponent } from './docs/docs.component';
+import { AlbumsComponent } from './albums/albums.component';
 import { MenuComponent } from './menu/menu.component';
 import { PodcastsComponent } from './podcasts/podcasts.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
@@ -23,7 +23,7 @@ import { FooterComponent } from './footer/footer.component';
   declarations: [
     AppComponent,
     MenuComponent,
-    DocsComponent,
+    AlbumsComponent,
     PodcastsComponent,
     DocMenuComponent,
     DocComponent,
@@ -37,7 +37,7 @@ import { FooterComponent } from './footer/footer.component';
     RouterModule.forRoot([
       {path: '', component: PodcastsComponent},
       {path: 'docs/:id', component: DocComponent},
-      {path: 'albums', component: DocsComponent},
+      {path: 'albums', component: AlbumsComponent},
       {path: 'podcasts', component: PodcastsComponent},
       {path: 'podcasts/:source', component: PodcastsComponent}]),
     FormsModule,

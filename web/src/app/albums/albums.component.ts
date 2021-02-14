@@ -4,11 +4,11 @@ import {ActivatedRoute} from '@angular/router';
 import { AppComponent } from '../app.component';
 
 @Component({
-  selector: 'app-docs',
-  templateUrl: './docs.component.html',
-  styleUrls: ['./docs.component.css']
+  selector: 'app-albums',
+  templateUrl: './albums.component.html',
+  styleUrls: ['./albums.component.css']
 })
-export class DocsComponent implements OnInit {
+export class AlbumsComponent implements OnInit {
   searchText: string = '';
   docs = [];
   page: number = 0;

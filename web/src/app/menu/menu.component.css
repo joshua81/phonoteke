@@ -12,7 +12,13 @@
     border-bottom: 4px solid #18A2B8;
 }
 
-.search {
-    min-width: 200px;
-    max-width: 200px;
+span.search {
+    display: inline-block;
+    mask: url("/images/search.svg") no-repeat;
+    width: 16px;
+    height: 16px;
+    margin: 0px;
+    padding: 0px;
+    background: #888888;
+    cursor: pointer;
 }

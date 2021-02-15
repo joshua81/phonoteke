@@ -11,6 +11,7 @@ export class MenuComponent implements OnInit {
   type: string = null;
   source: string = null;
   searchText: string = '';
+  showSearch: boolean = false;
   
   constructor(public app: AppComponent, private router: Router, private route: ActivatedRoute) {
     this.route.url.subscribe(params => {
@@ -32,5 +33,10 @@ export class MenuComponent implements OnInit {
         queryParams: { q: this.searchText }
       });
     }
+    this.toggleSearch();
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
   }
 }

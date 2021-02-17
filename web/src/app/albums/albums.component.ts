@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
 
 @Component({
@@ -14,9 +16,12 @@ export class AlbumsComponent implements OnInit {
   page: number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
-    this.route.paramMap.subscribe(params => {
-      window.scrollTo(0, 0);
-      this.loadDocs();
+    combineLatest(this.route.queryParams)
+    .pipe(map(params => ({searchText: params[0].q})))
+    .subscribe(params => {
+        window.scrollTo(0, 0);
+        this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
+        this.loadDocs();
     });
   }
 

@@ -43,11 +43,11 @@
     </div>
 
     <!-- source + spotify + songkick -->
-    <div *ngIf="doc.artistid || doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
+    <div *ngIf="(!app.isDesktop && doc.spalbumid) || doc.artistid" class="d-flex flex-row justify-content-center align-items-center mt-3">
       <!--a class="ml-1 mr-1" href="{{doc.url}}" target="_blank">
         <img class="source" src="{{'/images/' + doc.source + '.png'}}" />
       </a-->
-      <a *ngIf="doc.spalbumid" class="spotify ml-1 mr-1" href="{{'https://open.spotify.com/' + (doc.type == 'podcast' ? 'playlist' : 'album') + '/' + doc.spalbumid}}" target="_blank">
+      <a *ngIf="!app.isDesktop && doc.spalbumid" class="spotify ml-1 mr-1" href="{{'https://open.spotify.com/' + (doc.type == 'podcast' ? 'playlist' : 'album') + '/' + doc.spalbumid}}" target="_blank">
         <span class="spotify"></span>
       </a>
       <span *ngIf="doc.artistid" class="songkick ml-1 mr-1" (click)="app.loadEvents(doc.artistid)"></span>

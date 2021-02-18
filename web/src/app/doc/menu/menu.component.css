@@ -11,7 +11,7 @@ img.cover {
     cursor: pointer;
   }
   
-.previous {
+span.previous {
     display: inline-block;
     mask: url("/images/previous.svg") no-repeat;
     width: 10px;

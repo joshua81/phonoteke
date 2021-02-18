@@ -23,13 +23,8 @@ export class MenuComponent implements OnInit {
   ngOnInit() {}
 
   search() {
-    if(this.source == null) {
-      this.router.navigate([this.type], {
-        queryParams: { q: this.searchText }
-      });
-    }
-    else {
-      this.router.navigate([this.type + '/' + this.source], {
+    if(this.searchText != null && this.searchText != '') {
+      this.router.navigate([this.type + (this.source == null ? '' : '/' + this.source)], {
         queryParams: { q: this.searchText }
       });
     }
@@ -38,5 +33,6 @@ export class MenuComponent implements OnInit {
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
+    this.searchText = '';
   }
 }

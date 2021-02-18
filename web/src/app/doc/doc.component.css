@@ -12,9 +12,18 @@
   background-color: #FFFFFF;
 }
 
-.icon {
-  border-radius: 50%;
-  background: #FFFFFF;
+span.songkick {
+  display: inline-block;
+  mask: url("/images/songkick.svg") no-repeat;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #F80046;
+  cursor: pointer;
+}
+
+.spotify {
   width: 30px;
   height: 30px;
   margin: 0px;
@@ -22,14 +31,15 @@
   cursor: pointer;
 }
 
-.songkick {
+span.spotify {
   display: inline-block;
-  content: url("/images/songkick.png");
-}
-
-.spotify {
-  display: inline-block;
-  content: url("/images/spotify.png");
+  mask: url("/images/spotify.svg") no-repeat;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  background: #1DB954;
+  cursor: pointer;
 }
 
 .vote {
@@ -54,7 +64,7 @@ h2.vote {
   padding-top: 7px;
 }
 
-.star {
+span.star {
   display: inline-block;
   mask: url("/images/star.svg") no-repeat;
   width: 20px;

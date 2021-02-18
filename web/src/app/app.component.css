@@ -41,21 +41,6 @@
     max-height: 40px;
 }
 
-.icon {
-    width: 34px;
-    height: 34px;
-    background: #FFFFFF;
-
-    border-radius: 50%;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #FFFFFF;
-}
-
-.disabled {
-    filter: grayscale(100%);
-}
-
 .progress {
     cursor: pointer;
 }

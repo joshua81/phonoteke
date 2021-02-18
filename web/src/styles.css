@@ -154,22 +154,6 @@ img.source {
     cursor: pointer;
 }
 
-img.spotify {
-    border-radius: 50%;
-    content: url("/images/spotify.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
-img.podcast {
-    border-radius: 50%;
-    content: url("/images/podcast.png");
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-}
-
 img.equalizer {
     content: url("/images/equalizer.gif");
     width: 20px;
@@ -184,7 +168,7 @@ img.equalizer {
     cursor: pointer;
 }
   
-.player-play {
+span.player-play {
     display: inline-block;
     mask: url("/images/play.svg") no-repeat;
     width: 16px;
@@ -195,7 +179,7 @@ img.equalizer {
     cursor: pointer;
 }
   
-.player-pause {
+span.player-pause {
     display: inline-block;
     mask: url("/images/pause.svg") no-repeat;
     width: 16px;
@@ -206,7 +190,7 @@ img.equalizer {
     cursor: pointer;
 }
   
-.player-forward {
+span.player-forward {
     display: inline-block;
     mask: url("/images/forward.svg") no-repeat;
     width: 16px;
@@ -217,7 +201,7 @@ img.equalizer {
     cursor: pointer;
 }
   
-.player-backward {
+span.player-backward {
     display: inline-block;
     mask: url("/images/backward.svg") no-repeat;
     width: 16px;
@@ -246,7 +230,7 @@ img.equalizer {
     opacity: 1;
 }
   
-.previous {
+span.previous {
     display: inline-block;
     mask: url("/images/previous.svg") no-repeat;
     width: 10px;
@@ -275,7 +259,7 @@ img.equalizer {
     opacity: 1;
 }
   
-.next {
+span.next {
     display: inline-block;
     mask: url("/images/next.svg") no-repeat;
     width: 10px;

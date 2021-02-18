@@ -69,16 +69,6 @@
   </div>
 </div>
 
-<!-- Login -->
-<div *ngIf="isDesktop" class="icon d-flex flex-row justify-content-center align-items-center ml-auto mr-2 mb-2 fixed-bottom">
-  <a *ngIf="player == null" href="/api/login">
-    <img class="spotify disabled"/>
-  </a>
-  <a *ngIf="player != null" (click)="loadDevices()">
-    <img class="spotify">
-  </a>
-</div>
-
 <!-- Error -->
 <div *ngIf="error" class="d-flex flex-row justify-content-center w-max ml-auto mr-auto fixed-bottom">
   <div class="alert alert-warning alert-dismissible fade show" role="alert">

@@ -14,7 +14,7 @@ img.cover {
   cursor: pointer;
 }
 
-.youtube {
+span.youtube {
   position: absolute;
   display: inline-block;
   mask: url("/images/youtube.svg") no-repeat;

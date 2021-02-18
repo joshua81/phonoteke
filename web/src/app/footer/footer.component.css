@@ -13,7 +13,7 @@
   cursor: pointer;
 }
 
-.cc {
+span.cc {
   display: inline-block;
   mask: url("/images/cc.svg") no-repeat;
   width: 20px;
@@ -24,7 +24,7 @@
   cursor: pointer;
 }
 
-.github {
+span.github {
   display: inline-block;
   mask: url("/images/github.svg") no-repeat;
   width: 20px;
@@ -35,7 +35,7 @@
   cursor: pointer;
 }
 
-.twitter {
+span.twitter {
   display: inline-block;
   mask: url("/images/twitter.svg") no-repeat;
   width: 20px;
@@ -46,7 +46,7 @@
   cursor: pointer;
 }
 
-.telegram {
+span.telegram {
   display: inline-block;
   mask: url("/images/telegram.svg") no-repeat;
   width: 20px;

@@ -3,7 +3,7 @@
   border-style: solid;
   border-width: 0px 1px 0px 1px;
   border-color: #C8C8C8;
-  background-color: #FFFFFF;
+  background-color: #888888;
 }
 
 .icon {
@@ -20,7 +20,7 @@ span.cc {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #939497;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
@@ -31,7 +31,7 @@ span.github {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #939497;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
@@ -42,7 +42,7 @@ span.twitter {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #939497;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
@@ -53,13 +53,13 @@ span.telegram {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #939497;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
 .api {
   border-radius: 50%;
-  background: #939497;
+  background: #FFFFFF;
   width: 24px;
   height: 24px;
   padding-top: 7px;

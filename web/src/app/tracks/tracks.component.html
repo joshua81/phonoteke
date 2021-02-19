@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center ml-2" (click)="app.playPauseSpotify(doc.doc, track)"
-                [ngStyle]="{'background': (app.track != null && app.track.item.id == track.spotify ? '#18A2B8' : '#282D32')}">
+                [ngStyle]="{'background': (app.track != null && app.track.item.id == track.spotify ? '#18A2B8' : '#888888')}">
                 <span class="play"></span>
             </div>
         </div>

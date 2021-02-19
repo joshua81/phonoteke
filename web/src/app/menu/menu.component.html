@@ -7,14 +7,14 @@
     <a *ngIf="!showSearch" class="menu-item ml-1 mr-auto" [routerLink]="['/albums']" [ngClass]="{'selected' : source == 'albums'}">
       <h2>Albums</h2>
     </a>
-    <form *ngIf="showSearch" class="search w-100 ml-2 mr-1">
+    <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
     </form>
-    <div class="d-flex flex-row align-items-center ml-1 mr-2" (click)="toggleSearch()">
+    <div class="d-flex flex-row align-items-center ml-2 mr-2" (click)="toggleSearch()">
       <span class="search"></span>
     </div>
     <!-- Spotify login -->
-    <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center ml-1 mr-2">
+    <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center ml-2 mr-2">
       <a *ngIf="app.player == null" class="spotify" href="/api/login">
         <span class="spotify-disabled"></span>
       </a>

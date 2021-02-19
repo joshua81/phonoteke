@@ -154,12 +154,6 @@ img.source {
     cursor: pointer;
 }
 
-img.equalizer {
-    content: url("/images/equalizer.gif");
-    width: 20px;
-    height: 20px;
-}
-
 .player-button {
     width: 16px;
     height: 16px;

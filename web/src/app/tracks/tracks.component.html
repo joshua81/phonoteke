@@ -9,14 +9,15 @@
                 <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
                 <div class="d-flex flex-row">
-                    <div *ngIf="app.player && track.spotify" class="btn btn-link p-0" (click)="app.playPauseSpotify(doc.doc, track)">Play</div>
-                    <div *ngIf="app.player && track.spotify && (track.youtube || track.artistid)" class="ml-1 mr-1">|</div>
                     <div *ngIf="track.youtube" class="btn btn-link p-0" (click)="app.playYoutube(track.youtube)">Video</div>
                     <div *ngIf="track.youtube && track.artistid" class="ml-1 mr-1">|</div>
                     <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
                 </div>
             </div>
-            <img *ngIf="app.track != null && app.track.item.id == track.spotify" class="equalizer ml-2" />
+            <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center ml-2" (click)="app.playPauseSpotify(doc.doc, track)"
+                [ngStyle]="{'background': (app.track != null && app.track.item.id == track.spotify ? '#18A2B8' : '#282D32')}">
+                <span class="play"></span>
+            </div>
         </div>
     </div>
 </div>

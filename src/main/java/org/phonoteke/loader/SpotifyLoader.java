@@ -506,32 +506,34 @@ public class SpotifyLoader implements HumanBeats
 					for(int i = 0; i < tracks.getItems().length; i++)
 					{
 						Track track = tracks.getItems()[i];
-						String spartist = track.getArtists()[0].getName();
-						String spartistid = track.getArtists()[0].getId();
-						String spalbum = track.getAlbum().getName();
-						String spalbumid = track.getAlbum().getId();
-						String spsong = track.getName();
-						for(String match : HumanBeats.FEAT) {
-							Matcher m = Pattern.compile(match).matcher(spsong);
-							if(m.matches()) {
-								spsong = m.group(1);
-								break;
+						if(track != null) {
+							String spartist = track.getArtists()[0].getName();
+							String spartistid = track.getArtists()[0].getId();
+							String spalbum = track.getAlbum().getName();
+							String spalbumid = track.getAlbum().getId();
+							String spsong = track.getName();
+							for(String match : HumanBeats.FEAT) {
+								Matcher m = Pattern.compile(match).matcher(spsong);
+								if(m.matches()) {
+									spsong = m.group(1);
+									break;
+								}
 							}
-						}
-						String trackid = track.getId();
-						int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-						Document page = new Document("spotify", trackid);
-						page.append("artist", spartist);
-						page.append("spartistid", spartistid);
-						page.append("album", spalbum);
-						page.append("spalbumid", spalbumid);
-						page.append("track", spsong);
-						page.append("score", score);
-						getImages(page, track.getAlbum().getImages());
+							String trackid = track.getId();
+							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
+							Document page = new Document("spotify", trackid);
+							page.append("artist", spartist);
+							page.append("spartistid", spartistid);
+							page.append("album", spalbum);
+							page.append("spalbumid", spalbumid);
+							page.append("track", spsong);
+							page.append("score", score);
+							getImages(page, track.getAlbum().getImages());
 
-						if(score >= SCORE && !tracksMap.containsKey(score)) {
-							LOGGER.info("Found: " + title + " | " + spartist + " - " + spsong + " | score: " + score);
-							tracksMap.put(score, page);
+							if(score >= SCORE && !tracksMap.containsKey(score)) {
+								LOGGER.info("Found: " + title + " | " + spartist + " - " + spsong + " | score: " + score);
+								tracksMap.put(score, page);
+							}
 						}
 					}
 					Thread.sleep(100);

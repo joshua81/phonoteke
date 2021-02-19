@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
 
   search() {
     if(this.searchText != null && this.searchText != '') {
-      this.router.navigate([this.router.url], {queryParams: { q: this.searchText }});
+      this.router.navigate([this.router.url.split("?")[0]], {queryParams: { q: this.searchText }});
     }
     this.toggleSearch();
   }

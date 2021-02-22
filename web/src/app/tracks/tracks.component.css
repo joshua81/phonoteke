@@ -4,6 +4,9 @@ div.cover {
     min-width: 62px;
     height: 62px;
     min-height: 62px;
+    margin: 0px;
+    padding: 0px;
+    
     background: #18A2B8;
     border-width: 1px;
     border-color: #9c9c9c;
@@ -20,8 +23,8 @@ img.cover {
     position: absolute;
     top: 0px;
     left: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    margin: 0px;
+    padding: 0px;
 
     width: 60px;
     min-width: 60px;

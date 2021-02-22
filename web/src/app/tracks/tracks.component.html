@@ -3,7 +3,7 @@
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" loading="lazy"/>
-                <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center ml-2" (click)="app.playPauseSpotify(doc.doc, track)">
+                <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="app.playPauseSpotify(doc.doc, track)">
                     <span class="play"></span>
                 </div>
             </div>

@@ -3,6 +3,9 @@
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <img *ngIf="track.spotify != null" class="cover" src="{{track.coverM}}" loading="lazy"/>
+                <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center ml-2" (click)="app.playPauseSpotify(doc.doc, track)">
+                    <span class="play"></span>
+                </div>
             </div>
             <div class="ml-2 w-100">
                 <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
@@ -13,10 +16,6 @@
                     <div *ngIf="track.youtube && track.artistid" class="ml-1 mr-1">|</div>
                     <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
                 </div>
-            </div>
-            <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center ml-2" (click)="app.playPauseSpotify(doc.doc, track)"
-                [ngStyle]="{'background': (app.track != null && app.track.item.id == track.spotify ? '#18A2B8' : '#888888')}">
-                <span class="play"></span>
             </div>
         </div>
     </div>

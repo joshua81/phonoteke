@@ -11,8 +11,7 @@ import { AppComponent } from '../app.component';
 export class DocComponent implements OnInit {
   id: string = null;
   doc = null;
-  links = [];
-  podcasts = [];
+  links = null;
 
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
@@ -36,27 +35,17 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
-    this.links = [];
-    this.podcasts = [];
+    this.links = null;
     this.loadLinks();
   }
 
   loadLinks() {
-    this.app.loading = true;
+    //this.app.loading = true;
     this.http.get('/api/docs/' + this.id + '/links').subscribe(
       (data: any) => {
-        this.app.loading = false;
-        this.setLinks(data);
+        //this.app.loading = false;
+        this.links = data;
       });
-  }
-
-  setLinks(links: any) {
-    this.links = links.filter(function(link: any){
-		  return link.type != 'podcast';
-    });
-    this.podcasts = links.filter(function(link: any){
-		  return link.type == 'podcast';
-    });
   }
 
   formatDate(date: string) {

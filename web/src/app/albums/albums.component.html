@@ -1,5 +1,5 @@
 <app-menu></app-menu>
-<div *ngIf="docs && docs.length != 0" class="fill">
+<div *ngIf="docs && docs.length != 0" class="min-vh-100">
     <div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-2">
         <div infinite-scroll (scrolled)="scrollDocs()">
           <div class="d-flex flex-wrap justify-content-center">
@@ -22,6 +22,6 @@
     </div>      
 </div>
 
-<div *ngIf="!app.loading && docs && docs.length == 0" class="d-flex justify-content-center align-items-center fill">
+<div *ngIf="!app.loading && docs && docs.length == 0" class="min-vh-100 d-flex justify-content-center align-items-center">
     <div class="font-weight-bold">No albums found</div>
 </div>

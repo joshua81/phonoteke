@@ -1,7 +1,3 @@
-.fill { 
-    min-height: calc(100vh - 135px);
-}
-  
 div.cover {
     width: 190px;
     position: relative;

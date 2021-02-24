@@ -314,7 +314,6 @@ async function findEvents(id) {
 
 async function findLinks(id) {
 	console.log('Links: id=' + id);
-	var result = null;
 	const doc = await docs.find({'id': id}).toArray();
 	if(doc && doc[0]) {
 		var artists = [];
@@ -337,7 +336,7 @@ async function findLinks(id) {
 		podcasts = podcasts.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
-		result = {albums: albums, podcasts: podcasts};
+		return {albums: albums, podcasts: podcasts};
 	}
-	return result;
+	return {albums: [], podcasts: []};
 }

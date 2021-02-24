@@ -7,7 +7,7 @@ div.cover {
     margin: 0px;
     padding: 0px;
     
-    background: #18A2B8;
+    background: #282D32;
     border-width: 1px;
     border-color: #9c9c9c;
     border-style: solid;
@@ -42,6 +42,17 @@ span.play {
     mask: url("/images/play.svg") no-repeat;
     width: 16px;
     height: 16px;
+    margin: 0px;
+    padding: 0px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+span.album {
+    display: inline-block;
+    mask: url("/images/album.svg") no-repeat;
+    width: 20px;
+    height: 20px;
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;

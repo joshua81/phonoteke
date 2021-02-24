@@ -10,7 +10,8 @@
     </a>
     <div class="p-2 w-100">
       <!--span class="text-white font-weight-bold">{{track.item.album.name}}</span-->
-      <div class="text-white text-truncate-1">{{track.item.artists[0].name + ' | ' + track.item.name}}</div>
+      <h2 class="text-white text-truncate-1">{{track.item.name}}</h2>
+      <h3 class="text-white text-truncate-1 mb-auto">{{track.item.artists[0].name}}</h3>
       <div class="d-flex flex-row align-items-center">
         <div class="player-button" (click)="previousSpotify()">
           <span class="player-backward"></span>
@@ -40,7 +41,8 @@
       <img class="cover" src="{{audio.cover}}"/>
     </a>
     <div class="p-2 w-100">
-      <div class="text-white text-truncate-1">{{audio.artist + ' | ' + audio.title}}</div>
+      <h2 class="text-white text-truncate-1">{{audio.title}}</h2>
+      <h3 class="text-white text-truncate-1 mb-auto">{{audio.artist}}</h3>
       <div class="d-flex flex-row align-items-center">
         <div class="text-white">{{currentTime}}</div>
         <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeAudio($event)">

@@ -40,7 +40,6 @@ public interface HumanBeats
 	public static final int NUMBER_OF_CRAWLERS = 10;
 	public static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
-	public static final int SLEEP_TIME = 2000;
 	public static final int THRESHOLD = 90;
 	public static final int SCORE = 60;
 	public static final int TRACKS_SIZE = 6;

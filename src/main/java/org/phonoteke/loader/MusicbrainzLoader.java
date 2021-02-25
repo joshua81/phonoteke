@@ -144,7 +144,7 @@ public class MusicbrainzLoader implements HumanBeats
 		finally
 		{
 			try {
-				Thread.sleep(SLEEP_TIME);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// do nothing
 			}

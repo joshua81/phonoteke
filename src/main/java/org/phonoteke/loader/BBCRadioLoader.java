@@ -24,11 +24,6 @@ public class BBCRadioLoader extends PodcastLoader
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
-	public static final String GILLES_PETERSON = "bbcradio6gillespeterson";
-	public static final String JORJA_SMITH = "bbcradio3jorjasmith";
-	public static final String ARLO_PARKS = "bbcradio6arloparks";
-	public static final String LOYLE_CARNER = "bbcradio6loylecarner";
-
 
 	@Override
 	public void load(String... args) 
@@ -44,6 +39,9 @@ public class BBCRadioLoader extends PodcastLoader
 			BBCRadioLoader.authors = show.get("authors", List.class);
 			LOGGER.info("Crawling " + BBCRadioLoader.artist);
 			crawl(url);
+//			for(int j = 1; j <= 10; j++) { 
+//				crawl(url + "?page=" + j);
+//			}
 		}
 	}
 

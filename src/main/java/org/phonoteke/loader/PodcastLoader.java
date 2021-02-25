@@ -16,17 +16,17 @@ public class PodcastLoader extends AbstractCrawler
 	protected static String artist;
 	protected static String source;
 	protected static List<String> authors;
-	
+
 	protected MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
 
 	public static void main(String[] args) {
-		new PodcastLoader().load(BBCRadioLoader.GILLES_PETERSON);
+		//new PodcastLoader().load(BBCRadioLoader.GILLES_PETERSON);
 	}
 
 	public void initShows() {
-//		initShow("spreaker", "https://api.spreaker.com/show/4380252/episodes", 
-//				"Jazz Tracks", "jazztracks", Lists.newArrayList("Danilo Di Termini"), 
-//				Lists.newArrayList("@daniloddt", "#jazztracks"));
+		//		initShow("spreaker", "https://api.spreaker.com/show/4380252/episodes", 
+		//				"Jazz Tracks", "jazztracks", Lists.newArrayList("Danilo Di Termini"), 
+		//				Lists.newArrayList("@daniloddt", "#jazztracks"));
 	}
 
 	private void initShow(String type, String url, String title, String source, List<String> authors, List<String> twitter) {

@@ -521,17 +521,16 @@ public class SpotifyLoader implements HumanBeats
 							}
 							String trackid = track.getId();
 							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-							Document page = new Document("spotify", trackid);
-							page.append("artist", spartist);
-							page.append("spartistid", spartistid);
-							page.append("album", spalbum);
-							page.append("spalbumid", spalbumid);
-							page.append("track", spsong);
-							page.append("score", score);
-							getImages(page, track.getAlbum().getImages());
-
 							if(score >= SCORE && !tracksMap.containsKey(score)) {
 								LOGGER.info("Found: " + title + " | " + spartist + " - " + spsong + " | score: " + score);
+								Document page = new Document("spotify", trackid);
+								page.append("artist", spartist);
+								page.append("spartistid", spartistid);
+								page.append("album", spalbum);
+								page.append("spalbumid", spalbumid);
+								page.append("track", spsong);
+								page.append("score", score);
+								getImages(page, track.getAlbum().getImages());
 								tracksMap.put(score, page);
 							}
 						}

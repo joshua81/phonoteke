@@ -17,7 +17,7 @@
   </div>
 </div>
 
-<div *ngIf="docs && docs.length != 0" class="container w-max min-vh-100 p-0 mt-4">
+<div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-4">
   <div infinite-scroll (scrolled)="scrollDocs()">
     <div class="d-flex flex-wrap justify-content-center">
       <div *ngFor="let doc of docs" class="m-1">
@@ -38,6 +38,6 @@
   </div>
 </div>      
 
-<div *ngIf="!app.loading && docs && docs.length == 0" class="min-vh-100 d-flex justify-content-center align-items-center">
+<div *ngIf="!app.loading && docs && docs.length == 0" class="d-flex justify-content-center align-items-center">
   <div class="font-weight-bold">No episodes found</div>
 </div>   

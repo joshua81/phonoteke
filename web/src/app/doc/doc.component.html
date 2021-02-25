@@ -64,7 +64,7 @@
   </div>
       
   <!-- links -->
-  <div *ngIf="links && (links.podcasts.length != 0 || links.albums.length != 0)" class="links p-2 mt-3">
+  <div *ngIf="links && (links.podcasts.length != 0 || links.albums.length != 0)" class="section p-2 mt-3">
     <h2>Ti potrebbe interessare</h2>
     <app-link [links]="links.podcasts" type="podcasts" label="Podcasts"></app-link>
     <app-link [links]="links.albums" type="albums" label="Album"></app-link>

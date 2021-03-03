@@ -1,8 +1,7 @@
 .menu-item {
     width: 60px;
     min-width: 60px;
-    height: 30px;
-    padding-top: 4px;
+    height: 40px;
     text-align: center;
     cursor: pointer;
     border-bottom: 4px solid #FFFFFF;

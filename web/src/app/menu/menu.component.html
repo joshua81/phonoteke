@@ -15,8 +15,8 @@
     </div>
     <!-- Spotify login -->
     <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center ml-2 mr-2">
-      <a *ngIf="app.player == null" class="spotify" href="/api/login">
-        <span class="spotify-disabled"></span>
+      <a *ngIf="app.player == null" class="login" href="/api/login">
+        <h2 class="pt-3">Log in</h2>
       </a>
       <a *ngIf="app.player != null" class="spotify" (click)="app.loadDevices()">
         <span class="spotify"></span>

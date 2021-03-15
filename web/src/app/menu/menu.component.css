@@ -41,13 +41,9 @@ span.spotify {
     cursor: pointer;
 }
 
-span.spotify-disabled {
-    display: inline-block;
-    mask: url("/images/spotify.svg") no-repeat;
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #888888;
+.login {
+    height: 40px;
+    text-align: center;
     cursor: pointer;
+    border-bottom: 4px solid #FFFFFF;
 }

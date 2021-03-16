@@ -33,8 +33,8 @@ span.search {
 span.spotify {
     display: inline-block;
     mask: url("/images/spotify.svg") no-repeat;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     margin: 0px;
     padding: 0px;
     background: #1DB954;

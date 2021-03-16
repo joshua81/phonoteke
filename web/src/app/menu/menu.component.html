@@ -6,10 +6,10 @@
 
   <div class="d-flex flex-row w-max ml-auto mr-auto">
     <a *ngIf="!showSearch" class="menu-item ml-2 mr-1" [routerLink]="['/podcasts']" [ngClass]="{'selected' : source == 'podcasts'}">
-      <h2 class="pt-3">Podcasts</h2>
+      <h2 class="pt-3">Podcast</h2>
     </a>
     <a *ngIf="!showSearch" class="menu-item ml-1 mr-auto" [routerLink]="['/albums']" [ngClass]="{'selected' : source == 'albums'}">
-      <h2 class="pt-3">Albums</h2>
+      <h2 class="pt-3">Album</h2>
     </a>
     <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
       <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">

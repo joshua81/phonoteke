@@ -32,4 +32,8 @@ img.cover {
     position: absolute;
     bottom: 0px;
 }
+
+.msg {
+    min-height: calc(100vh - 100px);
+}
   

@@ -310,7 +310,7 @@ public class SpotifyLoader implements HumanBeats
 		{
 			login();
 			String q = artist + " " + album;
-			SearchAlbumsRequest request = spotify.searchAlbums(q).build();
+			SearchAlbumsRequest request = spotify.searchAlbums(q).market(CountryCode.IT).build();
 			Paging<AlbumSimplified> albums = request.execute();
 			for(int j = 0; j < albums.getItems().length; j++)
 			{
@@ -372,7 +372,7 @@ public class SpotifyLoader implements HumanBeats
 			try
 			{
 				login();
-				SearchArtistsRequest request = spotify.searchArtists(artist).build();
+				SearchArtistsRequest request = spotify.searchArtists(artist).market(CountryCode.IT).build();
 				Paging<Artist> artists = request.execute();
 				for(int j = 0; j < artists.getItems().length; j++)
 				{

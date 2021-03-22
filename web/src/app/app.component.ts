@@ -380,7 +380,12 @@ export class AppComponent {
 
   static formatDate(str: string) {
     var date: Date = new Date(str);
-    return AppComponent.lpad(date.getDate()) + "-" + AppComponent.lpad(date.getMonth() + 1) + "-" + AppComponent.lpad(date.getFullYear())
+    return AppComponent.lpad(date.getDate()) + "-" + AppComponent.lpad(date.getMonth() + 1) + "-" + AppComponent.lpad(date.getFullYear());
+  }
+
+  static formatYear(str: string) {
+    var date: Date = new Date(str);
+    return AppComponent.lpad(date.getFullYear());
   }
 
   static lpad(n: number){

@@ -33,4 +33,8 @@ export class LinkComponent implements OnInit {
   formatDate(date: string) {
     return AppComponent.formatDate(date);
   }
+
+  formatYear(date: string) {
+    return AppComponent.formatYear(date);
+  }
 }

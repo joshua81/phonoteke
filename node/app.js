@@ -328,11 +328,11 @@ async function findLinks(id) {
 			});
 		}
 		var links = doc[0].links != null ? doc[0].links : [];
-		var albums = await docs.find({$and: [{'type': 'album'}, {$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1}).sort({"date":-1}).toArray();
+		var albums = await docs.find({$and: [{'type': 'album'}, {$or: [{'id': {'$in': links}}, {'spartistid': {'$in': artists}}]}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"year":-1, "artist": 1}).toArray();
 		albums = albums.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
-		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1}).sort({"date":-1}).limit(20).toArray();
+		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"date":-1, "artist": 1}).limit(20).toArray();
 		podcasts = podcasts.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

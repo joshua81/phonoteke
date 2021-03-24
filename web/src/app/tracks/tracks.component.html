@@ -1,5 +1,5 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 mt-3">
-    <div *ngFor="let track of tracks" class="mb-2">
+    <div *ngFor="let track of tracks; index as i" class="mb-2">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <div *ngIf="track.spotify == null" class="player d-flex flex-row align-items-center justify-content-center">
@@ -10,7 +10,8 @@
                     <span class="play"></span>
                 </div>
             </div>
-            <div class="ml-2 w-100">
+            <div class="font-weight-bold ml-2 mr-2">{{i+1}}</div>
+            <div class="w-100">
                 <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>

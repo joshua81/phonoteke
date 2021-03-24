@@ -12,7 +12,8 @@
       <h2 class="pt-3">Album</h2>
     </a>
     <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
-      <input class="form-control" name="search" type="search" placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
+      <input #input class="form-control" name="search" type="search"
+      placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
     </form>
     <div class="d-flex flex-row align-items-center ml-2 mr-2" (click)="toggleSearch()">
       <span class="search"></span>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ElementRef, ViewChild, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponent } from '../app.component';
 
@@ -12,6 +12,13 @@ export class MenuComponent implements OnInit {
   searchText: string = '';
   showSearch: boolean = false;
   
+  @ViewChild('input', { static: false }) 
+  set input(element: ElementRef<HTMLInputElement>) {
+    if(element) {
+      element.nativeElement.focus();
+    }
+  }
+
   constructor(public app: AppComponent, private router: Router, private route: ActivatedRoute) {
     this.route.url.subscribe(params => {
       this.source = params.length == 0 ? 'podcasts' : params[0].path;

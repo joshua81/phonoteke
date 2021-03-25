@@ -20,7 +20,7 @@ public class PatchLoader implements HumanBeats
 
 
 	public static void main(String[] args) {
-		new PatchLoader().resetTracks(2019);
+		new PatchLoader().renameSource();
 	}
 
 	@Override
@@ -92,15 +92,15 @@ public class PatchLoader implements HumanBeats
 		}
 	}
 
-	private void renamePodcasts()
+	private void renameSource()
 	{
-		LOGGER.info("Renaming podcasts...");
-		MongoCursor<Document> i = docs.find(Filters.eq("source", "bbcradio3jorjasmith")).iterator();
+		LOGGER.info("Renaming source...");
+		MongoCursor<Document> i = docs.find(Filters.eq("source", "bbcradio6stevelamacq")).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
-			page.append("artist", "Jorja Smith at Radio3");
+			page.append("source", "stevelamacq");
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			LOGGER.info("Document " + id + " updated");
 		}

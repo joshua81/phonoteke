@@ -14,6 +14,12 @@
     box-shadow: none;
 }
 
+.form-control:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: rgb(206, 212, 218);
+}
+
 html, body {
     height: 100%;
     background: rgba(233,240,242,1);

@@ -190,31 +190,6 @@ module.exports = app;
 async function findDocSnippet(id) {
 	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).toArray();
-	if(result && result[0]) {
-		// reset 'na' values
-		const doc = result[0];
-		if(doc.artistid == 'na') {
-			doc.artistid = null;
-		}
-		if(doc.spartistid == 'na') {
-			doc.spartistid = null;
-		}
-		if(doc.spalbumid == 'na') {
-			doc.spalbumid = null;
-		}
-		if(doc.tracks) {
-			doc.tracks.forEach(function(track) {
-				if(track.spotify == 'na') {
-					track.spotify = null;
-					track.spartistid = null;
-					track.spalbumid = null;
-				}
-				if(track.artistid == 'na') {
-					track.artistid = null;
-				}
-			});
-		}
-	}
 	return result;
 }
 

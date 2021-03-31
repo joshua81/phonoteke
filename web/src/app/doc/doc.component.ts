@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Title, Meta } from '@angular/platform-browser';
 import { AppComponent } from '../app.component';
 
 @Component({
@@ -14,7 +15,7 @@ export class DocComponent implements OnInit {
   links = null;
 
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     this.route.paramMap.subscribe(params => {
       window.scrollTo(0, 0);
       this.id = params.get('id');
@@ -35,6 +36,14 @@ export class DocComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
+
+    this.title.setTitle(this.doc.artist + ' - ' + this.doc.title);
+    this.meta.updateTag({ name: 'og:title', content: this.doc.artist + ' - ' + this.doc.title });
+    this.meta.updateTag({ name: 'og:type', content: 'music:' + this.doc.type });
+    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/docs/' + this.doc.id });
+    this.meta.updateTag({ name: 'og:image', content: this.doc.cover });
+    this.meta.updateTag({ name: 'og:description', content: this.doc.description });
+
     this.links = null;
     this.loadLinks();
   }

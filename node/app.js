@@ -29,14 +29,14 @@ client.connect(err => {
 app.engine('ntl', function (filePath, options, callback) {
 	fs.readFile(filePath, function (err, content) {
 		if (err) return callback(err);
-		var rendered = content.toString()
+		var index = content.toString()
 		.replace('#title#', options.title)
 		.replace('#title#', options.title)
 		.replace('#type#', options.type)
 		.replace('#url#', options.url)
 		.replace('#cover#', options.cover)
 		.replace('#description#', options.description);
-		return callback(null, rendered);
+		return callback(null, index);
 	});
 })
 app.set('views', './template')
@@ -171,20 +171,17 @@ app.get('/docs/:id', async(req,res)=>{
 			type: 'music:' + docs[0].type,
 			url: 'https://humanbeats.appspot.com/docs/' + req.params.id,
 			cover: docs[0].coverM == null ? docs[0].cover : docs[0].coverM,
-					description: docs[0].description });
-	}
-	else {
-		res.render('index', { 
-			title: 'Human Beats',
-			type: '',
-			url: 'https://humanbeats.appspot.com/',
-			cover: 'https://humanbeats.appspot.com/images/logo.png',
-			description: 'Human Beats' });
+			description: docs[0].description });
 	}
 })
 
 app.get('/*', (req,res)=>{
-	res.render('index', { title: 'Human Beats' });
+	res.render('index', { 
+		title: 'Human Beats',
+		type: 'music',
+		url: 'https://humanbeats.appspot.com/',
+		cover: 'https://humanbeats.appspot.com/images/logo.png',
+		description: 'Human Beats' });
 })
 module.exports = app;
 

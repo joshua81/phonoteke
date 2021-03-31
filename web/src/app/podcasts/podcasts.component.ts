@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
+import { Title, Meta } from '@angular/platform-browser';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
@@ -17,7 +18,7 @@ export class PodcastsComponent implements OnInit {
   source: string = null;
   page: number = 0;
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({source: params[0].source, searchText: params[1].q})))
     .subscribe(params => {
@@ -74,6 +75,13 @@ export class PodcastsComponent implements OnInit {
 
   docsLoaded(data: any) {
     this.docs.push.apply(this.docs, data);
+
+    this.title.setTitle('Human Beats - Podcast');
+    this.meta.updateTag({ name: 'og:title', content: 'Human Beats - Podcast' });
+    this.meta.updateTag({ name: 'og:type', content: 'music' });
+    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts' });
+    this.meta.updateTag({ name: 'og:image', content: 'https://humanbeats.appspot.com/images/logo.png' });
+    this.meta.updateTag({ name: 'og:description', content: 'Human Beats - Podcast' });
   }
 
   formatDate(date: string) {

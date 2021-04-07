@@ -84,12 +84,8 @@ public class SocialNetworkLoader implements HumanBeats
 
 	private void notify(Document page) {
 		String id = page.getString("id");
-		String source = page.getString("source");
 		String spotify = page.getString("spalbumid");
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		String title = page.getString("artist");
-		title = HumanBeats.format(title, page.getDate("date"));
-
 		Set<String> artists = Sets.newHashSet();
 		for(org.bson.Document track : tracks) {
 			if(track.getInteger("score") >= SCORE) {
@@ -97,9 +93,11 @@ public class SocialNetworkLoader implements HumanBeats
 			}
 		}
 
-		org.bson.Document show = shows.find(Filters.and(Filters.eq("source", source))).iterator().next();
+		String title = page.getString("artist");
+		org.bson.Document show = shows.find(Filters.and(Filters.eq("title", title))).iterator().next();
 		List<String> twitter = show.get("twitter", List.class);
 
+		title = HumanBeats.format(title, page.getDate("date"));
 		String tweet = sendTweet(title, Lists.newArrayList(artists), twitter, spotify);
 		page.append("tweet", tweet);
 		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 

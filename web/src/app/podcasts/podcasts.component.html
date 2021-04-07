@@ -6,8 +6,8 @@
   <div id="sources" class="d-flex flex-row flex-nowrap hscroll">
     <div *ngFor="let source of sources" class="mr-2">
       <div class="cover-menu card">
-        <a class="cover-menu" [routerLink]="['/podcasts/' + source.source]">
-          <img class="cover-menu card-img-top" src="{{'/images/' + source.source + '.png'}}" loading="lazy"/>
+        <a class="cover-menu" [routerLink]="['/podcasts/' + source]">
+          <img class="cover-menu card-img-top" src="{{'/images/' + source + '.png'}}" loading="lazy"/>
         </a>
       </div>
     </div>

@@ -79,7 +79,8 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 });
 
 app.get('/api/docs/sources', async(req, res)=>{
-	var result = await shows.find().project({source: 1, title: 1}).sort({"title":1}).toArray();
+	var result = await shows.find().project({source: 1}).sort({"title":1}).toArray();
+	result = Array.from(new Set(result.map(x => x.source)));
 	res.send(result);
 });
 

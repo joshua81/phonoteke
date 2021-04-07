@@ -25,6 +25,11 @@ public class BBCRadioLoader extends PodcastLoader
 	private static final String BBC = "bbc";
 
 
+	public static final void main(String[] args) {
+		new BBCRadioLoader().load("jamzsupernova");
+	}
+
+
 	@Override
 	public void load(String... args) 
 	{

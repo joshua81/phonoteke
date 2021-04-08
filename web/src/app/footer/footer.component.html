@@ -3,7 +3,7 @@
 </div>
 
 <footer *ngIf="showFooter" class="footer fixed-bottom d-flex flex-row align-items-center justify-content-center">
-  <div class="ml-2 mr-auto footer-icon d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
+  <div class="ml-2 mr-auto logo-icon d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
     <img class="logo">
   </div>
   <div class="icon ml-1 mr-1">
@@ -32,6 +32,6 @@
   <div class="icon ml-1 mr-1">
     <a href="https://creativecommons.org/" target="_blank"><span class="cc"></span></a>
   </div>
-  <div class="footer-icon ml-auto mr-2">
+  <div class="ml-auto mr-2" [ngStyle]="{'width':'60px'}">
   </div>
 </footer>

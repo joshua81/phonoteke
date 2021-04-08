@@ -2,7 +2,14 @@
   border-radius: 50%;
   height: 60px;
   width: 60px;
-  background-color: #282D32;
+  background-color: #FFFFFF;
+  cursor: pointer;
+}
+
+.logo-icon {
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
   cursor: pointer;
 }
 

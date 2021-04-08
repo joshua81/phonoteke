@@ -2,9 +2,6 @@
   <router-outlet></router-outlet>
 </div>
 
-<!-- Footer -->
-<app-footer></app-footer>
-
 <!-- Spotify player-->
 <div *ngIf="track" class="w-max ml-auto mr-auto fixed-bottom">
   <div class="player-spotify d-flex flex-row align-items-center">
@@ -104,6 +101,9 @@
     </div>
   </div>
 </div>
+
+<!-- Footer -->
+<app-footer></app-footer>
 
 <!-- Loading -->
 <div *ngIf="loading" class="d-flex justify-content-center modal-bg">

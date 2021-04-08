@@ -26,10 +26,11 @@ html, body {
 }
 
 .container-fluid {
-    min-height: calc(100vh - 60px);
+    min-height: 100vh;
     padding-top: 40px;
     padding-left: 0px;
     padding-right: 0px;
+    padding-bottom: 60px;
     margin: 0px;
 }
 

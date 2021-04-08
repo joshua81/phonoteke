@@ -1,4 +1,12 @@
-.footer-copyright {
+.footer-icon {
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  background-color: #282D32;
+  cursor: pointer;
+}
+
+.footer {
   height: 60px;
   background-color: #282D32;
 }

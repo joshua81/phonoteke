@@ -1,30 +1,37 @@
-<footer class="footer font-small mt-3">
-  <div class="footer-copyright d-flex flex-row align-items-center justify-content-center">
-    <div class="icon ml-1 mr-1">
-      <a href="https://github.com/joshua81/phonoteke/" target="_blank">
-        <span class="github"></span>
-      </a>
-    </div>
-    <div class="icon ml-1 mr-1">
-      <a href="https://twitter.com/beatshuman/" target="_blank">
-        <span class="twitter"></span>
-      </a>
-    </div>
-    <div class="icon ml-1 mr-1">
-      <a href="https://t.me/s/beatzhuman/" target="_blank">
-        <span class="telegram"></span>
-      </a>
-    </div>
-    <div class="icon ml-1 mr-1">
-      <a href="mailto:andrea.ricci@gmx.com">
-        <span class="mail"></span>
-      </a>
-    </div>
-    <!--div class="icon ml-1 mr-1">
-      <a href="/html/api.html" target="_blank"><h3 class="api text-white">&#123;api&#125;</h3></a>
-    </div-->
-    <div class="icon ml-1 mr-1">
-      <a href="https://creativecommons.org/" target="_blank"><span class="cc"></span></a>
-    </div>
+<div *ngIf="app.isDesktop && !showFooter" class="ml-2 footer-icon fixed-bottom d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
+  <img class="logo">
+</div>
+
+<footer *ngIf="showFooter" class="footer fixed-bottom d-flex flex-row align-items-center justify-content-center">
+  <div class="ml-2 mr-auto footer-icon d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
+    <img class="logo">
+  </div>
+  <div class="icon ml-1 mr-1">
+    <a href="https://github.com/joshua81/phonoteke/" target="_blank">
+      <span class="github"></span>
+    </a>
+  </div>
+  <div class="icon ml-1 mr-1">
+    <a href="https://twitter.com/beatshuman/" target="_blank">
+      <span class="twitter"></span>
+    </a>
+  </div>
+  <div class="icon ml-1 mr-1">
+    <a href="https://t.me/s/beatzhuman/" target="_blank">
+      <span class="telegram"></span>
+    </a>
+  </div>
+  <div class="icon ml-1 mr-1">
+    <a href="mailto:andrea.ricci@gmx.com">
+      <span class="mail"></span>
+    </a>
+  </div>
+  <!--div class="icon ml-1 mr-1">
+    <a href="/html/api.html" target="_blank"><h3 class="api text-white">&#123;api&#125;</h3></a>
+  </div-->
+  <div class="icon ml-1 mr-1">
+    <a href="https://creativecommons.org/" target="_blank"><span class="cc"></span></a>
+  </div>
+  <div class="footer-icon ml-auto mr-2">
   </div>
 </footer>

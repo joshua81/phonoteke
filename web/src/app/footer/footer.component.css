@@ -1,21 +1,13 @@
-.footer-icon {
-  border-radius: 50%;
+.footer {
   height: 60px;
-  width: 60px;
-  background-color: #FFFFFF;
-  cursor: pointer;
+  background-color: #282D32;
 }
 
 .logo-icon {
   border-radius: 50%;
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
   cursor: pointer;
-}
-
-.footer {
-  height: 60px;
-  background-color: #282D32;
 }
 
 .icon {

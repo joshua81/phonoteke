@@ -1,9 +1,14 @@
-<div *ngIf="app.isDesktop && !showFooter" class="ml-2 footer-icon fixed-bottom d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
-  <img class="logo">
+<div *ngIf="app.isDesktop && !showFooter" class="fixed-bottom d-flex flex-row align-items-center" 
+  [ngStyle]="{'width':'60px', 'height':'60px'}">
+  <div class="ml-2 logo-icon d-flex flex-row align-items-center justify-content-center" 
+    [ngStyle]="{'background-color': '#FFFFFF'}" (click)="toggleFooter()">
+    <img class="logo">
+  </div>
 </div>
 
 <footer *ngIf="showFooter" class="footer fixed-bottom d-flex flex-row align-items-center justify-content-center">
-  <div class="ml-2 mr-auto logo-icon d-flex flex-row align-items-center justify-content-center" (click)="toggleFooter()">
+  <div class="ml-2 mr-auto logo-icon d-flex flex-row align-items-center justify-content-center" 
+    [ngStyle]="{'background-color': '#282D32'}" (click)="toggleFooter()">
     <img class="logo">
   </div>
   <div class="icon ml-1 mr-1">

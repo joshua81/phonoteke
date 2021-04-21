@@ -52,7 +52,7 @@ export class AlbumsComponent implements OnInit {
     this.meta.updateTag({ name: 'og:title', content: 'Human Beats - Album' });
     this.meta.updateTag({ name: 'og:type', content: 'music' });
     this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/albums' });
-    this.meta.updateTag({ name: 'og:image', content: 'https://humanbeats.appspot.com/images/logo.png' });
+    this.meta.updateTag({ name: 'og:image', content: 'https://storage.googleapis.com/humanbeats/logo.png' });
     this.meta.updateTag({ name: 'og:description', content: 'Human Beats - Album' });
   }
 

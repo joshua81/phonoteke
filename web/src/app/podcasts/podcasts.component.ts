@@ -80,7 +80,7 @@ export class PodcastsComponent implements OnInit {
     this.meta.updateTag({ name: 'og:title', content: 'Human Beats - Podcast' });
     this.meta.updateTag({ name: 'og:type', content: 'music' });
     this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts' });
-    this.meta.updateTag({ name: 'og:image', content: 'https://humanbeats.appspot.com/images/logo.png' });
+    this.meta.updateTag({ name: 'og:image', content: 'https://storage.googleapis.com/humanbeats/logo.png' });
     this.meta.updateTag({ name: 'og:description', content: 'Human Beats - Podcast' });
   }
 

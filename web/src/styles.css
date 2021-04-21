@@ -148,7 +148,7 @@ h3 {
 
 img.logo {
     border-radius: 50%;
-    content: url("/images/logo.png");
+    content: url("https://storage.googleapis.com/humanbeats/logo.png");
     width: 30px;
     height: 30px;
     cursor: pointer;

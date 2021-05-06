@@ -32,7 +32,8 @@ export class PodcastComponent implements OnInit {
 
   loadSource(source: string) {
     this.source = null;
-
+    this.app.loading = true;
+    
     this.http.get('/api/sources/' + source).subscribe(
       (data: any) => {
         this.app.loading = false;

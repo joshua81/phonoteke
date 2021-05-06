@@ -1,0 +1,22 @@
+img.cover {
+    width: 40px;
+    height: 40px;
+    object-fit:cover;
+    cursor: pointer;
+}
+
+.button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+  
+span.previous {
+    display: inline-block;
+    mask: url("/images/previous.svg") no-repeat;
+    width: 10px;
+    height: 15px;
+    margin: 0;
+    background: #000000;
+    cursor: pointer;
+  }

@@ -15,11 +15,11 @@ const redirect_uri = 'https://humanbeats.appspot.com/api/login/spotify';
 const songkick_id = '1hOiIfT9pFTkyVkg';
 
 var docs = null;
-var shows = null;
+var authors = null;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
 	docs = client.db("mbeats").collection("docs");
-	shows = client.db("mbeats").collection("shows");
+	authors = client.db("mbeats").collection("authors");
 	console.log("Successfully Connected to MongoDB");
 	app.listen(PORT, () => {
 		console.log(`App listening on port ${PORT}`);
@@ -78,9 +78,13 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 	res.send(result);
 });
 
-app.get('/api/docs/sources', async(req, res)=>{
-	var result = await shows.find().project({source: 1}).sort({"title":1}).toArray();
-	result = Array.from(new Set(result.map(x => x.source)));
+app.get('/api/sources', async(req, res)=>{
+	var result = await authors.find().project({source: 1, name: 1, cover: 1}).sort({"name":1}).toArray();
+	res.send(result);
+});
+
+app.get('/api/sources/:source', async(req, res)=>{
+	var result = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1}).toArray();
 	res.send(result);
 });
 

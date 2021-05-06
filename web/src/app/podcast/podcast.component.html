@@ -1,23 +1,5 @@
-<app-menu></app-menu>
-<div class="container w-max pl-2 pr-2 mt-2" [ngStyle]="{'position': 'relative'}">
-  <div *ngIf="app.isDesktop" class="backward" (click)="previous()">
-    <span class="previous"></span>
-  </div>
-  <div id="sources" class="d-flex flex-row flex-nowrap hscroll">
-    <div *ngFor="let source of sources" class="mr-2">
-      <div class="cover-menu card">
-        <a class="cover-menu" [routerLink]="['/podcasts/' + source]">
-          <img class="cover-menu card-img-top" src="{{'https://storage.googleapis.com/humanbeats/' + source + '.png'}}" loading="lazy"/>
-        </a>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="app.isDesktop" class="forward" (click)="next()">
-    <span class="next"></span>
-  </div>
-</div>
-
-<div *ngIf="docs && docs.length != 0" class="container w-max p-0 mt-2">
+<podcast-menu></podcast-menu>
+<div *ngIf="docs && docs.length != 0" class="container p-0 mt-2">
   <div infinite-scroll (scrolled)="scrollDocs()">
     <div class="d-flex flex-wrap justify-content-center">
       <div *ngFor="let doc of docs" class="m-1">

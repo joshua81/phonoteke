@@ -37,7 +37,7 @@ public interface HumanBeats
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	public static final int NUMBER_OF_CRAWLERS = 10;
+	public static final int NUMBER_OF_CRAWLERS = 1;
 	public static final String TRACKS_NEW_LINE = "_NEW_LINE_";
 	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
 	public static final int THRESHOLD = 90;

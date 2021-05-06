@@ -1,0 +1,13 @@
+<authors-menu></authors-menu>
+<div class="container p-0 mt-2" [ngStyle]="{'position': 'relative'}">
+  <div class="d-flex flex-wrap justify-content-center w-100">
+    <div *ngFor="let author of authors">
+      <div class="author card">
+        <a class="author" [routerLink]="['/' + author.source]">
+          <img class="author card-img-top" src="{{author.cover}}" loading="lazy"/>
+          <h1 class="author font-weight-bold text-white">{{author.name}}</h1>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

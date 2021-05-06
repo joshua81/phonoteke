@@ -7,26 +7,31 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-
 import { AppComponent } from './app.component';
 import { AlbumsComponent } from './albums/albums.component';
-import { MenuComponent } from './menu/menu.component';
-import { PodcastsComponent } from './podcasts/podcasts.component';
-import { DocMenuComponent } from './doc/menu/menu.component';
+import { AlbumsMenuComponent } from './albums/menu/menu.component';
+import { PodcastComponent } from './podcast/podcast.component';
+import { PodcastMenuComponent } from './podcast/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
+import { DocMenuComponent } from './doc/menu/menu.component';
 import { TracksComponent } from './tracks/tracks.component';
 import { VideoComponent } from './video/video.component';
 import { LinkComponent } from './link/link.component';
 import { FooterComponent } from './footer/footer.component';
+import { AuthorsComponent } from './authors/authors.component';
+import { AuthorsMenuComponent } from './authors/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent,
+    AuthorsComponent,
+    AuthorsMenuComponent,
     AlbumsComponent,
-    PodcastsComponent,
-    DocMenuComponent,
+    AlbumsMenuComponent,
+    PodcastComponent,
+    PodcastMenuComponent,
     DocComponent,
+    DocMenuComponent,
     TracksComponent,
     VideoComponent,
     LinkComponent,
@@ -35,11 +40,10 @@ import { FooterComponent } from './footer/footer.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: PodcastsComponent},
-      {path: 'docs/:id', component: DocComponent},
-      {path: 'albums', component: AlbumsComponent},
-      {path: 'podcasts', component: PodcastsComponent},
-      {path: 'podcasts/:source', component: PodcastsComponent}]),
+      {path: '', component: AuthorsComponent},
+      {path: ':source', component: PodcastComponent},
+      {path: 'docs/:id', component: DocComponent}]),
+      //{path: 'albums', component: AlbumsComponent},
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

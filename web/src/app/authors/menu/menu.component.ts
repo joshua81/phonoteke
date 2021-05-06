@@ -1,13 +1,13 @@
 import { ElementRef, ViewChild, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppComponent } from '../app.component';
+import { AppComponent } from '../../app.component';
 
 @Component({
-  selector: 'app-menu',
+  selector: 'authors-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent implements OnInit {
+export class AuthorsMenuComponent implements OnInit {
   source: string = null;
   searchText: string = '';
   showSearch: boolean = false;

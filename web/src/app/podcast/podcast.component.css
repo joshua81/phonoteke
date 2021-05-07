@@ -19,16 +19,14 @@ img.cover {
     max-height: 196px;
     object-fit:cover;
 }
-  
+
 .card {
     border-style: none;
 }
   
 .card-body {
-    position: relative;
-    width: 50vw;
-    max-width: 200px;
     height: 140px;
+    position: relative;
 }
   
 .card-footer {
@@ -39,6 +37,6 @@ img.cover {
 }
 
 .msg {
-    min-height: calc(100vh - 166px);
+    min-height: calc(100vh - 40px);
 }
   

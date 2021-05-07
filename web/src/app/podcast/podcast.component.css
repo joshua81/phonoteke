@@ -1,44 +1,33 @@
-div.cover-menu {
-    width: 60px;
-    position: relative;
-}
-  
-a.cover-menu {
-    width: 58px;
-    height: 58px;
-}
-  
-img.cover-menu {
-    width: 58px;
-    height: 58px;
-    object-fit:cover;
-}
-
 div.cover {
-    width: 190px;
+    width: 50vw;
+    max-width: 200px;
+    padding: 2px;
     position: relative;
 }
   
 a.cover {
-    width: 188px;
-    height: 188px;
+    width: calc(50vw - 4px);
+    height: calc(50vw - 4px);
+    max-width: 196px;
+    max-height: 196px;
 }
   
 img.cover {
-    width: 188px;
-    height: 188px;
+    width: calc(50vw - 4px);
+    height: calc(50vw - 4px);
+    max-width: 196px;
+    max-height: 196px;
     object-fit:cover;
 }
   
 .card {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #C8C8C8;
+    border-style: none;
 }
   
 .card-body {
     position: relative;
-    width: 190px;
+    width: 50vw;
+    max-width: 200px;
     height: 140px;
 }
   

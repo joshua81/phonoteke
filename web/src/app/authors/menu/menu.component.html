@@ -11,26 +11,11 @@
       <div class="d-flex flex-row align-items-center ml-2 mr-2" (click)="toggleSearch()">
         <span class="search"></span>
       </div-->
-      <!--div class="d-flex flex-row align-items-center icon ml-2 mr-2">
-        <a href="https://github.com/joshua81/phonoteke/" target="_blank">
-          <span class="github"></span>
-        </a>
-      </div>
-      <div class="d-flex flex-row align-items-center icon ml-2 mr-2">
-        <a href="https://twitter.com/beatshuman/" target="_blank">
-          <span class="twitter"></span>
-        </a>
-      </div>
-      <div class="d-flex flex-row align-items-center icon ml-2 mr-2">
-        <a href="https://t.me/s/beatzhuman/" target="_blank">
-          <span class="telegram"></span>
-        </a>
-      </div-->
-      <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center icon ml-2 mr-2">
-        <a *ngIf="app.player == null" href="/api/login">
+      <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center ml-2 mr-3">
+        <a class="icon" *ngIf="app.player == null" href="/api/login">
           <span class="spotify-disabled"></span>
         </a>
-        <a *ngIf="app.player != null" (click)="app.loadDevices()">
+        <a class="icon" *ngIf="app.player != null" (click)="app.loadDevices()">
           <span class="spotify"></span>
         </a>
       </div>

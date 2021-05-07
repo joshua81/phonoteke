@@ -262,7 +262,7 @@ async function findDocs(t, p, q, s) {
 		}
 	}
 	
-	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*12).limit(12).sort({"date":-1}).toArray();
+	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*20).limit(20).sort({"date":-1}).toArray();
 	return result;
 }
 

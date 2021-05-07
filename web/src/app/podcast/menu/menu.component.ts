@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ElementRef, Component, ViewChild, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
 import { PodcastComponent } from '../podcast.component';
 
@@ -8,8 +9,28 @@ import { PodcastComponent } from '../podcast.component';
   styleUrls: ['./menu.component.css']
 })
 export class PodcastMenuComponent implements OnInit {
+  searchText: string = '';
+  showSearch: boolean = false;
   
-  constructor(public app: AppComponent, public doc: PodcastComponent) {}
+  @ViewChild('input', { static: false }) 
+  set input(element: ElementRef<HTMLInputElement>) {
+    if(element) {
+      element.nativeElement.focus();
+    }
+  }
+  constructor(public app: AppComponent, private router: Router, public doc: PodcastComponent) {}
 
   ngOnInit() {}
+
+  search() {
+    if(this.searchText != null && this.searchText != '') {
+      this.router.navigate([this.router.url.split("?")[0]], {queryParams: { q: this.searchText }});
+    }
+    this.toggleSearch();
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+    this.searchText = '';
+  }
 }

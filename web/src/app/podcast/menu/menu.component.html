@@ -7,12 +7,15 @@
         </div>
         <img class="cover" src="{{doc.source.cover}}"/>
       </div>
-      <div class="w-100 ml-1 mr-1">
-        <!--h3 class="text-center text-truncate-1" [innerHTML]="doc.source.name"></h3-->
+      <div *ngIf="!showSearch" class="w-100 ml-2 mr-2">
         <h2 class="text-center text-truncate-1" [innerHTML]="doc.source.name"></h2>
       </div>
-      <div class="d-flex flex-row">
-        <div [ngStyle]="{'width':'70px'}"></div>
+      <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
+        <input #input class="form-control" name="search" type="search"
+        placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
+      </form>
+      <div class="d-flex flex-row align-items-center ml-2 mr-2" (click)="toggleSearch()">
+        <span class="search"></span>
       </div>
     </div>
   </div>

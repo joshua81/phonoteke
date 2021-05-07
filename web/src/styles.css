@@ -29,6 +29,10 @@ html, body {
     max-width: 800px;
 }
 
+.container-fluid {
+    padding: 0px;
+}
+
 .navbar {
     padding: 0px;
     height: 40px;

@@ -8,8 +8,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { AppComponent } from './app.component';
-import { AlbumsComponent } from './albums/albums.component';
-import { AlbumsMenuComponent } from './albums/menu/menu.component';
 import { PodcastComponent } from './podcast/podcast.component';
 import { PodcastMenuComponent } from './podcast/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
@@ -26,8 +24,6 @@ import { AuthorsMenuComponent } from './authors/menu/menu.component';
     AppComponent,
     AuthorsComponent,
     AuthorsMenuComponent,
-    AlbumsComponent,
-    AlbumsMenuComponent,
     PodcastComponent,
     PodcastMenuComponent,
     DocComponent,
@@ -43,7 +39,6 @@ import { AuthorsMenuComponent } from './authors/menu/menu.component';
       {path: '', component: AuthorsComponent},
       {path: ':source', component: PodcastComponent},
       {path: 'docs/:id', component: DocComponent}]),
-      //{path: 'albums', component: AlbumsComponent},
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

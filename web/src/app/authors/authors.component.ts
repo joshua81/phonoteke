@@ -15,7 +15,6 @@ export class AuthorsComponent implements OnInit {
   searchText: string = '';
   docs = [];
   authors = [];
-  source: string = null;
   page: number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
@@ -24,7 +23,6 @@ export class AuthorsComponent implements OnInit {
     .subscribe(params => {
         window.scrollTo(0, 0);
         this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
-        this.source = (typeof(params.source) == 'undefined' || params.source == '') ? null : params.source;
         this.loadSources();
     });
   }

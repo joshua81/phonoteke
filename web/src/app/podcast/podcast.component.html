@@ -1,5 +1,5 @@
 <podcast-menu></podcast-menu>
-<div *ngIf="docs && docs.length != 0" class="container p-0 mt-2">
+<div *ngIf="docs && docs.length != 0" class="container-fluid p-0" [ngStyle]="{'margin-top': '42px'}">
   <div infinite-scroll (scrolled)="scrollDocs()">
     <div class="d-flex flex-wrap justify-content-center">
       <div *ngFor="let doc of docs" class="m-1">

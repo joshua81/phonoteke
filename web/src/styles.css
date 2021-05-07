@@ -25,13 +25,8 @@ html, body {
     background: rgba(233,240,242,1);
 }
 
-.container-fluid {
-    min-height: 100vh;
-    padding-top: 40px;
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-bottom: 10px;
-    margin: 0px;
+.container {
+    max-width: 800px;
 }
 
 .navbar {
@@ -79,11 +74,6 @@ h3 {
     font-weight: 300;
     margin-top: 3px;
     margin-bottom: 3px;
-}
-
-.w-max {
-    width: 100%;
-    max-width: 800px;
 }
 
 .text-truncate-1 {

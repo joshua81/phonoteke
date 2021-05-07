@@ -1,24 +1,17 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
-  <div class="container">
+  <div class="container-fluid">
     <div class="d-flex flex-row align-items-center w-100">
       <div class="d-flex flex-row ml-2 mr-auto">
         <a [routerLink]="['/']"><img class="logo"></a>
       </div>
-      <!--h1 class="font-weight-bold ml-auto mr-auto">Human Beats</h1-->
-      <!--a *ngIf="!showSearch" class="menu-item ml-2 mr-1" [routerLink]="['/podcasts']" [ngClass]="{'selected' : source == 'podcasts'}">
-        <h2 class="pt-3">Podcast</h2>
-      </a>
-      <a *ngIf="!showSearch" class="menu-item ml-1 mr-auto" [routerLink]="['/albums']" [ngClass]="{'selected' : source == 'albums'}">
-        <h2 class="pt-3">Album</h2>
-      </a>
-      <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
+      <!--form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
         <input #input class="form-control" name="search" type="search"
         placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
       </form>
       <div class="d-flex flex-row align-items-center ml-2 mr-2" (click)="toggleSearch()">
         <span class="search"></span>
       </div-->
-      <div class="d-flex flex-row align-items-center icon ml-2 mr-2">
+      <!--div class="d-flex flex-row align-items-center icon ml-2 mr-2">
         <a href="https://github.com/joshua81/phonoteke/" target="_blank">
           <span class="github"></span>
         </a>
@@ -32,7 +25,7 @@
         <a href="https://t.me/s/beatzhuman/" target="_blank">
           <span class="telegram"></span>
         </a>
-      </div>
+      </div-->
       <div *ngIf="app.isDesktop" class="d-flex flex-row align-items-center icon ml-2 mr-2">
         <a *ngIf="app.player == null" href="/api/login">
           <span class="spotify-disabled"></span>

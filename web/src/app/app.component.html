@@ -2,7 +2,7 @@
   <router-outlet></router-outlet>
 </div>
 
-<!-- Spotify player-->
+<!-- Spotify player -->
 <div *ngIf="track" class="ml-auto mr-auto fixed-bottom" [ngStyle]="{'width':'100vw'}">
   <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="['/docs/' + doc.id]">
@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<!-- Podcast player-->
+<!-- Podcast player -->
 <div *ngIf="audio" class="ml-auto mr-auto fixed-bottom" [ngStyle]="{'width':'100vw'}">
   <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="['/docs/' + doc.id]">
@@ -60,7 +60,7 @@
   </div>
 </div>
 
-<!-- Youtube player-->
+<!-- Youtube player -->
 <div *ngIf="youtube" class="d-flex flex-row justify-content-center ml-auto mr-auto fixed-bottom" [ngStyle]="{'width':'100vw'}">
   <div class="player-youtube">
     <iframe [src]='youtube' type="text/html" width="380" height="200" frameborder="0"></iframe>
@@ -100,6 +100,16 @@
       <div class="font-weight-bold mt-3 mb-3">Nessun concerto in programma</div>
     </div>
   </div>
+</div>
+
+<!-- Login -->
+<div *ngIf="isDesktop" class="login">
+  <a class="icon" *ngIf="player == null" href="/api/login">
+    <span class="spotify-disabled"></span>
+  </a>
+  <a class="icon" *ngIf="player != null" (click)="loadDevices()">
+    <span class="spotify"></span>
+  </a>
 </div>
 
 <!-- Loading -->

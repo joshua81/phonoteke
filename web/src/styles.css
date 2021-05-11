@@ -26,10 +26,11 @@ html, body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 800px !important;
 }
 
 .container-fluid {
+    max-width: 1200px !important;
     padding: 0px;
 }
 

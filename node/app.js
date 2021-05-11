@@ -262,7 +262,7 @@ async function findDocs(t, p, q, s) {
 		}
 	}
 	
-	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*20).limit(20).sort({"date":-1}).toArray();
+	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*18).limit(18).sort({"date":-1}).toArray();
 	return result;
 }
 
@@ -309,7 +309,7 @@ async function findLinks(id) {
 		albums = albums.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
-		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"date":-1, "artist": 1}).limit(20).toArray();
+		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"date":-1, "artist": 1}).limit(18).toArray();
 		podcasts = podcasts.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

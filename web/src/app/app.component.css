@@ -42,3 +42,43 @@
 .progress {
     cursor: pointer;
 }
+
+.login {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    width: 34px;
+    height: 34px;
+
+    padding-top: 2px;
+    padding-left: 2px;
+    background: white;
+    position: fixed;
+    bottom: 5px;
+    right: 0px;
+    cursor: pointer;
+}
+
+.icon {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+span.spotify {
+    display: inline-block;
+    mask: url("/images/spotify.svg") no-repeat;
+    width: 30px;
+    height: 30px;
+    background: #1DB954;
+    cursor: pointer;
+}
+
+span.spotify-disabled {
+    display: inline-block;
+    mask: url("/images/spotify.svg") no-repeat;
+    width: 30px;
+    height: 30px;
+    background: #888888;
+    cursor: pointer;
+}

@@ -44,10 +44,14 @@
 }
 
 .login {
+    width: 36px;
+    height: 36px;
+
     border-top-left-radius: 50%;
     border-bottom-left-radius: 50%;
-    width: 34px;
-    height: 34px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #C8C8C8;
 
     padding-top: 2px;
     padding-left: 2px;

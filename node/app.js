@@ -79,12 +79,12 @@ app.get('/api/docs/podcasts', async(req, res)=>{
 });
 
 app.get('/api/sources', async(req, res)=>{
-	var result = await authors.find().project({source: 1, name: 1, cover: 1}).sort({"name":1}).toArray();
+	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 
 app.get('/api/sources/:source', async(req, res)=>{
-	var result = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1}).toArray();
+	var result = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).toArray();
 	res.send(result);
 });
 

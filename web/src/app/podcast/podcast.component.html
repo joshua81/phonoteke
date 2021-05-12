@@ -14,6 +14,7 @@
             <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
             <h3 class="card-footer text-muted text-lowercase p-0">{{formatDate(doc.date)}}</h3>
           </div>
+          <div *ngIf="app.compareDates(doc.date)" class="today"></div>
         </div>
       </div>
     </div>

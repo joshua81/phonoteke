@@ -21,6 +21,7 @@ export class AppComponent {
   player = null;
   track = null;
   timer: Subscription = null;
+  yesterday: Date = null;
 
   audio = null;
   duration = "";
@@ -33,6 +34,10 @@ export class AppComponent {
   constructor(private router: Router, private location: Location, private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {
     this.isDesktop = !AppComponent.hasTouchScreen();
     this.loadDevices();
+    this.yesterday
+    this.yesterday = new Date();
+    this.yesterday.setDate(this.yesterday.getDate()-1);
+    this.yesterday.setHours(0, 0, 0, 0);  
 
     this.router.events.subscribe((event) => {
       //console.log(event);
@@ -365,6 +370,10 @@ export class AppComponent {
 
   closeAlert(){
     this.error = null;
+  }
+
+  compareDates(date: string){
+    return Date.parse(date) >= this.yesterday.getTime();
   }
 
   static formatTime(seconds: number) {

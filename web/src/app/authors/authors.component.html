@@ -7,6 +7,7 @@
           <img class="author card-img-top" src="{{author.cover}}" loading="lazy"/>
           <h1 class="author font-weight-bold text-white">{{author.name}}</h1>
         </a>
+        <div *ngIf="app.compareDates(author.lastEpisodeDate)" class="today"></div>
       </div>
     </div>
   </div>

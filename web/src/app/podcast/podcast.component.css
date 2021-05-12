@@ -39,4 +39,15 @@ img.cover {
 .msg {
     min-height: calc(100vh - 40px);
 }
+
+.today {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #18A2B8;
+  }
   

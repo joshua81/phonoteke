@@ -26,8 +26,6 @@ public class MusicbrainzLoader implements HumanBeats
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
 
-	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-
 
 	public static void main(String[] args) {
 		new MusicbrainzLoader().load(args);

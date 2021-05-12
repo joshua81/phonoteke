@@ -16,7 +16,6 @@ import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
@@ -31,7 +30,6 @@ public class YoutubeLoader implements HumanBeats
 	private static final String MATCH2 = "(?i)(.{1,100})[\\(\\[]Video(.{1,10})Ufficiale[\\)\\]]";
 	private static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2);
 
-	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 	private YouTube youtube = null;
 
 

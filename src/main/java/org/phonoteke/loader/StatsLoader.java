@@ -10,16 +10,12 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 public class StatsLoader implements HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
-	
-	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-
 	
 	public static void main(String[] args) {
 		new StatsLoader().load();

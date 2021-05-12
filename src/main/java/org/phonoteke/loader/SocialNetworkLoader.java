@@ -26,7 +26,6 @@ import com.google.api.client.util.Sets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
@@ -37,9 +36,6 @@ public class SocialNetworkLoader implements HumanBeats
 	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
 	private static final int SCORE = 80;
 	private static final int WEEKS = 1;
-
-	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-	private MongoCollection<org.bson.Document> shows = new MongoDB().getShows();
 
 	private static TwitterClient twitterClient;
 

@@ -38,12 +38,13 @@ public class BBCRadioLoader extends PodcastLoader
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			BBCRadioLoader.url = show.getString("url");
-			BBCRadioLoader.artist = show.getString("title");
-			BBCRadioLoader.source = show.getString("source");
-			BBCRadioLoader.authors = show.get("authors", List.class);
+			url = show.getString("url");
+			artist = show.getString("title");
+			source = show.getString("source");
+			authors = show.get("authors", List.class);
 			LOGGER.info("Crawling " + BBCRadioLoader.artist);
 			crawl(url);
+			updateLastEpisodeDate(source);
 			//			for(int j = 1; j <= 10; j++) { 
 			//				crawl(url + "?page=" + j);
 			//			}

@@ -21,7 +21,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -40,8 +39,6 @@ import edu.uci.ics.crawler4j.url.WebURL;
 public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 {
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
-
-	protected MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
 
 	protected void crawl(String url)
 	{
@@ -252,7 +249,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 		}
 		return tracks;
 	}
-	
+
 	protected List<org.bson.Document> getTracks(Element content, String source) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();

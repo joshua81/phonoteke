@@ -53,8 +53,6 @@ public class SpotifyLoader implements HumanBeats
 			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
 			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
 			.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
-	private MongoCollection<org.bson.Document> docs = new MongoDB().getDocs();
-
 
 	public static void main(String[] args) {
 		new SpotifyLoader().load();

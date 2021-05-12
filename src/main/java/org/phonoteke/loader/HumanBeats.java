@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mongodb.client.MongoCollection;
 
 public interface HumanBeats 
 {
@@ -43,6 +44,10 @@ public interface HumanBeats
 	public static final int THRESHOLD = 90;
 	public static final int SCORE = 60;
 	public static final int TRACKS_SIZE = 6;
+
+	public static final MongoCollection<org.bson.Document> shows = MongoDB.getShows();
+	public static final MongoCollection<org.bson.Document> docs = MongoDB.getDocs();
+	public static final MongoCollection<org.bson.Document> authors = MongoDB.getAuthors();
 
 	public enum TYPE {
 		artist,

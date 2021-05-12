@@ -40,7 +40,7 @@ img.cover {
     min-height: calc(100vh - 40px);
 }
 
-.today {
+.yesterday {
     position: absolute;
     top: 5px;
     right: 5px;

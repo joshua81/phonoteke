@@ -37,7 +37,7 @@ h1.author {
     border-style: none;
 }
 
-.today {
+.yesterday {
     position: absolute;
     top: 5px;
     right: 5px;

@@ -10,46 +10,59 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 
-public interface HumanBeats 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import edu.uci.ics.crawler4j.crawler.WebCrawler;
+
+public abstract class HumanBeats extends WebCrawler
 {
-	public static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+", "\\band\\b", "\\bwith\\b", "\\be\\b");
+	protected static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+", "\\band\\b", "\\bwith\\b", "\\be\\b");
 
-	public static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
-	public static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
-	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
+	protected static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
+	protected static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
+	protected static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
 
-	public static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
-	public static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";
-	public static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,200})";
-	public static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,200})";
-	public static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-	public static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
-	public static final String FEAT7 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
-	public static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
-	public static final List<String> FEAT = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
+	protected static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
+	protected static final String FEAT2 = "(?i)(.{1,100}?) ft[.]{0,1} (.{1,200})";
+	protected static final String FEAT3 = "(?i)(.{1,100}?) featuring (.{1,200})";
+	protected static final String FEAT4 = "(.{1,100}?)[\\(\\[](.{1,200})";
+	protected static final String FEAT5 = "(.{1,100}?)([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	protected static final String FEAT6 = "(.{1,100}?)[0-9]{0,2}’[0-9]{0,2}”";
+	protected static final String FEAT7 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1})";
+	protected static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
+	protected static final List<String> FEAT = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
 
-	public static final String AKA1 = "(?i)(.{1,100}?) aka (.{1,200})";
-	public static final List<String> AKA = Lists.newArrayList(AKA1);
+	protected static final String AKA1 = "(?i)(.{1,100}?) aka (.{1,200})";
+	protected static final List<String> AKA = Lists.newArrayList(AKA1);
 
-	public static final String NA = "na";
-	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
-	public static final int NUMBER_OF_CRAWLERS = 1;
-	public static final String TRACKS_NEW_LINE = "_NEW_LINE_";
-	public static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
-	public static final int THRESHOLD = 90;
-	public static final int SCORE = 60;
-	public static final int TRACKS_SIZE = 6;
+	protected static final String NA = "na";
+	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
+	protected static final int NUMBER_OF_CRAWLERS = 1;
+	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
+	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
+	protected static final int THRESHOLD = 90;
+	protected static final int SCORE = 60;
+	protected static final int TRACKS_SIZE = 6;
 
-	public static final MongoCollection<org.bson.Document> shows = MongoDB.getShows();
-	public static final MongoCollection<org.bson.Document> docs = MongoDB.getDocs();
-	public static final MongoCollection<org.bson.Document> authors = MongoDB.getAuthors();
+	protected MongoCollection<org.bson.Document> shows;
+	protected MongoCollection<org.bson.Document> docs;
+	protected MongoCollection<org.bson.Document> authors;
 
-	public enum TYPE {
+	protected enum TYPE {
 		artist,
 		album,
 		concert,
@@ -95,7 +108,25 @@ public interface HumanBeats
 		}
 	}
 
-	public static void printHelp() {
+	public HumanBeats() {
+		try
+		{
+			Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+			root.setLevel(Level.ERROR);
+
+			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
+			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
+			docs = db.getCollection("docs");
+			shows = db.getCollection("shows");
+			authors = db.getCollection("authors");
+		} 
+		catch (Throwable t) 
+		{
+			throw new RuntimeException(t);
+		}
+	}
+
+	private static void printHelp() {
 		System.out.println("Usage:");
 		System.out.println("- compile (compiles sources)");
 		System.out.println("- deploy (deploys to GCloud)");
@@ -114,9 +145,9 @@ public interface HumanBeats
 		System.out.println("- patch:replaceSpecialChars (patches db)");
 	}
 
-	public void load(String... args);
+	abstract void load(String... args);
 
-	public static boolean isTrack(String title)
+	protected boolean isTrack(String title)
 	{
 		title = cleanText(title);
 		for(String s : SEPARATORS) {
@@ -130,7 +161,7 @@ public interface HumanBeats
 		return false;
 	}
 
-	public static Set<String> parseTrack(String track) 
+	protected Set<String> parseTrack(String track) 
 	{
 		track = cleanText(track);
 		for(String s : SEPARATORS) {
@@ -159,7 +190,7 @@ public interface HumanBeats
 		return matches;
 	}
 
-	public static String parseArtistSong(String artist, String song)
+	protected String parseArtistSong(String artist, String song)
 	{
 		// artist
 		artist = cleanText(artist);
@@ -197,7 +228,7 @@ public interface HumanBeats
 		return cleanText(artist) + " " + cleanText(song);
 	}
 
-	public static String cleanText(String text) 
+	protected String cleanText(String text) 
 	{
 		// replaces all the HTML and non-HTML white spaces
 		text = text.replaceAll("&nbsp;", " ");
@@ -209,9 +240,17 @@ public interface HumanBeats
 		return text.toLowerCase().trim();
 	}
 
-	public static String format(String title, Date date) {
+	protected String format(String title, Date date) {
 		Preconditions.checkNotNull(title);
-
 		return date == null ? title.trim() : (title.trim() + " Ep." + new SimpleDateFormat("yyyy.MM.dd").format(date));
+	}
+
+	protected void updateLastEpisodeDate(String source) {
+		MongoCursor<org.bson.Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", source))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1).iterator();
+		Date date = i.next().get("date", Date.class);
+		i = authors.find(Filters.eq("source", source)).limit(1).iterator();
+		Document doc = i.next();
+		doc.append("lastEpisodeDate", date);
+		authors.updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 	}
 }

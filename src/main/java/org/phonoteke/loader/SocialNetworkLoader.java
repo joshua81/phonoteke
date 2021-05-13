@@ -30,7 +30,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.operation.OrderBy;
 
-public class SocialNetworkLoader implements HumanBeats
+public class SocialNetworkLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SocialNetworkLoader.class);
 	private static final String CREDENTIALS = "/Users/riccia/twitter.json";
@@ -93,7 +93,7 @@ public class SocialNetworkLoader implements HumanBeats
 		org.bson.Document show = shows.find(Filters.and(Filters.eq("title", title))).iterator().next();
 		List<String> twitter = show.get("twitter", List.class);
 
-		title = HumanBeats.format(title, page.getDate("date"));
+		title = format(title, page.getDate("date"));
 		String tweet = sendTweet(title, Lists.newArrayList(artists), twitter, spotify);
 		page.append("tweet", tweet);
 		docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 

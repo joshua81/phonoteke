@@ -13,7 +13,7 @@ import com.google.api.client.util.Maps;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class StatsLoader implements HumanBeats
+public class StatsLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
 	

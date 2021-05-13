@@ -14,13 +14,12 @@ import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.google.api.client.util.Maps;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class MusicbrainzLoader implements HumanBeats
+public class MusicbrainzLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 

@@ -26,7 +26,6 @@ import com.mongodb.client.model.Filters;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.crawler.exceptions.ParseException;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -36,7 +35,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 
-public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
+public abstract class AbstractCrawler extends HumanBeats
 {
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
 
@@ -282,7 +281,7 @@ public abstract class AbstractCrawler extends WebCrawler implements HumanBeats
 						}
 					}
 				}
-				if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
+				if(StringUtils.isNotBlank(title) && isTrack(title))
 				{
 					tracks.add(newTrack(title, null));
 					LOGGER.debug("tracks: " + title);

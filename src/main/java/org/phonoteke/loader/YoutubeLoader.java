@@ -22,7 +22,7 @@ import com.mongodb.operation.OrderBy;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class YoutubeLoader implements HumanBeats
+public class YoutubeLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
 

@@ -43,7 +43,7 @@ public class SpreakerLoader extends PodcastLoader
 			artist = show.getString("title");
 			source = show.getString("source");
 			authors = show.get("authors", List.class);
-			LOGGER.info("Crawling " + SpreakerLoader.artist);
+			LOGGER.info("Crawling " + artist);
 			crawl(url);
 			updateLastEpisodeDate(source);
 		}
@@ -139,7 +139,7 @@ public class SpreakerLoader extends PodcastLoader
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && HumanBeats.isTrack(title))
+			if(StringUtils.isNotBlank(title) && isTrack(title))
 			{
 				String youtube = null;
 				tracks.add(newTrack(title, youtube));

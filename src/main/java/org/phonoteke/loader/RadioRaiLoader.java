@@ -45,7 +45,7 @@ public class RadioRaiLoader extends PodcastLoader
 			artist = show.getString("title");
 			source = show.getString("source");
 			authors = show.get("authors", List.class);
-			LOGGER.info("Crawling " + RadioRaiLoader.artist);
+			LOGGER.info("Crawling " + artist);
 			crawl(url);
 			updateLastEpisodeDate(source);
 		}
@@ -54,7 +54,7 @@ public class RadioRaiLoader extends PodcastLoader
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
+		for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
 			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}

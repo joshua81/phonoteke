@@ -11,7 +11,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader implements HumanBeats
+public class PatchLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
 

@@ -17,7 +17,6 @@ import org.bson.Document;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.neovisionaries.i18n.CountryCode;
@@ -43,7 +42,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader implements HumanBeats
+public class SpotifyLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
 	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
@@ -222,7 +221,7 @@ public class SpotifyLoader implements HumanBeats
 						String title = page.getString("artist");
 						String description = page.getString("title");
 						Date date = page.getDate("date");
-						title = HumanBeats.format(title, date);
+						title = format(title, date);
 						CreatePlaylistRequest req = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 						Playlist playlist = req.execute();
 						id = playlist.getId();
@@ -485,7 +484,7 @@ public class SpotifyLoader implements HumanBeats
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		Set<String> chunks = HumanBeats.parseTrack(title);
+		Set<String> chunks = parseTrack(title);
 		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
 		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}

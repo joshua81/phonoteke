@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -107,7 +106,6 @@ public class BBCRadioLoader extends PodcastLoader
 			cal.setTime(date);
 			year = cal.get(Calendar.YEAR);
 		}
-		Preconditions.checkArgument(year >= 2020);
 		return year;
 	}
 

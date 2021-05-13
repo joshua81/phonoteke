@@ -9,10 +9,10 @@ public class PodcastLoader extends AbstractCrawler
 {
 	protected static final Logger LOGGER = LogManager.getLogger(PodcastLoader.class);
 
-	protected String url;
-	protected String artist;
-	protected String source;
-	protected List<String> authors;
+	protected static String url;
+	protected static String artist;
+	protected static String source;
+	protected static List<String> authors;
 
 	@Override
 	public void load(String... args) {

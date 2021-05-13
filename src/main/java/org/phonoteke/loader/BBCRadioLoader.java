@@ -23,6 +23,10 @@ public class BBCRadioLoader extends PodcastLoader
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
+	public static void main(String[] args) {
+		new BBCRadioLoader().load("anniemac");
+	}
+	
 	@Override
 	public void load(String... args) 
 	{
@@ -31,24 +35,24 @@ public class BBCRadioLoader extends PodcastLoader
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			BBCRadioLoader.url = show.getString("url");
+			BBCRadioLoader.artist = show.getString("title");
+			BBCRadioLoader.source = show.getString("source");
+			BBCRadioLoader.authors = show.get("authors", List.class);
 			
 			int pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-			LOGGER.info("Crawling " + artist + " (" + pages + " pages)");
+			LOGGER.info("Crawling " + BBCRadioLoader.artist + " (" + pages + " pages)");
 			for(int j = 1; j <= pages; j++) { 
-				crawl(url + "?page=" + j);
+				crawl(BBCRadioLoader.url + "?page=" + j);
 			}
-			updateLastEpisodeDate(source);
+			updateLastEpisodeDate(RadioRaiLoader.source);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(BBCRadioLoader.url);
 	}
 
 	@Override

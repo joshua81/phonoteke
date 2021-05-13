@@ -41,20 +41,21 @@ public class RadioRaiLoader extends PodcastLoader
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			RadioRaiLoader.url = show.getString("url");
+			RadioRaiLoader.artist = show.getString("title");
+			RadioRaiLoader.source = show.getString("source");
+			RadioRaiLoader.authors = show.get("authors", List.class);
+			
 			LOGGER.info("Crawling " + artist);
-			crawl(url);
-			updateLastEpisodeDate(source);
+			crawl(RadioRaiLoader.url);
+			updateLastEpisodeDate(RadioRaiLoader.source);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
+		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
 			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}

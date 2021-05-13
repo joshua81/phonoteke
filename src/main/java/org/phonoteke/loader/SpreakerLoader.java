@@ -39,13 +39,14 @@ public class SpreakerLoader extends PodcastLoader
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			SpreakerLoader.url = show.getString("url");
+			SpreakerLoader.artist = show.getString("title");
+			SpreakerLoader.source = show.getString("source");
+			SpreakerLoader.authors = show.get("authors", List.class);
+			
 			LOGGER.info("Crawling " + artist);
-			crawl(url);
-			updateLastEpisodeDate(source);
+			crawl(SpreakerLoader.url);
+			updateLastEpisodeDate(SpreakerLoader.source);
 		}
 	}
 

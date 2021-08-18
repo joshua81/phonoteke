@@ -30,7 +30,29 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 
 public abstract class HumanBeats extends WebCrawler
 {
-	protected static final List<String> SEPARATORS = Lists.newArrayList(">", ":", " – ", " - ", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+", "\\band\\b", "\\bwith\\b", "\\be\\b");
+	protected static final List<String> SEPARATORS = Lists.newArrayList(
+			">", 
+			":", 
+			"–", 
+			"-", 
+			",", 
+			";", 
+			"\"", 
+			"'", 
+			"“", 
+			"”", 
+			"‘", 
+			"’", 
+			"/", 
+			"&", 
+			"\\+", 
+			"\\band\\b", 
+			"\\bwith\\b", 
+			"\\be\\b",
+			"\\by\\b",
+			"\\bx\\b",
+			"\\baka\\b",
+			"\\bvs[.]{0,1}\\b");
 
 	protected static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
 	protected static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
@@ -46,14 +68,22 @@ public abstract class HumanBeats extends WebCrawler
 	protected static final String FEAT8 = "(.{1,100}?) - ([\\(\\[]{0,1}[0-9]{4}[\\)\\]]{0,1}) Remaster";
 	protected static final List<String> FEAT = Lists.newArrayList(FEAT1, FEAT2, FEAT3, FEAT4, FEAT5, FEAT6, FEAT7, FEAT8);
 
-	protected static final String AKA1 = "(?i)(.{1,100}?) aka (.{1,200})";
-	protected static final List<String> AKA = Lists.newArrayList(AKA1);
-
 	protected static final String NA = "na";
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 1;
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
-	protected static final List<String> TRACKS_TRIM = Lists.newArrayList("100% Bellamusica ®", "PLAYLIST:", "PLAYLIST", "TRACKLIST:", "TRACKLIST", "PLAY:", "PLAY", "LIST:", "LIST", "TRACKS:", "TRACKS");
+	protected static final List<String> TRACKS_TRIM = Lists.newArrayList(
+			"100% Bellamusica ®", 
+			"PLAYLIST:", 
+			"PLAYLIST", 
+			"TRACKLIST:", 
+			"TRACKLIST", 
+			"PLAY:", 
+			"PLAY", 
+			"LIST:", 
+			"LIST", 
+			"TRACKS:", 
+			"TRACKS");
 	protected static final int THRESHOLD = 90;
 	protected static final int SCORE = 60;
 	protected static final int TRACKS_SIZE = 6;
@@ -108,7 +138,7 @@ public abstract class HumanBeats extends WebCrawler
 		}
 	}
 
-	public HumanBeats() {
+	protected HumanBeats() {
 		try
 		{
 			Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -201,13 +231,6 @@ public abstract class HumanBeats extends WebCrawler
 				break;
 			}
 		}
-		for(String match : AKA) {
-			Matcher matcher = Pattern.compile(match).matcher(artist);
-			if(matcher.matches()) {
-				artist = matcher.group(2);
-				break;
-			}
-		}
 
 		// song
 		song = cleanText(song);
@@ -215,13 +238,6 @@ public abstract class HumanBeats extends WebCrawler
 			Matcher matcher = Pattern.compile(match).matcher(song);
 			if(matcher.matches()) {
 				song = matcher.group(1);
-				break;
-			}
-		}
-		for(String match : AKA) {
-			Matcher matcher = Pattern.compile(match).matcher(song);
-			if(matcher.matches()) {
-				song = matcher.group(2);
 				break;
 			}
 		}

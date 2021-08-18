@@ -3,21 +3,23 @@ div.author {
     height: 50vw;
     max-width: 200px;
     max-height: 200px;
+    padding: 2px;
+    background: none;
     position: relative;
 }
   
 a.author {
     width: 50vw;
     height: 50vw;
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 196px;
+    max-height: 196px;
 }
   
 img.author {
     width: 50vw;
     height: 50vw;
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 196px;
+    max-height: 196px;
     object-fit:cover;
 }
 

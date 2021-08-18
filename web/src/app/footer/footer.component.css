@@ -1,6 +1,5 @@
 .footer {
   height: 60px;
-  background-color: #282D32;
 }
 
 .icon {
@@ -17,7 +16,7 @@ span.cc {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #C9CACC;
+  background: #282D32;
   cursor: pointer;
 }
 
@@ -28,7 +27,7 @@ span.github {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #C9CACC;
+  background: #282D32;
   cursor: pointer;
 }
 
@@ -39,7 +38,7 @@ span.twitter {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #C9CACC;
+  background: #282D32;
   cursor: pointer;
 }
 
@@ -50,7 +49,7 @@ span.telegram {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #C9CACC;
+  background: #282D32;
   cursor: pointer;
 }
 
@@ -61,13 +60,13 @@ span.mail {
   height: 20px;
   margin-top: 5px;
   margin-left: 5px;
-  background: #C9CACC;
+  background: #282D32;
   cursor: pointer;
 }
 
 .api {
   border-radius: 50%;
-  background: #C9CACC;
+  background: #282D32;
   width: 24px;
   height: 24px;
   padding-top: 7px;

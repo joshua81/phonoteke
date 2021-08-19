@@ -3,9 +3,8 @@
 }
 
 .icon {
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 
@@ -14,10 +13,7 @@ span.cc {
   mask: url("/images/cc.svg") no-repeat;
   width: 20px;
   height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
   background: #282D32;
-  cursor: pointer;
 }
 
 span.github {
@@ -25,10 +21,7 @@ span.github {
   mask: url("/images/github.svg") no-repeat;
   width: 20px;
   height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
   background: #282D32;
-  cursor: pointer;
 }
 
 span.twitter {
@@ -36,10 +29,7 @@ span.twitter {
   mask: url("/images/twitter.svg") no-repeat;
   width: 20px;
   height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
   background: #282D32;
-  cursor: pointer;
 }
 
 span.telegram {
@@ -47,10 +37,7 @@ span.telegram {
   mask: url("/images/telegram.svg") no-repeat;
   width: 20px;
   height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
   background: #282D32;
-  cursor: pointer;
 }
 
 span.linkedin {
@@ -58,10 +45,7 @@ span.linkedin {
   mask: url("/images/linkedin.svg") no-repeat;
   width: 20px;
   height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
   background: #282D32;
-  cursor: pointer;
 }
 
 .api {

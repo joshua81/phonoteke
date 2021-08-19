@@ -53,17 +53,6 @@ span.telegram {
   cursor: pointer;
 }
 
-span.mail {
-  display: inline-block;
-  mask: url("/images/mail.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  margin-top: 5px;
-  margin-left: 5px;
-  background: #282D32;
-  cursor: pointer;
-}
-
 span.linkedin {
   display: inline-block;
   mask: url("/images/linkedin.svg") no-repeat;

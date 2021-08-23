@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const robots = require('express-robots-txt');
 const cookieParser = require('cookie-parser');
 const app = express();
 const fs = require('fs');
@@ -47,6 +48,11 @@ app.use('/js', express.static('js'));
 app.use('/html', express.static('html'));
 app.use(express.static('web'));
 app.use(cookieParser());
+app.use(robots({
+	UserAgent: '*',
+	Disallow: '/',
+	CrawlDelay: '5'
+}));
 
 app.get('/api/docs', async(req, res)=>{
 	var result = await findDocs(req.query.t, req.query.p, req.query.q, req.query.s);

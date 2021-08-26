@@ -113,7 +113,7 @@ app.get('/api/login', async(req, res)=>{
 	console.log('Login to Spotify');
 	res.redirect('https://accounts.spotify.com/authorize?' +
 			'response_type=code&' + 
-			'scope=user-read-private%20user-read-playback-state%20user-modify-playback-state&' + 
+			'scope=user-library-read%20user-library-modify%20user-read-private%20user-read-playback-state%20user-modify-playback-state&' + 
 			'client_id=' + client_id + '&' + 
 			'redirect_uri=' + redirect_uri);
 });

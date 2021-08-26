@@ -44,15 +44,20 @@ export class DocComponent implements OnInit {
     this.meta.updateTag({ name: 'og:image', content: this.doc.cover });
     this.meta.updateTag({ name: 'og:description', content: this.doc.description });
 
-    this.links = null;
     this.loadLinks();
+    this.loadTracks();
+  }
+
+  loadTracks() {
+    if(this.doc.tracks && this.doc.tracks.length > 0) {
+      this.app.checkTracks(this.doc.tracks);
+    }
   }
 
   loadLinks() {
-    //this.app.loading = true;
+    this.links = null;
     this.http.get('/api/docs/' + this.id + '/links').subscribe(
       (data: any) => {
-        //this.app.loading = false;
         this.links = data;
       });
   }

@@ -21,6 +21,10 @@
                     <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
                 </div>
             </div>
+            <div *ngIf="app.player" class="ml-2">
+                <span *ngIf="track.spotify && !track?.saved" class="love" (click)="app.saveTrack(track, true)"></span>
+                <span *ngIf="track.spotify && track?.saved" class="love-selected" (click)="app.saveTrack(track, false)"></span>
+            </div>
         </div>
     </div>
 </div>

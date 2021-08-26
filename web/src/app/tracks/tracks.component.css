@@ -58,3 +58,25 @@ span.album {
     background: #FFFFFF;
     cursor: pointer;
 }
+
+span.love {
+    display: inline-block;
+    mask: url("/images/love.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #888888;
+    cursor: pointer;
+}
+
+span.love-selected {
+    display: inline-block;
+    mask: url("/images/love-selected.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #F80046;
+    cursor: pointer;
+}

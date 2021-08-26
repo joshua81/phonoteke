@@ -64,6 +64,57 @@ export class AppComponent {
     }
   }
 
+  checkTracks(tracks: any[]) {
+    if(this.isDesktop && tracks && tracks.length > 0) {
+      const token = this.cookieService.get('spotify-token');
+      if(token != null && token != '') {
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        var ids = tracks.filter(track => track.spotify != null).
+          map(track => track['spotify']);
+        this.http.get('https://api.spotify.com/v1/me/tracks/contains?ids=' + ids.join(), options).subscribe(
+          (data: any) => {
+            if(data && data.length > 0) {
+              for (var i = 0; i < tracks.length; i++) {
+                if(tracks[i].spotify) {
+                  tracks[i].saved = data.shift();
+                } 
+              }
+            }
+          },
+          error => {
+            this.refreshToken();
+          });
+      }
+    }
+  }
+
+  saveTrack(track: any, save: boolean) {
+    if(track != null && track.spotify != null) {
+      const token = this.cookieService.get('spotify-token');
+      if(token != null && token != '') {
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        if(save) {
+          this.http.put('https://api.spotify.com/v1/me/tracks?ids=' + track.spotify, null, options).subscribe(
+            (data: any) => {track.saved = true},
+            error => {
+              this.refreshToken();
+          });
+        }
+        else {
+          this.http.delete('https://api.spotify.com/v1/me/tracks?ids=' + track.spotify, options).subscribe(
+            (data: any) => {track.saved = false},
+            error => {
+              this.refreshToken();
+          });
+        }
+      }
+    }
+  }
+
   loadDevices() {
     if(this.isDesktop) {
       const token = this.cookieService.get('spotify-token');
@@ -97,7 +148,7 @@ export class AppComponent {
         headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
       };
       this.http.put('https://api.spotify.com/v1/me/player', body, options).subscribe(
-        (data: any) => this.player = device,
+        (data: any) => {this.player = device},
         error => {
           this.refreshToken();
       });

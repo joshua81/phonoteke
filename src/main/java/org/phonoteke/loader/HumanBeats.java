@@ -223,12 +223,14 @@ public abstract class HumanBeats extends WebCrawler
 				if(m.matches()) {
 					track = m.group(2)+ "|" + m.group(3);
 					List<String> chunks = Arrays.asList(track.split("\\|"));
-					for(int middle = 1; middle < chunks.size(); middle++) {
-						String artist = String.join(" ", chunks.subList(0, middle));
-						for(int end = middle+1; end <= chunks.size(); end++) {
-							String song = String.join(" ", chunks.subList(middle, end));
-							if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
-								matches.add(parseArtistSong(artist, song));
+					for(int i = 1; i < chunks.size(); i++) {
+						for(int k = 1; k <= i; k++) {
+							String artist = String.join(" ", chunks.subList(0, k));
+							for(int j = i+1; j <= chunks.size(); j++) {
+								String song = String.join(" ", chunks.subList(i, j));
+								if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
+									matches.add(parseArtistSong(artist, song));
+								}
 							}
 						}
 					}

@@ -3,6 +3,7 @@ package org.phonoteke.loader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public abstract class AbstractCrawler extends HumanBeats
 {
+	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
 
 	protected void crawl(String url)
@@ -46,8 +48,10 @@ public abstract class AbstractCrawler extends HumanBeats
 			LOGGER.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
 			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+			config.setUserAgentString(USER_AGENT);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+			robotstxtConfig.setUserAgentName(USER_AGENT);
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);

@@ -55,9 +55,11 @@ public class RadioRaiLoader extends PodcastLoader
 			RadioRaiLoader.source = show.getString("source");
 			RadioRaiLoader.authors = show.get("authors", List.class);
 
-			LOGGER.info("Crawling " + artist);
-			crawl(RadioRaiLoader.url);
-			updateLastEpisodeDate(RadioRaiLoader.source);
+			if(source.equals(MUSICALBOX)) {
+				LOGGER.info("Crawling " + artist);
+				crawl(RadioRaiLoader.url);
+				updateLastEpisodeDate(RadioRaiLoader.source);
+			}
 		}
 	}
 
@@ -174,7 +176,7 @@ public class RadioRaiLoader extends PodcastLoader
 
 	protected List<org.bson.Document> getTracks(JsonArray tracks) 
 	{
-		return MUSICALBOX.equals(source) ? Lists.newArrayList() : checkTracks(null);
+		return Lists.newArrayList();
 	}
 
 	protected String getAudio(String url) 

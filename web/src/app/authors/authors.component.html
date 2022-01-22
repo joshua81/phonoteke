@@ -1,13 +1,38 @@
 <div class="container-fluid p-0">
-  <div class="d-flex flex-wrap justify-content-center w-100">
-    <div *ngFor="let author of authors">
+  <!-- podcasts -->
+  <div class="d-flex flex-wrap justify-content-center w-100 mt-5">
+    <div *ngFor="let podcast of podcasts; let i = index">
       <div class="author card">
-        <a class="author" [routerLink]="['/' + author.source]">
-          <img class="author card-img-top" src="{{author.cover}}" loading="lazy"/>
-          <h1 class="author font-weight-bold text-white">{{author.name}}</h1>
+        <h1 *ngIf="i == 0" class="title">PODCASTS</h1>
+        <a class="author" [routerLink]="['/' + podcast.source]">
+          <img class="author card-img-top" src="{{podcast.cover}}" loading="lazy"/>
+          <h1 class="author font-weight-bold text-white">{{podcast.name}}</h1>
         </a>
-        <div *ngIf="app.gtYesterday(author.lastEpisodeDate)" class="yesterday"></div>
+        <div *ngIf="app.gtYesterday(podcast.lastEpisodeDate)" class="yesterday"></div>
       </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center m-2">
+    <div class="plus" (click)="scollPodcasts()">
+      <span class="plus"></span>
+    </div>
+  </div>
+
+  <!-- albums -->
+  <div class="d-flex flex-wrap justify-content-center w-100 mt-5">
+    <div *ngFor="let album of albums; let i = index">
+      <div class="author card">
+        <h1 *ngIf="i == 0" class="title">ALBUMS</h1>
+        <a class="author" [routerLink]="['/docs/' + album.id]">
+          <img class="author card-img-top" src="{{album.cover}}" loading="lazy"/>
+          <h1 class="author font-weight-bold text-white">{{album.artist}}</h1>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center m-2">
+    <div class="plus" (click)="scrollAlbums()">
+      <span class="plus"></span>
     </div>
   </div>
 </div>

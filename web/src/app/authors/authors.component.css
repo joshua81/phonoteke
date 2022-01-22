@@ -23,6 +23,14 @@ img.author {
     object-fit:cover;
 }
 
+h1.title {
+    color: #408ea3;
+    font-weight: 600;
+
+    position: absolute;
+    top: -20px;
+}
+
 h1.author {
     font-size: 30px;
     line-height: 0.9;
@@ -49,4 +57,26 @@ h1.author {
     height: 10px;
     background: #18A2B8;
   }
+
+span.plus {
+    display: inline-block;
+    mask: url("/images/plus.svg") no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+    margin-left: 7px;
+    padding: 0px;
+    background: #408ea3;
+    cursor: pointer;
+}
+
+div.plus {
+    width: 32px;
+    height: 32px;
+
+    border-width: 2px;
+    border-color: #408ea3;
+    border-style: solid;
+    cursor: pointer;
+}
   

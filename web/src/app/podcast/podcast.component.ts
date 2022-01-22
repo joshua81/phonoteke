@@ -60,7 +60,7 @@ export class PodcastComponent implements OnInit {
     this.docs = [];
     this.app.loading = true;
 
-    this.http.get('/api/docs?t=podcast&p=' + this.page + '&q=' + this.searchText + '&s=' + this.source.source).subscribe(
+    this.http.get('/api/podcasts?p=' + this.page + '&q=' + this.searchText + '&s=' + this.source.source).subscribe(
       (data: any) => {
         this.app.loading = false;
         this.docsLoaded(data);
@@ -73,7 +73,7 @@ export class PodcastComponent implements OnInit {
 
   scrollDocs() {
     this.page++;
-    this.http.get('/api/docs?t=podcast&p=' + this.page + '&q=' + this.searchText + '&s=' + this.source.source).subscribe(
+    this.http.get('/api/podcasts?p=' + this.page + '&q=' + this.searchText + '&s=' + this.source.source).subscribe(
       (data: any) => this.docsLoaded(data));
   }
 

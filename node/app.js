@@ -54,38 +54,34 @@ app.use(robots({
 	CrawlDelay: '5'
 }));
 
-app.get('/api/docs', async(req, res)=>{
-	var result = await findDocs(req.query.t, req.query.p, req.query.q, req.query.s);
-	res.send(result);
-});
-
-app.get('/api/docs/albums', async(req, res)=>{
+app.get('/api/albums', async(req, res)=>{
 	var result = await findDocs('album', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
-app.get('/api/docs/artists', async(req, res)=>{
+app.get('/api/artists', async(req, res)=>{
 	var result = await findDocs('artist', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
-app.get('/api/docs/concerts', async(req, res)=>{
+app.get('/api/concerts', async(req, res)=>{
 	var result = await findDocs('concert', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
-app.get('/api/docs/interviews', async(req, res)=>{
+app.get('/api/interviews', async(req, res)=>{
 	var result = await findDocs('interview', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
-app.get('/api/docs/podcasts', async(req, res)=>{
+app.get('/api/podcasts', async(req, res)=>{
 	var result = await findDocs('podcast', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/sources', async(req, res)=>{
-	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).sort({"lastEpisodeDate":-1, "name":1}).toArray();
+	var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
+	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).skip(page*18).limit(18).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 

@@ -13,26 +13,47 @@ import { AppComponent } from '../app.component';
 })
 export class AuthorsComponent implements OnInit {
   searchText: string = '';
-  docs = [];
-  authors = [];
-  page: number = 0;
+  albums = [];
+  podcasts = [];
+  albumsPage: number = 0;
+  podcastsPage: number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({source: params[0].source, searchText: params[1].q})))
     .subscribe(params => {
-        window.scrollTo(0, 0);
-        this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
-        this.loadSources();
+      window.scrollTo(0, 0);
+      this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
+      this.loadPodcasts();
+      this.loadAlbums();
     });
   }
 
   ngOnInit() {}
 
-  loadSources() {
-    if(this.authors.length == 0) {
-      this.http.get('/api/sources').subscribe(
-        (data: any) => this.authors.push.apply(this.authors, data));
-    }
+  loadPodcasts() {
+    this.podcasts = [];
+    this.podcastsPage = 0;
+    this.http.get('/api/sources').subscribe(
+      (data: any) => this.podcasts.push.apply(this.podcasts, data));
+  }
+
+  scollPodcasts() {
+    this.podcastsPage++;
+    this.http.get('/api/sources?p=' + this.podcastsPage).subscribe(
+      (data: any) => this.podcasts.push.apply(this.podcasts, data));
+  }
+
+  loadAlbums() {
+    this.albums = [];
+    this.albumsPage = 0;
+    this.http.get('/api/albums?q=' + this.searchText).subscribe(
+      (data: any) => this.albums.push.apply(this.albums, data));
+  }
+
+  scrollAlbums() {
+    this.albumsPage++;
+    this.http.get('/api/albums?p=' + this.albumsPage + '&q=' + this.searchText).subscribe(
+      (data: any) => this.albums.push.apply(this.albums, data));
   }
 }

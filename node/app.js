@@ -75,27 +75,27 @@ app.get('/api/interviews', async(req, res)=>{
 });
 
 app.get('/api/podcasts', async(req, res)=>{
-	var result = await findDocs('podcast', req.query.p, req.query.q, req.query.s);
-	res.send(result);
-});
-
-app.get('/api/sources', async(req, res)=>{
 	var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
 	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).skip(page*18).limit(18).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 
-app.get('/api/sources/:source', async(req, res)=>{
+app.get('/api/podcasts/:source', async(req, res)=>{
 	var result = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).toArray();
 	res.send(result);
 });
 
-app.get('/api/docs/:id', async(req, res)=>{
+app.get('/api/podcasts/:source/episodes', async(req, res)=>{
+	var result = await findDocs('podcast', req.query.p, req.query.q, req.params.source);
+	res.send(result);
+});
+
+app.get('/api/:id', async(req, res)=>{
 	var result = await findDoc(req.params.id);
 	res.send(result);
 });
 
-app.get('/api/docs/:id/links', async(req, res)=>{
+app.get('/api/:id/links', async(req, res)=>{
 	var result = await findLinks(req.params.id);
 	res.send(result);
 });

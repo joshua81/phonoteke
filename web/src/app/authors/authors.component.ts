@@ -34,13 +34,13 @@ export class AuthorsComponent implements OnInit {
   loadPodcasts() {
     this.podcasts = [];
     this.podcastsPage = 0;
-    this.http.get('/api/sources').subscribe(
+    this.http.get('/api/podcasts').subscribe(
       (data: any) => this.podcasts.push.apply(this.podcasts, data));
   }
 
   scollPodcasts() {
     this.podcastsPage++;
-    this.http.get('/api/sources?p=' + this.podcastsPage).subscribe(
+    this.http.get('/api/podcasts?p=' + this.podcastsPage).subscribe(
       (data: any) => this.podcasts.push.apply(this.podcasts, data));
   }
 

@@ -35,8 +35,8 @@ import { AuthorsComponent } from './authors/authors.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: AuthorsComponent},
-      {path: ':source', component: PodcastComponent},
-      {path: 'docs/:id', component: DocComponent}]),
+      {path: 'podcasts/:source', component: PodcastComponent},
+      {path: ':id', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

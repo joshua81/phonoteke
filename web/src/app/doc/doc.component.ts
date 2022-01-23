@@ -27,7 +27,7 @@ export class DocComponent implements OnInit {
 
   loadDoc() {
     this.app.loading = true;
-    this.http.get('/api/docs/' + this.id).subscribe(
+    this.http.get('/api/' + this.id).subscribe(
       (data: any) => {
         this.app.loading = false;
         this.setDoc(data[0]);
@@ -56,7 +56,7 @@ export class DocComponent implements OnInit {
 
   loadLinks() {
     this.links = null;
-    this.http.get('/api/docs/' + this.id + '/links').subscribe(
+    this.http.get('/api/' + this.id + '/links').subscribe(
       (data: any) => {
         this.links = data;
       });

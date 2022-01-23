@@ -4,7 +4,7 @@
     <div class="d-flex flex-wrap justify-content-center">
       <div *ngFor="let doc of docs">
         <div class="cover card">
-          <a class="cover" [routerLink]="['/docs/' + doc.id]">
+          <a class="cover" [routerLink]="['/' + doc.id]">
             <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}" loading="lazy"/>
             <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}" loading="lazy"/>
           </a>

@@ -7,11 +7,11 @@ import { map } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
 
 @Component({
-  selector: 'app-authors',
-  templateUrl: './authors.component.html',
-  styleUrls: ['./authors.component.css']
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
-export class AuthorsComponent implements OnInit {
+export class HomeComponent implements OnInit {
   searchText: string = '';
   albums = [];
   podcasts = [];

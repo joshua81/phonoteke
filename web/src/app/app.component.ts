@@ -455,7 +455,7 @@ export class AppComponent {
     if (window.navigator.maxTouchPoints > 0) { 
       hasTouchScreen = true;
     } 
-    else if (window.navigator.msMaxTouchPoints > 0) {
+    else if (window.navigator.maxTouchPoints > 0) {
       hasTouchScreen = true;
     } 
     else {

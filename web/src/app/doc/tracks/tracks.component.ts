@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AppComponent } from '../app.component';
-import {DocComponent} from '../doc/doc.component';
+import { AppComponent } from '../../app.component';
+import {DocComponent} from '../doc.component';
 
 @Component({
   selector: 'app-tracks',

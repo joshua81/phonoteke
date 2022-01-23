@@ -12,16 +12,16 @@ import { PodcastComponent } from './podcast/podcast.component';
 import { PodcastMenuComponent } from './podcast/menu/menu.component';
 import { DocComponent } from './doc/doc.component';
 import { DocMenuComponent } from './doc/menu/menu.component';
-import { TracksComponent } from './tracks/tracks.component';
-import { VideoComponent } from './video/video.component';
-import { LinkComponent } from './link/link.component';
+import { TracksComponent } from './doc/tracks/tracks.component';
+import { VideoComponent } from './doc/video/video.component';
+import { LinkComponent } from './doc/link/link.component';
 import { FooterComponent } from './footer/footer.component';
-import { AuthorsComponent } from './authors/authors.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AuthorsComponent,
+    HomeComponent,
     PodcastComponent,
     PodcastMenuComponent,
     DocComponent,
@@ -34,7 +34,7 @@ import { AuthorsComponent } from './authors/authors.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([
-      {path: '', component: AuthorsComponent},
+      {path: '', component: HomeComponent},
       {path: 'podcasts/:source', component: PodcastComponent},
       {path: ':id', component: DocComponent}]),
     FormsModule,

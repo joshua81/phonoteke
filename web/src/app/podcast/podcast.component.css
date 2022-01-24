@@ -25,7 +25,7 @@ img.cover {
 }
   
 .card-body {
-    height: 140px;
+    height: 120px;
     position: relative;
 }
   
@@ -49,5 +49,27 @@ img.cover {
     width: 10px;
     height: 10px;
     background: #18A2B8;
-  }
+}
+
+span.plus {
+    display: inline-block;
+    mask: url("/images/plus.svg") no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+    margin-left: 7px;
+    padding: 0px;
+    background: #408ea3;
+    cursor: pointer;
+}
+
+div.plus {
+    width: 32px;
+    height: 32px;
+
+    border-width: 2px;
+    border-color: #408ea3;
+    border-style: solid;
+    cursor: pointer;
+}
   

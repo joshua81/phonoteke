@@ -90,16 +90,6 @@ app.get('/api/podcasts/:source/episodes', async(req, res)=>{
 	res.send(result);
 });
 
-app.get('/api/:id', async(req, res)=>{
-	var result = await findDoc(req.params.id);
-	res.send(result);
-});
-
-app.get('/api/:id/links', async(req, res)=>{
-	var result = await findLinks(req.params.id);
-	res.send(result);
-});
-
 app.get('/api/events/:id', async(req, res)=>{
 	const json = await findEvents(req.params.id);
 	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
@@ -170,17 +160,15 @@ app.get('/api/login/refresh', async(req,res)=>{
 	});
 });
 
-app.get('/docs/:id', async(req,res)=>{
-	var docs = await findDocSnippet(req.params.id);
-	if(docs && docs[0]) {
-		res.render('index', { 
-			title: docs[0].artist + ' - ' + docs[0].title,
-			type: 'music:' + docs[0].type,
-			url: 'https://humanbeats.appspot.com/docs/' + req.params.id,
-			cover: docs[0].coverM == null ? docs[0].cover : docs[0].coverM,
-			description: docs[0].description });
-	}
-})
+app.get('/api/:id', async(req, res)=>{
+	var result = await findDoc(req.params.id);
+	res.send(result);
+});
+
+app.get('/api/:id/links', async(req, res)=>{
+	var result = await findLinks(req.params.id);
+	res.send(result);
+});
 
 app.get('/*', (req,res)=>{
 	res.render('index', { 
@@ -193,12 +181,6 @@ app.get('/*', (req,res)=>{
 module.exports = app;
 
 //-----------------------------------------------
-
-async function findDocSnippet(id) {
-	console.log('Docs: id=' + id);
-	var result = await docs.find({'id': id}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1}).toArray();
-	return result;
-}
 
 async function findDoc(id) {
 	console.log('Docs: id=' + id);

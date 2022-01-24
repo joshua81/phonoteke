@@ -34,26 +34,46 @@ export class HomeComponent implements OnInit {
   loadPodcasts() {
     this.podcasts = [];
     this.podcastsPage = 0;
+    this.app.loading = true;
+
     this.http.get('/api/podcasts').subscribe(
-      (data: any) => this.podcasts.push.apply(this.podcasts, data));
+      (data: any) => {
+        this.podcasts.push.apply(this.podcasts, data);
+        this.app.loading = false;
+      });
   }
 
   scollPodcasts() {
     this.podcastsPage++;
+    this.app.loading = true;
+
     this.http.get('/api/podcasts?p=' + this.podcastsPage).subscribe(
-      (data: any) => this.podcasts.push.apply(this.podcasts, data));
+      (data: any) => {
+        this.podcasts.push.apply(this.podcasts, data);
+        this.app.loading = false;
+      });
   }
 
   loadAlbums() {
     this.albums = [];
     this.albumsPage = 0;
+    this.app.loading = true;
+
     this.http.get('/api/albums?q=' + this.searchText).subscribe(
-      (data: any) => this.albums.push.apply(this.albums, data));
+      (data: any) => {
+        this.albums.push.apply(this.albums, data);
+        this.app.loading = false;
+      });
   }
 
   scrollAlbums() {
     this.albumsPage++;
+    this.app.loading = true;
+
     this.http.get('/api/albums?p=' + this.albumsPage + '&q=' + this.searchText).subscribe(
-      (data: any) => this.albums.push.apply(this.albums, data));
+      (data: any) => {
+        this.albums.push.apply(this.albums, data);
+        this.app.loading = false;
+      });
   }
 }

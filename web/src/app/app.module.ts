@@ -17,11 +17,13 @@ import { VideoComponent } from './doc/video/video.component';
 import { LinkComponent } from './doc/link/link.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
+import { HomeMenuComponent } from './home/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
+    HomeMenuComponent,
     PodcastComponent,
     PodcastMenuComponent,
     DocComponent,

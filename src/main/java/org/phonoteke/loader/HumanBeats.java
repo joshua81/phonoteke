@@ -22,7 +22,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
+import com.mongodb.internal.operation.OrderBy;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

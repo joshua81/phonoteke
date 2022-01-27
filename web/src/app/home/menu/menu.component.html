@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top justify-content-center hscroll">
+  <div class="container-fluid">
+    <div class="d-flex flex-row align-items-center w-100">
+      <div class="ml-2 mr-2" [ngStyle]="{'width':'20px'}"></div>
+      <div *ngIf="!showSearch" class="w-100 ml-2 mr-2">
+        <h2 class="text-center text-truncate-1">Human Beats</h2>
+      </div>
+      <form *ngIf="showSearch" class="search w-100 ml-2 mr-2">
+        <input #input class="form-control" name="search" type="search"
+        placeholder="Cerca" aria-label="Cerca" [(ngModel)]="searchText" (search)="search()">
+      </form>
+      <div class="d-flex flex-row-reverse align-items-center ml-2 mr-2" [ngStyle]="{'width':'20px'}" (click)="toggleSearch()">
+        <span class="search"></span>
+      </div>
+    </div>
+  </div>
+</nav>

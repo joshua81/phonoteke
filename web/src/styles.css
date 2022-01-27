@@ -37,11 +37,8 @@ html, body {
 .navbar {
     padding: 0px;
     height: 40px;
-    background: #FFFFFF;
+    background: rgba(233,240,242,1);
     opacity: 0.9;
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-bottom-color: #C8C8C8;
 }
 
 .hscroll {

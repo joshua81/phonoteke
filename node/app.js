@@ -170,13 +170,25 @@ app.get('/api/:id/links', async(req, res)=>{
 	res.send(result);
 });
 
+app.get('/:id', async(req,res)=>{
+	var doc = await findDoc(req.params.id);
+	if(doc) {
+		res.render('index', { 
+			'og:title': doc.artist + ' - ' + doc.title,
+			'og:type': 'music:' + doc.type,
+			'og:url': 'https://humanbeats.appspot.com/' + req.params.id,
+			'og:cover': doc.coverM == null ? doc.cover : doc.coverM,
+			'og:description': doc.description });
+	}
+});
+
 app.get('/*', (req,res)=>{
 	res.render('index', { 
-		title: 'Human Beats',
-		type: 'music',
-		url: 'https://humanbeats.appspot.com/',
-		cover: 'https://humanbeats.appspot.com/images/logo.png',
-		description: 'Human Beats' });
+		'og:title': 'Human Beats',
+		'og:type': 'music',
+		'og:url': 'https://humanbeats.appspot.com/',
+		'og:cover': 'https://humanbeats.appspot.com/images/logo.png',
+		'og:description': 'Human Beats' });
 })
 module.exports = app;
 

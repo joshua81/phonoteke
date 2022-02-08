@@ -40,7 +40,7 @@ export class DocComponent implements OnInit {
     this.title.setTitle(this.doc.artist + ' - ' + this.doc.title);
     this.meta.updateTag({ name: 'og:title', content: this.doc.artist + ' - ' + this.doc.title });
     this.meta.updateTag({ name: 'og:type', content: 'music:' + this.doc.type });
-    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/docs/' + this.doc.id });
+    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/' + this.doc.id });
     this.meta.updateTag({ name: 'og:image', content: this.doc.cover });
     this.meta.updateTag({ name: 'og:description', content: this.doc.description });
 

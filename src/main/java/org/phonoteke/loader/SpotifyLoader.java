@@ -32,7 +32,6 @@ import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.follow.FollowPlaylistRequest;
-import com.wrapper.spotify.requests.data.follow.UnfollowPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.ReplacePlaylistsItemsRequest;
@@ -227,8 +226,8 @@ public class SpotifyLoader extends HumanBeats
 						id = playlist.getId();
 						AddItemsToPlaylistRequest req2 = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req2.execute();
-						UnfollowPlaylistRequest req3 = spotify.unfollowPlaylist(id).build();
-						req3.execute();
+//						UnfollowPlaylistRequest req3 = spotify.unfollowPlaylist(id).build();
+//						req3.execute();
 						page.append("spalbumid", id);
 						page.append("dirty", false);
 						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");

@@ -13,7 +13,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="(podcastsPage+1)*18 == podcasts.length" class="d-flex justify-content-center m-4">
+  <div *ngIf="(podcastsPage+1)*PAGE_SIZE == podcasts.length" class="d-flex justify-content-center m-4">
     <div class="plus" (click)="scollPodcasts()">
       <span class="plus"></span>
     </div>
@@ -31,7 +31,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="(albumsPage+1)*18 == albums.length" class="d-flex justify-content-center m-4">
+  <div *ngIf="(albumsPage+1)*PAGE_SIZE == albums.length" class="d-flex justify-content-center m-4">
     <div class="plus" (click)="scrollAlbums()">
       <span class="plus"></span>
     </div>

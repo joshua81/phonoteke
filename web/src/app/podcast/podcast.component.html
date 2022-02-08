@@ -17,7 +17,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="(page+1)*18 == docs.length" class="d-flex justify-content-center m-4">
+  <div *ngIf="(page+1)*PAGE_SIZE == docs.length" class="d-flex justify-content-center m-4">
     <div class="plus" (click)="scrollDocs()">
       <span class="plus"></span>
     </div>

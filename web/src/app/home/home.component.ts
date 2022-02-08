@@ -12,6 +12,7 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  PAGE_SIZE: number = 12;
   searchText: string = '';
   albums = [];
   podcasts = [];
@@ -22,14 +23,20 @@ export class HomeComponent implements OnInit {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({source: params[0].source, searchText: params[1].q})))
     .subscribe(params => {
-      window.scrollTo(0, 0);
-      this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
-      this.loadPodcasts();
-      this.loadAlbums();
+      var searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
+      if(this.searchText != searchText) {
+        this.searchText = searchText;
+        window.scrollTo(0, 0);
+        this.loadPodcasts();
+        this.loadAlbums();
+      }
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadPodcasts();
+    this.loadAlbums();
+  }
 
   loadPodcasts() {
     this.podcasts = [];

@@ -12,6 +12,7 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./podcast.component.css']
 })
 export class PodcastComponent implements OnInit {
+  PAGE_SIZE: number = 12;
   searchText: string = '';
   docs = [];
   source = null;
@@ -21,10 +22,13 @@ export class PodcastComponent implements OnInit {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({source: params[0].source, searchText: params[1].q})))
     .subscribe(params => {
-        window.scrollTo(0, 0);
-        this.searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
+        var searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
         var source = params.source;
-        this.loadSource(source);
+        if(this.source != source || this.searchText != searchText) {
+          this.searchText = searchText;
+          window.scrollTo(0, 0);
+          this.loadSource(source);
+        }
     });
   }
 

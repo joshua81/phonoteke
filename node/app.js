@@ -8,6 +8,7 @@ const fs = require('fs');
 const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 8080;
+const PAGE_SIZE = 12;
 
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const client_id = 'a6c3686d32cb48d4854d88915d3925be';
@@ -76,7 +77,7 @@ app.get('/api/interviews', async(req, res)=>{
 
 app.get('/api/podcasts', async(req, res)=>{
 	var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).skip(page*18).limit(18).sort({"lastEpisodeDate":-1, "name":1}).toArray();
+	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).skip(page*PAGE_SIZE).limit(PAGE_SIZE).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 
@@ -258,7 +259,7 @@ async function findDocs(t, p, q, s) {
 		}
 	}
 	
-	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*18).limit(18).sort({"date":-1}).toArray();
+	result = await docs.find(nql).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, description: 1, date: 1}).skip(page*PAGE_SIZE).limit(PAGE_SIZE).sort({"date":-1}).toArray();
 	return result;
 }
 
@@ -305,7 +306,7 @@ async function findLinks(id) {
 		albums = albums.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});
-		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"date":-1, "artist": 1}).limit(18).toArray();
+		var podcasts = await docs.find({$and: [{'type': 'podcast'}, {'tracks.spartistid': {'$in': artists}}]}).project({id: 1, type: 1, artist: 1, title: 1, cover: 1, coverL: 1, coverM: 1, coverS: 1, date: 1, year: 1}).sort({"date":-1, "artist": 1}).limit(PAGE_SIZE).toArray();
 		podcasts = podcasts.filter(function(value, index, arr){
 			return value.id != doc[0].id;
 		});

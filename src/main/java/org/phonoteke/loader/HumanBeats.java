@@ -107,6 +107,7 @@ public abstract class HumanBeats extends WebCrawler
 
 	protected MongoCollection<org.bson.Document> shows;
 	protected MongoCollection<org.bson.Document> docs;
+	protected MongoCollection<org.bson.Document> stats;
 	protected MongoCollection<org.bson.Document> authors;
 
 	protected enum TYPE {
@@ -166,6 +167,7 @@ public abstract class HumanBeats extends WebCrawler
 			docs = db.getCollection("docs");
 			shows = db.getCollection("shows");
 			authors = db.getCollection("authors");
+			stats = db.getCollection("stats");
 		} 
 		catch (Throwable t) 
 		{

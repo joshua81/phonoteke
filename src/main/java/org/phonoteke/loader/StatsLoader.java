@@ -26,6 +26,14 @@ public class StatsLoader extends HumanBeats
 	public static void main(String[] args) {
 		new StatsLoader().load("2022", "3", null);
 		new StatsLoader().load("2022", "3", "jamzsupernova");
+		new StatsLoader().load("2022", "3", "gillespeterson");
+		new StatsLoader().load("2022", "3", "musicalbox");
+		new StatsLoader().load("2022", "3", "blackalot");
+		new StatsLoader().load("2022", "3", "resetrefresh");
+		new StatsLoader().load("2022", "3", "rolloverhangover");
+		new StatsLoader().load("2022", "3", "theblessedmadonna");
+		new StatsLoader().load("2022", "3", "cassabertallot");
+		new StatsLoader().load("2022", "3", "petetong");
 	}
 
 	@Override
@@ -67,7 +75,7 @@ public class StatsLoader extends HumanBeats
 		TreeMap<BigDecimal, List<String>> topVideos = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> videos = Maps.newTreeMap();
 		Map<String, Document> trackVideos = Maps.newHashMap();
-		
+
 		MongoCursor<Document> i = getDocs(source, year, month);
 		i.forEachRemaining(page -> {
 			String s = page.getString("source");
@@ -125,8 +133,9 @@ public class StatsLoader extends HumanBeats
 			}
 		});
 
+		int date = year*100+month;
 		Document doc = new Document("source", source)
-				.append("month", year*100+month);
+				.append("date", date);
 
 		artists.keySet().forEach(a -> {
 			if(!topArtists.containsKey(artists.get(a))) {
@@ -177,7 +186,7 @@ public class StatsLoader extends HumanBeats
 				jsonSongs.add(getSong(trackSongs.get(s), score10));
 			});
 		}
-		doc.append("songs", subList(jsonSongs, 1000));
+		doc.append("tracks", subList(jsonSongs, 1000));
 
 		if(MapUtils.isNotEmpty(videos)) {
 			videos.keySet().forEach(a -> {
@@ -197,7 +206,10 @@ public class StatsLoader extends HumanBeats
 			}
 			doc.append("videos", subList(jsonVideos, 100));
 		}
-		LOGGER.info(doc.toJson());
+
+		stats.deleteOne(Filters.and(Filters.eq("source", source), Filters.eq("date", date)));
+		stats.insertOne(doc);
+		LOGGER.info(source + "-" + doc.getInteger("date") + " added");
 	}
 
 	private Float calculateScore(BigDecimal score, BigDecimal topScore) {

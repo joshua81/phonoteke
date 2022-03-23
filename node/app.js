@@ -18,10 +18,12 @@ const songkick_id = '1hOiIfT9pFTkyVkg';
 
 var docs = null;
 var authors = null;
+var stats = null;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
 	docs = client.db("mbeats").collection("docs");
 	authors = client.db("mbeats").collection("authors");
+	stats = client.db("mbeats").collection("stats");
 	console.log("Successfully Connected to MongoDB");
 	app.listen(PORT, () => {
 		console.log(`App listening on port ${PORT}`);
@@ -54,6 +56,16 @@ app.use(robots({
 	Disallow: '/',
 	CrawlDelay: '5'
 }));
+
+app.get('/api/stats/:date', async(req, res)=>{
+	var result = await stats.find({'source': null, 'date':parseInt(req.params.date)}).toArray();
+	res.send(result[0]);
+});
+
+app.get('/api/stats/:source/:date', async(req, res)=>{
+	var result = await stats.find({'source': req.params.source, 'date':parseInt(req.params.date)}).toArray();
+	res.send(result[0]);
+});
 
 app.get('/api/albums', async(req, res)=>{
 	var result = await findDocs('album', req.query.p, req.query.q, req.query.s);

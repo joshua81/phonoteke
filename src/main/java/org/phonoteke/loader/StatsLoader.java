@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +25,7 @@ public class StatsLoader extends HumanBeats
 
 	public static void main(String[] args) {
 		new StatsLoader().load("2022", "3", null);
+		new StatsLoader().load("2022", "3", "jamzsupernova");
 	}
 
 	@Override
@@ -32,92 +34,99 @@ public class StatsLoader extends HumanBeats
 		int year = Integer.parseInt(args[0]);
 		int month = Integer.parseInt(args[1]);
 		String source = args[2];
-		LOGGER.info("Calculating stats...");
-		LocalDateTime start = LocalDateTime.now().withYear(year).withMonth(month).with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0).withSecond(0);
-		LocalDateTime end = LocalDateTime.now().withYear(year).withMonth(month).with(TemporalAdjusters.lastDayOfMonth()).withHour(0).withMinute(0).withSecond(0);
+		load(year, month, source);
+	}
 
-		MongoCursor<Document> i = docs.find(Filters.and(
-				Filters.eq("type", "podcast"),
-//				Filters.eq("source", source), 
-				Filters.gt("date", start),
-				Filters.lt("date", end))).iterator();
+	private void load(int year, int month, String source)
+	{
 		Map<String, BigDecimal> weights = Maps.newHashMap();
 		if(source != null) {
 			weights.put(source, BigDecimal.ONE);
 		}
 		else {
-			while(i.hasNext()) 
-			{
-				Document page = i.next();
-				source = page.getString("source");
-				BigDecimal weight = weights.get(source);
+			MongoCursor<Document> i = getDocs(source, year, month);
+			i.forEachRemaining(page -> {
+				String s = page.getString("source");
+				BigDecimal weight = weights.get(s);
 				if(weight == null) {
 					weight = BigDecimal.ZERO;
 				}
-				weights.put(source, weight.add(BigDecimal.ONE));
-			}
+				weights.put(s, weight.add(BigDecimal.ONE));
+			});
 		}
 
-		i = docs.find(Filters.and(
-				Filters.eq("type", "podcast"),
-//				Filters.eq("source", source), 
-				Filters.gt("date", start),
-				Filters.lt("date", end))).iterator();
 		TreeMap<BigDecimal, List<String>> topArtists = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> artists = Maps.newTreeMap();
+		Map<String, Document> trackArtists = Maps.newHashMap();
 		TreeMap<BigDecimal, List<String>> topAlbums = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> albums = Maps.newTreeMap();
+		Map<String, Document> trackAlbums = Maps.newHashMap();
 		TreeMap<BigDecimal, List<String>> topSongs = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> songs = Maps.newTreeMap();
+		Map<String, Document> trackSongs = Maps.newHashMap();
 		TreeMap<BigDecimal, List<String>> topVideos = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> videos = Maps.newTreeMap();
-		while(i.hasNext()) 
-		{
-			Document page = i.next();
-			source = page.getString("source");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
-			{
-				for(org.bson.Document t : tracks)
-				{
-					String artist = t.getString("artist");
+		Map<String, Document> trackVideos = Maps.newHashMap();
+		
+		MongoCursor<Document> i = getDocs(source, year, month);
+		i.forEachRemaining(page -> {
+			String s = page.getString("source");
+			List<Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks)) {
+				tracks.forEach(t -> {
+					// Artist
+					String artist = t.getString("spartistid");
 					if(artist != null && !HumanBeats.NA.equals(artist)) {
 						BigDecimal artistNum = artists.get(artist);
 						if(artistNum == null) {
 							artistNum = BigDecimal.ZERO;
 						}
-						artists.put(artist, artistNum.add(BigDecimal.ONE.divide(weights.get(source), MathContext.DECIMAL32)));
+						BigDecimal score = artistNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+						artists.put(artist, score);
+						trackArtists.put(artist, t);
 					}
 
-					String album = t.getString("album");
+					// Album
+					String album = t.getString("spalbumid");
 					if(album != null && !HumanBeats.NA.equals(album)) {
-						BigDecimal albumNum = albums.get(artist + " - " + album);
+						BigDecimal albumNum = albums.get(album);
 						if(albumNum == null) {
 							albumNum = BigDecimal.ZERO;
 						}
-						albums.put(artist + " - " + album, albumNum.add(BigDecimal.ONE.divide(weights.get(source), MathContext.DECIMAL32)));
+						BigDecimal score = albumNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+						albums.put(album, score);
+						trackAlbums.put(album, t);
 					}
 
+					// Song
 					String song = t.getString("spotify");
 					if(song != null && !HumanBeats.NA.equals(song)) {
 						BigDecimal songNum = songs.get(song);
 						if(songNum == null) {
 							songNum = BigDecimal.ZERO;
 						}
-						songs.put(song, songNum.add(BigDecimal.ONE.divide(weights.get(source), MathContext.DECIMAL32)));
+						BigDecimal score = songNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+						songs.put(song, score);
+						trackSongs.put(song, t);
 					}
 
+					// Video
 					String video = t.getString("youtube");
 					if(video != null && !HumanBeats.NA.equals(video)) {
 						BigDecimal videoNum = videos.get(video);
 						if(videoNum == null) {
 							videoNum = BigDecimal.ZERO;
 						}
-						videos.put(video, videoNum.add(BigDecimal.ONE.divide(weights.get(source), MathContext.DECIMAL32)));
+						BigDecimal score = videoNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+						videos.put(video, score);
+						trackVideos.put(video, t);
 					}
-				}
+				});
 			}
-		}
+		});
+
+		Document doc = new Document("source", source)
+				.append("month", year*100+month);
 
 		artists.keySet().forEach(a -> {
 			if(!topArtists.containsKey(artists.get(a))) {
@@ -125,11 +134,16 @@ public class StatsLoader extends HumanBeats
 			}
 			topArtists.get(artists.get(a)).add(a);
 		});
-		BigDecimal top = topArtists.descendingKeySet().iterator().next();
-		for(BigDecimal rank : topArtists.descendingKeySet()) {
-			LOGGER.info("Artists: " + rank.divide(top, MathContext.DECIMAL32) + " -> " + topArtists.get(rank));
+
+		List<Document> jsonArtists = Lists.newArrayList();
+		BigDecimal topScore = topArtists.descendingKeySet().iterator().next();
+		for(BigDecimal score : topArtists.descendingKeySet()) {
+			final Float score10 = calculateScore(score, topScore);
+			topArtists.get(score).forEach(a -> {
+				jsonArtists.add(getArtist(trackArtists.get(a), score10));
+			});
 		}
-		LOGGER.info("--------------------");
+		doc.append("artists", subList(jsonArtists, 100));
 
 		albums.keySet().forEach(a -> {
 			if(!topAlbums.containsKey(albums.get(a))) {
@@ -137,11 +151,16 @@ public class StatsLoader extends HumanBeats
 			}
 			topAlbums.get(albums.get(a)).add(a);
 		});
-		top = topAlbums.descendingKeySet().iterator().next();
-		for(BigDecimal rank : topAlbums.descendingKeySet()) {
-			LOGGER.info("Albums: " + rank.divide(top, MathContext.DECIMAL32) + " -> " + topAlbums.get(rank));
+
+		List<Document> jsonAlbums = Lists.newArrayList();
+		topScore = topAlbums.descendingKeySet().iterator().next();
+		for(BigDecimal score : topAlbums.descendingKeySet()) {
+			final Float score10 = calculateScore(score, topScore);
+			topAlbums.get(score).forEach(a -> {
+				jsonAlbums.add(getAlbum(trackAlbums.get(a), score10));
+			});
 		}
-		LOGGER.info("--------------------");
+		doc.append("albums", subList(jsonAlbums, 100));
 
 		songs.keySet().forEach(s -> {
 			if(!topSongs.containsKey(songs.get(s))) {
@@ -149,22 +168,107 @@ public class StatsLoader extends HumanBeats
 			}
 			topSongs.get(songs.get(s)).add(s);
 		});
-		top = topSongs.descendingKeySet().iterator().next();
-		for(BigDecimal rank : topSongs.descendingKeySet()) {
-			LOGGER.info("Songs: " + rank.divide(top, MathContext.DECIMAL32) + " -> " + topSongs.get(rank));
-		}
-		LOGGER.info("--------------------");
 
-		videos.keySet().forEach(a -> {
-			if(!topVideos.containsKey(videos.get(a))) {
-				topVideos.put(videos.get(a), Lists.newArrayList());
-			}
-			topVideos.get(videos.get(a)).add(a);
-		});
-		top = topVideos.descendingKeySet().iterator().next();
-		for(BigDecimal rank : topVideos.descendingKeySet()) {
-			LOGGER.info("Videos: " + rank.divide(top, MathContext.DECIMAL32) + " -> " + topVideos.get(rank));
+		List<Document> jsonSongs = Lists.newArrayList();
+		topScore = topSongs.descendingKeySet().iterator().next();
+		for(BigDecimal score : topSongs.descendingKeySet()) {
+			final Float score10 = calculateScore(score, topScore);
+			topSongs.get(score).forEach(s -> {
+				jsonSongs.add(getSong(trackSongs.get(s), score10));
+			});
 		}
-		LOGGER.info("--------------------");
+		doc.append("songs", subList(jsonSongs, 1000));
+
+		if(MapUtils.isNotEmpty(videos)) {
+			videos.keySet().forEach(a -> {
+				if(!topVideos.containsKey(videos.get(a))) {
+					topVideos.put(videos.get(a), Lists.newArrayList());
+				}
+				topVideos.get(videos.get(a)).add(a);
+			});
+
+			List<Document> jsonVideos = Lists.newArrayList();
+			topScore = topVideos.descendingKeySet().iterator().next();
+			for(BigDecimal score : topVideos.descendingKeySet()) {
+				final Float score10 = calculateScore(score, topScore);
+				topVideos.get(score).forEach(v -> {
+					jsonVideos.add(getVideo(trackVideos.get(v), score10));
+				});
+			}
+			doc.append("videos", subList(jsonVideos, 100));
+		}
+		LOGGER.info(doc.toJson());
+	}
+
+	private Float calculateScore(BigDecimal score, BigDecimal topScore) {
+		return score.divide(topScore, MathContext.DECIMAL32).multiply(BigDecimal.TEN).floatValue();
+	}
+
+	private MongoCursor<Document> getDocs(String source, int year, int month) {
+		LocalDateTime start = LocalDateTime.now().withYear(year).withMonth(month).with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0).withSecond(0);
+		LocalDateTime end = LocalDateTime.now().withYear(year).withMonth(month).with(TemporalAdjusters.lastDayOfMonth()).withHour(0).withMinute(0).withSecond(0);
+
+		return source == null ? docs.find(Filters.and(
+				Filters.eq("type", "podcast"),
+				Filters.gt("date", start),
+				Filters.lt("date", end))).iterator() :
+
+					docs.find(Filters.and(
+							Filters.eq("type", "podcast"),
+							Filters.eq("source", source), 
+							Filters.gt("date", start),
+							Filters.lt("date", end))).iterator();
+	}
+
+	private Document getArtist(Document track, Float score) {
+		return new Document("score", score)
+				.append("artist", track.getString("artist"))
+				.append("spartistid", track.getString("spartistid"))
+				.append("artistid", replaceNA(track.getString("artistid")));
+	}
+
+	private Document getAlbum(Document track, Float score) {
+		return new Document("score", score)
+				.append("artist", track.getString("artist"))
+				.append("album", track.getString("album"))
+				.append("spartistid", track.getString("spartistid"))
+				.append("spalbumid", track.getString("spalbumid"))
+				.append("cover-s", track.getString("coverS"))
+				.append("cover-m", track.getString("coverM"))
+				.append("cover-l", track.getString("coverL"))
+				.append("artistid", replaceNA(track.getString("artistid")));
+	}
+
+	private Document getSong(Document track, Float score) {
+		return new Document("score", score)
+				.append("artist", track.getString("artist"))
+				.append("album", track.getString("album"))
+				.append("track", track.getString("track"))
+				.append("spartistid", track.getString("spartistid"))
+				.append("spalbumid", track.getString("spalbumid"))
+				.append("spotify", track.getString("spotify"))
+				.append("cover-s", track.getString("coverS"))
+				.append("cover-m", track.getString("coverM"))
+				.append("cover-l", track.getString("coverL"))
+				.append("artistid", replaceNA(track.getString("artistid")));
+	}
+
+	private Document getVideo(Document track, Float score) {
+		return new Document("score", score)
+				.append("artist", track.getString("artist"))
+				.append("album", track.getString("album"))
+				.append("track", track.getString("track"))
+				.append("spartistid", track.getString("spartistid"))
+				.append("spalbumid", track.getString("spalbumid"))
+				.append("youtube", track.getString("youtube"))
+				.append("artistid", replaceNA(track.getString("artistid")));
+	}
+
+	private String replaceNA(String val) {
+		return HumanBeats.NA.equals(val) ? null : val;
+	}
+
+	private List<Document> subList(List<Document> list, int size) {
+		return list.size() <= size ? list : list.subList(0, size);
 	}
 }

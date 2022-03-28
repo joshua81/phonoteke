@@ -17,8 +17,8 @@ export class AppComponent {
   isDesktop: boolean = false;
   youtube: SafeResourceUrl = null;
 
-  doc = null;
   player = null;
+  spalbumid = null;
   track = null;
   timer: Subscription = null;
 
@@ -155,87 +155,65 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(doc: any=null, track=null) {
+  playPauseSpotify(spalbumid:string, type:string, position:number=0) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
-      var currentPos: number = -1;
-      var newPos: number = 0;
-
-      if(this.doc != null && doc != null && this.doc.spalbumid == doc.spalbumid && this.track != null) {
-        currentPos = this.doc.tracks.
-          map(track => track.spotify).
-          filter(spotify => spotify != null).
-          indexOf(this.track.spotify);
-
-        newPos = currentPos;
-        if(track != null) {
-          newPos = this.doc.tracks.
-            map(track => track.spotify).
-            filter(spotify => spotify != null).
-            indexOf(track.spotify);
-        }
+      if(type == 'podcast') {
+        type = 'playlist';
       }
 
-      // pause
-      if(this.track != null && this.track.is_playing && (doc == null || currentPos == newPos)) {
-        const options = {
-          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-        };
-        this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
-          (data: any) => {this.statusSpotify()},
-          error => {
-            this.refreshToken();
-          });
-      }
-      // play
-      else if(this.track != null && !this.track.is_playing && (doc == null || currentPos == newPos)) {
-        const options = {
-          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
-        };
-        this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
-          (data: any) => {this.statusSpotify()},
-          error => {
-            this.refreshToken();
-          });
-      }
-      // play an other album or playlist
-      else {
-        if(this.timer) {
-          this.timer.unsubscribe();
-          this.timer = null;
-        }
-        this.doc = doc;
-        if(track != null) {
-          newPos = this.doc.tracks.
-            map(track => track.spotify).
-            filter(spotify => spotify != null).
-            indexOf(track.spotify);
-        }
-
-        var type = doc.type == 'podcast' ? 'playlist' : doc.type;
-        const token = this.cookieService.get('spotify-token');
-        if(token != null && token != '') {
-          var body = type != 'track' ? {
-            'context_uri': 'spotify:' + type + ':' + doc.spalbumid,
-            'uris': null,
-            'offset': {'position': newPos}
-          } : {
-            'context_uri': null,
-            'uris': ['spotify:track:' + doc.spalbumid],
-            'offset': {'position': newPos}
-          };
+      if(this.spalbumid == spalbumid && this.track != null) {
+        // pause
+        if(this.track.is_playing) {
           const options = {
             headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
           };
-          this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
-            (data: any) => {
-              this.statusSpotify();
-              this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
-            },
+          this.http.put('https://api.spotify.com/v1/me/player/pause?device_id=' + this.player.id, null, options).subscribe(
+            (data: any) => {this.statusSpotify()},
             error => {
               this.refreshToken();
             });
         }
+        // play
+        else if(!this.track.is_playing) {
+          const options = {
+            headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+          };
+          this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, null, options).subscribe(
+            (data: any) => {this.statusSpotify()},
+            error => {
+              this.refreshToken();
+            });
+        }
+      }
+      // play an other album or playlist
+      else if(spalbumid != null){
+        if(this.timer) {
+          this.timer.unsubscribe();
+          this.timer = null;
+        }
+
+        this.spalbumid = spalbumid;
+        var body = type != 'track' ? {
+          'context_uri': 'spotify:' + type + ':' + spalbumid,
+          'uris': null,
+          'offset': {'position': position}
+        } : {
+          'context_uri': null,
+          'uris': ['spotify:track:' + spalbumid],
+          'offset': {'position': position}
+        };
+        const options = {
+          headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+        };
+        this.http.put('https://api.spotify.com/v1/me/player/play?device_id=' + this.player.id, body, options).subscribe(
+          (data: any) => {
+            this.statusSpotify();
+            this.timer = timer(0, 5000).subscribe(() => this.statusSpotify());
+          },
+          error => {
+            this.refreshToken();
+          });
       }
     }
   }
@@ -311,10 +289,9 @@ export class AppComponent {
     }
   }
 
-  playPauseAudio(doc: any=null){
+  playPauseAudio(doc:any=null){
     if(doc != null && (this.audio == null || this.audio.src != doc.audio)) {
       this.close();
-      this.doc = doc;
       this.audio = new Audio();
       this.audio.src = doc.audio;
       this.audio.title = doc.title;
@@ -407,7 +384,6 @@ export class AppComponent {
     this.closeAlert();
 
     this.youtube = null;
-    this.doc = null;
   }
 
   closeEvents(){

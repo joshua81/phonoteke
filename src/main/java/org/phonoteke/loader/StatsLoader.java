@@ -25,15 +25,15 @@ public class StatsLoader extends HumanBeats
 
 	public static void main(String[] args) {
 		new StatsLoader().load("2022", "3", null);
-		new StatsLoader().load("2022", "3", "jamzsupernova");
-		new StatsLoader().load("2022", "3", "gillespeterson");
-		new StatsLoader().load("2022", "3", "musicalbox");
-		new StatsLoader().load("2022", "3", "blackalot");
-		new StatsLoader().load("2022", "3", "resetrefresh");
-		new StatsLoader().load("2022", "3", "rolloverhangover");
-		new StatsLoader().load("2022", "3", "theblessedmadonna");
-		new StatsLoader().load("2022", "3", "cassabertallot");
-		new StatsLoader().load("2022", "3", "petetong");
+//		new StatsLoader().load("2022", "3", "jamzsupernova");
+//		new StatsLoader().load("2022", "3", "gillespeterson");
+//		new StatsLoader().load("2022", "3", "musicalbox");
+//		new StatsLoader().load("2022", "3", "blackalot");
+//		new StatsLoader().load("2022", "3", "resetrefresh");
+//		new StatsLoader().load("2022", "3", "rolloverhangover");
+//		new StatsLoader().load("2022", "3", "theblessedmadonna");
+//		new StatsLoader().load("2022", "3", "cassabertallot");
+//		new StatsLoader().load("2022", "3", "petetong");
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class StatsLoader extends HumanBeats
 		for(BigDecimal score : topSongs.descendingKeySet()) {
 			final Float score10 = calculateScore(score, topScore);
 			topSongs.get(score).forEach(s -> {
-				jsonSongs.add(getSong(trackSongs.get(s), score10));
+				jsonSongs.add(getTrack(trackSongs.get(s), score10));
 			});
 		}
 		doc.append("tracks", subList(jsonSongs, 1000));
@@ -233,41 +233,33 @@ public class StatsLoader extends HumanBeats
 	}
 
 	private Document getArtist(Document track, Float score) {
-		return new Document("score", score)
-				.append("artist", track.getString("artist"))
+		return new Document("artist", track.getString("artist"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
 	private Document getAlbum(Document track, Float score) {
-		return new Document("score", score)
-				.append("artist", track.getString("artist"))
+		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("spalbumid", track.getString("spalbumid"))
-				.append("cover-s", track.getString("coverS"))
-				.append("cover-m", track.getString("coverM"))
-				.append("cover-l", track.getString("coverL"))
+				.append("cover", track.getString("coverM"))
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
-	private Document getSong(Document track, Float score) {
-		return new Document("score", score)
-				.append("artist", track.getString("artist"))
+	private Document getTrack(Document track, Float score) {
+		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("track", track.getString("track"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("spalbumid", track.getString("spalbumid"))
 				.append("spotify", track.getString("spotify"))
-				.append("cover-s", track.getString("coverS"))
-				.append("cover-m", track.getString("coverM"))
-				.append("cover-l", track.getString("coverL"))
+				.append("cover", track.getString("coverS"))
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
 	private Document getVideo(Document track, Float score) {
-		return new Document("score", score)
-				.append("artist", track.getString("artist"))
+		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("track", track.getString("track"))
 				.append("spartistid", track.getString("spartistid"))

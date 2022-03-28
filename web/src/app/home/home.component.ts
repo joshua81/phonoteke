@@ -12,45 +12,85 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  PAGE_SIZE: number = 12;
-  searchText: string = '';
+  PAGE_SIZE: number = 20;
+  spalbumid:string = null;
+  status:string = 'album';
+  data:any = null;
   albums = [];
+  albumsPage:number = 0;
+  videos = [];
+  videosPage:number = 0;
+  tracks = [];
+  tracksPpage:number = 0;
   podcasts = [];
-  albumsPage: number = 0;
-  podcastsPage: number = 0;
+  podcastsPage:number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
-    .pipe(map(params => ({source: params[0].source, searchText: params[1].q})))
+    .pipe(map(params => ({source: params[0].source})))
     .subscribe(params => {
-      var searchText = (typeof(params.searchText) == 'undefined' || params.searchText == null) ? '' : params.searchText;
-      if(this.searchText != searchText) {
-        this.searchText = searchText;
-        window.scrollTo(0, 0);
-        this.loadPodcasts();
-        this.loadAlbums();
-      }
+      window.scrollTo(0, 0);
+      this.loadStats(params.source);
     });
   }
 
   ngOnInit() {
-    this.loadPodcasts();
-    this.loadAlbums();
+    // nothing to do
   }
 
-  loadPodcasts() {
+  setStatus(status:string) {
+    this.status = status;
+    if(status == 'podcast') {
+      this.loadPodcasts();
+    }
+  }
+
+  loadStats(source:string=null) {
+    this.data = null;
+    this.albums = [];
+    this.albumsPage = 0;
+    this.videos = [];
+    this.videosPage = 0;
+    this.tracks = [];
+    this.tracksPpage = 0;
     this.podcasts = [];
     this.podcastsPage = 0;
     this.app.loading = true;
 
-    this.http.get('/api/podcasts').subscribe(
+    this.http.get('/api/stats/202203').subscribe(
       (data: any) => {
-        this.podcasts.push.apply(this.podcasts, data);
-        this.app.loading = false;
+        this.data = data;
+        this.loadPage();
       });
   }
 
-  scollPodcasts() {
+  loadPage() {
+    /*var start:number = this.page*this.PAGE_SIZE;
+    var end:number = (this.page+1)*this.PAGE_SIZE;
+    this.albums.push.apply(this.albums, data.albums.slice(start,end));
+    this.videos.push.apply(this.videos, data.videos.slice(start,end));
+    this.tracks.push.apply(this.tracks, data.tracks.slice(start,end));*/
+    this.albums.push.apply(this.albums, this.data.albums);
+    this.videos.push.apply(this.videos, this.data.videos);
+    this.tracks.push.apply(this.tracks, this.data.tracks);
+    this.app.loading = false;
+  }
+  
+  loadPodcasts() {
+    if(this.podcasts.length == 0) {
+      this.podcasts = [];
+      this.podcastsPage = 0;
+      this.app.loading = true;
+
+      this.http.get('/api/podcasts').subscribe(
+        (data: any) => {
+          this.podcasts.push.apply(this.podcasts, data);
+          this.app.loading = false;
+        });
+    }
+  }
+
+  /*scollPodcasts() {
     this.podcastsPage++;
     this.app.loading = true;
 
@@ -59,9 +99,9 @@ export class HomeComponent implements OnInit {
         this.podcasts.push.apply(this.podcasts, data);
         this.app.loading = false;
       });
-  }
+  }*/
 
-  loadAlbums() {
+  /*loadAlbums() {
     this.albums = [];
     this.albumsPage = 0;
     this.app.loading = true;
@@ -82,5 +122,5 @@ export class HomeComponent implements OnInit {
         this.albums.push.apply(this.albums, data);
         this.app.loading = false;
       });
-  }
+  }*/
 }

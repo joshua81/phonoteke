@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AppComponent } from '../../app.component';
-import {DocComponent} from '../doc.component';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-tracks',
@@ -8,9 +7,10 @@ import {DocComponent} from '../doc.component';
   styleUrls: ['./tracks.component.css']
 })
 export class TracksComponent implements OnInit {
+  @Input() spalbumid = null;
   @Input() tracks = null;
 
-  constructor(public app: AppComponent, public doc: DocComponent) {}
+  constructor(public app: AppComponent) {}
 
   ngOnInit() {
   }

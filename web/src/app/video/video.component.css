@@ -1,17 +1,23 @@
-.video {
-  position: relative;
-}
-
 div.cover {
   position: relative;
-  width: 120px;
   cursor: pointer;
 }
 
 img.cover {
-  width: 120px;
   object-fit:cover;
   cursor: pointer;
+}
+
+h1.cover {
+  font-size: 30px;
+  line-height: 0.9;
+  position: absolute;
+  margin: 4px;
+  padding: 0px;
+  bottom: 0px;
+  left: 0px;
+  background-color: #000000;
+  opacity: 0.7;
 }
 
 span.youtube {
@@ -22,8 +28,8 @@ span.youtube {
   height: 30px;
   margin: 0px;
   padding: 0px;
-  left: 45px;
-  top: 30px;
+  left: 145px;
+  top: 75px;
   background: #FFFFFF;
   opacity: 0.6;
   cursor: pointer;

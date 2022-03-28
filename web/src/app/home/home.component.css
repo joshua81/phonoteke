@@ -1,37 +1,4 @@
-div.author {
-    width: 50vw;
-    height: 50vw;
-    max-width: 200px;
-    max-height: 200px;
-    padding: 2px;
-    background: none;
-    position: relative;
-}
-  
-a.author {
-    width: 50vw;
-    height: 50vw;
-    max-width: 196px;
-    max-height: 196px;
-}
-  
-img.author {
-    width: 50vw;
-    height: 50vw;
-    max-width: 196px;
-    max-height: 196px;
-    object-fit:cover;
-}
-
-h1.title {
-    color: #408ea3;
-    font-weight: 600;
-
-    position: absolute;
-    top: -20px;
-}
-
-h1.author {
+h1 {
     font-size: 30px;
     line-height: 0.9;
     position: absolute;
@@ -42,41 +9,64 @@ h1.author {
     background-color: #000000;
     opacity: 0.7;
 }
-  
-.card {
-    border-style: none;
+
+h2 {
+    font-size: 20px;
 }
 
-.yesterday {
+div.wallpaper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: #ce9393;
+}
+
+div.menu {
     position: absolute;
-    top: 5px;
-    right: 5px;
-  
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    background: #18A2B8;
+    bottom: 4px;
 }
 
-span.plus {
-    display: inline-block;
-    mask: url("/images/plus.svg") no-repeat;
-    width: 16px;
-    height: 16px;
-    margin-top: 6px;
-    margin-left: 7px;
-    padding: 0px;
-    background: #408ea3;
+div.menu-item {
     cursor: pointer;
 }
 
-div.plus {
-    width: 32px;
-    height: 32px;
-
-    border-width: 2px;
-    border-color: #408ea3;
+div.selected {
     border-style: solid;
+    border-width: 0px 0px 4px 0px;
+    border-color: #FFFFFF;
+}
+
+div.album {
+    position: relative;
+    width: 50vw;
+    height: 50vw;
+    max-width: 200px;
+    max-height: 200px;
+    padding: 2px;
+    background: none;
+    cursor: pointer;
+}
+  
+img.album {
+    width: 50vw;
+    height: 50vw;
+    max-width: 196px;
+    max-height: 196px;
+    object-fit:cover;
+}
+
+span.play {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/play.svg") no-repeat;
+    width: 16px;
+    height: 16px;
+    margin: 0px;
+    padding: 0px;
+    left: 92px;
+    top: 92px;
+    background: #FFFFFF;
+    opacity: 0.6;
     cursor: pointer;
 }
   

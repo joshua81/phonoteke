@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import { AppComponent } from '../../app.component';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-video',
@@ -7,8 +7,6 @@ import { AppComponent } from '../../app.component';
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
-  @Input() type: string;
-  @Input() label: string;
   @Input() tracks = [];
 
   constructor(public app: AppComponent) {}

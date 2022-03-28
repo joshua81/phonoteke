@@ -1,12 +1,12 @@
-<div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 mt-3">
+<div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 pt-2">
     <div *ngFor="let track of tracks; index as i" class="mb-2">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
                 <div *ngIf="track.spotify == null" class="player d-flex flex-row align-items-center justify-content-center">
                     <span class="album"></span>
                 </div>
-                <img *ngIf="track.spotify" class="cover" src="{{track.coverM}}" loading="lazy"/>
-                <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="app.playPauseSpotify(doc.doc, track)">
+                <img *ngIf="track.spotify" class="cover" src="{{track.cover}}" loading="lazy"/>
+                <div *ngIf="app.player && track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="app.playPauseSpotify(spalbumid, 'podcast', i)">
                     <span class="play"></span>
                 </div>
             </div>

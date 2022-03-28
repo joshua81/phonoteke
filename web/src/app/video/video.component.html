@@ -1,0 +1,9 @@
+<div class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngFor="let video of tracks">
+    <div *ngIf="video.youtube" class="cover p-1" (click)="app.playYoutube(video.youtube)">
+      <img class="cover" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
+      <h1 class="cover font-weight-bold text-white">{{video.artist}}</h1>
+      <span class="youtube"></span>
+    </div>
+  </div>
+</div>

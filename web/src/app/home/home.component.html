@@ -1,12 +1,12 @@
-<home-menu></home-menu>
-<div class="container-fluid p-0" [ngStyle]="{'margin-top':'40px'}">
+<!--home-menu></home-menu-->
+<div class="container p-2">
   <!-- podcasts -->
-  <div class="d-flex flex-wrap justify-content-center w-100 pt-4">
-    <div *ngFor="let podcast of podcasts; let i = index">
+  <!--div class="d-flex flex-wrap justify-content-center w-100 pt-4">
+    <div *ngFor="let podcast of artists; let i = index">
       <div class="author card">
         <h1 *ngIf="i == 0" class="title">PODCASTS</h1>
         <a class="author" [routerLink]="['/podcasts/' + podcast.source]">
-          <img class="author card-img-top" src="{{podcast.cover}}" loading="lazy"/>
+          <img class="author card-img-top" src="{{podcast.cove-m}}" loading="lazy"/>
           <h1 class="author font-weight-bold text-white">{{podcast.name}}</h1>
         </a>
         <div *ngIf="app.gtYesterday(podcast.lastEpisodeDate)" class="yesterday"></div>
@@ -17,24 +17,55 @@
     <div class="plus" (click)="scollPodcasts()">
       <span class="plus"></span>
     </div>
-  </div>
+  </div-->
 
-  <!-- albums -->
-  <div class="d-flex flex-wrap justify-content-center w-100 pt-4">
-    <div *ngFor="let album of albums; let i = index">
-      <div class="author card">
-        <h1 *ngIf="i == 0" class="title">ALBUMS</h1>
-        <a class="author" [routerLink]="['/' + album.id]">
-          <img class="author card-img-top" src="{{album.cover}}" loading="lazy"/>
-          <h1 class="author font-weight-bold text-white">{{album.artist}}</h1>
-        </a>
+  <!-- menu -->
+  <div class="wallpaper w-100">
+    <div class="menu d-flex flex-row justify-content-center w-100">
+      <div class="menu-item" [ngClass]="{'selected': status == 'album'}" (click)="setStatus('album')">
+        <h2 class="pl-2 pr-2 font-weight-bold text-white">Albums</h2>
+      </div>
+      <div class="menu-item" [ngClass]="{'selected': status == 'video'}" (click)="setStatus('video')">
+        <h2 class="pl-2 pr-2 font-weight-bold text-white">Videos</h2>
+      </div>
+      <div class="menu-item" [ngClass]="{'selected': status == 'track'}" (click)="setStatus('track')">
+        <h2 class="pl-2 pr-2 font-weight-bold text-white">Tracks</h2>
+      </div>
+      <div class="menu-item" [ngClass]="{'selected': status == 'podcast'}" (click)="setStatus('podcast')">
+        <h2 class="pl-2 pr-2 font-weight-bold text-white">Podcasts</h2>
       </div>
     </div>
   </div>
-  <div *ngIf="(albumsPage+1)*PAGE_SIZE == albums.length" class="d-flex justify-content-center m-4">
+
+  <!-- albums -->
+  <div *ngIf="status=='album'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+    <div *ngFor="let album of albums">
+      <div class="album" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
+        <img class="album" src="{{album.cover}}" loading="lazy"/>
+        <h1 class="font-weight-bold text-white">{{album.artist}}</h1>
+        <span class="play"></span>
+      </div>
+    </div>
+  </div>
+
+  <app-video *ngIf="status=='video'" [tracks]="videos"></app-video>
+  <app-tracks *ngIf="status=='track'" [spalbumid]="spalbumid" [tracks]="tracks"></app-tracks>
+
+  <!-- videos -->
+  <!--div class="d-flex flex-row flex-nowrap hscroll pt-2">
+    <div *ngFor="let video of videos" class="pr-2">
+      <div *ngIf="video.youtube" class="cover" (click)="app.playYoutube(video.youtube)">
+        <img class="cover" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
+        <span class="youtube"></span>
+      </div>
+    </div>
+  </div-->
+  <!-- tracks -->
+  <!--div *ngIf="(albumsPage+1)*PAGE_SIZE == albums.length" class="d-flex justify-content-center m-4">
     <div class="plus" (click)="scrollAlbums()">
       <span class="plus"></span>
     </div>
-  </div>
+  </div-->
+  
 </div>
 <app-footer></app-footer>

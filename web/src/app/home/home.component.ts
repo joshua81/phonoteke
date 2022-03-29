@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   PAGE_SIZE: number = 20;
   spalbumid:string = null;
   status:string = 'album';
+  source:string = null;
   data:any = null;
   albums = [];
   albumsPage:number = 0;
@@ -24,6 +25,8 @@ export class HomeComponent implements OnInit {
   tracksPpage:number = 0;
   shows = [];
   showsPage:number = 0;
+  episodes = [];
+  episodesPage:number = 0;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
@@ -31,12 +34,27 @@ export class HomeComponent implements OnInit {
     .subscribe(params => {
       window.scrollTo(0, 0);
       this.loadStats(params.source, parseInt(params.date));
-      this.loadPodcasts();
     });
   }
 
   ngOnInit() {
     // nothing to do
+  }
+
+  reset() {
+    this.setStatus('album');
+    this.source = null;
+    this.data = null;
+    this.albums = [];
+    this.albumsPage = 0;
+    this.videos = [];
+    this.videosPage = 0;
+    this.tracks = [];
+    this.tracksPpage = 0;
+    this.shows = [];
+    this.showsPage = 0;
+    this.episodes = [];
+    this.episodesPage = 0;
   }
 
   setStatus(status:string) {
@@ -51,30 +69,23 @@ export class HomeComponent implements OnInit {
       date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
     }
 
-    this.status = 'album';
-    this.data = null;
-    this.albums = [];
-    this.albumsPage = 0;
-    this.videos = [];
-    this.videosPage = 0;
-    this.tracks = [];
-    this.tracksPpage = 0;
-    this.shows = [];
-    this.showsPage = 0;
+    this.reset();
     this.app.loading = true;
-
-    if(source == null) {
+    this.source = source;
+    if(this.source == null) {
       this.http.get('/api/stats/' + date).subscribe(
         (data: any) => {
           this.data = data;
           this.loadPage();
+          this.loadPodcasts();
         });
     }
     else {
-      this.http.get('/api/stats/' + source + "/" + date).subscribe(
+      this.http.get('/api/stats/' + this.source + "/" + date).subscribe(
         (data: any) => {
           this.data = data;
           this.loadPage();
+          this.loadEpisodes();
         });
     }
   }
@@ -92,16 +103,48 @@ export class HomeComponent implements OnInit {
   }
   
   loadPodcasts() {
-    if(this.shows.length == 0) {
+    if(this.source == null && this.shows.length == 0) {
       this.shows = [];
       this.showsPage = 0;
       this.app.loading = true;
-
       this.http.get('/api/podcasts').subscribe(
         (data: any) => {
-          this.shows.push.apply(this.shows, data);
           this.app.loading = false;
+          this.shows.push.apply(this.shows, data);
         });
     }
   }
+
+  loadEpisodes() {
+    if(this.source != null && this.episodes.length == 0) {
+      this.episodes = [];
+      this.episodesPage = 0;
+      this.app.loading = true;
+      this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
+        (data: any) => {
+          this.app.loading = false;
+          this.episodes.push.apply(this.episodes, data);
+        });    
+    }
+  }
+
+  /*scrollDocs() {
+    this.page++;
+    this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.page).subscribe(
+      (data: any) => this.docsLoaded(data));
+  }*/
+
+    /*sourceLoaded(data: any) {
+    if(data.length != 0) {
+      this.source = data[0];
+      this.title.setTitle('Human Beats - ' + this.source.name);
+      this.meta.updateTag({ name: 'og:title', content: 'Human Beats - ' + this.source.name });
+      this.meta.updateTag({ name: 'og:type', content: 'music' });
+      this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts/' + this.source.source });
+      this.meta.updateTag({ name: 'og:image', content: this.source.cover });
+      this.meta.updateTag({ name: 'og:description', content: 'Human Beats - ' + this.source.name });
+
+      this.loadDocs();
+    }
+  }*/
 }

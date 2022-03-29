@@ -88,8 +88,7 @@ app.get('/api/interviews', async(req, res)=>{
 });
 
 app.get('/api/podcasts', async(req, res)=>{
-	var page = Number(req.query.p) > 0 ? Number(req.query.p) : 0;
-	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).skip(page*PAGE_SIZE).limit(PAGE_SIZE).sort({"lastEpisodeDate":-1, "name":1}).toArray();
+	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 

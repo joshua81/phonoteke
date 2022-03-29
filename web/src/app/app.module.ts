@@ -37,8 +37,9 @@ import { HomeMenuComponent } from './home/menu/menu.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent},
-      {path: 'podcasts/:source', component: PodcastComponent},
-      {path: ':id', component: DocComponent}]),
+      {path: ':source', component: HomeComponent},
+      {path: ':source/:date', component: HomeComponent},
+      {path: 'doc/:id', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

@@ -25,15 +25,15 @@ public class StatsLoader extends HumanBeats
 
 	public static void main(String[] args) {
 		new StatsLoader().load("2022", "3", null);
-//		new StatsLoader().load("2022", "3", "jamzsupernova");
-//		new StatsLoader().load("2022", "3", "gillespeterson");
-//		new StatsLoader().load("2022", "3", "musicalbox");
-//		new StatsLoader().load("2022", "3", "blackalot");
-//		new StatsLoader().load("2022", "3", "resetrefresh");
-//		new StatsLoader().load("2022", "3", "rolloverhangover");
-//		new StatsLoader().load("2022", "3", "theblessedmadonna");
-//		new StatsLoader().load("2022", "3", "cassabertallot");
-//		new StatsLoader().load("2022", "3", "petetong");
+		new StatsLoader().load("2022", "3", "jamzsupernova");
+		new StatsLoader().load("2022", "3", "gillespeterson");
+		new StatsLoader().load("2022", "3", "musicalbox");
+		new StatsLoader().load("2022", "3", "blackalot");
+		new StatsLoader().load("2022", "3", "resetrefresh");
+		new StatsLoader().load("2022", "3", "rolloverhangover");
+		new StatsLoader().load("2022", "3", "theblessedmadonna");
+		new StatsLoader().load("2022", "3", "cassabertallot");
+		new StatsLoader().load("2022", "3", "petetong");
 	}
 
 	@Override
@@ -186,7 +186,7 @@ public class StatsLoader extends HumanBeats
 				jsonSongs.add(getTrack(trackSongs.get(s), score10));
 			});
 		}
-		doc.append("tracks", subList(jsonSongs, 1000));
+		doc.append("tracks", subList(jsonSongs, 100));
 
 		if(MapUtils.isNotEmpty(videos)) {
 			videos.keySet().forEach(a -> {

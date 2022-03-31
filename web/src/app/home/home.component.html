@@ -1,28 +1,33 @@
 <div class="container p-2">
-  <!-- menu -->
   <div class="wallpaper w-100 text-center">
     <img class="wallpaper" src="{{'https://storage.googleapis.com/humanbeats/' + source + '-wp.jpg'}}"/>
+    
+    <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
+      <span class="previous"></span>
+    </div>
+
+    <!-- menu -->
     <div class="menu d-flex flex-row justify-content-center w-100">
-      <div *ngIf="albums.length > 0" class="menu-item" [ngClass]="{'selected': status == 'album'}" (click)="setStatus('album')">
+      <div *ngIf="albums.length > 0" class="menu-item" [ngClass]="{'selected': status == 'albums'}" (click)="setStatus('albums')">
         <h2 class="pl-2 pr-2 text-white">Albums</h2>
       </div>
-      <div *ngIf="videos.length > 0" class="menu-item" [ngClass]="{'selected': status == 'video'}" (click)="setStatus('video')">
+      <div *ngIf="videos.length > 0" class="menu-item" [ngClass]="{'selected': status == 'videos'}" (click)="setStatus('videos')">
         <h2 class="pl-2 pr-2 text-white">Videos</h2>
       </div>
-      <div *ngIf="tracks.length > 0" class="menu-item" [ngClass]="{'selected': status == 'track'}" (click)="setStatus('track')">
+      <div *ngIf="tracks.length > 0" class="menu-item" [ngClass]="{'selected': status == 'tracks'}" (click)="setStatus('tracks')">
         <h2 class="pl-2 pr-2 text-white">Tracks</h2>
       </div>
-      <div *ngIf="source == null && shows.length > 0" class="menu-item" [ngClass]="{'selected': status == 'show'}" (click)="setStatus('show')">
+      <div *ngIf="source == null && shows.length > 0" class="menu-item" [ngClass]="{'selected': status == 'shows'}" (click)="setStatus('shows')">
         <h2 class="pl-2 pr-2 text-white">Shows</h2>
       </div>
-      <div *ngIf="source != null && episodes.length > 0" class="menu-item" [ngClass]="{'selected': status == 'episode'}" (click)="setStatus('episode')">
+      <div *ngIf="source != null && episodes.length > 0" class="menu-item" [ngClass]="{'selected': status == 'episodes'}" (click)="setStatus('episodes')">
         <h2 class="pl-2 pr-2 text-white">Episodes</h2>
       </div>
     </div>
   </div>
 
   <!-- albums -->
-  <div *ngIf="status=='album'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let album of albums">
       <div class="album" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
@@ -32,12 +37,13 @@
     </div>
   </div>
 
-  <app-video *ngIf="status=='video'" [tracks]="videos"></app-video>
-  <app-tracks *ngIf="status=='track'" [spalbumid]="spalbumid" [tracks]="tracks"></app-tracks>
-  <app-podcasts *ngIf="status=='episode'" [docs]="episodes"></app-podcasts>
+  <app-video *ngIf="status=='videos'" [tracks]="videos"></app-video>
+  <app-tracks *ngIf="status=='tracks'" [tracks]="tracks" [spalbumid]="spalbumid"></app-tracks>
+  <app-podcasts *ngIf="status=='episodes'" [source]="source" [docs]="episodes"></app-podcasts>
+  <!--app-doc *ngIf="status=='doc'" [doc]="doc"></app-doc-->
 
   <!-- shows -->
-  <div *ngIf="status=='show'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let show of shows">
       <div class="album">
         <a [routerLink]="['/' + show.source]">

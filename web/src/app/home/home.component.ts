@@ -14,9 +14,8 @@ import { AppComponent } from '../app.component';
 export class HomeComponent implements OnInit {
   PAGE_SIZE: number = 20;
   spalbumid:string = null;
-  status:string = 'album';
+  status:string = "albums";
   source:string = null;
-  data:any = null;
   albums = [];
   albumsPage:number = 0;
   videos = [];
@@ -30,21 +29,24 @@ export class HomeComponent implements OnInit {
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
-    .pipe(map(params => ({source: params[0].source, date: params[0].date})))
+    .pipe(map(params => ({source: params[0].source})))
     .subscribe(params => {
       window.scrollTo(0, 0);
-      this.loadStats(params.source, parseInt(params.date));
+      if(params.source != undefined && params.source != null) {
+        this.source = params.source;
+      }
+      this.reset();
+      this.loadStats();
     });
   }
 
   ngOnInit() {
-    // nothing to do
+    this.reset();
   }
 
   reset() {
-    this.setStatus('album');
-    this.source = null;
-    this.data = null;
+    this.setStatus("albums");
+    this.spalbumid = null;
     this.albums = [];
     this.albumsPage = 0;
     this.videos = [];
@@ -58,47 +60,40 @@ export class HomeComponent implements OnInit {
   }
 
   setStatus(status:string) {
-    this.status = status;
+    if(status != null) {
+      this.status = status;
+    }
   }
 
-  loadStats(source:string=null, date:number=null) {
-    if(typeof source == 'undefined' || source == null) {
-      source = null;
-    }
-    if(typeof date == 'undefined' || date == null || isNaN(date)) {
-      date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
-    }
-
-    this.reset();
+  loadStats() {
     this.app.loading = true;
-    this.source = source;
+    var date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
     if(this.source == null) {
       this.http.get('/api/stats/' + date).subscribe(
         (data: any) => {
-          this.data = data;
-          this.loadPage();
+          this.loadPage(data);
           this.loadPodcasts();
         });
     }
     else {
       this.http.get('/api/stats/' + this.source + "/" + date).subscribe(
         (data: any) => {
-          this.data = data;
-          this.loadPage();
+          this.loadPage(data);
+          this.setMeta(data);
           this.loadEpisodes();
         });
     }
   }
 
-  loadPage() {
+  loadPage(data:any) {
     /*var start:number = this.page*this.PAGE_SIZE;
     var end:number = (this.page+1)*this.PAGE_SIZE;
     this.albums.push.apply(this.albums, data.albums.slice(start,end));
     this.videos.push.apply(this.videos, data.videos.slice(start,end));
     this.tracks.push.apply(this.tracks, data.tracks.slice(start,end));*/
-    this.albums.push.apply(this.albums, this.data.albums);
-    this.videos.push.apply(this.videos, this.data.videos);
-    this.tracks.push.apply(this.tracks, this.data.tracks);
+    this.albums.push.apply(this.albums, data.albums);
+    this.videos.push.apply(this.videos, data.videos);
+    this.tracks.push.apply(this.tracks, data.tracks);
     this.app.loading = false;
   }
   
@@ -134,17 +129,12 @@ export class HomeComponent implements OnInit {
       (data: any) => this.docsLoaded(data));
   }*/
 
-    /*sourceLoaded(data: any) {
-    if(data.length != 0) {
-      this.source = data[0];
-      this.title.setTitle('Human Beats - ' + this.source.name);
-      this.meta.updateTag({ name: 'og:title', content: 'Human Beats - ' + this.source.name });
-      this.meta.updateTag({ name: 'og:type', content: 'music' });
-      this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts/' + this.source.source });
-      this.meta.updateTag({ name: 'og:image', content: this.source.cover });
-      this.meta.updateTag({ name: 'og:description', content: 'Human Beats - ' + this.source.name });
-
-      this.loadDocs();
-    }
-  }*/
+  setMeta(data:any) {
+    this.title.setTitle('Human Beats - ' + data.name);
+    this.meta.updateTag({ name: 'og:title', content: 'Human Beats - ' + data.name });
+    this.meta.updateTag({ name: 'og:type', content: 'music' });
+    this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts/' + data.source });
+    this.meta.updateTag({ name: 'og:image', content: data.cover });
+    this.meta.updateTag({ name: 'og:description', content: 'Human Beats - ' + data.name });
+  }
 }

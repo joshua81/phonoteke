@@ -34,9 +34,8 @@ import { HomeComponent } from './home/home.component';
     RouterModule.forRoot([
       {path: '', component: HomeComponent},
       {path: ':source', component: HomeComponent},
-      {path: ':source/:date', component: HomeComponent},
-      {path: 'episodes/:id', component: DocComponent},
-      {path: 'albums/:id', component: DocComponent}]),
+      {path: 'albums/:id', component: DocComponent},
+      {path: 'episodes/:id', component: DocComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

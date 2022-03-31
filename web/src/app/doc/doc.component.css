@@ -1,8 +1,14 @@
-.section {
-  border-style: solid;
-  border-width: 1px 1px 1px 1px;
-  border-color: #C8C8C8;
-  background-color: #FFFFFF;
+div.wallpaper {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #ce9393;
+}
+
+img.wallpaper {
+  width: 100%;
+  height: 300px;
+  object-fit: none;
 }
 
 span.songkick {
@@ -91,3 +97,28 @@ img.cover {
   cursor: pointer;
 }
 
+.back {
+  position: absolute;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+
+  width: 20px;
+  height: 20px;
+  top: 5px;
+  left: 5px;
+  background: #000000;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+span.previous {
+  display: inline-block;
+  mask: url("/images/previous.svg") no-repeat;
+  width: 10px;
+  height: 15px;
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  cursor: pointer;
+}

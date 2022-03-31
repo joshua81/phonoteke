@@ -7,6 +7,7 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./podcast.component.css']
 })
 export class PodcastComponent implements OnInit {
+  @Input() source:string = null;
   @Input() docs = [];
 
   constructor(public app: AppComponent) {

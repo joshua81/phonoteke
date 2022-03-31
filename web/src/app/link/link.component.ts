@@ -8,7 +8,6 @@ import { AppComponent } from '../app.component';
 })
 export class LinkComponent implements OnInit {
   @Input() type: string;
-  @Input() label: string;
   @Input() links = [];
   scrollLinks: number = 0;
 

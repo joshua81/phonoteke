@@ -1,6 +1,6 @@
 <div class="container p-2">
   <div class="wallpaper w-100 text-center">
-    <img class="wallpaper" src="{{'https://storage.googleapis.com/humanbeats/' + source + '-wp.jpg'}}"/>
+    <img class="wallpaper" src="{{'https://storage.googleapis.com/humanbeats/' + (source == null ? 'humanbeats' : source) + '-wp.jpg'}}"/>
     
     <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
       <span class="previous"></span>

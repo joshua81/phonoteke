@@ -34,6 +34,14 @@ public class StatsLoader extends HumanBeats
 		new StatsLoader().load("2022", "3", "theblessedmadonna");
 		new StatsLoader().load("2022", "3", "cassabertallot");
 		new StatsLoader().load("2022", "3", "petetong");
+		new StatsLoader().load("2022", "3", "thetuesdaytapes");
+		new StatsLoader().load("2022", "3", "futuresounds");
+		new StatsLoader().load("2022", "3", "jazztracks");
+		new StatsLoader().load("2022", "3", "casabertallot");
+		new StatsLoader().load("2022", "3", "donletts");
+		new StatsLoader().load("2022", "3", "maryannehobbs");
+		new StatsLoader().load("2022", "3", "stevelamacq");
+		new StatsLoader().load("2022", "3", "siananderson");
 	}
 
 	@Override

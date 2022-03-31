@@ -10,8 +10,11 @@ export class TracksComponent implements OnInit {
   @Input() spalbumid = null;
   @Input() tracks = null;
 
-  constructor(public app: AppComponent) {}
+  constructor(public app: AppComponent) {
+    // nothing to do
+  }
 
   ngOnInit() {
+    // nothing to do
   }
 }

@@ -15,11 +15,6 @@
     </div>
   </div>
 </div>
-  <!--div *ngIf="(page+1)*PAGE_SIZE == docs.length" class="d-flex justify-content-center m-4">
-    <div class="plus" (click)="scrollDocs()">
-      <span class="plus"></span>
-    </div>
-  </div-->
 <div *ngIf="!app.loading && docs.length == 0" class="msg d-flex justify-content-center align-items-center">
   <div class="font-weight-bold">Nessun episodio trovato</div>
 </div>

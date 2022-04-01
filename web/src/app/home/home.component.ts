@@ -67,16 +67,16 @@ export class HomeComponent implements OnInit {
 
   loadStats() {
     this.app.loading = true;
-    var date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
+    //var date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
     if(this.source == null) {
-      this.http.get('/api/stats/' + date).subscribe(
+      this.http.get('/api/stats').subscribe(
         (data: any) => {
           this.loadPage(data);
           this.loadPodcasts();
         });
     }
     else {
-      this.http.get('/api/stats/' + this.source + "/" + date).subscribe(
+      this.http.get('/api/stats/' + this.source).subscribe(
         (data: any) => {
           this.loadPage(data);
           this.setMeta(data);

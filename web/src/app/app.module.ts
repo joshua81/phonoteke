@@ -10,7 +10,6 @@ import { YouTubePlayerModule } from '@angular/youtube-player';
 import { AppComponent } from './app.component';
 import { PodcastComponent } from './podcast/podcast.component';
 import { DocComponent } from './doc/doc.component';
-import { DocMenuComponent } from './doc/menu/menu.component';
 import { TracksComponent } from './tracks/tracks.component';
 import { VideoComponent } from './video/video.component';
 import { LinkComponent } from './link/link.component';
@@ -23,7 +22,6 @@ import { HomeComponent } from './home/home.component';
     HomeComponent,
     PodcastComponent,
     DocComponent,
-    DocMenuComponent,
     TracksComponent,
     VideoComponent,
     LinkComponent,

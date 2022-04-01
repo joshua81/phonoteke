@@ -57,13 +57,13 @@ app.use(robots({
 	CrawlDelay: '5'
 }));
 
-app.get('/api/stats/:date', async(req, res)=>{
-	var result = await stats.find({'source': null, 'date':parseInt(req.params.date)}).toArray();
+app.get('/api/stats', async(req, res)=>{
+	var result = await stats.find({'source': null}).toArray();
 	res.send(result[0]);
 });
 
-app.get('/api/stats/:source/:date', async(req, res)=>{
-	var result = await stats.find({'source': req.params.source, 'date':parseInt(req.params.date)}).toArray();
+app.get('/api/stats/:source', async(req, res)=>{
+	var result = await stats.find({'source': req.params.source}).toArray();
 	res.send(result[0]);
 });
 

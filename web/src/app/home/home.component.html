@@ -5,23 +5,25 @@
     <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
       <span class="previous"></span>
     </div>
+    
+    <div class="title text-left"><h1 class="font-weight-bold text-white">{{name}}</h1></div>
 
     <!-- menu -->
     <div class="menu d-flex flex-row justify-content-center w-100">
       <div *ngIf="albums.length > 0" class="menu-item" [ngClass]="{'selected': status == 'albums'}" (click)="setStatus('albums')">
-        <h2 class="pl-2 pr-2 text-white">Albums</h2>
+        <h3 class="pl-2 pr-2 font-weight-bold text-white">Albums</h3>
       </div>
       <div *ngIf="videos.length > 0" class="menu-item" [ngClass]="{'selected': status == 'videos'}" (click)="setStatus('videos')">
-        <h2 class="pl-2 pr-2 text-white">Videos</h2>
+        <h3 class="pl-2 pr-2 font-weight-bold text-white">Videos</h3>
       </div>
       <div *ngIf="tracks.length > 0" class="menu-item" [ngClass]="{'selected': status == 'tracks'}" (click)="setStatus('tracks')">
-        <h2 class="pl-2 pr-2 text-white">Tracks</h2>
+        <h3 class="pl-2 pr-2 font-weight-bold text-white">Tracks</h3>
       </div>
       <div *ngIf="source == null && shows.length > 0" class="menu-item" [ngClass]="{'selected': status == 'shows'}" (click)="setStatus('shows')">
-        <h2 class="pl-2 pr-2 text-white">Shows</h2>
+        <h3 class="pl-2 pr-2 font-weight-bold text-white">Shows</h3>
       </div>
       <div *ngIf="source != null && episodes.length > 0" class="menu-item" [ngClass]="{'selected': status == 'episodes'}" (click)="setStatus('episodes')">
-        <h2 class="pl-2 pr-2 text-white">Episodes</h2>
+        <h3 class="pl-2 pr-2 font-weight-bold text-white">Episodes</h3>
       </div>
     </div>
   </div>
@@ -31,7 +33,7 @@
     <div *ngFor="let album of albums">
       <div class="album" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
-        <h1 class="text-white">{{album.artist}}</h1>
+        <h2 class="font-weight-normal text-white">{{album.artist}}</h2>
         <span class="play"></span>
       </div>
     </div>
@@ -48,7 +50,7 @@
       <div class="album">
         <a [routerLink]="['/' + show.source]">
           <img class="album" src="{{show.cover}}" loading="lazy"/>
-          <h1 class="text-white">{{show.name}}</h1>
+          <h2 class="font-weight-normal text-white">{{show.name}}</h2>
         </a>
       </div>
     </div>

@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   spalbumid:string = null;
   status:string = "albums";
   source:string = null;
+  name:string = null;
   albums = [];
   albumsPage:number = 0;
   videos = [];
@@ -46,6 +47,7 @@ export class HomeComponent implements OnInit {
 
   reset() {
     this.setStatus("albums");
+    this.name = null;
     this.spalbumid = null;
     this.albums = [];
     this.albumsPage = 0;
@@ -79,7 +81,6 @@ export class HomeComponent implements OnInit {
       this.http.get('/api/stats/' + this.source).subscribe(
         (data: any) => {
           this.loadPage(data);
-          this.setMeta(data);
           this.loadEpisodes();
         });
     }
@@ -91,6 +92,8 @@ export class HomeComponent implements OnInit {
     this.albums.push.apply(this.albums, data.albums.slice(start,end));
     this.videos.push.apply(this.videos, data.videos.slice(start,end));
     this.tracks.push.apply(this.tracks, data.tracks.slice(start,end));*/
+    this.setMeta(data);
+    this.name = data.name;
     this.albums.push.apply(this.albums, data.albums);
     this.videos.push.apply(this.videos, data.videos);
     this.tracks.push.apply(this.tracks, data.tracks);

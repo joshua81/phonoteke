@@ -5,6 +5,8 @@
     <div class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
       <span class="previous"></span>
     </div>
+
+    <div class="title text-left"><h1 class="font-weight-bold text-white">{{doc.artist}}</h1></div>
     
     <!-- menu -->
     <div *ngIf="doc.type == 'podcast' && doc.audio" class="player d-flex flex-row justify-content-center align-items-center p-2"

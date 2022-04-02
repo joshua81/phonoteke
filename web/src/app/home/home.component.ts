@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
   }
 
   reset() {
-    this.setStatus("albums");
+    this.setStatus(this.source == null ? "shows" : "episodes");
     this.name = null;
     this.spalbumid = null;
     this.albums = [];

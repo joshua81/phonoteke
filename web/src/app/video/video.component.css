@@ -5,6 +5,8 @@ div.cover {
 
 img.cover {
   object-fit:cover;
+  width: 320px;
+  height: 180px;
   cursor: pointer;
 }
 

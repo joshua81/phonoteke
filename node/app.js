@@ -8,7 +8,7 @@ const fs = require('fs');
 const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
 const PORT = process.env.PORT || 8080;
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 20;
 
 const uri = "mongodb+srv://mbeats:PwlVOgNqv36lvVXb@hbeats-31tc8.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const client_id = 'a6c3686d32cb48d4854d88915d3925be';

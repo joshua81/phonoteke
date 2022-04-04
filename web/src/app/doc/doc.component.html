@@ -58,7 +58,7 @@
   </div>
 
   <p *ngIf="doc.review" class="text-justify mt-3" [innerHTML]="doc.review"></p>
-  <app-tracks *ngIf="doc.type == 'podcast'" [tracks]="doc.tracks"></app-tracks>
+  <app-tracks *ngIf="doc.type == 'podcast'" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
   <!--app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video-->
         
   <!-- links -->

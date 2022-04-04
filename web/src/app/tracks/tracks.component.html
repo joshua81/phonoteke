@@ -7,7 +7,7 @@
                 </div>
                 <img *ngIf="track.spotify && track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
                 <img *ngIf="track.spotify && track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
-                <div *ngIf="track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="app.playPauseSpotify(spalbumid, 'podcast', i)">
+                <div *ngIf="track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="playPauseSpotify(track.spotify)">
                     <span class="play"></span>
                 </div>
             </div>

@@ -17,4 +17,21 @@ export class TracksComponent implements OnInit {
   ngOnInit() {
     // nothing to do
   }
+
+  playPauseSpotify(track:string) {
+    if(this.spalbumid != null && track != null) {
+      var pos:number = 0;
+      for(var j:number=0; j < this.tracks.length; j++) {
+        if(this.tracks[j].spotify == track) {
+          break;
+        }
+        if(this.tracks[j].spotify != null) {
+          pos++
+        }
+      }
+      if(pos >= 0) {
+        this.app.playPauseSpotify(this.spalbumid, 'podcast', pos, track);
+      }
+    }
+  }
 }

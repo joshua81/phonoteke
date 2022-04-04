@@ -155,14 +155,14 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(spalbumid:string, type:string, position:number=0) {
+  playPauseSpotify(spalbumid:string, type:string, position:number=0, trackid:string=null) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {
       if(type == 'podcast') {
         type = 'playlist';
       }
-
-      if(this.spalbumid == spalbumid && this.track != null) {
+      
+      if(this.spalbumid == spalbumid && this.track != null && this.track.item.id == trackid) {
         // pause
         if(this.track.is_playing) {
           const options = {

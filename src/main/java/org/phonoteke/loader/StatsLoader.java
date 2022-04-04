@@ -3,6 +3,8 @@ package org.phonoteke.loader;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,26 +32,27 @@ public class StatsLoader extends HumanBeats
 	public void load(String... args)
 	{
 		if(args.length == 0) {
-			load(null, "Human Beats");
+			load(null, "Human Beats", null);
 
 			MongoCursor<Document> i = authors.find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				String source = page.getString("source");
 				String name = page.getString("name");
-				load(source, name);
+				Date lastEpisode = page.getDate("lastEpisodeDate");
+				load(source, name, lastEpisode);
 			}
 		}
 	}
 
-	private void load(String source, String name)
+	private void load(String source, String name, Date lastEpisode)
 	{
 		Map<String, BigDecimal> weights = Maps.newHashMap();
 		if(source != null) {
 			weights.put(source, BigDecimal.ONE);
 		}
 		else {
-			MongoCursor<Document> i = getDocs(source);
+			MongoCursor<Document> i = getDocs(source, lastEpisode);
 			i.forEachRemaining(page -> {
 				String s = page.getString("source");
 				BigDecimal weight = weights.get(s);
@@ -60,7 +63,7 @@ public class StatsLoader extends HumanBeats
 			});
 		}
 
-		MongoCursor<Document> i = getDocs(source);
+		MongoCursor<Document> i = getDocs(source, lastEpisode);
 		if(!i.hasNext()) {
 			return;
 		}
@@ -223,9 +226,9 @@ public class StatsLoader extends HumanBeats
 		return score.divide(topScore, MathContext.DECIMAL32).multiply(BigDecimal.TEN).floatValue();
 	}
 
-	private MongoCursor<Document> getDocs(String source) {
-		LocalDateTime start = LocalDateTime.now().minusDays(30);
-		LocalDateTime end = LocalDateTime.now();
+	private MongoCursor<Document> getDocs(String source, Date lastEpisode) {
+		LocalDateTime end = lastEpisode == null ? LocalDateTime.now() : LocalDateTime.ofInstant(lastEpisode.toInstant(), ZoneOffset.UTC);
+		LocalDateTime start = end.minusDays(30);
 
 		return source == null ? docs.find(Filters.and(
 				Filters.eq("type", "podcast"),

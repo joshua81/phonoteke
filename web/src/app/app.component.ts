@@ -12,23 +12,23 @@ import { Subscription, timer } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  private history: string[] = [];
+  private history:string[] = [];
 
-  isDesktop: boolean = false;
-  youtube: SafeResourceUrl = null;
+  isDesktop:boolean = false;
+  youtube:SafeResourceUrl = null;
 
-  player = null;
-  spalbumid = null;
-  track = null;
-  timer: Subscription = null;
+  player:any = null;
+  spalbumid:string = null;
+  track:any = null;
+  timer:Subscription = null;
 
-  audio = null;
-  duration = "";
-  currentTime = "";
+  audio:any = null;
+  duration:string = "";
+  currentTime:string = "";
   
   events = null;
   error = null;
-  loading = false;
+  loading:boolean = false;
 
   constructor(private router: Router, private location: Location, private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {
     this.isDesktop = !AppComponent.hasTouchScreen();
@@ -155,14 +155,10 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(spalbumid:string, type:string, position:number=0, trackid:string=null) {
+  playPauseSpotify(spalbumid:string, type:string=null, position:number=0, trackid:string=null) {
     const token = this.cookieService.get('spotify-token');
-    if(token != null && token != '' && this.player != null) {
-      if(type == 'podcast') {
-        type = 'playlist';
-      }
-      
-      if(this.spalbumid == spalbumid && this.track != null && this.track.item.id == trackid) {
+    if(token != null && token != '' && this.player != null) {      
+      if(this.spalbumid == spalbumid && this.track != null && (type == null || this.track.item.id == trackid)) {
         // pause
         if(this.track.is_playing) {
           const options = {
@@ -191,6 +187,9 @@ export class AppComponent {
         if(this.timer) {
           this.timer.unsubscribe();
           this.timer = null;
+        }
+        if(type == 'podcast') {
+          type = 'playlist';
         }
 
         this.spalbumid = spalbumid;

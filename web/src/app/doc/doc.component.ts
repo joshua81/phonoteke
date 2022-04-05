@@ -12,8 +12,8 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./doc.component.css']
 })
 export class DocComponent implements OnInit {
-  doc = null;
-  links = [];
+  doc:any = null;
+  links:any = null;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
@@ -35,7 +35,7 @@ export class DocComponent implements OnInit {
 
   reset() {
     this.doc = null;
-    this.links = [];
+    this.links = null;
   }
 
   loadDoc(id:string) {

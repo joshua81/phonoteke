@@ -114,4 +114,15 @@ span.play {
     background: #FFFFFF;
     cursor: pointer;
   }
+
+  .yesterday {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #18A2B8;
+}
   

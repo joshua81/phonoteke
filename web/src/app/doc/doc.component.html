@@ -8,7 +8,7 @@
 
     <div class="title text-left"><h1 class="font-weight-bold text-white">{{doc.artist}}</h1></div>
     
-    <!-- menu -->
+    <!-- player -->
     <div *ngIf="doc.type == 'podcast' && doc.audio" class="player d-flex flex-row justify-content-center align-items-center p-2"
       (click)="app.playPauseAudio(doc)">
       <div class="player-button">
@@ -16,8 +16,7 @@
         <span *ngIf="app.audio != null && app.audio.src == doc.audio && !app.audio.paused" class="player-pause"></span>
       </div>
     </div>
-    
-    <div *ngIf="doc.type != 'podcast' && doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
+    <div *ngIf="doc.audio == null && doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
       (click)="app.playPauseSpotify(doc.spalbumid, doc.type)">
       <div class="player-button">
         <span *ngIf="app.track == null || app.spalbumid != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
@@ -38,8 +37,8 @@
   <!-- info -->
   <div class="text-center w-100">
     <div class="d-flex flex-row justify-content-center">
-      <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-      <h3 *ngIf="doc.type == 'podcast'" class="ml-1">{{' | ' + formatDate(doc.date)}}</h3>
+      <h3 *ngIf="doc.type != 'podcast'" class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+      <h3 *ngIf="doc.type == 'podcast'">{{formatDate(doc.date)}}</h3>
     </div>
     <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
     <h3 *ngIf="doc.type == 'album' && doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
@@ -61,11 +60,6 @@
   <app-tracks *ngIf="doc.type == 'podcast'" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
   <!--app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video-->
         
-  <!-- links -->
-  <!--div *ngIf="links && (links.podcasts.length != 0 || links.albums.length != 0)" class="p-2">
-    <h2>Ti potrebbe interessare</h2>
-    <app-link [links]="links.podcasts" type="episodes"></app-link>
-    <app-link [links]="links.albums" type="albums"></app-link>
-  </div-->
+  <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>
 </div>
 <app-footer></app-footer>

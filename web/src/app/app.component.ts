@@ -293,25 +293,22 @@ export class AppComponent {
 
   playPauseAudio(doc:any=null){
     if(doc != null && doc.audio != null) {
-      if(doc.audio.endsWith(".mp3")) {
-        if(this.audio == null || this.audio.source != doc.audio) {
-          this.close();
+      if(this.audio == null || this.audio.source != doc.audio) {
+        this.close();
+        if(!Hls.isSupported()) {
           this.audio = new Audio();
           this.audio.src = doc.audio;
           this.audio.source = doc.audio;
           this.audio.title = doc.title;
           this.audio.artist = doc.artist;
           this.audio.cover = doc.cover;
+          this.audio.load();
           this.audio.ontimeupdate = () => {
             this.duration = AppComponent.formatTime(this.audio.duration);
             this.currentTime = AppComponent.formatTime(this.audio.currentTime);
           }
-          this.audio.load();
         }
-      }
-      else if (Hls.isSupported()) {
-        if(this.audio == null || this.audio.source != doc.audio) {
-          this.close();
+        else {
           this.audio = document.querySelector('#video');
           var hls = new Hls();
           hls.attachMedia(this.audio);
@@ -319,11 +316,11 @@ export class AppComponent {
           this.audio.title = doc.title;
           this.audio.artist = doc.artist;
           this.audio.cover = doc.cover;
+          hls.loadSource(doc.audio);
           this.audio.ontimeupdate = () => {
             this.duration = AppComponent.formatTime(this.audio.duration);
             this.currentTime = AppComponent.formatTime(this.audio.currentTime);
           }
-          hls.loadSource(doc.audio);
         }
       }
     }

@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Subscription, timer } from 'rxjs';
+import Hls from 'hls.js';
 
 @Component({
   selector: 'app-root',
@@ -42,7 +43,9 @@ export class AppComponent {
     });
   }
   
-  ngOnInit() {}
+  ngOnInit() {
+    // nothing to do
+  }
 
   back(): void {
     this.history.pop();
@@ -289,25 +292,48 @@ export class AppComponent {
   }
 
   playPauseAudio(doc:any=null){
-    if(doc != null && (this.audio == null || this.audio.src != doc.audio)) {
-      this.close();
-      this.audio = new Audio();
-      this.audio.src = doc.audio;
-      this.audio.title = doc.title;
-      this.audio.artist = doc.artist;
-      this.audio.cover = doc.cover;
-      this.audio.ontimeupdate = () => {
-        this.duration = AppComponent.formatTime(this.audio.duration);
-        this.currentTime = AppComponent.formatTime(this.audio.currentTime);
+    if(doc != null && doc.audio != null) {
+      if(doc.audio.endsWith(".mp3")) {
+        if(this.audio == null || this.audio.source != doc.audio) {
+          this.close();
+          this.audio = new Audio();
+          this.audio.src = doc.audio;
+          this.audio.source = doc.audio;
+          this.audio.title = doc.title;
+          this.audio.artist = doc.artist;
+          this.audio.cover = doc.cover;
+          this.audio.ontimeupdate = () => {
+            this.duration = AppComponent.formatTime(this.audio.duration);
+            this.currentTime = AppComponent.formatTime(this.audio.currentTime);
+          }
+          this.audio.load();
+        }
       }
-      this.audio.load();
+      else if (Hls.isSupported()) {
+        if(this.audio == null || this.audio.source != doc.audio) {
+          this.close();
+          this.audio = document.querySelector('#video');
+          var hls = new Hls();
+          hls.attachMedia(this.audio);
+          this.audio.source = doc.audio;
+          this.audio.title = doc.title;
+          this.audio.artist = doc.artist;
+          this.audio.cover = doc.cover;
+          this.audio.ontimeupdate = () => {
+            this.duration = AppComponent.formatTime(this.audio.duration);
+            this.currentTime = AppComponent.formatTime(this.audio.currentTime);
+          }
+          hls.loadSource(doc.audio);
+        }
+      }
     }
-
-    if(this.audio.paused){
-      this.audio.play();
-    }
-    else{
-      this.audio.pause();
+    if(this.audio) {
+      if(this.audio.paused) {
+        this.audio.play();
+      }
+      else {
+        this.audio.pause();
+      }
     }
   }
 

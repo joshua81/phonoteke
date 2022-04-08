@@ -295,7 +295,7 @@ export class AppComponent {
     if(doc != null && doc.audio != null) {
       if(this.audio == null || this.audio.source != doc.audio) {
         this.close();
-        if(!Hls.isSupported()) {
+        if(!Hls.isSupported() || doc.audio.endsWith(".mp3")) {
           this.audio = new Audio();
           this.audio.src = doc.audio;
           this.audio.source = doc.audio;

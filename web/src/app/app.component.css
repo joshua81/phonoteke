@@ -4,17 +4,6 @@
     cursor: pointer;
 }
 
-.player-youtube {
-    position: relative;
-    width: 390px;
-    max-width: 390px;
-    height: 200px;
-    max-height: 200px;
-    margin: 0px;
-    padding: 0px;
-    background: #000000;
-}
-
 .player-spotify {
     position: relative;
     width: 100%;

@@ -39,8 +39,20 @@
     </div>
   </div>
 
+  <!-- videos -->
   <app-video *ngIf="status=='videos'" [tracks]="videos"></app-video>
-  <app-tracks *ngIf="status=='tracks'" [tracks]="tracks" [spalbumid]="spalbumid"></app-tracks>
+
+  <!-- tracks -->
+  <div *ngIf="status=='tracks'" class="w-100 mt-3">
+    <div class="d-flex flex-row justify-content-center align-items-center">
+      <a *ngIf="spalbumid" class="spotify" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
+        <span class="spotify"></span>
+      </a>
+    </div>
+    <app-tracks [tracks]="tracks" [spalbumid]="spalbumid"></app-tracks>
+  </div>
+
+  <!-- episodes -->
   <app-podcasts *ngIf="status=='episodes'" [source]="source" [docs]="episodes"></app-podcasts>
   <!--app-doc *ngIf="status=='doc'" [doc]="doc"></app-doc-->
 

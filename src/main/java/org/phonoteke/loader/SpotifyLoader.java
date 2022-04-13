@@ -190,12 +190,24 @@ public class SpotifyLoader extends HumanBeats
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
-			createPlaylist(page);
+			String title = page.getString("artist");
+			String description = page.getString("title");
+			Date date = page.getDate("date");
+			title = format(title, date);
+			createPlaylist(page, title, description);
 			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		}
+
+		i = stats.find().iterator();
+		while(i.hasNext()) { 
+			Document page = i.next();
+			String name = page.getString("name");
+			createPlaylist(page, name, null);
+			stats.updateOne(Filters.eq("name", name), new org.bson.Document("$set", page)); 
 		}
 	}
 
-	private void createPlaylist(Document page)
+	private void createPlaylist(Document page, String title, String description)
 	{
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
 		if(CollectionUtils.isNotEmpty(tracks))
@@ -217,27 +229,32 @@ public class SpotifyLoader extends HumanBeats
 				{
 					if(id == null) {
 						// create new playlist
-						String title = page.getString("artist");
-						String description = page.getString("title");
-						Date date = page.getDate("date");
-						title = format(title, date);
 						CreatePlaylistRequest req = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
 						Playlist playlist = req.execute();
 						id = playlist.getId();
 						AddItemsToPlaylistRequest req2 = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req2.execute();
-//						UnfollowPlaylistRequest req3 = spotify.unfollowPlaylist(id).build();
-//						req3.execute();
 						page.append("spalbumid", id);
 						page.append("dirty", false);
 						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");
 					}
 					// update existing playlist
 					else {
-						ReplacePlaylistsItemsRequest req = spotify.replacePlaylistsItems(id, Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
-						req.execute();
+						if(uris.size() > 50) {
+							ReplacePlaylistsItemsRequest req = spotify.replacePlaylistsItems(id, 
+									Arrays.copyOf(uris.subList(0, 50).toArray(), 50, String[].class)).build();
+							req.execute();
+							AddItemsToPlaylistRequest req2 = spotify.addItemsToPlaylist(id, 
+									Arrays.copyOf(uris.subList(50, uris.size()).toArray(), uris.size()-50, String[].class)).build();
+							req2.execute();
+						}
+						else {
+							ReplacePlaylistsItemsRequest req = spotify.replacePlaylistsItems(id, 
+									Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
+							req.execute();
+						}
 						page.append("dirty", false);
-						LOGGER.info("Playlist " + id + " updated");
+						LOGGER.info("Playlist " + title + " updated");
 					}
 				}
 				catch (Exception e) 

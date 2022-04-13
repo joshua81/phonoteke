@@ -94,6 +94,7 @@ export class HomeComponent implements OnInit {
     this.tracks.push.apply(this.tracks, data.tracks.slice(start,end));*/
     this.setMeta(data);
     this.name = data.name;
+    this.spalbumid = data.spalbumid;
     this.albums.push.apply(this.albums, data.albums);
     this.videos.push.apply(this.videos, data.videos);
     this.tracks.push.apply(this.tracks, data.tracks);

@@ -191,7 +191,7 @@ export class AppComponent {
           this.timer.unsubscribe();
           this.timer = null;
         }
-        if(type == 'podcast') {
+        if(type != 'album') {
           type = 'playlist';
         }
 

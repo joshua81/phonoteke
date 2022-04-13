@@ -272,18 +272,18 @@ public class StatsLoader extends HumanBeats
 
 	private MongoCursor<Document> getDocs(String source, Date lastEpisode) {
 		LocalDateTime end = lastEpisode == null ? LocalDateTime.now() : LocalDateTime.ofInstant(lastEpisode.toInstant(), ZoneOffset.UTC);
-		LocalDateTime start = end.minusDays(30);
+		LocalDateTime start = end.minusDays(31);
 
 		return source == null ? docs.find(Filters.and(
 				Filters.eq("type", "podcast"),
-				Filters.gt("date", start),
-				Filters.lt("date", end))).iterator() :
+				Filters.gte("date", start),
+				Filters.lte("date", end))).iterator() :
 
 					docs.find(Filters.and(
 							Filters.eq("type", "podcast"),
 							Filters.eq("source", source), 
-							Filters.gt("date", start),
-							Filters.lt("date", end))).iterator();
+							Filters.gte("date", start),
+							Filters.lte("date", end))).iterator();
 	}
 
 	private Document getArtist(Document track, Float score) {

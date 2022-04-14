@@ -161,7 +161,7 @@ export class AppComponent {
   playPauseSpotify(spalbumid:string, type:string=null, position:number=0, trackid:string=null) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {      
-      if(this.spalbumid == spalbumid && this.track != null && (type == null || this.track.item.id == trackid)) {
+      if(this.spalbumid == spalbumid && this.track != null && (trackid == null || this.track.item.id == trackid)) {
         // pause
         if(this.track.is_playing) {
           const options = {

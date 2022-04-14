@@ -17,7 +17,7 @@
       </div>
     </div>
     <div *ngIf="doc.audio == null && doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
-      (click)="app.playPauseSpotify(doc.spalbumid, doc.type)">
+      (click)="app.playPauseSpotify(doc.spalbumid)">
       <div class="player-button">
         <span *ngIf="app.track == null || app.spalbumid != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
         <span *ngIf="app.track != null && app.spalbumid == doc.spalbumid && app.track.is_playing" class="player-pause"></span>

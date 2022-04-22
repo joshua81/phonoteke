@@ -11,20 +11,23 @@
                     <span class="play"></span>
                 </div>
             </div>
-            <div class="font-weight-bold ml-2 mr-2">{{i+1}}</div>
-            <div class="w-100">
+            <div class="counter justify-content-center text-center font-weight-bold ml-1 mr-1">{{i+1}}</div>
+            <div class="w-100 ml-1 mr-1">
                 <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
-                <div class="d-flex flex-row">
-                    <div *ngIf="track.youtube" class="btn btn-link p-0" (click)="app.playYoutube(track.youtube)">Video</div>
-                    <div *ngIf="track.youtube && track.artistid" class="ml-1 mr-1">|</div>
-                    <div *ngIf="track.artistid" class="btn btn-link p-0" (click)="app.loadEvents(track.artistid)">Concerti</div>
-                </div>
             </div>
-            <div *ngIf="app.player" class="ml-2">
-                <span *ngIf="track.spotify && !track?.saved" class="love" (click)="app.saveTrack(track, true)"></span>
-                <span *ngIf="track.spotify && track?.saved" class="love-selected" (click)="app.saveTrack(track, false)"></span>
+            <div class="d-flex flex-row ml-1 mr-1">
+                <div *ngIf="track.youtube" class="d-flex flex-row align-items-center justify-content-center mr-1" (click)="app.playYoutube(track.youtube)">
+                    <span class="youtube"></span>
+                </div>
+                <div *ngIf="track.artistid" class="d-flex flex-row align-items-center justify-content-center ml-1 mr-1" (click)="app.loadEvents(track.artistid)">
+                    <span class="songkick"></span>
+                </div>
+                <div *ngIf="app.player" class="d-flex flex-row align-items-center justify-content-center ml-1">
+                    <span *ngIf="track.spotify && !track?.saved" class="love" (click)="app.saveTrack(track, true)"></span>
+                    <span *ngIf="track.spotify && track?.saved" class="love-selected" (click)="app.saveTrack(track, false)"></span>
+                </div>
             </div>
         </div>
     </div>

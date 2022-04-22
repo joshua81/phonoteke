@@ -80,3 +80,29 @@ span.love-selected {
     background: #F80046;
     cursor: pointer;
 }
+
+span.youtube {
+    display: inline-block;
+    mask: url("/images/youtube.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #FF0000;
+    cursor: pointer;
+}
+
+span.songkick {
+    display: inline-block;
+    mask: url("/images/songkick.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #F80046;
+    cursor: pointer;
+}
+
+.counter {
+    width: 20px;
+}

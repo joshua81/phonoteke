@@ -288,8 +288,8 @@ async function findEvents(id) {
 					resolve(body);
 				}
 				else {
-					console.log("Error while executing findEvents()");
-					return null;
+					console.log("Error while executing findEvents()" + body);
+					reject("Error while executing findEvents()");
 				}
 			});
 		});

@@ -17,7 +17,7 @@
                 <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' da '}}<span class="font-weight-bold">{{track.album}}</span></div>
                 <div *ngIf="track.spotify" class="text-truncate-1">{{'di ' + track.artist}}</div>
             </div>
-            <div class="d-flex flex-row ml-1 mr-1">
+            <div class="d-flex flex-row ml-1">
                 <div *ngIf="track.youtube" class="d-flex flex-row align-items-center justify-content-center mr-1" (click)="app.playYoutube(track.youtube)">
                     <span class="youtube"></span>
                 </div>

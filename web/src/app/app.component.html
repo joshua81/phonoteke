@@ -82,6 +82,9 @@
 <!-- Events -->
 <div *ngIf="events" class="d-flex justify-content-center modal-bg" (click)="closeEvents()">
   <div *ngIf="events.length != 0" class="align-self-center overflow-auto modal-content">
+    <div class="m-1 d-flex justify-content-center">
+      <span class="songkick"></span>
+    </div>
     <div class="list-group">
       <div *ngFor="let event of events" class="p-2 list-group-item">
         <div class="d-flex align-items-center">
@@ -95,6 +98,9 @@
     </div>
   </div>
   <div *ngIf="events.length == 0" class="align-self-center overflow-auto modal-content">
+    <div class="m-1 d-flex justify-content-center">
+      <span class="songkick"></span>
+    </div>
     <div class="d-flex flex-row justify-content-center align-items-center">
       <div class="font-weight-bold mt-3 mb-3">Nessun concerto in programma</div>
     </div>

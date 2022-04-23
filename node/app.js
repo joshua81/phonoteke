@@ -104,7 +104,7 @@ app.get('/api/podcasts/:source/episodes', async(req, res)=>{
 
 app.get('/api/events/:id', async(req, res)=>{
 	const json = await findEvents(req.params.id);
-	res.send(json.resultsPage.results.event ? json.resultsPage.results.event : []);
+	res.send(json && json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
 
 app.get('/api/login', async(req, res)=>{
@@ -288,8 +288,8 @@ async function findEvents(id) {
 					resolve(body);
 				}
 				else {
-					console.log("Error while executing findEvents()" + body);
-					reject("Error while executing findEvents()");
+					console.log('Error while executing findEvents()');
+					resolve(null);
 				}
 			});
 		});

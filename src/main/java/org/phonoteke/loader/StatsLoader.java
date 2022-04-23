@@ -175,6 +175,7 @@ public class StatsLoader extends HumanBeats
 			topArtists.get(artists.get(a)).add(a);
 		});
 
+		// Artists
 		List<Document> jsonArtists = Lists.newArrayList();
 		BigDecimal topScore = topArtists.descendingKeySet().iterator().next();
 		for(BigDecimal score : topArtists.descendingKeySet()) {
@@ -186,6 +187,7 @@ public class StatsLoader extends HumanBeats
 				}
 			});
 			topArtists.get(score).forEach(a -> {
+				LOGGER.info("Artist: " + a + " score: " + score10);
 				jsonArtists.add(getArtist(trackArtists.get(a), score10));
 			});
 		}
@@ -198,6 +200,7 @@ public class StatsLoader extends HumanBeats
 			topAlbums.get(albums.get(a)).add(a);
 		});
 
+		// Albums
 		List<Document> jsonAlbums = Lists.newArrayList();
 		topScore = topAlbums.descendingKeySet().iterator().next();
 		for(BigDecimal score : topAlbums.descendingKeySet()) {
@@ -205,10 +208,15 @@ public class StatsLoader extends HumanBeats
 			Collections.sort(topAlbums.get(score), new Comparator<String>() {
 				@Override
 				public int compare(String o1, String o2) {
-					return dateAlbums.get(o2).compareTo(dateAlbums.get(o1));
+					Document a1 = trackAlbums.get(o1);
+					Document a2 = trackAlbums.get(o2);
+					int res = artists.get(a2.get("spartistid")).compareTo(artists.get(a1.get("spartistid")));
+					return res != 0 ? res : dateAlbums.get(o2).compareTo(dateAlbums.get(o1));
 				}
 			});
 			topAlbums.get(score).forEach(a -> {
+				Document a1 = trackAlbums.get(a);
+				LOGGER.info("Album: " + a + " score: " + score10 + " artist: " + artists.get(a1.get("spartistid")));
 				jsonAlbums.add(getAlbum(trackAlbums.get(a), score10));
 			});
 		}
@@ -221,6 +229,7 @@ public class StatsLoader extends HumanBeats
 			topSongs.get(songs.get(s)).add(s);
 		});
 
+		// Tracks
 		List<Document> jsonSongs = Lists.newArrayList();
 		topScore = topSongs.descendingKeySet().iterator().next();
 		for(BigDecimal score : topSongs.descendingKeySet()) {
@@ -228,15 +237,23 @@ public class StatsLoader extends HumanBeats
 			Collections.sort(topSongs.get(score), new Comparator<String>() {
 				@Override
 				public int compare(String o1, String o2) {
-					return dateSongs.get(o2).compareTo(dateSongs.get(o1));
+					Document s1 = trackSongs.get(o1);
+					Document s2 = trackSongs.get(o2);
+					int res = artists.get(s2.get("spartistid")).compareTo(artists.get(s1.get("spartistid")));
+					if(res == 0) {
+						res = albums.get(s2.get("spalbumid")).compareTo(albums.get(s1.get("spalbumid")));
+					}
+					return res != 0 ? res : dateSongs.get(o2).compareTo(dateSongs.get(o1));
 				}
 			});
 			topSongs.get(score).forEach(s -> {
+				LOGGER.info("Track: " + s + " score: " + score10);
 				jsonSongs.add(getTrack(trackSongs.get(s), score10));
 			});
 		}
 		doc.append("tracks", subList(jsonSongs, 100));
 
+		// Videos
 		if(MapUtils.isNotEmpty(videos)) {
 			videos.keySet().forEach(a -> {
 				if(!topVideos.containsKey(videos.get(a))) {
@@ -252,10 +269,17 @@ public class StatsLoader extends HumanBeats
 				Collections.sort(topVideos.get(score), new Comparator<String>() {
 					@Override
 					public int compare(String o1, String o2) {
-						return dateVideos.get(o2).compareTo(dateVideos.get(o1));
+						Document v1 = trackVideos.get(o1);
+						Document v2 = trackVideos.get(o2);
+						int res = artists.get(v2.get("spartistid")).compareTo(artists.get(v1.get("spartistid")));
+						if(res == 0) {
+							res = albums.get(v2.get("spalbumid")).compareTo(albums.get(v1.get("spalbumid")));
+						}
+						return res != 0 ? res : dateVideos.get(o2).compareTo(dateVideos.get(o1));
 					}
 				});
 				topVideos.get(score).forEach(v -> {
+					LOGGER.info("Video: " + v + " score: " + score10);
 					jsonVideos.add(getVideo(trackVideos.get(v), score10));
 				});
 			}
@@ -309,6 +333,7 @@ public class StatsLoader extends HumanBeats
 				.append("spalbumid", track.getString("spalbumid"))
 				.append("spotify", track.getString("spotify"))
 				.append("cover", track.getString("coverS"))
+				.append("youtube", replaceNA(track.getString("youtube")))
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 

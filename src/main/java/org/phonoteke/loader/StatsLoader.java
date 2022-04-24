@@ -74,17 +74,17 @@ public class StatsLoader extends HumanBeats
 		TreeMap<String, BigDecimal> artists = Maps.newTreeMap();
 		Map<String, Document> trackArtists = Maps.newHashMap();
 		Map<String, Date> dateArtists = Maps.newHashMap();
-		
+
 		TreeMap<BigDecimal, List<String>> topAlbums = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> albums = Maps.newTreeMap();
 		Map<String, Document> trackAlbums = Maps.newHashMap();
 		Map<String, Date> dateAlbums = Maps.newHashMap();
-		
+
 		TreeMap<BigDecimal, List<String>> topSongs = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> songs = Maps.newTreeMap();
 		Map<String, Document> trackSongs = Maps.newHashMap();
 		Map<String, Date> dateSongs = Maps.newHashMap();
-		
+
 		TreeMap<BigDecimal, List<String>> topVideos = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> videos = Maps.newTreeMap();
 		Map<String, Document> trackVideos = Maps.newHashMap();
@@ -239,9 +239,9 @@ public class StatsLoader extends HumanBeats
 				public int compare(String o1, String o2) {
 					Document s1 = trackSongs.get(o1);
 					Document s2 = trackSongs.get(o2);
-					int res = artists.get(s2.get("spartistid")).compareTo(artists.get(s1.get("spartistid")));
+					int res = albums.get(s2.get("spalbumid")).compareTo(albums.get(s1.get("spalbumid")));
 					if(res == 0) {
-						res = albums.get(s2.get("spalbumid")).compareTo(albums.get(s1.get("spalbumid")));
+						res = artists.get(s2.get("spartistid")).compareTo(artists.get(s1.get("spartistid")));						
 					}
 					return res != 0 ? res : dateSongs.get(o2).compareTo(dateSongs.get(o1));
 				}
@@ -271,9 +271,9 @@ public class StatsLoader extends HumanBeats
 					public int compare(String o1, String o2) {
 						Document v1 = trackVideos.get(o1);
 						Document v2 = trackVideos.get(o2);
-						int res = artists.get(v2.get("spartistid")).compareTo(artists.get(v1.get("spartistid")));
+						int res = albums.get(v2.get("spalbumid")).compareTo(albums.get(v1.get("spalbumid")));
 						if(res == 0) {
-							res = albums.get(v2.get("spalbumid")).compareTo(albums.get(v1.get("spalbumid")));
+							res = artists.get(v2.get("spartistid")).compareTo(artists.get(v1.get("spartistid")));
 						}
 						return res != 0 ? res : dateVideos.get(o2).compareTo(dateVideos.get(o1));
 					}

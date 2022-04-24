@@ -73,32 +73,30 @@ public class StatsLoader extends HumanBeats
 		TreeMap<BigDecimal, List<String>> topArtists = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> artists = Maps.newTreeMap();
 		Map<String, Document> trackArtists = Maps.newHashMap();
-		Map<String, Date> dateArtists = Maps.newHashMap();
 
 		TreeMap<BigDecimal, List<String>> topAlbums = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> albums = Maps.newTreeMap();
 		Map<String, Document> trackAlbums = Maps.newHashMap();
-		Map<String, Date> dateAlbums = Maps.newHashMap();
 
 		TreeMap<BigDecimal, List<String>> topSongs = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> songs = Maps.newTreeMap();
 		Map<String, Document> trackSongs = Maps.newHashMap();
-		Map<String, Date> dateSongs = Maps.newHashMap();
 
 		TreeMap<BigDecimal, List<String>> topVideos = Maps.newTreeMap();
 		TreeMap<String, BigDecimal> videos = Maps.newTreeMap();
 		Map<String, Document> trackVideos = Maps.newHashMap();
-		Map<String, Date> dateVideos = Maps.newHashMap();
 
 		i.forEachRemaining(page -> {
-			String s = page.getString("source");
-			Date date = page.getDate("date");
 			List<Document> tracks = page.get("tracks", List.class);
 			if(CollectionUtils.isEmpty(tracks)) {
 				return;
 			}
 
+			String s = page.getString("source");
+			Date date = page.getDate("date");
 			tracks.forEach(t -> {
+				t.put("date", date);
+
 				// Artist
 				String artist = t.getString("spartistid");
 				if(artist != null && !HumanBeats.NA.equals(artist)) {
@@ -109,9 +107,6 @@ public class StatsLoader extends HumanBeats
 					BigDecimal score = artistNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
 					artists.put(artist, score);
 					trackArtists.put(artist, t);
-					if(!dateArtists.containsKey(artist) || dateArtists.get(artist).before(date)) {
-						dateArtists.put(artist, date);
-					}
 				}
 
 				// Album
@@ -124,9 +119,6 @@ public class StatsLoader extends HumanBeats
 					BigDecimal score = albumNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
 					albums.put(album, score);
 					trackAlbums.put(album, t);
-					if(!dateAlbums.containsKey(album) || dateAlbums.get(album).before(date)) {
-						dateAlbums.put(album, date);
-					}
 				}
 
 				// Song
@@ -139,9 +131,6 @@ public class StatsLoader extends HumanBeats
 					BigDecimal score = songNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
 					songs.put(song, score);
 					trackSongs.put(song, t);
-					if(!dateSongs.containsKey(song) || dateSongs.get(song).before(date)) {
-						dateSongs.put(song, date);
-					}
 				}
 
 				// Video
@@ -154,9 +143,6 @@ public class StatsLoader extends HumanBeats
 					BigDecimal score = videoNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
 					videos.put(video, score);
 					trackVideos.put(video, t);
-					if(!dateVideos.containsKey(video) || dateVideos.get(video).before(date)) {
-						dateVideos.put(video, date);
-					}
 				}
 			});
 		});
@@ -177,18 +163,19 @@ public class StatsLoader extends HumanBeats
 
 		// Artists
 		List<Document> jsonArtists = Lists.newArrayList();
-		BigDecimal topScore = topArtists.descendingKeySet().iterator().next();
 		for(BigDecimal score : topArtists.descendingKeySet()) {
-			final Float score10 = calculateScore(score, topScore);
 			Collections.sort(topArtists.get(score), new Comparator<String>() {
 				@Override
 				public int compare(String o1, String o2) {
-					return dateArtists.get(o2).compareTo(dateArtists.get(o1));
+					Document a1 = trackArtists.get(o1);
+					Document a2 = trackArtists.get(o2);
+					return a2.getDate("date").compareTo(a1.getDate("date"));
 				}
 			});
 			topArtists.get(score).forEach(a -> {
-				LOGGER.info("Artist: " + a + " score: " + score10);
-				jsonArtists.add(getArtist(trackArtists.get(a), score10));
+				Document artist = trackArtists.get(a);
+				LOGGER.info("Artist: " + a + " score: " + score);
+				jsonArtists.add(getArtist(artist));
 			});
 		}
 		doc.append("artists", subList(jsonArtists, 100));
@@ -202,22 +189,21 @@ public class StatsLoader extends HumanBeats
 
 		// Albums
 		List<Document> jsonAlbums = Lists.newArrayList();
-		topScore = topAlbums.descendingKeySet().iterator().next();
 		for(BigDecimal score : topAlbums.descendingKeySet()) {
-			final Float score10 = calculateScore(score, topScore);
 			Collections.sort(topAlbums.get(score), new Comparator<String>() {
 				@Override
 				public int compare(String o1, String o2) {
 					Document a1 = trackAlbums.get(o1);
 					Document a2 = trackAlbums.get(o2);
 					int res = artists.get(a2.get("spartistid")).compareTo(artists.get(a1.get("spartistid")));
-					return res != 0 ? res : dateAlbums.get(o2).compareTo(dateAlbums.get(o1));
+					return res != 0 ? res : a2.getDate("date").compareTo(a1.getDate("date"));
 				}
 			});
 			topAlbums.get(score).forEach(a -> {
-				Document a1 = trackAlbums.get(a);
-				LOGGER.info("Album: " + a + " score: " + score10 + " artist: " + artists.get(a1.get("spartistid")));
-				jsonAlbums.add(getAlbum(trackAlbums.get(a), score10));
+				Document album = trackAlbums.get(a);
+				BigDecimal artistScore = artists.get(album.get("spartistid"));
+				LOGGER.info("Album: " + a + " score: " + score + " artist: " + artistScore);
+				jsonAlbums.add(getAlbum(album));
 			});
 		}
 		doc.append("albums", subList(jsonAlbums, 100));
@@ -231,9 +217,7 @@ public class StatsLoader extends HumanBeats
 
 		// Tracks
 		List<Document> jsonSongs = Lists.newArrayList();
-		topScore = topSongs.descendingKeySet().iterator().next();
 		for(BigDecimal score : topSongs.descendingKeySet()) {
-			final Float score10 = calculateScore(score, topScore);
 			Collections.sort(topSongs.get(score), new Comparator<String>() {
 				@Override
 				public int compare(String o1, String o2) {
@@ -243,12 +227,15 @@ public class StatsLoader extends HumanBeats
 					if(res == 0) {
 						res = artists.get(s2.get("spartistid")).compareTo(artists.get(s1.get("spartistid")));						
 					}
-					return res != 0 ? res : dateSongs.get(o2).compareTo(dateSongs.get(o1));
+					return res != 0 ? res : s2.getDate("date").compareTo(s1.getDate("date"));
 				}
 			});
 			topSongs.get(score).forEach(s -> {
-				LOGGER.info("Track: " + s + " score: " + score10);
-				jsonSongs.add(getTrack(trackSongs.get(s), score10));
+				Document track = trackSongs.get(s);
+				BigDecimal albumScore = albums.get(track.get("spalbumid"));
+				BigDecimal artistScore = artists.get(track.get("spartistid"));
+				LOGGER.info("Track: " + s + " score: " + score + " album: " +  albumScore + " artist: " + artistScore);
+				jsonSongs.add(getTrack(track));
 			});
 		}
 		doc.append("tracks", subList(jsonSongs, 100));
@@ -263,9 +250,7 @@ public class StatsLoader extends HumanBeats
 			});
 
 			List<Document> jsonVideos = Lists.newArrayList();
-			topScore = topVideos.descendingKeySet().iterator().next();
 			for(BigDecimal score : topVideos.descendingKeySet()) {
-				final Float score10 = calculateScore(score, topScore);
 				Collections.sort(topVideos.get(score), new Comparator<String>() {
 					@Override
 					public int compare(String o1, String o2) {
@@ -275,12 +260,15 @@ public class StatsLoader extends HumanBeats
 						if(res == 0) {
 							res = artists.get(v2.get("spartistid")).compareTo(artists.get(v1.get("spartistid")));
 						}
-						return res != 0 ? res : dateVideos.get(o2).compareTo(dateVideos.get(o1));
+						return res != 0 ? res : v2.getDate("date").compareTo(v1.getDate("date"));
 					}
 				});
 				topVideos.get(score).forEach(v -> {
-					LOGGER.info("Video: " + v + " score: " + score10);
-					jsonVideos.add(getVideo(trackVideos.get(v), score10));
+					Document video = trackVideos.get(v);
+					BigDecimal albumScore = albums.get(video.get("spalbumid"));
+					BigDecimal artistScore = artists.get(video.get("spartistid"));
+					LOGGER.info("Video: " + v + " score: " + score + " album: " +  albumScore + " artist: " + artistScore);
+					jsonVideos.add(getVideo(video));
 				});
 			}
 			doc.append("videos", subList(jsonVideos, 100));
@@ -288,10 +276,6 @@ public class StatsLoader extends HumanBeats
 
 		stats.updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 		LOGGER.info(source + " updated");
-	}
-
-	private Float calculateScore(BigDecimal score, BigDecimal topScore) {
-		return score.divide(topScore, MathContext.DECIMAL32).multiply(BigDecimal.TEN).floatValue();
 	}
 
 	private MongoCursor<Document> getDocs(String source, Date lastEpisode) {
@@ -310,13 +294,13 @@ public class StatsLoader extends HumanBeats
 							Filters.lte("date", end))).iterator();
 	}
 
-	private Document getArtist(Document track, Float score) {
+	private Document getArtist(Document track) {
 		return new Document("artist", track.getString("artist"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
-	private Document getAlbum(Document track, Float score) {
+	private Document getAlbum(Document track) {
 		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("spartistid", track.getString("spartistid"))
@@ -325,7 +309,7 @@ public class StatsLoader extends HumanBeats
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
-	private Document getTrack(Document track, Float score) {
+	private Document getTrack(Document track) {
 		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("track", track.getString("track"))
@@ -337,7 +321,7 @@ public class StatsLoader extends HumanBeats
 				.append("artistid", replaceNA(track.getString("artistid")));
 	}
 
-	private Document getVideo(Document track, Float score) {
+	private Document getVideo(Document track) {
 		return new Document("artist", track.getString("artist"))
 				.append("album", track.getString("album"))
 				.append("track", track.getString("track"))

@@ -61,12 +61,12 @@ span.album {
 
 span.love {
     display: inline-block;
-    mask: url("/images/love.svg") no-repeat;
+    mask: url("/images/love-selected.svg") no-repeat;
     width: 20px;
     height: 20px;
     margin: 0px;
     padding: 0px;
-    background: #888888;
+    background: #b0b0b0;
     cursor: pointer;
 }
 

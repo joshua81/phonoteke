@@ -21,9 +21,9 @@
                 <div *ngIf="track.youtube" class="d-flex flex-row align-items-center justify-content-center mr-1" (click)="app.playYoutube(track.youtube)">
                     <span class="youtube"></span>
                 </div>
-                <div *ngIf="track.artistid" class="d-flex flex-row align-items-center justify-content-center ml-1 mr-1" (click)="app.loadEvents(track.artistid)">
+                <!--div *ngIf="track.artistid" class="d-flex flex-row align-items-center justify-content-center ml-1 mr-1" (click)="app.loadEvents(track.artistid)">
                     <span class="songkick"></span>
-                </div>
+                </div-->
                 <div *ngIf="app.player" class="d-flex flex-row align-items-center justify-content-center ml-1">
                     <span *ngIf="track.spotify && !track?.saved" class="love" (click)="app.saveTrack(track, true)"></span>
                     <span *ngIf="track.spotify && track?.saved" class="love-selected" (click)="app.saveTrack(track, false)"></span>

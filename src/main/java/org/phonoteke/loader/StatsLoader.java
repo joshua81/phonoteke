@@ -25,6 +25,18 @@ public class StatsLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
 
+	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
+	private Map<String, Document> artists = Maps.newHashMap();
+
+	private Map<String, BigDecimal> albumsScore = Maps.newHashMap();
+	private Map<String, Document> albums = Maps.newHashMap();
+
+	private Map<String, BigDecimal> songsScore = Maps.newHashMap();
+	private Map<String, Document> songs = Maps.newHashMap();
+
+	private Map<String, BigDecimal> videosScore = Maps.newHashMap();
+	private Map<String, Document> videos = Maps.newHashMap();
+
 	public static void main(String[] args) {
 		new StatsLoader().load();
 	}
@@ -69,17 +81,17 @@ public class StatsLoader extends HumanBeats
 			return;
 		}
 
-		Map<String, BigDecimal> artistsScore = Maps.newHashMap();
-		Map<String, Document> artists = Maps.newHashMap();
+		artistsScore = Maps.newHashMap();
+		artists = Maps.newHashMap();
 
-		Map<String, BigDecimal> albumsScore = Maps.newHashMap();
-		Map<String, Document> albums = Maps.newHashMap();
+		albumsScore = Maps.newHashMap();
+		albums = Maps.newHashMap();
 
-		Map<String, BigDecimal> songsScore = Maps.newHashMap();
-		Map<String, Document> songs = Maps.newHashMap();
+		songsScore = Maps.newHashMap();
+		songs = Maps.newHashMap();
 
-		Map<String, BigDecimal> videosScore = Maps.newHashMap();
-		Map<String, Document> videos = Maps.newHashMap();
+		videosScore = Maps.newHashMap();
+		videos = Maps.newHashMap();
 
 		i.forEachRemaining(page -> {
 			List<Document> tracks = page.get("tracks", List.class);
@@ -154,12 +166,13 @@ public class StatsLoader extends HumanBeats
 		Collections.sort(jsonArtists, new Comparator<Document>() {
 			@Override
 			public int compare(Document a1, Document a2) {
-				int res = artistsScore.get(a2.get("spartistid")).compareTo(artistsScore.get(a1.get("spartistid")));
-				return res != 0 ? res : a2.getDate("date").compareTo(a1.getDate("date"));
+				int res = artistScore(a2).compareTo(artistScore(a1));
+				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
 			}
 		});
 		doc.append("artists", Lists.newArrayList());
 		subList(jsonArtists, 100).forEach(a -> {
+			LOGGER.info("Artist: " + artistScore(a) + "|" + trackDate(a));
 			doc.get("artists", List.class).add(getArtist(a));
 		});
 
@@ -168,17 +181,17 @@ public class StatsLoader extends HumanBeats
 		Collections.sort(jsonAlbums, new Comparator<Document>() {
 			@Override
 			public int compare(Document a1, Document a2) {
-				int res = albumsScore.get(a2.get("spalbumid")).compareTo(albumsScore.get(a1.get("spalbumid")));
+				int res = albumScore(a2).compareTo(albumScore(a1));
 				if(res != 0) {
 					return res;
 				}
-				res = artistsScore.get(a2.get("spartistid")).compareTo(artistsScore.get(a1.get("spartistid")));
-				return res != 0 ? res : a2.getDate("date").compareTo(a1.getDate("date"));
+				res = artistScore(a2).compareTo(artistScore(a1));
+				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
 			}
 		});
 		doc.append("albums", Lists.newArrayList());
 		subList(jsonAlbums, 100).forEach(a -> {
-			LOGGER.info("Album " +  a.get("spalbumid") + ": " + albumsScore.get(a.get("spalbumid")));
+			LOGGER.info("Album: " + albumScore(a) + "|" + artistScore(a) + "|" + trackDate(a));
 			doc.get("albums", List.class).add(getAlbum(a));
 		});
 
@@ -187,21 +200,21 @@ public class StatsLoader extends HumanBeats
 		Collections.sort(jsonSongs, new Comparator<Document>() {
 			@Override
 			public int compare(Document s1, Document s2) {
-				int res = songsScore.get(s2.get("spotify")).compareTo(songsScore.get(s1.get("spotify")));
+				int res = trackScore(s2).compareTo(trackScore(s1));
 				if(res != 0) {
 					return res;
 				}
-				res = albumsScore.get(s2.get("spalbumid")).compareTo(albumsScore.get(s1.get("spalbumid")));
+				res = albumScore(s2).compareTo(albumScore(s1));
 				if(res != 0) {
 					return res;
 				}
-				res = artistsScore.get(s2.get("spartistid")).compareTo(artistsScore.get(s1.get("spartistid")));
-				return res != 0 ? res : s2.getDate("date").compareTo(s1.getDate("date"));
+				res = artistScore(s2).compareTo(artistScore(s1));
+				return res != 0 ? res : trackDate(s2).compareTo(trackDate(s1));
 			}
 		});
 		doc.append("tracks", Lists.newArrayList());
 		subList(jsonSongs, 100).forEach(s -> {
-			LOGGER.info("Track " +  s.get("spotify") + ": " + songsScore.get(s.get("spotify")));
+			LOGGER.info("Track: " + trackScore(s) + "|" + albumScore(s) + "|" + artistScore(s) + "|" + trackDate(s));
 			doc.get("tracks", List.class).add(getTrack(s));
 		});
 
@@ -211,21 +224,21 @@ public class StatsLoader extends HumanBeats
 			Collections.sort(jsonVideos, new Comparator<Document>() {
 				@Override
 				public int compare(Document v1, Document v2) {
-					int res = videosScore.get(v2.get("youtube")).compareTo(videosScore.get(v1.get("youtube")));
+					int res = videoScore(v2).compareTo(videoScore(v1));
 					if(res != 0) {
 						return res;
 					}
-					res = albumsScore.get(v2.get("spalbumid")).compareTo(albumsScore.get(v1.get("spalbumid")));
+					res = albumScore(v2).compareTo(albumScore(v1));
 					if(res != 0) {
 						return res;
 					}
-					res = artistsScore.get(v2.get("spartistid")).compareTo(artistsScore.get(v1.get("spartistid")));
-					return res != 0 ? res : v2.getDate("date").compareTo(v1.getDate("date"));
+					res = artistScore(v2).compareTo(artistScore(v1));
+					return res != 0 ? res : trackDate(v2).compareTo(trackDate(v1));
 				}
 			});
 			doc.append("videos", Lists.newArrayList());
 			subList(jsonVideos, 100).forEach(v -> {
-				LOGGER.info("Video " +  v.get("youtube") + ": " + videosScore.get(v.get("youtube")));
+				LOGGER.info("Video: " + videoScore(v) + "|" + albumScore(v) + "|" + artistScore(v) + "|" + trackDate(v));
 				doc.get("videos", List.class).add(getVideo(v));
 			});
 		}
@@ -236,7 +249,7 @@ public class StatsLoader extends HumanBeats
 
 	private MongoCursor<Document> getDocs(String source, Date lastEpisode) {
 		LocalDateTime end = lastEpisode == null ? LocalDateTime.now() : LocalDateTime.ofInstant(lastEpisode.toInstant(), ZoneOffset.UTC);
-		LocalDateTime start = end.minusDays(31);
+		LocalDateTime start = end.minusMonths(1);
 
 		return source == null ? docs.find(Filters.and(
 				Filters.eq("type", "podcast"),
@@ -293,5 +306,25 @@ public class StatsLoader extends HumanBeats
 
 	private List<Document> subList(List<Document> list, int size) {
 		return list.size() <= size ? list : list.subList(0, size);
+	}
+
+	private BigDecimal artistScore(Document track) {
+		return artistsScore.get(track.get("spartistid"));
+	}
+
+	private BigDecimal albumScore(Document track) {
+		return albumsScore.get(track.get("spalbumid"));
+	}
+
+	private BigDecimal videoScore(Document track) {
+		return videosScore.get(track.get("youtube"));
+	}
+
+	private BigDecimal trackScore(Document track) {
+		return songsScore.get(track.get("spotify"));
+	}
+
+	private Date trackDate(Document track) {
+		return track.getDate("date");
 	}
 }

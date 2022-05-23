@@ -386,6 +386,10 @@ public abstract class AbstractCrawler extends HumanBeats
 		return null;
 	}
 
+	protected String cleanHTML(String html) {
+		return Jsoup.parse(html).wholeText();
+	}
+
 	//-------------------------------------------
 
 	private class PhonotekeParser extends Parser {

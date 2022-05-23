@@ -19,5 +19,6 @@ public class PodcastLoader extends AbstractCrawler
 		new BBCRadioLoader().load(args);
 		new RadioRaiLoader().load(args);
 		new SpreakerLoader().load(args);
+		new WorldWideFMLoader().load(args);
 	}
 }

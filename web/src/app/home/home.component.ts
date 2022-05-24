@@ -122,13 +122,11 @@ export class HomeComponent implements OnInit {
   }
 
   scrollEpisodes() {
-    if(this.source != null) {
+    if(this.source != null && this.episodes.length > 0) {
       this.episodesPage++;
-      this.app.loading = true;
       this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
         (data: any) => {
           this.episodes.push.apply(this.episodes, data);
-          this.app.loading = false;
         });
     }
   }

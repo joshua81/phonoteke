@@ -1,5 +1,6 @@
 import {Component, OnInit, Input} from '@angular/core';
 import { AppComponent } from '../app.component';
+import { HomeComponent } from '../home/home.component';
 
 @Component({
   selector: 'app-podcasts',
@@ -10,7 +11,7 @@ export class PodcastComponent implements OnInit {
   @Input() source:string = null;
   @Input() docs = [];
 
-  constructor(public app: AppComponent) {
+  constructor(public app: AppComponent, private home: HomeComponent) {
     // nothing to do
   }
 
@@ -20,5 +21,9 @@ export class PodcastComponent implements OnInit {
 
   formatDate(date: string) {
     return AppComponent.formatDate(date);
+  }
+
+  scrollDocs() {
+    this.home.scrollEpisodes();
   }
 }

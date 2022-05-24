@@ -12,7 +12,6 @@ import { AppComponent } from '../app.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  PAGE_SIZE: number = 20;
   spalbumid:string = null;
   status:string = "albums";
   source:string = null;
@@ -68,9 +67,8 @@ export class HomeComponent implements OnInit {
   }
 
   loadStats() {
-    this.app.loading = true;
-    //var date = new Date().getFullYear() * 100 + new Date().getMonth() + 1;
     if(this.source == null) {
+      this.app.loading = true;
       this.http.get('/api/stats').subscribe(
         (data: any) => {
           this.loadPage(data);
@@ -78,6 +76,7 @@ export class HomeComponent implements OnInit {
         });
     }
     else {
+      this.app.loading = true;
       this.http.get('/api/stats/' + this.source).subscribe(
         (data: any) => {
           this.loadPage(data);
@@ -87,11 +86,6 @@ export class HomeComponent implements OnInit {
   }
 
   loadPage(data:any) {
-    /*var start:number = this.page*this.PAGE_SIZE;
-    var end:number = (this.page+1)*this.PAGE_SIZE;
-    this.albums.push.apply(this.albums, data.albums.slice(start,end));
-    this.videos.push.apply(this.videos, data.videos.slice(start,end));
-    this.tracks.push.apply(this.tracks, data.tracks.slice(start,end));*/
     this.setMeta(data);
     this.name = data.name;
     this.spalbumid = data.spalbumid;
@@ -108,8 +102,8 @@ export class HomeComponent implements OnInit {
       this.app.loading = true;
       this.http.get('/api/podcasts').subscribe(
         (data: any) => {
-          this.app.loading = false;
           this.shows.push.apply(this.shows, data);
+          this.app.loading = false;
         });
     }
   }
@@ -121,17 +115,23 @@ export class HomeComponent implements OnInit {
       this.app.loading = true;
       this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
         (data: any) => {
-          this.app.loading = false;
           this.episodes.push.apply(this.episodes, data);
+          this.app.loading = false;
         });    
     }
   }
 
-  /*scrollDocs() {
-    this.page++;
-    this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.page).subscribe(
-      (data: any) => this.docsLoaded(data));
-  }*/
+  scrollEpisodes() {
+    if(this.source != null) {
+      this.episodesPage++;
+      this.app.loading = true;
+      this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
+        (data: any) => {
+          this.episodes.push.apply(this.episodes, data);
+          this.app.loading = false;
+        });
+    }
+  }
 
   setMeta(data:any) {
     this.title.setTitle('Human Beats - ' + data.name);

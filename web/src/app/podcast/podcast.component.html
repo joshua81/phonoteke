@@ -1,4 +1,4 @@
-<div class="d-flex flex-wrap justify-content-center w-100 pt-2">
+<div infinite-scroll (scrolled)="scrollDocs()" class="d-flex flex-wrap justify-content-center w-100 pt-2">
   <div *ngFor="let doc of docs">
     <div class="cover card">
       <a class="cover" [routerLink]="['/episodes/' + doc.id]">

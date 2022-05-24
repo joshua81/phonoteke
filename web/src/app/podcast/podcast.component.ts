@@ -23,7 +23,7 @@ export class PodcastComponent implements OnInit {
     return AppComponent.formatDate(date);
   }
 
-  scrollDocs() {
+  scrollEpisodes() {
     this.home.scrollEpisodes();
   }
 }

@@ -24,6 +24,7 @@ import com.mongodb.client.model.Filters;
 public class StatsLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
+	private static final BigDecimal MIN_WEIGHT = new BigDecimal(4);
 
 	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
 	private Map<String, Document> artists = Maps.newHashMap();
@@ -36,6 +37,8 @@ public class StatsLoader extends HumanBeats
 
 	private Map<String, BigDecimal> videosScore = Maps.newHashMap();
 	private Map<String, Document> videos = Maps.newHashMap();
+
+	private Map<String, BigDecimal> weights = Maps.newHashMap();
 
 	public static void main(String[] args) {
 		new StatsLoader().load();
@@ -60,7 +63,7 @@ public class StatsLoader extends HumanBeats
 
 	private void load(String source, String name, Date lastEpisode)
 	{
-		Map<String, BigDecimal> weights = Maps.newHashMap();
+		weights = Maps.newHashMap();
 		if(source != null) {
 			weights.put(source, BigDecimal.ONE);
 		}
@@ -111,7 +114,7 @@ public class StatsLoader extends HumanBeats
 					if(artistNum == null) {
 						artistNum = BigDecimal.ZERO;
 					}
-					BigDecimal score = artistNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+					BigDecimal score = artistNum.add(getScore(s));
 					artistsScore.put(artist, score);
 					artists.put(artist, t);
 				}
@@ -123,7 +126,7 @@ public class StatsLoader extends HumanBeats
 					if(albumNum == null) {
 						albumNum = BigDecimal.ZERO;
 					}
-					BigDecimal score = albumNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+					BigDecimal score = albumNum.add(getScore(s));
 					albumsScore.put(album, score);
 					albums.put(album, t);
 				}
@@ -135,7 +138,7 @@ public class StatsLoader extends HumanBeats
 					if(songNum == null) {
 						songNum = BigDecimal.ZERO;
 					}
-					BigDecimal score = songNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+					BigDecimal score = songNum.add(getScore(s));
 					songsScore.put(song, score);
 					songs.put(song, t);
 				}
@@ -147,7 +150,7 @@ public class StatsLoader extends HumanBeats
 					if(videoNum == null) {
 						videoNum = BigDecimal.ZERO;
 					}
-					BigDecimal score = videoNum.add(BigDecimal.ONE.divide(weights.get(s), MathContext.DECIMAL32));
+					BigDecimal score = videoNum.add(getScore(s));
 					videosScore.put(video, score);
 					videos.put(video, t);
 				}
@@ -298,6 +301,10 @@ public class StatsLoader extends HumanBeats
 				.append("spalbumid", track.getString("spalbumid"))
 				.append("youtube", track.getString("youtube"))
 				.append("artistid", replaceNA(track.getString("artistid")));
+	}
+
+	private BigDecimal getScore(String source) {
+		return BigDecimal.ONE.divide(weights.get(source).max(MIN_WEIGHT), MathContext.DECIMAL32);
 	}
 
 	private String replaceNA(String val) {

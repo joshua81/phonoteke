@@ -44,7 +44,7 @@ public class SpreakerLoader extends PodcastLoader
 			SpreakerLoader.source = show.getString("source");
 			SpreakerLoader.authors = show.get("authors", List.class);
 			
-			LOGGER.info("Crawling " + artist);
+			LOGGER.info("Crawling " + SpreakerLoader.artist);
 			crawl(SpreakerLoader.url);
 			updateLastEpisodeDate(SpreakerLoader.source);
 		}

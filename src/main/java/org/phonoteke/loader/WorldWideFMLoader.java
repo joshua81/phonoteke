@@ -22,6 +22,8 @@ import com.mongodb.client.model.Filters;
 
 public class WorldWideFMLoader extends PodcastLoader
 {
+	private static final String WWFM = "wwfm";
+
 	private static final String ID = "120803";
 	private static final String URL = "https://worldwidefm.net/";
 	private static final String ARTIST = "Gilles Peterson";
@@ -38,14 +40,16 @@ public class WorldWideFMLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		WorldWideFMLoader.url = URL;
-		WorldWideFMLoader.artist = ARTIST;
-		WorldWideFMLoader.source = SOURCE;
-		WorldWideFMLoader.authors = AUTHORS;
+		if(args.length == 0 || WWFM.equals(args[0])) {
+			WorldWideFMLoader.url = URL;
+			WorldWideFMLoader.artist = ARTIST;
+			WorldWideFMLoader.source = SOURCE;
+			WorldWideFMLoader.authors = AUTHORS;
 
-		LOGGER.info("Crawling " + WorldWideFMLoader.url);
-		crawl(WorldWideFMLoader.url);
-		updateLastEpisodeDate(WorldWideFMLoader.source);
+			LOGGER.info("Crawling " + WorldWideFMLoader.url);
+			crawl(WorldWideFMLoader.url);
+			updateLastEpisodeDate(WorldWideFMLoader.source);
+		}
 	}
 
 	@Override

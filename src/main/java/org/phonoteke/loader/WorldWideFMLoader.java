@@ -18,17 +18,20 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 public class WorldWideFMLoader extends PodcastLoader
 {
 	private static final String WWFM = "wwfm";
+	
+	public static final String GILLESPETERSON = "gillespeterson";
 
-	private static final String ID = "120803";
+//	private static final String ID = "120803";
 	private static final String URL = "https://worldwidefm.net/";
-	private static final String ARTIST = "Gilles Peterson";
-	private static final String SOURCE = "wwfm";
-	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
+//	private static final String ARTIST = "Gilles Peterson";
+//	private static final String SOURCE = "wwfm";
+//	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
 
 	private static final String JSON_EPISODES = "{\"operationName\":\"getRelatedEpisodes\",\"variables\":{\"id\":\"$ID\",\"offset\":0,\"limit\":12},\"query\":\"query getRelatedEpisodes($id: [QueryArgument], $offset: Int, $limit: Int) {\\n  entries(\\n    section: \\\"episode\\\"\\n    episodeCollection: $id\\n    offset: $offset\\n    limit: $limit\\n  ) {\\n    id\\n    title\\n    ... on episode_episode_Entry {\\n      description\\n      uri\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      genreTags {\\n        title\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 	private static final String JSON_EPISODE = "{\"operationName\":\"getEpisode\",\"variables\":{\"slug\":\"$EPISODE\"},\"query\":\"query getEpisode($slug: [String]) {\\n  entry(section: \\\"episode\\\", slug: $slug) {\\n    id\\n    title\\n    postDate @formatDateTime(format: \\\"d.m.y\\\")\\n    ... on episode_episode_Entry {\\n      broadcastDate @formatDateTime(format: \\\"d.m.y\\\")\\n      description\\n      uri\\n      genreTags {\\n        title\\n        slug\\n        __typename\\n      }\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      player\\n      tracklist\\n      bodyText\\n      episodeCollection {\\n        id\\n        title\\n        uri\\n        ... on collectionCategories_Category {\\n          thumbnail {\\n            url @transform(width: 1200, height: 1200, immediately: true)\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
@@ -40,13 +43,18 @@ public class WorldWideFMLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		if(args.length == 0 || WWFM.equals(args[0])) {
+		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", WWFM))).iterator() : 
+			shows.find(Filters.and(Filters.eq("type", WWFM), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
+		{
+			org.bson.Document show = i.next();
 			WorldWideFMLoader.url = URL;
-			WorldWideFMLoader.artist = ARTIST;
-			WorldWideFMLoader.source = SOURCE;
-			WorldWideFMLoader.authors = AUTHORS;
-
-			LOGGER.info("Crawling " + WorldWideFMLoader.url);
+			WorldWideFMLoader.id = show.getString("id");
+			WorldWideFMLoader.artist = show.getString("title");
+			WorldWideFMLoader.source = show.getString("source");
+			WorldWideFMLoader.authors = show.get("authors", List.class);
+			
+			LOGGER.info("Crawling " + WorldWideFMLoader.artist);
 			crawl(WorldWideFMLoader.url);
 			updateLastEpisodeDate(WorldWideFMLoader.source);
 		}
@@ -59,7 +67,7 @@ public class WorldWideFMLoader extends PodcastLoader
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpPost httpPost = new HttpPost(url + "/cached_api");
-			httpPost.setEntity(new StringEntity(JSON_EPISODES.replace("$ID", ID)));
+			httpPost.setEntity(new StringEntity(JSON_EPISODES.replace("$ID", id)));
 			httpPost.setHeader("Accept", "application/json");
 			httpPost.setHeader("Content-type", "application/json");
 
@@ -81,7 +89,7 @@ public class WorldWideFMLoader extends PodcastLoader
 					JsonObject gson2 = new Gson().fromJson(new InputStreamReader(response2.getEntity().getContent()), JsonObject.class);
 					doc = gson2.get("data").getAsJsonObject().get("entry").getAsJsonObject();
 
-					String pageUrl = URL + doc.get("uri").getAsString();
+					String pageUrl = url + doc.get("uri").getAsString();
 					TYPE type = TYPE.podcast;
 
 					LOGGER.debug("Parsing page " + pageUrl);
@@ -122,7 +130,7 @@ public class WorldWideFMLoader extends PodcastLoader
 				}
 				catch (Throwable t) 
 				{
-					LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+					LOGGER.error("ERROR parsing page " + id + ": " + t.getMessage());
 					t.printStackTrace();
 					throw new RuntimeException(t);
 				}
@@ -131,7 +139,7 @@ public class WorldWideFMLoader extends PodcastLoader
 		}
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+			LOGGER.error("ERROR parsing page " + id + ": " + t.getMessage());
 			t.printStackTrace();
 			throw new RuntimeException(t);
 		}

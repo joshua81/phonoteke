@@ -9,6 +9,7 @@ import { AppComponent } from '../app.component';
 export class TracksComponent implements OnInit {
   @Input() spalbumid = null;
   @Input() tracks = null;
+  @Input() doc = null;
 
   constructor(public app: AppComponent) {
     // nothing to do
@@ -30,7 +31,7 @@ export class TracksComponent implements OnInit {
         }
       }
       if(pos >= 0) {
-        this.app.playPauseSpotify(this.spalbumid, 'podcast', pos, track);
+        this.app.playPauseSpotify(this.spalbumid, 'podcast', this.doc, pos, track);
       }
     }
   }

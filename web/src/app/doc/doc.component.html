@@ -17,7 +17,7 @@
       </div>
     </div>
     <div *ngIf="doc.audio == null && doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
-      (click)="app.playPauseSpotify(doc.spalbumid)">
+      (click)="app.playPauseSpotify(doc.spalbumid, 'podcast', doc)">
       <div class="player-button">
         <span *ngIf="app.track == null || app.spalbumid != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
         <span *ngIf="app.track != null && app.spalbumid == doc.spalbumid && app.track.is_playing" class="player-pause"></span>
@@ -57,7 +57,7 @@
   </div>
 
   <p *ngIf="doc.review" class="text-justify mt-3" [innerHTML]="doc.review"></p>
-  <app-tracks *ngIf="doc.type == 'podcast'" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
+  <app-tracks *ngIf="doc.type == 'podcast'" [doc]="doc" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
   <!--app-video *ngIf="doc.type != 'podcast'" [tracks]="doc.tracks"></app-video-->
         
   <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>

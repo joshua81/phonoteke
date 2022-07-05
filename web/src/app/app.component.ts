@@ -18,6 +18,7 @@ export class AppComponent {
   isDesktop:boolean = false;
   youtube:SafeResourceUrl = null;
 
+  doc:any = null;
   player:any = null;
   spalbumid:string = null;
   track:any = null;
@@ -158,7 +159,7 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(spalbumid:string, type:string=null, position:number=0, trackid:string=null) {
+  playPauseSpotify(spalbumid:string, type:string=null, doc:any=null, position:number=0, trackid:string=null) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {      
       if(this.spalbumid == spalbumid && this.track != null && (trackid == null || this.track.item.id == trackid)) {
@@ -195,6 +196,7 @@ export class AppComponent {
           type = 'playlist';
         }
 
+        this.doc = doc;
         this.spalbumid = spalbumid;
         var body = type != 'track' ? {
           'context_uri': 'spotify:' + type + ':' + spalbumid,
@@ -295,6 +297,7 @@ export class AppComponent {
     if(doc != null && doc.audio != null) {
       if(this.audio == null || this.audio.source != doc.audio) {
         this.close();
+        this.doc = doc;
         if(!Hls.isSupported() || doc.audio.endsWith(".mp3")) {
           this.audio = new Audio();
           this.audio.src = doc.audio;
@@ -392,6 +395,9 @@ export class AppComponent {
   }
 
   close() {
+    this.doc = null;
+    this.youtube = null;
+
     // podcast player
     if(this.audio) {
       this.audio.pause();
@@ -404,8 +410,6 @@ export class AppComponent {
     this.closeSpotify();
     this.closeEvents();
     this.closeAlert();
-
-    this.youtube = null;
   }
 
   closeEvents(){

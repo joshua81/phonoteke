@@ -109,7 +109,7 @@ public class WorldWideFMLoader extends PodcastLoader
 									append("authors", authors).
 									append("cover", doc.get("thumbnail").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString()).
 									append("date", getDate(doc.get("broadcastDate").getAsString())).
-									append("description", getDescription(doc)).
+									append("description", getDescription(doc, title)).
 									append("genres", null).
 									append("label", null).
 									append("links", null).
@@ -161,8 +161,8 @@ public class WorldWideFMLoader extends PodcastLoader
 		return cal.get(Calendar.YEAR);
 	}
 
-	private String getDescription(JsonObject doc) {
-		return cleanHTML(doc.get("description").getAsString());
+	private String getDescription(JsonObject doc, String title) {
+		return doc.get("description").isJsonObject() ? cleanHTML(doc.get("description").getAsString()) : title;
 	}
 
 	private String getAudio(JsonObject doc) {

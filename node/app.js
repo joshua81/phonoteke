@@ -182,18 +182,6 @@ app.get('/api/:id/links', async(req, res)=>{
 	res.send(result);
 });
 
-app.get('/:id', async(req,res)=>{
-	var doc = await findDoc(req.params.id);
-	if(doc) {
-		res.render('index', { 
-			'og:title': doc.artist + ' - ' + doc.title,
-			'og:type': 'music:' + doc.type,
-			'og:url': 'https://humanbeats.appspot.com/' + req.params.id,
-			'og:cover': doc.coverM == null ? doc.cover : doc.coverM,
-			'og:description': doc.description });
-	}
-});
-
 app.get('/*', (req,res)=>{
 	res.render('index', { 
 		'og:title': 'Human Beats',

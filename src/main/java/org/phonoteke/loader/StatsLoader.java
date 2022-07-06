@@ -3,7 +3,6 @@ package org.phonoteke.loader;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,8 +17,10 @@ import org.bson.Document;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.operation.OrderBy;
 
 public class StatsLoader extends HumanBeats
 {
@@ -41,37 +42,35 @@ public class StatsLoader extends HumanBeats
 	private Map<String, BigDecimal> weights = Maps.newHashMap();
 
 	public static void main(String[] args) {
-		new StatsLoader().load("musicalbox");
+		new StatsLoader().load();
 	}
 
 	@Override
 	public void load(String... args)
 	{
 		if(args.length == 0) {
-			load(null, null);
-			
+			loadPodcast(null);
+
 			MongoCursor<Document> i = authors.find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				String source = page.getString("source");
-				Date lastEpisode = page.getDate("lastEpisodeDate");
-				load(source, lastEpisode);
+				loadPodcast(source);
 			}
 		}
 		else {
 			String source = args[0];
-			load(source, null);
+			loadPodcast(source);
 		}
 	}
 
-	private void load(String source, Date lastEpisode)
-	{
+	private void loadPodcast(String source) {
 		weights = Maps.newHashMap();
 		if(source != null) {
 			weights.put(source, BigDecimal.ONE);
 		}
 		else {
-			MongoCursor<Document> i = getDocs(source, lastEpisode);
+			MongoCursor<Document> i = getDocs(source);
 			i.forEachRemaining(page -> {
 				String s = page.getString("source");
 				BigDecimal weight = weights.get(s);
@@ -82,7 +81,7 @@ public class StatsLoader extends HumanBeats
 			});
 		}
 
-		MongoCursor<Document> i = getDocs(source, lastEpisode);
+		MongoCursor<Document> i = getDocs(source);
 		if(!i.hasNext()) {
 			return;
 		}
@@ -178,7 +177,7 @@ public class StatsLoader extends HumanBeats
 		});
 		doc.append("artists", Lists.newArrayList());
 		subList(jsonArtists, 100).forEach(a -> {
-			LOGGER.info("Artist: " + a.getString("artist") + "|" + artistScore(a));
+			//LOGGER.info("Artist: " + a.getString("artist") + "|" + artistScore(a));
 			doc.get("artists", List.class).add(getArtist(a));
 		});
 
@@ -197,7 +196,7 @@ public class StatsLoader extends HumanBeats
 		});
 		doc.append("albums", Lists.newArrayList());
 		subList(jsonAlbums, 100).forEach(a -> {
-			LOGGER.info("Album: " + a.getString("artist") + "|" + a.getString("album") + "|" + albumScore(a) + "|" + artistScore(a));
+			//LOGGER.info("Album: " + a.getString("artist") + "|" + a.getString("album") + "|" + albumScore(a) + "|" + artistScore(a));
 			doc.get("albums", List.class).add(getAlbum(a));
 		});
 
@@ -220,7 +219,7 @@ public class StatsLoader extends HumanBeats
 		});
 		doc.append("tracks", Lists.newArrayList());
 		subList(jsonSongs, 100).forEach(s -> {
-			LOGGER.info("Track: " + trackScore(s) + "|" + albumScore(s) + "|" + artistScore(s) + "|" + trackDate(s));
+			//LOGGER.info("Track: " + trackScore(s) + "|" + albumScore(s) + "|" + artistScore(s) + "|" + trackDate(s));
 			doc.get("tracks", List.class).add(getTrack(s));
 		});
 
@@ -244,29 +243,30 @@ public class StatsLoader extends HumanBeats
 			});
 			doc.append("videos", Lists.newArrayList());
 			subList(jsonVideos, 100).forEach(v -> {
-				LOGGER.info("Video: " + videoScore(v) + "|" + albumScore(v) + "|" + artistScore(v) + "|" + trackDate(v));
+				//LOGGER.info("Video: " + videoScore(v) + "|" + albumScore(v) + "|" + artistScore(v) + "|" + trackDate(v));
 				doc.get("videos", List.class).add(getVideo(v));
 			});
 		}
 
-		//		stats.updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-		//		LOGGER.info(source + " updated");
+		stats.updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+		LOGGER.info(source + " updated");
 	}
 
-	private MongoCursor<Document> getDocs(String source, Date lastEpisode) {
-		LocalDateTime end = lastEpisode == null ? LocalDateTime.now() : LocalDateTime.ofInstant(lastEpisode.toInstant(), ZoneOffset.UTC);
-		LocalDateTime start = end.minusYears(1);
+	private MongoCursor<Document> getDocs(String source) {
+		LocalDateTime end = LocalDateTime.now();
+		LocalDateTime start = end.minusMonths(1);
 
 		return source == null ? docs.find(Filters.and(
 				Filters.eq("type", "podcast"),
 				Filters.gte("date", start),
-				Filters.lte("date", end))).iterator() :
+				Filters.lte("date", end)))
+				.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator() :
 
 					docs.find(Filters.and(
 							Filters.eq("type", "podcast"),
-							Filters.eq("source", source), 
-							Filters.gte("date", start),
-							Filters.lte("date", end))).iterator();
+							Filters.eq("source", source)))
+					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation()))
+					.limit(30).iterator();
 	}
 
 	private Document getArtist(Document track) {
@@ -319,19 +319,23 @@ public class StatsLoader extends HumanBeats
 	}
 
 	private BigDecimal artistScore(Document track) {
-		return artistsScore.get(track.get("spartistid"));
+		BigDecimal score = artistsScore.get(track.get("spartistid"));
+		return score == null ? BigDecimal.ZERO : score;
 	}
 
 	private BigDecimal albumScore(Document track) {
-		return albumsScore.get(track.get("spalbumid"));
+		BigDecimal score = albumsScore.get(track.get("spalbumid"));
+		return score == null ? BigDecimal.ZERO : score;
 	}
 
 	private BigDecimal videoScore(Document track) {
-		return videosScore.get(track.get("youtube"));
+		BigDecimal score = videosScore.get(track.get("youtube"));
+		return score == null ? BigDecimal.ZERO : score;
 	}
 
 	private BigDecimal trackScore(Document track) {
-		return songsScore.get(track.get("spotify"));
+		BigDecimal score = songsScore.get(track.get("spotify"));
+		return score == null ? BigDecimal.ZERO : score;
 	}
 
 	private Date trackDate(Document track) {

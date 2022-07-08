@@ -17,7 +17,8 @@ export class AppComponent {
 
   isDesktop:boolean = false;
   youtube:SafeResourceUrl = null;
-
+  wwfm:SafeResourceUrl = null;
+  
   doc:any = null;
   player:any = null;
   spalbumid:string = null;
@@ -295,7 +296,11 @@ export class AppComponent {
 
   playPauseAudio(doc:any=null){
     if(doc != null && doc.audio != null) {
-      if(this.audio == null || this.audio.source != doc.audio) {
+      if(doc.audio.startsWith('https://www.mixcloud.com/')) {
+        this.close();
+        this.wwfm = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.mixcloud.com/widget/iframe/?&autoplay=1&hide_cover=1&mini=1&dark=1&feed=' + doc.audio.substring(24));
+      }
+      else if(this.audio == null || this.audio.source != doc.audio) {
         this.close();
         this.doc = doc;
         if(!Hls.isSupported() || doc.audio.endsWith(".mp3")) {
@@ -376,7 +381,7 @@ export class AppComponent {
   playYoutube(track: string){
     if(this.youtube == null) {
       this.close();
-      this.youtube = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + track + '?autoplay=1');;
+      this.youtube = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + track + '?autoplay=1');
     }
     else {
       this.youtube = null;
@@ -397,6 +402,7 @@ export class AppComponent {
   close() {
     this.doc = null;
     this.youtube = null;
+    this.wwfm = null;
 
     // podcast player
     if(this.audio) {

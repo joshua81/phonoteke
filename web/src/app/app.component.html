@@ -60,6 +60,16 @@
   </div>
 </div>
 
+<!-- MixCloud player -->
+<div *ngIf="wwfm" class="fixed-bottom">
+  <div class="player-spotify">
+    <iframe [src]='wwfm' width="100%" height="60px" frameborder="0"></iframe>
+    <div class="close" aria-label="Close" (click)="close()">
+      <span class="text-white" aria-hidden="true">&times;</span>
+    </div>
+  </div>
+</div>
+
 <!-- Youtube player -->
 <div *ngIf="youtube" class="d-flex justify-content-center modal-bg" (click)="close()">
   <div class="align-self-center">

@@ -8,6 +8,10 @@
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
+    <div class="player-button m-4" (click)="playPauseSpotify(spalbumid)">
+      <span *ngIf="!track.is_playing" class="player-play"></span>
+      <span *ngIf="track.is_playing" class="player-pause"></span>
+    </div>
     <div class="p-2 w-100">
       <h2 class="text-white text-truncate-1">{{track.item.name}}</h2>
       <h3 class="text-white text-truncate-1 mb-auto">{{track.item.artists[0].name}}</h3>
@@ -20,10 +24,6 @@
         </div>
         <div class="player-button" (click)="nextSpotify()">
           <span class="player-forward"></span>
-        </div>
-        <div class="player-button ml-2" (click)="playPauseSpotify(spalbumid)">
-          <span *ngIf="!track.is_playing" class="player-play"></span>
-          <span *ngIf="track.is_playing" class="player-pause"></span>
         </div>
       </div>
     </div>
@@ -39,6 +39,10 @@
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{audio.cover}}"/>
     </a>
+    <div class="player-button m-4" (click)="playPauseAudio()">
+      <span *ngIf="audio == null || audio.paused" class="player-play"></span>
+      <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+    </div>
     <div class="p-2 w-100">
       <h2 class="text-white text-truncate-1">{{audio.title}}</h2>
       <h3 class="text-white text-truncate-1 mb-auto">{{audio.artist}}</h3>
@@ -48,10 +52,6 @@
           <div class="progress-bar bg-warning" role="progressbar" [style.width.%]="[100*audio.currentTime/audio.duration]"></div>
         </div>
         <div class="text-white">{{duration}}</div>
-        <div class="player-button ml-2" (click)="playPauseAudio()">
-          <span *ngIf="audio == null || audio.paused" class="player-play"></span>
-          <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
-        </div>
       </div>
     </div>
     <div class="close" aria-label="Close" (click)="close()">

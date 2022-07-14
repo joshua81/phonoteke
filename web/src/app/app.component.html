@@ -8,8 +8,8 @@
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
-    <div class="cover d-flex flex-row align-items-center">
-      <div class="player-button ml-auto mr-auto" (click)="playPauseSpotify(spalbumid)">
+    <div class="cover d-flex flex-row align-items-center" (click)="playPauseSpotify(spalbumid)">
+      <div class="player-button ml-auto mr-auto">
         <span *ngIf="!track.is_playing" class="player-play"></span>
         <span *ngIf="track.is_playing" class="player-pause"></span>
       </div>
@@ -41,8 +41,8 @@
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{audio.cover}}"/>
     </a>
-    <div class="cover d-flex flex-row align-items-center">
-      <div class="player-button ml-auto mr-auto" (click)="playPauseAudio()">
+    <div class="cover d-flex flex-row align-items-center" (click)="playPauseAudio()">
+      <div class="player-button ml-auto mr-auto">
         <span *ngIf="audio == null || audio.paused" class="player-play"></span>
         <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
       </div>

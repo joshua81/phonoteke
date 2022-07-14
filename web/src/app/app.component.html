@@ -4,15 +4,17 @@
 
 <!-- Spotify player -->
 <div *ngIf="track" class="fixed-bottom">
-  <div class="player-spotify d-flex flex-row align-items-center ml-auto mr-auto">
+  <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
-    <div class="player-button m-4" (click)="playPauseSpotify(spalbumid)">
-      <span *ngIf="!track.is_playing" class="player-play"></span>
-      <span *ngIf="track.is_playing" class="player-pause"></span>
+    <div class="cover d-flex flex-row align-items-center">
+      <div class="player-button ml-auto mr-auto" (click)="playPauseSpotify(spalbumid)">
+        <span *ngIf="!track.is_playing" class="player-play"></span>
+        <span *ngIf="track.is_playing" class="player-pause"></span>
+      </div>
     </div>
-    <div class="p-2 w-100">
+    <div class="pr-1 pt-1 pb-1 w-100">
       <h2 class="text-white text-truncate-1">{{track.item.name}}</h2>
       <h3 class="text-white text-truncate-1 mb-auto">{{track.item.artists[0].name}}</h3>
       <div class="d-flex flex-row align-items-center">
@@ -35,15 +37,17 @@
 
 <!-- Podcast player -->
 <div *ngIf="audio" class="fixed-bottom">
-  <div class="player-spotify d-flex flex-row align-items-center ml-auto mr-auto">
+  <div class="player-spotify d-flex flex-row align-items-center">
     <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
       <img class="cover" src="{{audio.cover}}"/>
     </a>
-    <div class="player-button m-4" (click)="playPauseAudio()">
-      <span *ngIf="audio == null || audio.paused" class="player-play"></span>
-      <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+    <div class="cover d-flex flex-row align-items-center">
+      <div class="player-button ml-auto mr-auto" (click)="playPauseAudio()">
+        <span *ngIf="audio == null || audio.paused" class="player-play"></span>
+        <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
+      </div>
     </div>
-    <div class="p-2 w-100">
+    <div class="pr-1 pt-1 pb-1 w-100">
       <h2 class="text-white text-truncate-1">{{audio.title}}</h2>
       <h3 class="text-white text-truncate-1 mb-auto">{{audio.artist}}</h3>
       <div class="d-flex flex-row align-items-center">

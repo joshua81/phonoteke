@@ -1,7 +1,6 @@
 package org.phonoteke.loader;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +24,6 @@ import com.mongodb.operation.OrderBy;
 public class StatsLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
-	private static final BigDecimal MIN_WEIGHT = new BigDecimal(4);
 
 	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
 	private Map<String, Document> artists = Maps.newHashMap();
@@ -38,8 +36,6 @@ public class StatsLoader extends HumanBeats
 
 	private Map<String, BigDecimal> videosScore = Maps.newHashMap();
 	private Map<String, Document> videos = Maps.newHashMap();
-
-	private Map<String, BigDecimal> weights = Maps.newHashMap();
 
 	public static void main(String[] args) {
 		new StatsLoader().load();
@@ -65,22 +61,6 @@ public class StatsLoader extends HumanBeats
 	}
 
 	private void loadPodcast(String source) {
-		weights = Maps.newHashMap();
-		if(source != null) {
-			weights.put(source, BigDecimal.ONE);
-		}
-		else {
-			MongoCursor<Document> i = getDocs(source);
-			i.forEachRemaining(page -> {
-				String s = page.getString("source");
-				BigDecimal weight = weights.get(s);
-				if(weight == null) {
-					weight = BigDecimal.ZERO;
-				}
-				weights.put(s, weight.add(BigDecimal.ONE));
-			});
-		}
-
 		MongoCursor<Document> i = getDocs(source);
 		if(!i.hasNext()) {
 			return;
@@ -307,7 +287,7 @@ public class StatsLoader extends HumanBeats
 	}
 
 	private BigDecimal getScore(String source) {
-		return source != null ? BigDecimal.ONE : BigDecimal.ONE.divide(weights.get(source).max(MIN_WEIGHT), MathContext.DECIMAL32);
+		return BigDecimal.ONE;
 	}
 
 	private String replaceNA(String val) {

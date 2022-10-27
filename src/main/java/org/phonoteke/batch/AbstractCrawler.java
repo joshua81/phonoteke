@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +17,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.phonoteke.batch.model.Doc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -91,20 +92,23 @@ public abstract class AbstractCrawler extends HumanBeats
 					String artist = getArtist(url, doc);
 					String title = getTitle(url, doc);
 
-					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", url))).iterator().tryNext();
+					Doc json = docs.findBySourceUrl(source, url);//Filters.and(
+					//							Filters.eq("source", source), 
+					//							Filters.eq("url", url))).iterator().tryNext();
 					if(json == null)
 					{
 						switch(type)
 						{
 						case album:
 						case podcast:
-							if(type.equals(TYPE.podcast) || !docs.find(Filters.and(Filters.eq("source", source),
+							if(type.equals(TYPE.podcast) || !docs.find(Filters.and(
+									Filters.eq("source", source),
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist),
 									Filters.eq("title", title))).iterator().hasNext())
 							{
-								json = new org.bson.Document("id", id).
+								json = Doc.builder().
+										id(id).
 										append("url", getUrl(url)).
 										append("type", type.name()).
 										append("artist", artist).
@@ -125,7 +129,8 @@ public abstract class AbstractCrawler extends HumanBeats
 							}
 							break;
 						case artist:
-							if(!docs.find(Filters.and(Filters.eq("source", source), 
+							if(!docs.find(Filters.and(
+									Filters.eq("source", source), 
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist))).iterator().hasNext())
 							{

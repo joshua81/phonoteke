@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -13,51 +13,45 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.phonoteke.batch.model.Doc;
+import org.phonoteke.batch.model.Show;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
 
 public class WorldWideFMLoader extends PodcastLoader
 {
 	private static final String WWFM = "wwfm";
-	
+
 	public static final String GILLESPETERSON = "gillespeterson";
 
-//	private static final String ID = "120803";
+	//	private static final String ID = "120803";
 	private static final String URL = "https://worldwidefm.net/";
-//	private static final String ARTIST = "Gilles Peterson";
-//	private static final String SOURCE = "wwfm";
-//	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
+	//	private static final String ARTIST = "Gilles Peterson";
+	//	private static final String SOURCE = "wwfm";
+	//	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
 
 	private static final String JSON_EPISODES = "{\"operationName\":\"getRelatedEpisodes\",\"variables\":{\"id\":\"$ID\",\"offset\":0,\"limit\":12},\"query\":\"query getRelatedEpisodes($id: [QueryArgument], $offset: Int, $limit: Int) {\\n  entries(\\n    section: \\\"episode\\\"\\n    episodeCollection: $id\\n    offset: $offset\\n    limit: $limit\\n  ) {\\n    id\\n    title\\n    ... on episode_episode_Entry {\\n      description\\n      uri\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      genreTags {\\n        title\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 	private static final String JSON_EPISODE = "{\"operationName\":\"getEpisode\",\"variables\":{\"slug\":\"$EPISODE\"},\"query\":\"query getEpisode($slug: [String]) {\\n  entry(section: \\\"episode\\\", slug: $slug) {\\n    id\\n    title\\n    postDate @formatDateTime(format: \\\"d.m.y\\\")\\n    ... on episode_episode_Entry {\\n      broadcastDate @formatDateTime(format: \\\"d.m.y\\\")\\n      description\\n      uri\\n      genreTags {\\n        title\\n        slug\\n        __typename\\n      }\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      player\\n      tracklist\\n      bodyText\\n      episodeCollection {\\n        id\\n        title\\n        uri\\n        ... on collectionCategories_Category {\\n          thumbnail {\\n            url @transform(width: 1200, height: 1200, immediately: true)\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 
-	public static void main(String[] args) {
-		new WorldWideFMLoader().load(args);
-	}
 
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", WWFM))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", WWFM), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
+		List<Show> docs = args.length == 0 ? shows.findByType(WWFM) : shows.findByTypeSource(WWFM, args[0]);
+		docs.iterator().forEachRemaining(show -> {
 			WorldWideFMLoader.url = URL;
-			WorldWideFMLoader.id = show.getString("id");
-			WorldWideFMLoader.artist = show.getString("title");
-			WorldWideFMLoader.source = show.getString("source");
-			WorldWideFMLoader.authors = show.get("authors", List.class);
-			
+			WorldWideFMLoader.id = show.getId();
+			WorldWideFMLoader.artist = show.getTitle();
+			WorldWideFMLoader.source = show.getSource();
+			WorldWideFMLoader.authors = show.getAuthors();
+
 			LOGGER.info("Crawling " + WorldWideFMLoader.artist);
 			crawl(WorldWideFMLoader.url);
 			updateLastEpisodeDate(WorldWideFMLoader.source);
-		}
+		});
 	}
 
 	@Override
@@ -96,32 +90,32 @@ public class WorldWideFMLoader extends PodcastLoader
 					String id = getId(pageUrl);
 					String title = doc.get("title").getAsString();
 
-					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
+					Doc json = docs.findBySourceUrl(source, pageUrl);
 					if(json == null)
 					{
 						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", authors).
-									append("cover", doc.get("thumbnail").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString()).
-									append("date", getDate(doc.get("broadcastDate").getAsString())).
-									append("description", getDescription(doc, title)).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
-									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("broadcastDate").getAsString())).
-									append("tracks", getTracks(doc.get("tracklist").getAsString())).
-									append("audio", getAudio(doc));
+							json = Doc.builder().
+									id(id).
+									url(getUrl(pageUrl)).
+									type(type.name()).
+									artist(artist).
+									title(title).
+									authors(authors).
+									cover(doc.get("thumbnail").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString()).
+									date(getDate(doc.get("broadcastDate").getAsString())).
+									description(getDescription(doc, title)).
+									genres(null).
+									label(null).
+									links(null).
+									review(null).
+									source(source).
+									vote(null).
+									year(getYear(doc.get("broadcastDate").getAsString())).
+									tracks(getTracks(doc.get("tracklist").getAsString())).
+									audio(getAudio(doc)).build();
 
-							docs.insertOne(json);
-							LOGGER.info(json.getString("type") + " " + pageUrl + " added");
+							docs.insert(json);
+							LOGGER.info(json.getType() + " " + pageUrl + " added");
 						}
 						catch(Exception e) {
 							LOGGER.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

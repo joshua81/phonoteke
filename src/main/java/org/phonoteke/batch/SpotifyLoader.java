@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -13,12 +13,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.phonoteke.batch.model.Doc;
+import org.phonoteke.batch.model.Stat;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
 import com.neovisionaries.i18n.CountryCode;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
@@ -41,6 +42,7 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
+@Component
 public class SpotifyLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
@@ -61,13 +63,10 @@ public class SpotifyLoader extends HumanBeats
 	{
 		if(args.length == 0) {
 			LOGGER.info("Loading Spotify...");
-			MongoCursor<Document> i = docs.find(Filters.or(
-					Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
-					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
-			while(i.hasNext()) { 
-				Document page = i.next();
-				String id = page.getString("id"); 
-				String type = page.getString("type");
+			List<Doc> i = docs.findSpotify();
+			i.stream().forEach(page -> {
+				String id = page.getId(); 
+				String type = page.getType();
 				if("album".equals(type)) {
 					loadAlbum(page);
 				}
@@ -77,8 +76,8 @@ public class SpotifyLoader extends HumanBeats
 				else {
 					loadArtist(page);
 				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-			}
+				docs.save(page);
+			});
 		}
 		else if("follow".equals(args[0])) {
 			LOGGER.info("Following Spotify playlists...");
@@ -163,12 +162,10 @@ public class SpotifyLoader extends HumanBeats
 
 	private void renamePlaylists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.eq("type", "podcast")).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			String spalbumid = page.getString("spalbumid");
+		List<Doc> i = docs.findByType("podcast");
+		i.stream().forEach(page ->  {
+			String id = page.getId();
+			String spalbumid = page.getSpalbumid();
 			if(spalbumid != null) {
 				try {
 					//					String name = "";
@@ -180,36 +177,33 @@ public class SpotifyLoader extends HumanBeats
 					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
 				}
 			}
-		}
+		});
 	}
 
 	private void createPlaylists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			String title = page.getString("artist");
-			String description = page.getString("title");
-			Date date = page.getDate("date");
+		List<Doc> i = docs.findDirtyPodcast();
+		i.stream().forEach(page -> {
+			String id = page.getId();
+			String title = page.getArtist();
+			String description = page.getTitle();
+			Date date = page.getDate();
 			title = format(title, date);
 			createPlaylist(page, title, description);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		}
+			docs.save(page);
+		});
 
-		i = stats.find().iterator();
-		while(i.hasNext()) { 
-			Document page = i.next();
-			String name = page.getString("name");
+		List<Stat> s = stats.findAll();
+		s.stream().forEach(page -> {
+			String name = page.getName();
 			createPlaylist(page, name, null);
-			stats.updateOne(Filters.eq("name", name), new org.bson.Document("$set", page)); 
-		}
+			stats.save(page); 
+		});
 	}
 
-	private void createPlaylist(Document page, String title, String description)
+	private void createPlaylist(Doc page, String title, String description)
 	{
-		List<org.bson.Document> tracks = page.get("tracks", List.class);
+		List<org.bson.Document> tracks = page.getTracks();
 		if(CollectionUtils.isNotEmpty(tracks))
 		{
 			List<String> uris = Lists.newArrayList();
@@ -224,7 +218,7 @@ public class SpotifyLoader extends HumanBeats
 
 			if(CollectionUtils.isNotEmpty(uris))
 			{
-				String id = page.getString("spalbumid");
+				String id = page.getSpalbumid();
 				try
 				{
 					if(id == null) {
@@ -234,8 +228,8 @@ public class SpotifyLoader extends HumanBeats
 						id = playlist.getId();
 						AddItemsToPlaylistRequest req2 = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req2.execute();
-						page.append("spalbumid", id);
-						page.append("dirty", false);
+						page.setSpalbumid(id);
+						page.setDirty(false);
 						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");
 					}
 					// update existing playlist
@@ -253,7 +247,7 @@ public class SpotifyLoader extends HumanBeats
 									Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 							req.execute();
 						}
-						page.append("dirty", false);
+						page.setDirty(false);
 						LOGGER.info("Playlist " + title + " updated");
 					}
 				}
@@ -288,10 +282,10 @@ public class SpotifyLoader extends HumanBeats
 		}
 	}
 
-	private void loadAlbum(Document page)
+	private void loadAlbum(Doc page)
 	{
-		String artist = page.getString("artist");
-		String album = page.getString("title");
+		String artist = page.getArtist();
+		String album = page.getTitle();
 
 		// check if the article was already crawled
 		LOGGER.debug("Loading album " + artist + " - " + album);
@@ -300,19 +294,19 @@ public class SpotifyLoader extends HumanBeats
 		{
 			String artistId = spotify.getString("spartistid");
 			String albumId = spotify.getString("spalbumid");
-			page.append("spartistid", artistId).
-			append("spalbumid", albumId).
-			append("coverL", spotify.getString("coverL")).
-			append("coverM", spotify.getString("coverM")).
-			append("coverS", spotify.getString("coverS")).
-			append("score", spotify.getInteger("score")).
-			append("artistid", null);
+			page.setSpartistid(artistId);
+			page.setSpalbumid(albumId);
+			page.setCoverL(spotify.getString("coverL"));
+			page.setCoverM(spotify.getString("coverM"));
+			page.setCoverS(spotify.getString("coverS"));
+			page.setScore(spotify.getInteger("score"));
+			page.setArtistid(null);
 		}
 		else
 		{
-			page.append("spartistid", NA).
-			append("spalbumid", NA).
-			append("score", 0);
+			page.setSpartistid(NA);
+			page.setSpalbumid(NA);
+			page.setScore(0);
 		}
 	}
 
@@ -355,30 +349,29 @@ public class SpotifyLoader extends HumanBeats
 		return albumsMap.isEmpty() ?  null : albumsMap.descendingMap().firstEntry().getValue();
 	}
 
-	private void loadArtist(Document page)
+	private void loadArtist(Doc page)
 	{
-		String artist = page.getString("artist");
+		String artist = page.getArtist();
 
 		LOGGER.debug("Loading artist " + artist);
-		Document spotify = loadArtist(artist);
+		Doc spotify = loadArtist(artist);
 		if(spotify != null)
 		{
-			String artistId = spotify.getString("spartistid");
-			page.append("spartistid", artistId).
-			append("coverL", spotify.getString("coverL")).
-			append("coverM", spotify.getString("coverM")).
-			append("coverS", spotify.getString("coverS")).
-			append("score", spotify.getInteger("score")).
-			append("artistid", null);
+			page.setSpartistid(spotify.getSpartistid());
+			page.setCoverL(spotify.getCoverL());
+			page.setCoverM(spotify.getCoverM());
+			page.setCoverS(spotify.getCoverS());
+			page.setScore(spotify.getScore());
+			page.setArtistid(null);
 		}
 		else
 		{
-			page.append("spartistid", NA).
-			append("score", 0);
+			page.setSpartistid(NA);
+			page.setScore(0);
 		}
 	}
 
-	private Document loadArtist(String artist)
+	private Doc loadArtist(String artist)
 	{
 		TreeMap<Integer, Document> artistsMap = Maps.newTreeMap();
 		if(artist != null) {
@@ -435,9 +428,9 @@ public class SpotifyLoader extends HumanBeats
 		}
 	}
 
-	private void loadTracks(Document page)
+	private void loadTracks(Doc page)
 	{
-		List<org.bson.Document> tracks = page.get("tracks", List.class);
+		List<org.bson.Document> tracks = page.getTracks();
 		if(CollectionUtils.isNotEmpty(tracks))
 		{
 			int score = 0;
@@ -493,8 +486,8 @@ public class SpotifyLoader extends HumanBeats
 				score += track.getInteger("score", 0);
 			}
 			score = score/tracks.size();
-			page.append("score", score);
-			page.append("dirty", true);
+			page.setScore(score);
+			page.setDirty(true);
 		}
 	}
 

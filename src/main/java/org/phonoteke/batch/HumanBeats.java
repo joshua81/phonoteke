@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -11,21 +11,19 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import org.slf4j.LoggerFactory;
+import org.phonoteke.batch.model.AuthorRepository;
+import org.phonoteke.batch.model.DocRepository;
+import org.phonoteke.batch.model.ShowRepository;
+import org.phonoteke.batch.model.StatRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
+import com.mongodb.internal.operation.OrderBy;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 
 public abstract class HumanBeats extends WebCrawler
@@ -105,10 +103,10 @@ public abstract class HumanBeats extends WebCrawler
 	protected static final int SCORE = 70;
 	protected static final int TRACKS_SIZE = 6;
 
-	protected MongoCollection<org.bson.Document> shows;
-	protected MongoCollection<org.bson.Document> docs;
-	protected MongoCollection<org.bson.Document> stats;
-	protected MongoCollection<org.bson.Document> authors;
+//	protected MongoCollection<org.bson.Document> shows;
+//	protected MongoCollection<org.bson.Document> docs;
+//	protected MongoCollection<org.bson.Document> stats;
+//	protected MongoCollection<org.bson.Document> authors;
 
 	protected enum TYPE {
 		artist,
@@ -119,80 +117,93 @@ public abstract class HumanBeats extends WebCrawler
 		unknown
 	}
 
-	public static void main(String[] args) {
-		if(args.length > 0) {
-			String task = args[0].split(":")[0];
-			String[] subtask = Arrays.copyOfRange(args[0].split(":"), 1, args[0].split(":").length);
-			if("mb".equals(task)) {
-				new MusicbrainzLoader().load(subtask);
-			}
-			else if("sp".equals(task)) {
-				new SpotifyLoader().load(subtask);
-			}
-			else if("tw".equals(task)) {
-				new SocialNetworkLoader().load(subtask);
-			}
-			else if("yt".equals(task)) {
-				new YoutubeLoader().load(subtask);
-			}
-			else if("doc".equals(task)) {
-				new OndarockLoader().load(subtask);
-			}
-			else if("pod".equals(task)) {
-				new PodcastLoader().load(subtask);
-			}
-			else if("stats".equals(task)) {
-				new StatsLoader().load(subtask);
-			}
-			else if("patch".equals(task)) {
-				new PatchLoader().load(subtask);
-			}
-			else {
-				printHelp();
-			}
-		}
-		else {
-			printHelp();
-		}
-	}
+//	public static void main(String[] args) {
+//		if(args.length > 0) {
+//			String task = args[0].split(":")[0];
+//			String[] subtask = Arrays.copyOfRange(args[0].split(":"), 1, args[0].split(":").length);
+//			if("mb".equals(task)) {
+//				new MusicbrainzLoader().load(subtask);
+//			}
+//			else if("sp".equals(task)) {
+//				new SpotifyLoader().load(subtask);
+//			}
+//			else if("tw".equals(task)) {
+//				new SocialNetworkLoader().load(subtask);
+//			}
+//			else if("yt".equals(task)) {
+//				new YoutubeLoader().load(subtask);
+//			}
+//			else if("doc".equals(task)) {
+//				new OndarockLoader().load(subtask);
+//			}
+//			else if("pod".equals(task)) {
+//				new PodcastLoader().load(subtask);
+//			}
+//			else if("stats".equals(task)) {
+//				new StatsLoader().load(subtask);
+//			}
+//			else if("patch".equals(task)) {
+//				new PatchLoader().load(subtask);
+//			}
+//			else {
+//				printHelp();
+//			}
+//		}
+//		else {
+//			printHelp();
+//		}
+//	}
 
-	protected HumanBeats() {
-		try
-		{
-			Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-			root.setLevel(Level.ERROR);
+//	protected HumanBeats() {
+//		try
+//		{
+//			Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//			root.setLevel(Level.ERROR);
+//
+////			//MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
+////			MongoDatabase db = null;//new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
+////			docs = db.getCollection("docs");
+////			shows = db.getCollection("shows");
+////			authors = db.getCollection("authors");
+////			stats = db.getCollection("stats");
+//		} 
+//		catch (Throwable t) 
+//		{
+//			throw new RuntimeException(t);
+//		}
+//	}
 
-			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
-			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
-			docs = db.getCollection("docs");
-			shows = db.getCollection("shows");
-			authors = db.getCollection("authors");
-			stats = db.getCollection("stats");
-		} 
-		catch (Throwable t) 
-		{
-			throw new RuntimeException(t);
-		}
-	}
-
-	private static void printHelp() {
-		System.out.println("Usage:");
-		System.out.println("- compile (compiles sources)");
-		System.out.println("- deploy (deploys to GCloud)");
-		System.out.println("- test (deploys test)");
-		System.out.println("- mb (loads Music Brainz)");
-		System.out.println("- sp (loads Spotify)");
-		System.out.println("- sp:playlist (loads Spotify playlists)");
-		System.out.println("- tw (loads Twitter)");
-		System.out.println("- yt (loads Youtube)");
-		System.out.println("- doc (loads documents)");
-		System.out.println("- pod (loads podcasts)");
-		System.out.println("- stats (loads stats)");
-		System.out.println("- patch:resetTracksTitle (patches db)");
-		System.out.println("- patch:calculateScore (patches db)");
-		System.out.println("- patch:resetTracks (patches db)");
-		System.out.println("- patch:replaceSpecialChars (patches db)");
-	}
+//	private static void printHelp() {
+//		System.out.println("Usage:");
+//		System.out.println("- compile (compiles sources)");
+//		System.out.println("- deploy (deploys to GCloud)");
+//		System.out.println("- test (deploys test)");
+//		System.out.println("- mb (loads Music Brainz)");
+//		System.out.println("- sp (loads Spotify)");
+//		System.out.println("- sp:playlist (loads Spotify playlists)");
+//		System.out.println("- tw (loads Twitter)");
+//		System.out.println("- yt (loads Youtube)");
+//		System.out.println("- doc (loads documents)");
+//		System.out.println("- pod (loads podcasts)");
+//		System.out.println("- stats (loads stats)");
+//		System.out.println("- patch:resetTracksTitle (patches db)");
+//		System.out.println("- patch:calculateScore (patches db)");
+//		System.out.println("- patch:resetTracks (patches db)");
+//		System.out.println("- patch:replaceSpecialChars (patches db)");
+//	}
+	
+	@Autowired
+	protected DocRepository docs;
+	
+	@Autowired
+	protected AuthorRepository authors;
+	
+	@Autowired
+	protected StatRepository stats;
+	
+	@Autowired
+	protected ShowRepository shows;
+	
 
 	abstract void load(String... args);
 

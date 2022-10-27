@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Maps;
 import com.mongodb.client.MongoCursor;
@@ -19,16 +20,13 @@ import com.mongodb.client.model.Filters;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
+@Component
 public class MusicbrainzLoader extends HumanBeats
 {
 	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
 
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
-
-
-	public static void main(String[] args) {
-		new MusicbrainzLoader().load(args);
-	}
+	
 
 	@Override
 	public void load(String... args) 

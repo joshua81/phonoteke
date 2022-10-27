@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,13 +13,13 @@ import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.phonoteke.batch.model.Doc;
+import org.phonoteke.batch.model.Show;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -45,22 +45,19 @@ public class RadioRaiLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", RAI))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", RAI), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			RadioRaiLoader.url = show.getString("url");
-			RadioRaiLoader.artist = show.getString("title");
-			RadioRaiLoader.source = show.getString("source");
-			RadioRaiLoader.authors = show.get("authors", List.class);
+		List<Show> pages = args.length == 0 ? shows.findByType(RAI) : shows.findByTypeSource(RAI, args[0]);
+		pages.iterator().forEachRemaining(show -> {
+			RadioRaiLoader.url = show.getUrl();
+			RadioRaiLoader.artist = show.getTitle();
+			RadioRaiLoader.source = show.getSource();
+			RadioRaiLoader.authors = show.getAuthors();
 
 			if(source.equals(MUSICALBOX)) {
 				LOGGER.info("Crawling " + artist);
 				crawl(RadioRaiLoader.url);
 				updateLastEpisodeDate(RadioRaiLoader.source);
 			}
-		}
+		});
 	}
 
 	@Override
@@ -93,12 +90,12 @@ public class RadioRaiLoader extends PodcastLoader
 				if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
 					return;
 
-				org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("url", pageUrl))).iterator().tryNext();
+				Doc json = docs.findBySourceUrl(source, pageUrl);
 				if(json == null)
 				{
 					try {
-						json = new org.bson.Document("id", id).
+						json = Doc.builder().
+								id(id).
 								append("url", getUrl(pageUrl)).
 								append("type", type.name()).
 								append("artist", artist).
@@ -117,7 +114,7 @@ public class RadioRaiLoader extends PodcastLoader
 								append("tracks", getTracks(null)).
 								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
 
-						docs.insertOne(json);
+						docs.insert(json);
 						LOGGER.info(json.getString("type") + " " + pageUrl + " added");
 					}
 					catch(Exception e) {

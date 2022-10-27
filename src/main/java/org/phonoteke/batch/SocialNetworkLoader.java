@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
+import com.mongodb.internal.operation.OrderBy;
 
 public class SocialNetworkLoader extends HumanBeats
 {

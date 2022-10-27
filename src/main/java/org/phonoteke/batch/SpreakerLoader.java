@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.phonoteke.batch.model.Doc;
+import org.phonoteke.batch.model.Show;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
 
 public class SpreakerLoader extends PodcastLoader
 {
@@ -34,20 +34,17 @@ public class SpreakerLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			SpreakerLoader.url = show.getString("url");
-			SpreakerLoader.artist = show.getString("title");
-			SpreakerLoader.source = show.getString("source");
-			SpreakerLoader.authors = show.get("authors", List.class);
-			
+		List<Show> i = args.length == 0 ? shows.findByType(SPREAKER) : shows.findByTypeSource(SPREAKER, args[0]);
+		i.iterator().forEachRemaining(show -> {
+			SpreakerLoader.url = show.getUrl();
+			SpreakerLoader.artist = show.getTitle();
+			SpreakerLoader.source = show.getSource();
+			SpreakerLoader.authors = show.getAuthors();
+
 			LOGGER.info("Crawling " + SpreakerLoader.artist);
 			crawl(SpreakerLoader.url);
 			updateLastEpisodeDate(SpreakerLoader.source);
-		}
+		});
 	}
 
 	@Override
@@ -72,32 +69,31 @@ public class SpreakerLoader extends PodcastLoader
 					String id = getId(pageUrl);
 					String title = doc.get("title").getAsString();
 
-					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
+					Doc json = docs.findBySourceUrl(source, pageUrl);
 					if(json == null)
 					{
 						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", authors).
-									append("cover", doc.get("image_original_url").getAsString()).
-									append("date", getDate(doc.get("published_at").getAsString())).
-									append("description", title).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
-									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("published_at").getAsString())).
-									append("tracks", getTracks(doc.get("description").getAsString())).
-									append("audio", doc.get("download_url").getAsString());
+							json = Doc.builder().id(id).
+									url(getUrl(pageUrl)).
+									type(type.name()).
+									artist(artist).
+									title(title).
+									authors(authors).
+									cover(doc.get("image_original_url").getAsString()).
+									date(getDate(doc.get("published_at").getAsString())).
+									description(title).
+									genres(null).
+									label(null).
+									links(null).
+									review(null).
+									source(source).
+									vote(null).
+									year(getYear(doc.get("published_at").getAsString())).
+									tracks(getTracks(doc.get("description").getAsString())).
+									audio(doc.get("download_url").getAsString()).build();
 
-							docs.insertOne(json);
-							LOGGER.info(json.getString("type") + " " + pageUrl + " added");
+							docs.insert(json);
+							LOGGER.info(json.getType() + " " + pageUrl + " added");
 						}
 						catch(Exception e) {
 							LOGGER.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

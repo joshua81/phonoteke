@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.phonoteke.batch;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
@@ -21,6 +22,7 @@ import com.google.common.collect.Lists;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 
+@Component
 public class OndarockLoader extends AbstractCrawler
 {
 	public static final String SOURCE = "ondarock";
@@ -28,10 +30,6 @@ public class OndarockLoader extends AbstractCrawler
 
 	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
 
-
-	public static void main(String[] args) {
-		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-anebrun-howbeautyholdsthehandof%20sorrow.htm");
-	}
 
 	@Override
 	public void load(String... args) 

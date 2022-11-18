@@ -23,9 +23,9 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class RadioCapitalLoader extends PodcastLoader
 {
-	private static final String URL = "https://www.capital.it/programmi/";
-	private static final String EPISODE_URL = "https://www.capital.it/programmi/b-side/puntate/";
-	private static final String PLAYLIST_URL = "https://www.capital.it/programmi/b-side/playlist/dettaglio/";
+	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
+	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
+	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
 
 	public static void main(String[] args) {
 		new RadioCapitalLoader().load("casabertallot");
@@ -34,12 +34,21 @@ public class RadioCapitalLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		RadioCapitalLoader.url = EPISODE_URL;
-		RadioCapitalLoader.artist = "B-Side";
-		RadioCapitalLoader.source = "casabertallot";
-		RadioCapitalLoader.authors = Lists.newArrayList("Alessio Bertallot");
-		crawl(RadioCapitalLoader.url);
-		updateLastEpisodeDate(RadioRaiLoader.source);
+		if(args.length == 0 || "capital".equals(args[0])) {
+			RadioCapitalLoader.url = BSIDE_URL + "puntate/";
+			RadioCapitalLoader.artist = "B-Side";
+			RadioCapitalLoader.source = "casabertallot";
+			RadioCapitalLoader.authors = Lists.newArrayList("Alessio Bertallot");
+			crawl(RadioCapitalLoader.url);
+			updateLastEpisodeDate(RadioRaiLoader.source);
+
+			RadioCapitalLoader.url = EXTRA_URL + "puntate/";
+			RadioCapitalLoader.artist = "Extra";
+			RadioCapitalLoader.source = "alexpaletta";
+			RadioCapitalLoader.authors = Lists.newArrayList("Alex Paletta");
+			crawl(RadioCapitalLoader.url);
+			updateLastEpisodeDate(RadioRaiLoader.source);
+		}
 	}
 
 	@Override
@@ -51,8 +60,10 @@ public class RadioCapitalLoader extends PodcastLoader
 	@Override
 	public void visit(Page page) 
 	{
-		if(page.getWebURL().getURL().startsWith(EPISODE_URL + "b-side-del") ||
-				page.getWebURL().getURL().startsWith(EPISODE_URL + "puntata-del")) {
+		if(page.getWebURL().getURL().startsWith(BSIDE_URL + "puntate/b-side-del") ||
+				page.getWebURL().getURL().startsWith(BSIDE_URL + "puntate/puntata-del") || 
+				page.getWebURL().getURL().startsWith(EXTRA_URL + "puntate/extra-del") ||
+				page.getWebURL().getURL().startsWith(EXTRA_URL + "puntate/puntata-del")) {
 			super.visit(page);
 		}
 	}
@@ -60,7 +71,7 @@ public class RadioCapitalLoader extends PodcastLoader
 	@Override
 	protected String getBaseUrl()
 	{
-		return URL;
+		return CAPITAL_URL;
 	}
 
 	@Override
@@ -140,7 +151,15 @@ public class RadioCapitalLoader extends PodcastLoader
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		try {
 			String date = new SimpleDateFormat("yyyy-MM-dd").format(getDate(url, doc));
-			doc = Jsoup.connect(PLAYLIST_URL + date).ignoreContentType(true).get();
+			if(url.startsWith(BSIDE_URL)) {
+				doc = Jsoup.connect(BSIDE_URL + "playlist/dettaglio/" + date).ignoreContentType(true).get();
+			}
+			else if(url.startsWith(EXTRA_URL)) {
+				doc = Jsoup.connect(EXTRA_URL + "playlist/dettaglio/" + date).ignoreContentType(true).get();
+			}
+			else {
+				throw new RuntimeException("Unknown url: " + url);
+			}
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();

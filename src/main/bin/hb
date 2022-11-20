@@ -14,7 +14,7 @@ do
 		rm -rf $HOME/workspace/phonoteke/node/web
 		cp -r dist/web $HOME/workspace/phonoteke/node/
 		cd $HOME/workspace/phonoteke/node/
-		mv web/index.html template/index.ntl
+		mv web/index.html template/index.ejs
 		gcloud app deploy
 		shift
 		;;
@@ -24,7 +24,7 @@ do
 		rm -rf $HOME/workspace/phonoteke/node/web
 		cp -r dist/web $HOME/workspace/phonoteke/node/
 		cd $HOME/workspace/phonoteke/node/
-		mv web/index.html template/index.ntl
+		mv web/index.html template/index.ejs
 		node app.js
 		shift
 		;;

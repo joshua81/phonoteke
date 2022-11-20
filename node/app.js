@@ -168,23 +168,29 @@ app.get('/api/:id/links', async(req, res)=>{
 });
 
 app.get('/episodes/:id', async(req,res)=>{
+	console.log('Episode: ' + req.params.id);
 	var doc = await docs.find({'id': req.params.id}).project({artist: 1, title: 1, type: 1, cover: 1, coverM: 1, description: 1}).toArray();
-	res.render('index', { 
-		title: doc[0].artist + ' - ' + doc[0].title,
-		type: 'music:' + doc[0].type,
-		url: 'https://humanbeats.appspot.com/episodes/' + req.params.id,
-		cover: doc[0].coverM == null ? doc[0].cover : doc[0].coverM,
-		description: doc[0].description });
+	if(doc && doc[0]) {
+		res.render('index', { 
+			title: doc[0].artist + ' - ' + doc[0].title,
+			type: 'music:' + doc[0].type,
+			url: 'https://humanbeats.appspot.com/episodes/' + req.params.id,
+			cover: doc[0].coverM == null ? doc[0].cover : doc[0].coverM,
+			description: doc[0].description });
+	}
 });
 
 app.get('/:source', async(req,res)=>{
+	console.log('Source: ' + req.params.source);
 	var doc = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1}).toArray();
-	res.render('index', { 
-		title: doc[0].name,
-		type: 'music:podcast',
-		url: 'https://humanbeats.appspot.com/' + req.params.source,
-		cover: doc[0].cover,
-		description: doc[0].name + ' podcasts'});
+	if(doc && doc[0]) {
+		res.render('index', { 
+			title: 'Human Beats - ' + doc[0].name,
+			type: 'music:podcast',
+			url: 'https://humanbeats.appspot.com/' + req.params.source,
+			cover: doc[0].cover,
+			description: doc[0].name + ' podcasts'});
+	}
 });
 
 app.get('/*', (req,res)=>{

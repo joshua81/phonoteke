@@ -34,7 +34,7 @@ app.set('view engine', 'ejs');
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
-app.use(express.static('web'));
+app.use('/', express.static('web'));
 app.use(cookieParser());
 app.use(robots({
 	UserAgent: '*',
@@ -180,24 +180,14 @@ app.get('/episodes/:id', async(req,res)=>{
 });
 
 app.get('/:source', async(req,res)=>{
-	if(req.params.source.endsWith('.css') || req.params.source.endsWith('.js')) {
+	var doc = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1}).toArray();
+	if(doc && doc[0]) {
 		res.render('index', { 
-			title: 'Human Beats',
-			type: 'music',
-			url: 'https://humanbeats.appspot.com/',
-			cover: 'https://humanbeats.appspot.com/favicon.ico',
-			description: 'Music designed by humans, assembled by robots' });
-	}
-	else {
-		var doc = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1}).toArray();
-		if(doc && doc[0]) {
-			res.render('index', { 
-				title: 'Human Beats - ' + doc[0].name,
-				type: 'music:podcast',
-				url: 'https://humanbeats.appspot.com/' + req.params.source,
-				cover: doc[0].cover,
-				description: doc[0].name + ' podcasts'});
-		}
+			title: 'Human Beats - ' + doc[0].name,
+			type: 'music:podcast',
+			url: 'https://humanbeats.appspot.com/' + req.params.source,
+			cover: doc[0].cover,
+			description: doc[0].name + ' podcasts'});
 	}
 });
 

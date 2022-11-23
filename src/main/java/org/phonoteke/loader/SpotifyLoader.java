@@ -535,7 +535,7 @@ public class SpotifyLoader extends HumanBeats
 							String trackid = track.getId();
 							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
 							if(score >= SCORE && !tracksMap.containsKey(score)) {
-								LOGGER.info("Found: " + title + " | " + spartist + " - " + spsong + " | score: " + score);
+								LOGGER.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
 								Document page = new Document("spotify", trackid);
 								page.append("artist", spartist);
 								page.append("spartistid", spartistid);

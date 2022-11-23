@@ -30,49 +30,12 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 
 public abstract class HumanBeats extends WebCrawler
 {
-	protected static final List<String> SEPARATORS1 = Lists.newArrayList(
-			">", 
-			":", 
-			"–", 
-			"-", 
-			",", 
-			";", 
-			"\"", 
-			"'", 
-			"“", 
-			"”", 
-			"‘", 
-			"’", 
-			"/", 
-			"&", 
-			"\\+");
-	protected static final List<String> SEPARATORS2 = Lists.newArrayList(
-			">", 
-			":", 
-			"–", 
-			"-", 
-			",", 
-			";", 
-			"\"", 
-			"'", 
-			"“", 
-			"”", 
-			"‘", 
-			"’", 
-			"/", 
-			"&", 
-			"\\+",
-			"\\band\\b", 
-			"\\bwith\\b", 
-			"\\be\\b",
-			"\\by\\b",
-			"\\bx\\b",
-			"\\baka\\b",
-			"\\bvs[.]{0,1}\\b");
-	protected static final List<List<String>> SEPARATORS = Lists.newArrayList(SEPARATORS1, SEPARATORS2);
+	protected static final List<String> SEPARATORS = Lists.newArrayList(
+			">", "<", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+",
+			"\\band\\b", "\\bwith\\b", "\\be\\b", "\\by\\b", "\\bx\\b", "\\baka\\b", "\\bvs[.]{0,1}\\b");
 
-	protected static final String MATCH1 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
-	protected static final String MATCH2 = "([0-9]{0,2}[•*\\|]{0,1}[0-9]{0,2}[\\._)\\|-]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
+	protected static final String MATCH1 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
+	protected static final String MATCH2 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
 	protected static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
 
 	protected static final String FEAT1 = "(?i)(.{1,100}?) feat[.]{0,1} (.{1,200})";
@@ -89,20 +52,9 @@ public abstract class HumanBeats extends WebCrawler
 	protected static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
 	protected static final int NUMBER_OF_CRAWLERS = 1;
 	protected static final String TRACKS_NEW_LINE = "_NEW_LINE_";
-	protected static final List<String> TRACKS_TRIM = Lists.newArrayList(
-			"100% Bellamusica ®", 
-			"PLAYLIST:", 
-			"PLAYLIST", 
-			"TRACKLIST:", 
-			"TRACKLIST", 
-			"PLAY:", 
-			"PLAY", 
-			"LIST:", 
-			"LIST", 
-			"TRACKS:", 
-			"TRACKS");
+
 	protected static final int THRESHOLD = 90;
-	protected static final int SCORE = 70;
+	protected static final int SCORE = 80;
 	protected static final int TRACKS_SIZE = 6;
 
 	protected MongoCollection<org.bson.Document> shows;
@@ -199,14 +151,12 @@ public abstract class HumanBeats extends WebCrawler
 	protected boolean isTrack(String title)
 	{
 		title = cleanText(title);
-		for(List<String> separators : SEPARATORS) {
-			for(String s : separators) {
-				title = title.replaceAll(s, "|");
-			}
-			for(String match : MATCHS) {
-				if(title.matches(match)) {
-					return true;
-				}
+		for(String s : SEPARATORS) {
+			title = title.replaceAll(s, "|");
+		}
+		for(String match : MATCHS) {
+			if(title.matches(match)) {
+				return true;
 			}
 		}
 		return false;
@@ -216,23 +166,21 @@ public abstract class HumanBeats extends WebCrawler
 	{
 		track = cleanText(track);
 		Set<String> matches = new LinkedHashSet<String>();
-		for(List<String> separators : SEPARATORS) {
-			for(String s : separators) {
-				track = track.replaceAll(s, "|");
-			}
-			for(String match : MATCHS) {
-				Matcher m = Pattern.compile(match).matcher(track);
-				if(m.matches()) {
-					track = m.group(2)+ "|" + m.group(3);
-					List<String> chunks = Arrays.asList(track.split("\\|"));
-					for(int i = 1; i < chunks.size(); i++) {
-						for(int k = 1; k <= i; k++) {
-							String artist = String.join(" ", chunks.subList(0, k));
-							for(int j = i+1; j <= chunks.size(); j++) {
-								String song = String.join(" ", chunks.subList(i, j));
-								if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
-									matches.add(parseArtistSong(artist, song));
-								}
+		for(String s : SEPARATORS) {
+			track = track.replaceAll(s, "|");
+		}
+		for(String match : MATCHS) {
+			Matcher m = Pattern.compile(match).matcher(track);
+			if(m.matches()) {
+				track = m.group(2)+ "|" + m.group(3);
+				List<String> chunks = Arrays.asList(track.split("\\|"));
+				for(int i = 1; i < chunks.size(); i++) {
+					for(int k = 1; k <= i; k++) {
+						String artist = String.join(" ", chunks.subList(0, k));
+						for(int j = i+1; j <= chunks.size(); j++) {
+							String song = String.join(" ", chunks.subList(i, j));
+							if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
+								matches.add(parseArtistSong(artist, song));
 							}
 						}
 					}

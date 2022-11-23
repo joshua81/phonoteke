@@ -275,16 +275,6 @@ public abstract class AbstractCrawler extends HumanBeats
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title))
-				{
-					for(String p : TRACKS_TRIM)
-					{
-						if(title.toUpperCase().startsWith(p))
-						{
-							title = title.substring(p.length()).trim();
-						}
-					}
-				}
 				if(StringUtils.isNotBlank(title) && isTrack(title))
 				{
 					tracks.add(newTrack(title, null));

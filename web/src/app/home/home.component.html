@@ -69,7 +69,6 @@
 
   <!-- episodes -->
   <app-podcasts *ngIf="status=='episodes'" [source]="source" [docs]="episodes"></app-podcasts>
-  <!--app-doc *ngIf="status=='doc'" [doc]="doc"></app-doc-->
 
   <!-- shows -->
   <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
@@ -84,4 +83,6 @@
     </div>
   </div>
 </div>
+
+<!-- footer -->
 <app-footer></app-footer>

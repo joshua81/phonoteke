@@ -60,6 +60,16 @@ a:hover {
     cursor: pointer;
     text-decoration: none !important;
 }
+
+p {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16px;
+}
+
+em {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16px;
+}
   
 h1 {
     font-size: 14px;

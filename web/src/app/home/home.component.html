@@ -47,7 +47,15 @@
   </div>
 
   <!-- videos -->
-  <app-video *ngIf="status=='videos'" [tracks]="videos"></app-video>
+  <div *ngIf="status=='videos'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+    <div *ngFor="let video of videos">
+      <div *ngIf="video.youtube" class="video p-1" (click)="app.playYoutube(video.youtube)">
+        <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
+        <h2 class="font-weight-normal text-white">{{video.artist}}</h2>
+        <span class="youtube"></span>
+      </div>
+    </div>
+  </div>
 
   <!-- tracks -->
   <div *ngIf="status=='tracks'" class="w-100 mt-3">

@@ -145,4 +145,30 @@ span.play {
     height: 10px;
     background: #18A2B8;
 }
+
+div.video {
+    position: relative;
+    cursor: pointer;
+}
   
+img.video {
+    object-fit:cover;
+    width: 320px;
+    height: 180px;
+    cursor: pointer;
+}
+  
+span.youtube {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/youtube.svg") no-repeat;
+    width: 30px;
+    height: 30px;
+    margin: 0px;
+    padding: 0px;
+    left: 145px;
+    top: 75px;
+    background: #FFFFFF;
+    opacity: 0.6;
+    cursor: pointer;
+}

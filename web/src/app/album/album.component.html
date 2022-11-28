@@ -1,0 +1,50 @@
+<div class="container p-2">
+  <div class="wallpaper w-100">
+    <div class="d-flex flex-row justify-content-center align-items-center w-100">
+      <div class="cover">  
+        <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
+        <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
+        <div>
+          <h2 *ngIf="doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
+          <div *ngIf="doc.vote && doc.vote == 10" class="vote"><span class="star"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
+      <span class="previous"></span>
+    </div>
+
+    <!-- player -->
+    <div *ngIf="doc.spalbumid && app.player" class="player d-flex flex-row justify-content-center align-items-center p-2"
+      (click)="app.playPauseSpotify(doc.spalbumid, 'podcast', doc)">
+      <div class="player-button">
+        <span *ngIf="app.track == null || app.spalbumid != doc.spalbumid || !app.track.is_playing" class="player-play"></span>
+        <span *ngIf="app.track != null && app.spalbumid == doc.spalbumid && app.track.is_playing" class="player-pause"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- info -->
+  <div class="text-center w-100">
+    <div class="d-flex flex-row justify-content-center">
+      <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
+    </div>
+    <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+    <h3 *ngIf="doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
+    <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
+  </div>
+
+  <!-- source + spotify + songkick -->
+  <div *ngIf="doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
+    <a *ngIf="doc.spalbumid" class="spotify ml-1 mr-1" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+      <span class="spotify"></span>
+    </a>
+  </div>
+
+  <p class="text-justify mt-3" [innerHTML]="doc.review"></p>
+  
+  <app-video [tracks]="doc.tracks"></app-video>     
+  <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>
+</div>
+<app-footer></app-footer>

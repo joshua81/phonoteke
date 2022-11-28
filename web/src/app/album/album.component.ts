@@ -7,11 +7,11 @@ import { map } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
 
 @Component({
-  selector: 'app-doc',
-  templateUrl: './doc.component.html',
-  styleUrls: ['./doc.component.css']
+  selector: 'app-album',
+  templateUrl: './album.component.html',
+  styleUrls: ['./album.component.css']
 })
-export class DocComponent implements OnInit {
+export class AlbumComponent implements OnInit {
   doc:any = null;
   links:any = null;
 

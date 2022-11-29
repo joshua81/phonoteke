@@ -27,11 +27,9 @@
 
   <!-- info -->
   <div class="text-center w-100">
-    <div class="d-flex flex-row justify-content-center">
-      <h3>{{formatDate(doc.date)}}</h3>
-    </div>
+    <h3>{{formatDate(doc.date)}}</h3>
     <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-    <h3 *ngIf="doc.authors" class="text-muted mx-auto">di {{doc.authors}}</h3>
+    <h3 *ngIf="doc.authors" class="text-muted mx-auto">{{doc.authors}}</h3>
   </div>
 
   <!-- source + spotify + songkick -->

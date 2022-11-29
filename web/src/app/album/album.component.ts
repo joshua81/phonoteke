@@ -51,6 +51,7 @@ export class AlbumComponent implements OnInit {
 
   setDoc(doc: any) {
     this.doc = doc;
+    this.app.doc = doc;
 
     this.setMeta();
     this.loadLinks();

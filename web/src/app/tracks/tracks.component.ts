@@ -31,7 +31,7 @@ export class TracksComponent implements OnInit {
         }
       }
       if(pos >= 0) {
-        this.app.playPauseSpotify(this.spalbumid, 'podcast', this.doc, pos, track);
+        this.app.playPauseSpotify(this.spalbumid, 'playlist', pos, track);
       }
     }
   }

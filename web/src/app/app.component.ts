@@ -160,7 +160,7 @@ export class AppComponent {
     }
   }
 
-  playPauseSpotify(spalbumid:string, type:string=null, doc:any=null, position:number=0, trackid:string=null) {
+  playPauseSpotify(spalbumid:string, type:string=null, position:number=0, trackid:string=null) {
     const token = this.cookieService.get('spotify-token');
     if(token != null && token != '' && this.player != null) {      
       if(this.spalbumid == spalbumid && this.track != null && (trackid == null || this.track.item.id == trackid)) {
@@ -193,19 +193,10 @@ export class AppComponent {
           this.timer.unsubscribe();
           this.timer = null;
         }
-        if(type != 'album') {
-          type = 'playlist';
-        }
-
-        this.doc = doc;
         this.spalbumid = spalbumid;
-        var body = type != 'track' ? {
+        var body = {
           'context_uri': 'spotify:' + type + ':' + spalbumid,
           'uris': null,
-          'offset': {'position': position}
-        } : {
-          'context_uri': null,
-          'uris': ['spotify:track:' + spalbumid],
           'offset': {'position': position}
         };
         const options = {
@@ -302,7 +293,6 @@ export class AppComponent {
       }
       else if(this.audio == null || this.audio.source != doc.audio) {
         this.close();
-        this.doc = doc;
         if(!Hls.isSupported() || doc.audio.endsWith(".mp3")) {
           this.audio = new Audio();
           this.audio.src = doc.audio;
@@ -400,7 +390,6 @@ export class AppComponent {
   }
 
   close() {
-    this.doc = null;
     this.youtube = null;
     this.wwfm = null;
 

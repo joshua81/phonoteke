@@ -103,9 +103,9 @@ span.play {
     background: #000000;
     opacity: 0.8;
     cursor: pointer;
-  }
+}
   
-  span.previous {
+span.previous {
     display: inline-block;
     mask: url("/images/previous.svg") no-repeat;
     width: 10px;
@@ -114,17 +114,17 @@ span.play {
     padding: 0;
     background: #FFFFFF;
     cursor: pointer;
-  }
+}
 
-  .spotify {
+.spotify {
     width: 30px;
     height: 30px;
     margin: 0px;
     padding: 0px;
     cursor: pointer;
-  }
+}
   
-  span.spotify {
+span.spotify {
     display: inline-block;
     mask: url("/images/spotify.svg") no-repeat;
     width: 30px;
@@ -133,9 +133,9 @@ span.play {
     padding: 0px;
     background: #1DB954;
     cursor: pointer;
-  }
+}
 
-  .yesterday {
+.yesterday {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -153,8 +153,8 @@ div.video {
   
 img.video {
     object-fit:cover;
-    width: 320px;
-    height: 180px;
+    width: 108px;
+    height: 60px;
     cursor: pointer;
 }
   
@@ -166,8 +166,8 @@ span.youtube {
     height: 30px;
     margin: 0px;
     padding: 0px;
-    left: 145px;
-    top: 75px;
+    left: 39px;
+    top: 18px;
     background: #FFFFFF;
     opacity: 0.6;
     cursor: pointer;

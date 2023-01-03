@@ -59,9 +59,7 @@ div.selected {
 div.album {
     position: relative;
     width: 50vw;
-    height: 50vw;
     max-width: 200px;
-    max-height: 200px;
     padding: 2px;
     background: none;
     cursor: pointer;
@@ -69,9 +67,7 @@ div.album {
   
 img.album {
     width: 50vw;
-    height: 50vw;
     max-width: 196px;
-    max-height: 196px;
     object-fit:cover;
 }
 

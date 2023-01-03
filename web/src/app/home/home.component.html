@@ -30,19 +30,17 @@
 
   <!-- albums -->
   <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
-    <div *ngFor="let album of albums">
-      <div *ngIf="!app.isDesktop" class="album">
-        <a href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
-          <img class="album" src="{{album.cover}}" loading="lazy"/>
-          <span class="play"></span>
-        </a>
-        <h2 class="font-weight-normal text-white">{{album.artist}}</h2>
-      </div>
-      <div *ngIf="app.isDesktop" class="album" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
+    <div *ngFor="let album of albums" class="album">
+      <a *ngIf="!app.isDesktop" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
-        <h2 class="font-weight-normal text-white">{{album.artist}}</h2>
+        <span class="play"></span>
+      </a>
+      <div *ngIf="app.isDesktop" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
+        <img class="album" src="{{album.cover}}" loading="lazy"/>
         <span class="play"></span>
       </div>
+      <div class="text-truncate-1 font-weight-bold">{{album.album}}</div>
+      <div class="text-truncate-1">{{album.artist}}</div>
     </div>
   </div>
 

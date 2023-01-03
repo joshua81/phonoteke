@@ -15,8 +15,7 @@
       </div>
     </div>
     <div class="pr-1 pt-1 pb-1 w-100">
-      <h2 class="text-white text-truncate-1">{{track.item.name}}</h2>
-      <h3 class="text-white text-truncate-1 mb-auto">{{track.item.artists[0].name}}</h3>
+      <h2 class="text-white text-truncate-1">{{track.item.artists[0].name + ' | ' + track.item.name}}</h2>
       <div class="d-flex flex-row align-items-center">
         <div class="player-button" (click)="previousSpotify()">
           <span class="player-backward"></span>
@@ -48,8 +47,7 @@
       </div>
     </div>
     <div class="pr-1 pt-1 pb-1 w-100">
-      <h2 class="text-white text-truncate-1">{{audio.title}}</h2>
-      <h3 class="text-white text-truncate-1 mb-auto">{{audio.artist}}</h3>
+      <h2 class="text-white text-truncate-1">{{audio.artist + ' | ' + audio.title}}</h2>
       <div class="d-flex flex-row align-items-center">
         <div class="text-white">{{currentTime}}</div>
         <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeAudio($event)">

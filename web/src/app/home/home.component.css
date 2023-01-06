@@ -7,10 +7,11 @@ h2 {
     font-size: 30px;
     line-height: 0.9;
     position: absolute;
-    margin: 4px;
-    padding: 0px;
+    margin: 2px;
+    padding: 2px;
     bottom: 0px;
     left: 0px;
+    right: 0px;
     background-color: #000000;
     opacity: 0.7;
 }
@@ -56,17 +57,36 @@ div.selected {
     border-color: #FFFFFF;
 }
 
+div.show {
+    position: relative;
+    width: 200px;
+    max-width: 200px;
+    height: 200px;
+    max-height: 200px;
+    padding: 2px;
+    background: none;
+    cursor: pointer;
+}
+  
+img.show {
+    width: 196px;
+    max-width: 196px;
+    object-fit:cover;
+}
+
 div.album {
     position: relative;
-    width: 50vw;
+    width: 200px;
     max-width: 200px;
+    height: 240px;
+    max-height: 240px;
     padding: 2px;
     background: none;
     cursor: pointer;
 }
   
 img.album {
-    width: 50vw;
+    width: 196px;
     max-width: 196px;
     object-fit:cover;
 }

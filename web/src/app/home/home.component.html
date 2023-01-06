@@ -76,9 +76,9 @@
   <!-- shows -->
   <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let show of shows">
-      <div class="album">
+      <div class="show">
         <a [routerLink]="['/' + show.source]">
-          <img class="album" src="{{show.cover}}" loading="lazy"/>
+          <img class="show" src="{{show.cover}}" loading="lazy"/>
           <h2 class="font-weight-normal text-white">{{show.name}}</h2>
         </a>
         <div *ngIf="app.gtYesterday(show.lastEpisodeDate)" class="yesterday"></div>

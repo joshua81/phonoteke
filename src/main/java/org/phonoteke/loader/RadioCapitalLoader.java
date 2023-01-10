@@ -1,7 +1,6 @@
 package org.phonoteke.loader;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,8 +8,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -198,13 +195,15 @@ public class RadioCapitalLoader extends PodcastLoader
 	@Override
 	protected String getAudio(String url, Document doc) 
 	{
+		Date date = getDate(url, doc);
+		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
+		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;
-		Element content = doc.select("iframe").first();
-		if(content != null)
-		{
-			List<NameValuePair> params = URLEncodedUtils.parse(content.attr("src"), StandardCharsets.UTF_8);
-			NameValuePair param = params.stream().filter(p -> p.getName().equals("file")).findFirst().orElse(null);
-			audio = param.getValue();
+		if(RadioCapitalLoader.source.equals("alexpaletta")) {
+			audio = "https://media.capital.it/" + d1 + "/episodes/extra/extra_" + d2 + "_000000.mp3";
+		}
+		else if(RadioCapitalLoader.source.equals("casabertallot")){
+			audio = "https://media.capital.it/" + d1 + "/episodes/bertallot/bertallot_" + d2 + "_220000.mp3";
 		}
 		LOGGER.debug("audio: " + audio);
 		return audio;

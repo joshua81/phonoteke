@@ -210,15 +210,11 @@ public class PatchLoader extends HumanBeats
 			String id = page.getString("id");
 
 			String title = page.getString("title");
-			title = title.replaceAll("&amp;", "&");
-			title = title.replaceAll("&gt;", ">");
-			title = title.replaceAll("&lt;", "<");
+			title = cleanText(title);
 			page.append("title", title);
 
 			String artist = page.getString("artist");
-			artist = artist.replaceAll("&amp;", "&");
-			artist = artist.replaceAll("&gt;", ">");
-			artist = artist.replaceAll("&lt;", "<");
+			artist = cleanText(artist);
 			page.append("artist", artist);
 
 			page.append("spartistid", null);

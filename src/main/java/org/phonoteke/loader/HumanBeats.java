@@ -81,9 +81,6 @@ public abstract class HumanBeats extends WebCrawler
 			else if("sp".equals(task)) {
 				new SpotifyLoader().load(subtask);
 			}
-			else if("tw".equals(task)) {
-				new SocialNetworkLoader().load(subtask);
-			}
 			else if("yt".equals(task)) {
 				new YoutubeLoader().load(subtask);
 			}
@@ -113,7 +110,7 @@ public abstract class HumanBeats extends WebCrawler
 		{
 			Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 			root.setLevel(Level.ERROR);
-
+			
 			MongoClientURI uri = new MongoClientURI(System.getenv("MONGO_URL"));
 			MongoDatabase db = new MongoClient(uri).getDatabase(System.getenv("MONGO_DB"));
 			docs = db.getCollection("docs");
@@ -218,6 +215,9 @@ public abstract class HumanBeats extends WebCrawler
 	{
 		// replaces all the HTML and non-HTML white spaces
 		text = text.replaceAll("&nbsp;", " ");
+		text = text.replaceAll("&amp;", "&");
+		text = text.replaceAll("&gt;", ">");
+		text = text.replaceAll("&lt;", "<");
 		text = text.replaceAll("\\s+", " ");
 		// erases all the ASCII control characters
 		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");

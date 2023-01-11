@@ -66,8 +66,9 @@ p {
     font-size: 16px;
 }
 
-em {
+p blockquote, p em {
     font-family: "Times New Roman", Times, serif;
+    font-style: italic;
     font-size: 16px;
 }
   

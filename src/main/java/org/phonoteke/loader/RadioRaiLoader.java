@@ -13,6 +13,8 @@ import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -23,8 +25,11 @@ import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.extern.slf4j.Slf4j;
 
-public class RadioRaiLoader extends PodcastLoader
+@Component
+@Slf4j
+public class RadioRaiLoader extends AbstractCrawler
 {
 	private static final String URL = "https://www.raiplaysound.it/";
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
@@ -38,27 +43,23 @@ public class RadioRaiLoader extends PodcastLoader
 	public static final String STEREONOTTE = "stereonotte";
 
 
-	public static void main(String args[]) {
-		new RadioRaiLoader().load(MUSICALBOX);
-	}
-
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", RAI))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", RAI), Filters.eq("source", args[0]))).iterator();
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", RAI))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", RAI), Filters.eq("source", args[0]))).iterator();
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			RadioRaiLoader.url = show.getString("url");
-			RadioRaiLoader.artist = show.getString("title");
-			RadioRaiLoader.source = show.getString("source");
-			RadioRaiLoader.authors = show.get("authors", List.class);
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
 
 			if(source.equals(MUSICALBOX)) {
-				LOGGER.info("Crawling " + artist);
-				crawl(RadioRaiLoader.url);
-				updateLastEpisodeDate(RadioRaiLoader.source);
+				log.info("Crawling " + artist);
+				crawl(this.url);
+				updateLastEpisodeDate(this.source);
 			}
 		}
 	}
@@ -66,7 +67,7 @@ public class RadioRaiLoader extends PodcastLoader
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
+		for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
 			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}
@@ -86,14 +87,14 @@ public class RadioRaiLoader extends PodcastLoader
 				String pageUrl = page.getWebURL().getURL();
 				TYPE type = TYPE.podcast;
 
-				LOGGER.debug("Parsing page " + pageUrl);
+				log.debug("Parsing page " + pageUrl);
 				String id = getId(pageUrl);
 
 				Date start = new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2021");
 				if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
 					return;
 
-				org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
+				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("url", pageUrl))).iterator().tryNext();
 				if(json == null)
 				{
@@ -117,17 +118,17 @@ public class RadioRaiLoader extends PodcastLoader
 								append("tracks", getTracks(null)).
 								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
 
-						docs.insertOne(json);
-						LOGGER.info(json.getString("type") + " " + pageUrl + " added");
+						repo.getDocs().insertOne(json);
+						log.info(json.getString("type") + " " + pageUrl + " added");
 					}
 					catch(Exception e) {
-						LOGGER.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+						log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 					}
 				}
 			}
 			catch (Throwable t) 
 			{
-				LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+				log.error("ERROR parsing page " + url + ": " + t.getMessage());
 				throw new RuntimeException(t);
 			}
 		}

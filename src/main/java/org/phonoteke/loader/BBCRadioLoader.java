@@ -10,6 +10,8 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
@@ -17,42 +19,42 @@ import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.extern.slf4j.Slf4j;
 
-public class BBCRadioLoader extends PodcastLoader
+@Component
+@Slf4j
+public class BBCRadioLoader extends AbstractCrawler
 {
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
-	public static void main(String[] args) {
-		new BBCRadioLoader().load("anniemac");
-	}
-	
+
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", BBC))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", BBC), Filters.eq("source", args[0]))).iterator();
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", BBC))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", BBC), Filters.eq("source", args[0]))).iterator();
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			BBCRadioLoader.url = show.getString("url");
-			BBCRadioLoader.artist = show.getString("title");
-			BBCRadioLoader.source = show.getString("source");
-			BBCRadioLoader.authors = show.get("authors", List.class);
-			
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+
 			int pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-			LOGGER.info("Crawling " + BBCRadioLoader.artist + " (" + pages + " pages)");
+			log.info("Crawling " + artist + " (" + pages + " pages)");
 			for(int j = 1; j <= pages; j++) { 
-				crawl(BBCRadioLoader.url + "?page=" + j);
+				crawl(url + "?page=" + j);
 			}
-			updateLastEpisodeDate(RadioRaiLoader.source);
+			updateLastEpisodeDate(source);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(BBCRadioLoader.url);
+		return page.getWebURL().getURL().startsWith(this.url);
 	}
 
 	@Override
@@ -95,7 +97,7 @@ public class BBCRadioLoader extends PodcastLoader
 		{
 			// nothing to do
 		}
-		LOGGER.debug("date: " + date);
+		log.debug("date: " + date);
 		return date;
 	}
 
@@ -122,7 +124,7 @@ public class BBCRadioLoader extends PodcastLoader
 		{
 			desc = content.attr("content").trim();
 		}
-		LOGGER.debug("description: " + desc);
+		log.debug("description: " + desc);
 		return desc;
 	}
 
@@ -135,7 +137,7 @@ public class BBCRadioLoader extends PodcastLoader
 		{
 			title = content.attr("content").trim();
 		}
-		LOGGER.debug("title: " + title);
+		log.debug("title: " + title);
 		return title;
 	}
 
@@ -151,7 +153,7 @@ public class BBCRadioLoader extends PodcastLoader
 				String title = track.select("h3").first() != null ? track.select("h3").first().text() : track.select("h4").first().text();
 				title += " - " + track.select("p").first().text();
 				tracks.add(newTrack(title, null));
-				LOGGER.debug("track: " + title);
+				log.debug("track: " + title);
 			}
 		}
 		return checkTracks(tracks);
@@ -166,7 +168,7 @@ public class BBCRadioLoader extends PodcastLoader
 		{
 			cover = content.attr("content").trim();
 		}
-		LOGGER.debug("cover: " + cover);
+		log.debug("cover: " + cover);
 		return cover;
 	}
 

@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -18,7 +20,11 @@ import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class SpreakerLoader extends PodcastLoader
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Slf4j
+public class SpreakerLoader extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
 
@@ -34,19 +40,19 @@ public class SpreakerLoader extends PodcastLoader
 	@Override
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? shows.find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
-			shows.find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			SpreakerLoader.url = show.getString("url");
-			SpreakerLoader.artist = show.getString("title");
-			SpreakerLoader.source = show.getString("source");
-			SpreakerLoader.authors = show.get("authors", List.class);
-			
-			LOGGER.info("Crawling " + SpreakerLoader.artist);
-			crawl(SpreakerLoader.url);
-			updateLastEpisodeDate(SpreakerLoader.source);
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+
+			log.info("Crawling " + this.artist);
+			crawl(this.url);
+			updateLastEpisodeDate(this.source);
 		}
 	}
 
@@ -68,11 +74,11 @@ public class SpreakerLoader extends PodcastLoader
 					String pageUrl = doc.get("site_url").getAsString();
 					TYPE type = TYPE.podcast;
 
-					LOGGER.debug("Parsing page " + pageUrl);
+					log.debug("Parsing page " + pageUrl);
 					String id = getId(pageUrl);
 					String title = doc.get("title").getAsString();
 
-					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
+					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 							Filters.eq("url", pageUrl))).iterator().tryNext();
 					if(json == null)
 					{
@@ -96,11 +102,11 @@ public class SpreakerLoader extends PodcastLoader
 									append("tracks", getTracks(doc.get("description").getAsString())).
 									append("audio", doc.get("download_url").getAsString());
 
-							docs.insertOne(json);
-							LOGGER.info(json.getString("type") + " " + pageUrl + " added");
+							repo.getDocs().insertOne(json);
+							log.info(json.getString("type") + " " + pageUrl + " added");
 						}
 						catch(Exception e) {
-							LOGGER.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 						}
 					}
 				});
@@ -108,7 +114,7 @@ public class SpreakerLoader extends PodcastLoader
 		}
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+			log.error("ERROR parsing page " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -140,11 +146,11 @@ public class SpreakerLoader extends PodcastLoader
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && isTrack(title))
+			if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
 			{
 				String youtube = null;
 				tracks.add(newTrack(title, youtube));
-				LOGGER.debug("tracks: " + title + ", youtube: " + youtube);
+				log.debug("tracks: " + title + ", youtube: " + youtube);
 			}
 		}
 		return checkTracks(tracks);

@@ -8,30 +8,27 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.extern.slf4j.Slf4j;
 
+@Component
+@Slf4j
 public class OndarockLoader extends AbstractCrawler
 {
 	public static final String SOURCE = "ondarock";
 	public static final String URL = "https://www.ondarock.it/";
 
-	private static final Logger LOGGER = LogManager.getLogger(OndarockLoader.class);
-
-
-	public static void main(String[] args) {
-		new OndarockLoader().load("https://www.ondarock.it/recensioni/2020-anebrun-howbeautyholdsthehandof%20sorrow.htm");
-	}
 
 	@Override
 	public void load(String... args) 
@@ -318,7 +315,7 @@ public class OndarockLoader extends AbstractCrawler
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR getCreationDate() "+ url + ": " + t.getMessage());
+			log.error("ERROR getCreationDate() "+ url + ": " + t.getMessage());
 			return null;
 		}
 	}
@@ -361,7 +358,7 @@ public class OndarockLoader extends AbstractCrawler
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR getCover() "+ url + ": " + t.getMessage());
+			log.error("ERROR getCover() "+ url + ": " + t.getMessage());
 			return null;
 		}
 	}
@@ -503,7 +500,7 @@ public class OndarockLoader extends AbstractCrawler
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR getVote() "+ url + ": " + t.getMessage());
+			log.error("ERROR getVote() "+ url + ": " + t.getMessage());
 			return 0F;
 		}
 	}

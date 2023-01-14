@@ -8,11 +8,14 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -39,29 +42,44 @@ import com.wrapper.spotify.requests.data.search.simplified.SearchAlbumsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
 
+import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class SpotifyLoader extends HumanBeats
+@Component
+@Slf4j
+public class SpotifyLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(SpotifyLoader.class);
-	private static final String SPOTIFY_USER = System.getenv("SPOTIFY_USER");
+	@Value("${spotify.user}")
+	private String spotifyUser;
+
+	@Value("${spotify.client.id}")
+	private String spotifyClientId;
+
+	@Value("${spotify.client.secret}")
+	private String spotifyClientSecret;
+
+	@Value("${spotify.redirect}")
+	private String spotifyRedirect;
+	
+	@Autowired
+	private MongoRepository repo;
 
 	private ClientCredentials credentials;
-	private SpotifyApi spotify = new SpotifyApi.Builder()
-			.setClientId(System.getenv("SPOTIFY_CLIENT_ID"))
-			.setClientSecret(System.getenv("SPOTIFY_CLIENT_SECRET"))
-			.setRedirectUri(SpotifyHttpManager.makeUri(System.getenv("SPOTIFY_REDIRECT"))).build();
+	private SpotifyApi spotify;
 
-	public static void main(String[] args) {
-		new SpotifyLoader().load();
+	@PostConstruct
+	public void init() {
+		spotify = new SpotifyApi.Builder()
+				.setClientId(spotifyClientId)
+				.setClientSecret(spotifyClientSecret)
+				.setRedirectUri(SpotifyHttpManager.makeUri(spotifyRedirect)).build();
 	}
 
-	@Override
 	public void load(String... args)
 	{
 		if(args.length == 0) {
-			LOGGER.info("Loading Spotify...");
-			MongoCursor<Document> i = docs.find(Filters.or(
+			log.info("Loading Spotify...");
+			MongoCursor<Document> i = repo.getDocs().find(Filters.or(
 					Filters.and(Filters.ne("type", "podcast"), Filters.eq("spartistid", null)), 
 					Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.spotify", null)))).iterator();
 			while(i.hasNext()) { 
@@ -77,21 +95,21 @@ public class SpotifyLoader extends HumanBeats
 				else {
 					loadArtist(page);
 				}
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+				repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 			}
 		}
 		else if("follow".equals(args[0])) {
-			LOGGER.info("Following Spotify playlists...");
+			log.info("Following Spotify playlists...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[2]).build();
 			followPlaylist(args[1]);
 		}		
 		else if("rename".equals(args[0])) {
-			LOGGER.info("Renaming Spotify playlists...");
+			log.info("Renaming Spotify playlists...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[1]).build();
 			renamePlaylists();
 		}
 		else {
-			LOGGER.info("Creating Spotify playlist...");
+			log.info("Creating Spotify playlist...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[0]).build();
 			createPlaylists();
 		}
@@ -104,16 +122,16 @@ public class SpotifyLoader extends HumanBeats
 		try {
 			FollowPlaylistRequest req0 = spotify.followPlaylist(id, true).build();
 			req0.execute();
-			LOGGER.info("Playlist " + id + " followed");
+			log.info("Playlist " + id + " followed");
 		}
 		catch (Exception e) {
-			LOGGER.error("ERROR following playlist " + id + ": " + e.getMessage());
+			log.error("ERROR following playlist " + id + ": " + e.getMessage());
 		}
 	}
 
 	//	private void resetPlaylists()
 	//	{
-	//		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).iterator();
+	//		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("spalbumid", null))).iterator();
 	//		while(i.hasNext()) 
 	//		{ 
 	//			Document page = i.next();
@@ -128,12 +146,12 @@ public class SpotifyLoader extends HumanBeats
 	//				});
 	//				if(tracksnum.get() > 0) {
 	//					page.append("dirty", true);
-	//					docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-	//					LOGGER.info("Playlist " + id + " reset: " + tracksnum.get());
+	//					repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+	//					log.info("Playlist " + id + " reset: " + tracksnum.get());
 	//				}
 	//			} 
 	//			catch (Exception e) {
-	//				LOGGER.error("ERROR resetting playlist " + id + ": " + e.getMessage());
+	//				log.error("ERROR resetting playlist " + id + ": " + e.getMessage());
 	//			}
 	//		}
 	//	}
@@ -148,22 +166,22 @@ public class SpotifyLoader extends HumanBeats
 	//					try {
 	//						UnfollowPlaylistRequest req2 = spotify.unfollowPlaylist(p.getId()).build();
 	//						req2.execute();
-	//						LOGGER.info("Playlist " + p.getId() + " unfollowed");
+	//						log.info("Playlist " + p.getId() + " unfollowed");
 	//					}
 	//					catch (Exception e) {
-	//						LOGGER.error("ERROR unfollowing playlist " + p.getId() + ": " + e.getMessage());
+	//						log.error("ERROR unfollowing playlist " + p.getId() + ": " + e.getMessage());
 	//					}
 	//				}
 	//			}
 	//		}
 	//		catch (Exception e) {
-	//			LOGGER.error("ERROR getting the list of playlists: " + e.getMessage());
+	//			log.error("ERROR getting the list of playlists: " + e.getMessage());
 	//		}
 	//	}
 
 	private void renamePlaylists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.eq("type", "podcast")).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("type", "podcast")).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -174,10 +192,10 @@ public class SpotifyLoader extends HumanBeats
 					//					String name = "";
 					//					ChangePlaylistsDetailsRequest req = spotify.changePlaylistsDetails(spalbumid).name(name).build();
 					//					req.execute();
-					LOGGER.info("Playlist " + id + " renamed");
+					log.info("Playlist " + id + " renamed");
 				} 
 				catch (Exception e) {
-					LOGGER.error("ERROR renaming playlist " + id + ": " + e.getMessage());
+					log.error("ERROR renaming playlist " + id + ": " + e.getMessage());
 				}
 			}
 		}
@@ -185,7 +203,7 @@ public class SpotifyLoader extends HumanBeats
 
 	private void createPlaylists()
 	{
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -193,17 +211,17 @@ public class SpotifyLoader extends HumanBeats
 			String title = page.getString("artist");
 			String description = page.getString("title");
 			Date date = page.getDate("date");
-			title = format(title, date);
+			title = Utils.format(title, date);
 			createPlaylist(page, title, description);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
 
-		i = stats.find().iterator();
+		i = repo.getStats().find().iterator();
 		while(i.hasNext()) { 
 			Document page = i.next();
 			String name = page.getString("name");
 			createPlaylist(page, name, null);
-			stats.updateOne(Filters.eq("name", name), new org.bson.Document("$set", page)); 
+			repo.getStats().updateOne(Filters.eq("name", name), new org.bson.Document("$set", page)); 
 		}
 	}
 
@@ -216,7 +234,7 @@ public class SpotifyLoader extends HumanBeats
 			for(org.bson.Document track : tracks)
 			{
 				String spotify = track.getString("spotify");
-				if(spotify != null && !NA.equals(spotify))
+				if(spotify != null && !Utils.NA.equals(spotify))
 				{
 					uris.add("spotify:track:" + spotify);
 				}
@@ -229,14 +247,14 @@ public class SpotifyLoader extends HumanBeats
 				{
 					if(id == null) {
 						// create new playlist
-						CreatePlaylistRequest req = spotify.createPlaylist(SPOTIFY_USER, title).description(description).public_(true).build();
+						CreatePlaylistRequest req = spotify.createPlaylist(spotifyUser, title).description(description).public_(true).build();
 						Playlist playlist = req.execute();
 						id = playlist.getId();
 						AddItemsToPlaylistRequest req2 = spotify.addItemsToPlaylist(playlist.getId(), Arrays.copyOf(uris.toArray(), uris.size(), String[].class)).build();
 						req2.execute();
 						page.append("spalbumid", id);
 						page.append("dirty", false);
-						LOGGER.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");
+						log.info("Playlist: " + playlist.getName() + " spotify: " + id + " created");
 					}
 					// update existing playlist
 					else {
@@ -254,12 +272,12 @@ public class SpotifyLoader extends HumanBeats
 							req.execute();
 						}
 						page.append("dirty", false);
-						LOGGER.info("Playlist " + title + " updated");
+						log.info("Playlist " + title + " updated");
 					}
 				}
 				catch (Exception e) 
 				{
-					LOGGER.error("ERROR creating/updating playlist " + id + ": " + e.getMessage());
+					log.error("ERROR creating/updating playlist " + id + ": " + e.getMessage());
 				}
 			}
 		}
@@ -279,11 +297,11 @@ public class SpotifyLoader extends HumanBeats
 			{
 				credentials = spotify.clientCredentials().build().execute();
 				spotify.setAccessToken(credentials.getAccessToken());
-				LOGGER.info("Expires in: " + credentials.getExpiresIn() + " secs");
+				log.info("Expires in: " + credentials.getExpiresIn() + " secs");
 			} 
 			catch (Exception e) 
 			{
-				LOGGER.error("ERROR connecting to Spotify: " + e.getMessage());
+				log.error("ERROR connecting to Spotify: " + e.getMessage());
 			}
 		}
 	}
@@ -294,7 +312,7 @@ public class SpotifyLoader extends HumanBeats
 		String album = page.getString("title");
 
 		// check if the article was already crawled
-		LOGGER.debug("Loading album " + artist + " - " + album);
+		log.debug("Loading album " + artist + " - " + album);
 		Document spotify = loadAlbum(artist, album);
 		if(spotify != null)
 		{
@@ -310,8 +328,8 @@ public class SpotifyLoader extends HumanBeats
 		}
 		else
 		{
-			page.append("spartistid", NA).
-			append("spalbumid", NA).
+			page.append("spartistid", Utils.NA).
+			append("spalbumid", Utils.NA).
 			append("score", 0);
 		}
 	}
@@ -341,7 +359,7 @@ public class SpotifyLoader extends HumanBeats
 					getImages(page, a.getImages());
 
 					if(!albumsMap.containsKey(score)) {
-						LOGGER.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
+						log.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
 						albumsMap.put(score, page);
 					}
 				}
@@ -349,7 +367,7 @@ public class SpotifyLoader extends HumanBeats
 		}
 		catch (Exception e) 
 		{
-			LOGGER.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage(), e);
+			log.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage(), e);
 			relogin();
 		}
 		return albumsMap.isEmpty() ?  null : albumsMap.descendingMap().firstEntry().getValue();
@@ -359,7 +377,7 @@ public class SpotifyLoader extends HumanBeats
 	{
 		String artist = page.getString("artist");
 
-		LOGGER.debug("Loading artist " + artist);
+		log.debug("Loading artist " + artist);
 		Document spotify = loadArtist(artist);
 		if(spotify != null)
 		{
@@ -373,7 +391,7 @@ public class SpotifyLoader extends HumanBeats
 		}
 		else
 		{
-			page.append("spartistid", NA).
+			page.append("spartistid", Utils.NA).
 			append("score", 0);
 		}
 	}
@@ -398,14 +416,14 @@ public class SpotifyLoader extends HumanBeats
 					getImages(page, a.getImages());
 
 					if(!artistsMap.containsKey(score)) {
-						LOGGER.info(artist + " | " + spartist + ": " + score);
+						log.info(artist + " | " + spartist + ": " + score);
 						artistsMap.put(score, page);
 					}
 				}
 			}
 			catch (Exception e) 
 			{
-				LOGGER.error("ERROR loading " + artist + ": " + e.getMessage());
+				log.error("ERROR loading " + artist + ": " + e.getMessage());
 				relogin();
 			}
 		}
@@ -429,7 +447,7 @@ public class SpotifyLoader extends HumanBeats
 			}
 			catch (Exception e) 
 			{
-				LOGGER.error("ERROR loading " + artistId + ": " + e.getMessage());
+				log.error("ERROR loading " + artistId + ": " + e.getMessage());
 				relogin();
 			}
 		}
@@ -469,7 +487,7 @@ public class SpotifyLoader extends HumanBeats
 						}
 						else
 						{
-							track.append("spotify", NA).
+							track.append("spotify", Utils.NA).
 							append("artist", null).
 							append("album", null).
 							append("track", null).
@@ -480,13 +498,13 @@ public class SpotifyLoader extends HumanBeats
 							append("coverS", null).
 							append("title", track.getString("titleOrig")).
 							append("score", 0).
-							append("artistid", NA).
-							append("youtube", NA);
+							append("artistid", Utils.NA).
+							append("youtube", Utils.NA);
 						}
 					}
 					catch (Exception e) 
 					{
-						LOGGER.error("ERROR loading " + title + ": " + e.getMessage(), e);
+						log.error("ERROR loading " + title + ": " + e.getMessage(), e);
 						relogin();
 					}
 				}
@@ -500,7 +518,7 @@ public class SpotifyLoader extends HumanBeats
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		Set<String> chunks = parseTrack(title);
+		Set<String> chunks = Utils.parseTrack(title);
 		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
 		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}
@@ -514,7 +532,7 @@ public class SpotifyLoader extends HumanBeats
 					SearchTracksRequest request = spotify.searchTracks(title).market(CountryCode.IT).build();
 					Paging<Track> tracks = request.execute();
 					if(tracks.getItems().length == 0) {
-						LOGGER.info("Not found: " + title);
+						log.info("Not found: " + title);
 					}
 					for(int i = 0; i < tracks.getItems().length; i++)
 					{
@@ -525,7 +543,7 @@ public class SpotifyLoader extends HumanBeats
 							String spalbum = track.getAlbum().getName();
 							String spalbumid = track.getAlbum().getId();
 							String spsong = track.getName();
-							for(String match : HumanBeats.FEAT) {
+							for(String match : Utils.FEAT) {
 								Matcher m = Pattern.compile(match).matcher(spsong);
 								if(m.matches()) {
 									spsong = m.group(1);
@@ -534,8 +552,8 @@ public class SpotifyLoader extends HumanBeats
 							}
 							String trackid = track.getId();
 							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-							if(score >= SCORE && !tracksMap.containsKey(score)) {
-								LOGGER.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
+							if(score >= Utils.SCORE && !tracksMap.containsKey(score)) {
+								log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
 								Document page = new Document("spotify", trackid);
 								page.append("artist", spartist);
 								page.append("spartistid", spartistid);

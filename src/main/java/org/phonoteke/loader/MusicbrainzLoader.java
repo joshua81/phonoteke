@@ -9,32 +9,32 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Maps;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
+import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
-public class MusicbrainzLoader extends HumanBeats
+@Component
+@Slf4j
+public class MusicbrainzLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(MusicbrainzLoader.class);
-
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
+	
+	@Autowired
+	private MongoRepository repo;
 
 
-	public static void main(String[] args) {
-		new MusicbrainzLoader().load(args);
-	}
-
-	@Override
+	//	@Override
 	public void load(String... args) 
 	{
-		LOGGER.info("Loading Musicbrainz...");
-		MongoCursor<Document> i = docs.find(Filters.or(
+		log.info("Loading Musicbrainz...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("artistid", null)),
 				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).iterator();
 
@@ -52,7 +52,7 @@ public class MusicbrainzLoader extends HumanBeats
 			else {
 				loadArtistMBId(page);
 			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
@@ -63,14 +63,14 @@ public class MusicbrainzLoader extends HumanBeats
 		String artistId = page.getString("artistid");
 		String title = page.getString("title");
 
-		LOGGER.debug("Loading Album " + id);
+		log.debug("Loading Album " + id);
 		org.bson.Document mbalbum = getAlbum(artist, title);
 		if(mbalbum != null && mbalbum.getInteger("count") > 0)
 		{
 			artistId = getAlbumId(artist + " - " + title, mbalbum);
 		}
-		page.append("artistid", artistId == null ? NA : artistId);
-		LOGGER.info(artist + " - " + title + ": " + artistId);
+		page.append("artistid", artistId == null ? Utils.NA : artistId);
+		log.info(artist + " - " + title + ": " + artistId);
 	}
 
 	private org.bson.Document getAlbum(String artist, String title)
@@ -89,14 +89,14 @@ public class MusicbrainzLoader extends HumanBeats
 		String artist = page.getString("artist");
 		String artistId = page.getString("artistid");
 
-		LOGGER.debug("Loading Artist: " + id);
+		log.debug("Loading Artist: " + id);
 		org.bson.Document mbartist = getArtist(artist);
 		if(mbartist != null && mbartist.getInteger("count") > 0)
 		{
 			artistId = getArtistId(artist, mbartist);
 		}
-		page.append("artistid", artistId == null ? NA : artistId);
-		LOGGER.info(artist + ": " + artistId);
+		page.append("artistid", artistId == null ? Utils.NA : artistId);
+		log.info(artist + ": " + artistId);
 	}
 
 	private org.bson.Document getArtist(String artist)
@@ -118,7 +118,7 @@ public class MusicbrainzLoader extends HumanBeats
 		} 
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage());
+			log.error("ERROR: " + t.getMessage());
 			return null;
 		}
 
@@ -135,7 +135,7 @@ public class MusicbrainzLoader extends HumanBeats
 		}
 		catch(Throwable t)
 		{
-			LOGGER.error("ERROR: " + t.getMessage());
+			log.error("ERROR: " + t.getMessage());
 			return null;
 		}
 		finally
@@ -160,15 +160,15 @@ public class MusicbrainzLoader extends HumanBeats
 			{
 				if(album != null && artist != null)
 				{
-					LOGGER.debug("Loading Album " + artist + " - " + album);
+					log.debug("Loading Album " + artist + " - " + album);
 					org.bson.Document mbalbum = getAlbum(artist, album);
 					if(mbalbum != null && mbalbum.getInteger("count") > 0)
 					{
 						artistId = getAlbumId(artist + " - " + album, mbalbum);
 					}
 				}
-				track.append("artistid", artistId == null ? NA : artistId);
-				LOGGER.info(artist + " - " + album + ": " + artistId);
+				track.append("artistid", artistId == null ? Utils.NA : artistId);
+				log.info(artist + " - " + album + ": " + artistId);
 			}
 		}
 	}
@@ -185,14 +185,14 @@ public class MusicbrainzLoader extends HumanBeats
 				String mbartist = getRecordingArtist(release);
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
-				if(score >= THRESHOLD && scoreTitle >= THRESHOLD)
+				if(score >= Utils.THRESHOLD && scoreTitle >= Utils.THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? Utils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getArtistId(String name, org.bson.Document artist)
@@ -206,14 +206,14 @@ public class MusicbrainzLoader extends HumanBeats
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score >= THRESHOLD && scoreArtist >= THRESHOLD)
+				if(score >= Utils.THRESHOLD && scoreArtist >= Utils.THRESHOLD)
 				{
 					String artistId = mbartist.getString("id");
 					scores.put(score, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? Utils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getRecordingArtistId(org.bson.Document recording)

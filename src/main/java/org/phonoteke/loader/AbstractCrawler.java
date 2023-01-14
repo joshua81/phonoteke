@@ -11,22 +11,26 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.internal.operation.OrderBy;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.crawler.exceptions.ParseException;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -35,19 +39,31 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.extern.slf4j.Slf4j;
 
-public abstract class AbstractCrawler extends HumanBeats
+@Slf4j
+public abstract class AbstractCrawler extends WebCrawler
 {
 	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
-	protected static final Logger LOGGER = LogManager.getLogger(AbstractCrawler.class);
 
+	@Autowired
+	protected MongoRepository repo;
+	
+	protected String id;
+	protected String url;
+	protected String artist;
+	protected String source;
+	protected List<String> authors;
+
+	abstract void load(String... args);
+	
 	protected void crawl(String url)
 	{
 		try
 		{
-			LOGGER.info("Crawling " + url);
+			log.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
-			config.setCrawlStorageFolder(CRAWL_STORAGE_FOLDER);
+			config.setCrawlStorageFolder(Utils.CRAWL_STORAGE_FOLDER);
 			config.setUserAgentString(USER_AGENT);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
@@ -55,11 +71,11 @@ public abstract class AbstractCrawler extends HumanBeats
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);
-			controller.start(getClass(), NUMBER_OF_CRAWLERS);
+			controller.start(getClass(), Utils.NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR crawling " + url + ": " + t.getMessage());
+			log.error("ERROR crawling " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}
@@ -85,13 +101,13 @@ public abstract class AbstractCrawler extends HumanBeats
 			{
 				try
 				{
-					LOGGER.debug("Parsing page " + url);
+					log.debug("Parsing page " + url);
 					String id = getId(url);
 					Document doc = Jsoup.parse(html);
 					String artist = getArtist(url, doc);
 					String title = getTitle(url, doc);
 
-					org.bson.Document json = docs.find(Filters.and(Filters.eq("source", source), 
+					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 							Filters.eq("url", url))).iterator().tryNext();
 					if(json == null)
 					{
@@ -99,7 +115,7 @@ public abstract class AbstractCrawler extends HumanBeats
 						{
 						case album:
 						case podcast:
-							if(type.equals(TYPE.podcast) || !docs.find(Filters.and(Filters.eq("source", source),
+							if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(Filters.eq("source", source),
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist),
 									Filters.eq("title", title))).iterator().hasNext())
@@ -125,7 +141,7 @@ public abstract class AbstractCrawler extends HumanBeats
 							}
 							break;
 						case artist:
-							if(!docs.find(Filters.and(Filters.eq("source", source), 
+							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist))).iterator().hasNext())
 							{
@@ -144,7 +160,7 @@ public abstract class AbstractCrawler extends HumanBeats
 							}
 							break;
 						case concert:
-							if(!docs.find(Filters.and(Filters.eq("source", source), 
+							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist),
 									Filters.eq("title", title))).iterator().hasNext())
@@ -164,7 +180,7 @@ public abstract class AbstractCrawler extends HumanBeats
 							}
 							break;
 						case interview:
-							if(!docs.find(Filters.and(Filters.eq("source", source), 
+							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist),
 									Filters.eq("title", title))).iterator().hasNext())
@@ -188,14 +204,14 @@ public abstract class AbstractCrawler extends HumanBeats
 						}
 						if(json != null)
 						{
-							docs.insertOne(json);
-							LOGGER.info(json.getString("type") + " " + url + " added");
+							repo.getDocs().insertOne(json);
+							log.info(json.getString("type") + " " + url + " added");
 						}
 					}
 				}
 				catch (Throwable t) 
 				{
-					LOGGER.error("ERROR parsing page " + url + ": " + t.getMessage());
+					log.error("ERROR parsing page " + url + ": " + t.getMessage());
 					throw new RuntimeException(t);
 				}
 			}
@@ -220,7 +236,7 @@ public abstract class AbstractCrawler extends HumanBeats
 		} 
 		catch (Throwable t) 
 		{
-			LOGGER.error("ERROR getUrl() "+ url + ": " + t.getMessage());
+			log.error("ERROR getUrl() "+ url + ": " + t.getMessage());
 			return null;
 		} 
 	}
@@ -239,14 +255,14 @@ public abstract class AbstractCrawler extends HumanBeats
 					int ix = "https://www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
 					tracks.add(newTrack(null, youtube));
-					LOGGER.debug("tracks: youtube: " + youtube);
+					log.debug("tracks: youtube: " + youtube);
 				}
 				else if(src.startsWith("//www.youtube.com/embed/"))
 				{
 					int ix = "//www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
 					tracks.add(newTrack(null, youtube));
-					LOGGER.debug("tracks: youtube: " + youtube);
+					log.debug("tracks: youtube: " + youtube);
 				}
 			}
 		}
@@ -258,27 +274,27 @@ public abstract class AbstractCrawler extends HumanBeats
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		if(content != null)
 		{
-			content.select("br").after(TRACKS_NEW_LINE);
-			content.select("p").after(TRACKS_NEW_LINE);
-			content.select("li").after(TRACKS_NEW_LINE);
-			content.select("h1").after(TRACKS_NEW_LINE);
-			content.select("h2").after(TRACKS_NEW_LINE);
-			content.select("h3").after(TRACKS_NEW_LINE);
-			content.select("div").after(TRACKS_NEW_LINE);
+			content.select("br").after(Utils.TRACKS_NEW_LINE);
+			content.select("p").after(Utils.TRACKS_NEW_LINE);
+			content.select("li").after(Utils.TRACKS_NEW_LINE);
+			content.select("h1").after(Utils.TRACKS_NEW_LINE);
+			content.select("h2").after(Utils.TRACKS_NEW_LINE);
+			content.select("h3").after(Utils.TRACKS_NEW_LINE);
+			content.select("div").after(Utils.TRACKS_NEW_LINE);
 
-			String[] chunks = content.text().replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+			String[] chunks = content.text().replace("||", Utils.TRACKS_NEW_LINE).split(Utils.TRACKS_NEW_LINE);
 			if(RadioRaiLoader.SEIGRADI.equals(source))
 			{
-				String str = content.text().replace(TRACKS_NEW_LINE + " "+ TRACKS_NEW_LINE, "||").replace(TRACKS_NEW_LINE, " - ");
-				chunks = str.replace("||", TRACKS_NEW_LINE).split(TRACKS_NEW_LINE);
+				String str = content.text().replace(Utils.TRACKS_NEW_LINE + " "+ Utils.TRACKS_NEW_LINE, "||").replace(Utils.TRACKS_NEW_LINE, " - ");
+				chunks = str.replace("||", Utils.TRACKS_NEW_LINE).split(Utils.TRACKS_NEW_LINE);
 			}
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title) && isTrack(title))
+				if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
 				{
 					tracks.add(newTrack(title, null));
-					LOGGER.debug("tracks: " + title);
+					log.debug("tracks: " + title);
 				}
 			}
 		}
@@ -298,8 +314,17 @@ public abstract class AbstractCrawler extends HumanBeats
 
 	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
 	{
-		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= TRACKS_SIZE, "Number of tracks less than " + TRACKS_SIZE);
+		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= Utils.TRACKS_SIZE, "Number of tracks less than " + Utils.TRACKS_SIZE);
 		return tracks;
+	}
+	
+	protected void updateLastEpisodeDate(String source) {
+		MongoCursor<org.bson.Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", source))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1).iterator();
+		Date date = i.next().get("date", Date.class);
+		i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+		org.bson.Document doc = i.next();
+		doc.append("lastEpisodeDate", date);
+		repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 	}
 
 	//---------------------------------
@@ -406,7 +431,7 @@ public abstract class AbstractCrawler extends HumanBeats
 				parsedData.setMetaTags(Maps.newHashMap());
 				return parsedData;
 			} catch (IOException e) {
-				LOGGER.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
+				log.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
 				throw new ParseException();
 			}
 		}

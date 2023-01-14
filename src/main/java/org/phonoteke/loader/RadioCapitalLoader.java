@@ -12,46 +12,48 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.extern.slf4j.Slf4j;
 
-public class RadioCapitalLoader extends PodcastLoader
+@Component
+@Slf4j
+public class RadioCapitalLoader extends AbstractCrawler
 {
 	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
 	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
 	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
-
-	public static void main(String[] args) {
-		new RadioCapitalLoader().load("casabertallot");
-	}
+	
 
 	@Override
 	public void load(String... args) 
 	{
 		if(args.length == 0 || "capital".equals(args[0])) {
-			RadioCapitalLoader.url = BSIDE_URL + "puntate/";
-			RadioCapitalLoader.artist = "B-Side";
-			RadioCapitalLoader.source = "casabertallot";
-			RadioCapitalLoader.authors = Lists.newArrayList("Alessio Bertallot");
-			crawl(RadioCapitalLoader.url);
-			updateLastEpisodeDate(RadioRaiLoader.source);
+			this.url = BSIDE_URL + "puntate/";
+			this.artist = "B-Side";
+			this.source = "casabertallot";
+			this.authors = Lists.newArrayList("Alessio Bertallot");
+			crawl(this.url);
+			updateLastEpisodeDate(this.source);
 
-			RadioCapitalLoader.url = EXTRA_URL + "puntate/";
-			RadioCapitalLoader.artist = "Extra";
-			RadioCapitalLoader.source = "alexpaletta";
-			RadioCapitalLoader.authors = Lists.newArrayList("Alex Paletta");
-			crawl(RadioCapitalLoader.url);
-			updateLastEpisodeDate(RadioRaiLoader.source);
+			this.url = EXTRA_URL + "puntate/";
+			this.artist = "Extra";
+			this.source = "alexpaletta";
+			this.authors = Lists.newArrayList("Alex Paletta");
+			crawl(this.url);
+			updateLastEpisodeDate(this.source);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(RadioCapitalLoader.url);
+		return page.getWebURL().getURL().startsWith(this.url);
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class RadioCapitalLoader extends PodcastLoader
 		{
 			// nothing to do
 		}
-		LOGGER.debug("date: " + date);
+		log.debug("date: " + date);
 		return date;
 	}
 
@@ -138,7 +140,7 @@ public class RadioCapitalLoader extends PodcastLoader
 		{
 			title = content.attr("content").trim();
 		}
-		LOGGER.debug("title: " + title);
+		log.debug("title: " + title);
 		return title;
 	}
 
@@ -164,7 +166,7 @@ public class RadioCapitalLoader extends PodcastLoader
 					Element track = i.next();
 					String title = track.select("span.author").text() + " - " + track.select("span.song").text();
 					tracks.add(newTrack(title, null));
-					LOGGER.debug("track: " + title);
+					log.debug("track: " + title);
 				}
 			}
 		} catch (IOException e) {
@@ -182,7 +184,7 @@ public class RadioCapitalLoader extends PodcastLoader
 		{
 			cover = content.attr("content").trim();
 		}
-		LOGGER.debug("cover: " + cover);
+		log.debug("cover: " + cover);
 		return cover;
 	}
 
@@ -199,13 +201,13 @@ public class RadioCapitalLoader extends PodcastLoader
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
 		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;
-		if(RadioCapitalLoader.source.equals("alexpaletta")) {
+		if(this.source.equals("alexpaletta")) {
 			audio = "https://media.capital.it/" + d1 + "/episodes/extra/extra_" + d2 + "_000000.mp3";
 		}
-		else if(RadioCapitalLoader.source.equals("casabertallot")){
+		else if(this.source.equals("casabertallot")){
 			audio = "https://media.capital.it/" + d1 + "/episodes/bertallot/bertallot_" + d2 + "_220000.mp3";
 		}
-		LOGGER.debug("audio: " + audio);
+		log.debug("audio: " + audio);
 		return audio;
 	}
 }

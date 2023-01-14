@@ -10,21 +10,26 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.operation.OrderBy;
+import com.mongodb.internal.operation.OrderBy;
 
-public class StatsLoader extends HumanBeats
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Slf4j
+public class StatsLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(StatsLoader.class);
-
+	@Autowired
+	private MongoRepository repo;
+	
 	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
 	private Map<String, Document> artists = Maps.newHashMap();
 
@@ -37,17 +42,13 @@ public class StatsLoader extends HumanBeats
 	private Map<String, BigDecimal> videosScore = Maps.newHashMap();
 	private Map<String, Document> videos = Maps.newHashMap();
 
-	public static void main(String[] args) {
-		new StatsLoader().load();
-	}
 
-	@Override
 	public void load(String... args)
 	{
 		if(args.length == 0) {
 			loadPodcast(null);
 
-			MongoCursor<Document> i = authors.find().iterator();
+			MongoCursor<Document> i = repo.getAuthors().find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				String source = page.getString("source");
@@ -91,7 +92,7 @@ public class StatsLoader extends HumanBeats
 
 				// Artist
 				String artist = t.getString("spartistid");
-				if(artist != null && !HumanBeats.NA.equals(artist)) {
+				if(artist != null && !Utils.NA.equals(artist)) {
 					BigDecimal score = artistsScore.get(artist);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -103,7 +104,7 @@ public class StatsLoader extends HumanBeats
 
 				// Album
 				String album = t.getString("spalbumid");
-				if(album != null && !HumanBeats.NA.equals(album)) {
+				if(album != null && !Utils.NA.equals(album)) {
 					BigDecimal score = albumsScore.get(album);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -115,7 +116,7 @@ public class StatsLoader extends HumanBeats
 
 				// Song
 				String song = t.getString("spotify");
-				if(song != null && !HumanBeats.NA.equals(song)) {
+				if(song != null && !Utils.NA.equals(song)) {
 					BigDecimal score = songsScore.get(song);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -127,7 +128,7 @@ public class StatsLoader extends HumanBeats
 
 				// Video
 				String video = t.getString("youtube");
-				if(video != null && !HumanBeats.NA.equals(video)) {
+				if(video != null && !Utils.NA.equals(video)) {
 					BigDecimal score = videosScore.get(video);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -139,7 +140,7 @@ public class StatsLoader extends HumanBeats
 			});
 		});
 
-		MongoCursor<Document> j = stats.find(Filters.and(Filters.eq("source", source))).iterator();
+		MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 		final Document doc = j.next();
 		//		if(doc == null) {
 		//			doc = new Document("source", source)
@@ -228,21 +229,21 @@ public class StatsLoader extends HumanBeats
 			});
 		}
 
-		stats.updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-		LOGGER.info(source + " updated");
+		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+		log.info(source + " updated");
 	}
 
 	private MongoCursor<Document> getDocs(String source) {
 		LocalDateTime end = LocalDateTime.now();
 		LocalDateTime start = end.minusMonths(1);
 
-		return source == null ? docs.find(Filters.and(
+		return source == null ? repo.getDocs().find(Filters.and(
 				Filters.eq("type", "podcast"),
 				Filters.gte("date", start),
 				Filters.lte("date", end)))
 				.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator() :
 
-					docs.find(Filters.and(
+					repo.getDocs().find(Filters.and(
 							Filters.eq("type", "podcast"),
 							Filters.eq("source", source)))
 					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation()))
@@ -291,7 +292,7 @@ public class StatsLoader extends HumanBeats
 	}
 
 	private String replaceNA(String val) {
-		return HumanBeats.NA.equals(val) ? null : val;
+		return Utils.NA.equals(val) ? null : val;
 	}
 
 	private List<Document> subList(List<Document> list, int size) {

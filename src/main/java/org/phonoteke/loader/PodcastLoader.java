@@ -1,26 +1,31 @@
 package org.phonoteke.loader;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-public class PodcastLoader extends AbstractCrawler
+@Component
+public class PodcastLoader
 {
-	protected static final Logger LOGGER = LogManager.getLogger(PodcastLoader.class);
+	@Autowired
+	private BBCRadioLoader bbc;
+	
+	@Autowired
+	private RadioRaiLoader rai;
+	
+	@Autowired
+	private SpreakerLoader spreaker;
+	
+	@Autowired
+	private WorldWideFMLoader wwfm;
 
-	protected static String url;
-	protected static String id;
-	protected static String artist;
-	protected static String source;
-	protected static List<String> authors;
-
-	@Override
+	@Autowired
+	private RadioCapitalLoader capital;
+	
 	public void load(String... args) {
-		new BBCRadioLoader().load(args);
-		new RadioRaiLoader().load(args);
-		new SpreakerLoader().load(args);
-		new WorldWideFMLoader().load(args);
-		new RadioCapitalLoader().load(args);
+		bbc.load(args);
+		rai.load(args);
+		spreaker.load(args);
+		wwfm.load(args);
+		capital.load(args);
 	}
 }

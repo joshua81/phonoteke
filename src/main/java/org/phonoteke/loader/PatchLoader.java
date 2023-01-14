@@ -4,23 +4,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-public class PatchLoader extends HumanBeats
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Slf4j
+public class PatchLoader
 {
-	private static final Logger LOGGER = LogManager.getLogger(PatchLoader.class);
-
-
-	public static void main(String[] args) {
-		new PatchLoader().renameSource();
-	}
-
-	@Override
+	@Autowired
+	private MongoRepository repo;
+	
 	public void load(String... args) 
 	{
 		if("resetTracksTitle".equals(args[0])) {
@@ -46,67 +45,67 @@ public class PatchLoader extends HumanBeats
 
 	private void deleteEmptyPlaylists()
 	{
-		LOGGER.info("Deleting empty playlists...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.size("tracks", 5))).iterator();
+		log.info("Deleting empty playlists...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.size("tracks", 5))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
 			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info("Document " + id + " deleted. Tracks size "+ tracks.size());	
+			repo.getDocs().deleteOne(Filters.eq("id", id));
+			log.info("Document " + id + " deleted. Tracks size "+ tracks.size());	
 		}
 
-		LOGGER.info("Deleting dismissed playlists...");
-		i = docs.find(Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.eq("source", "ondarock"), Filters.eq("source", "playaestas")))).iterator();
+		log.info("Deleting dismissed playlists...");
+		i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.or(Filters.eq("source", "ondarock"), Filters.eq("source", "playaestas")))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
 			String source = page.getString("source");
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info("Document " + id + " deleted. Source "+ source);	
+			repo.getDocs().deleteOne(Filters.eq("id", id));
+			log.info("Document " + id + " deleted. Source "+ source);	
 		}
 	}
 
 	private void deleteDoc(String id)
 	{
-		LOGGER.info("Deleting doc...");
-		docs.deleteOne(Filters.eq("id", id));
-		LOGGER.info("Document " + id + " deleted");	
+		log.info("Deleting doc...");
+		repo.getDocs().deleteOne(Filters.eq("id", id));
+		log.info("Document " + id + " deleted");	
 	}
 
 	private void deleteDocs()
 	{
-		LOGGER.info("Deleting docs...");
-		MongoCursor<Document> i = docs.find(Filters.eq("source", "worldwidefm")).iterator();
+		log.info("Deleting repo.getDocs()...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", "worldwidefm")).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
-			docs.deleteOne(Filters.eq("id", id));
-			LOGGER.info("Document " + id + " deleted");
+			repo.getDocs().deleteOne(Filters.eq("id", id));
+			log.info("Document " + id + " deleted");
 		}
 	}
 
 	private void renameSource()
 	{
-		LOGGER.info("Renaming source...");
-		MongoCursor<Document> i = docs.find(Filters.eq("source", "bbcradio6stevelamacq")).iterator();
+		log.info("Renaming source...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", "bbcradio6stevelamacq")).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			String id = page.getString("id");
 			page.append("source", "stevelamacq");
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			log.info("Document " + id + " updated");
 		}
 	}
 
 	private void resetTracksTitle()
 	{
-		LOGGER.info("Resetting tracks title...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator();
+		log.info("Resetting tracks title...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
@@ -117,20 +116,20 @@ public class PatchLoader extends HumanBeats
 				for(org.bson.Document track : tracks)
 				{
 					String spotify = track.getString("spotify");
-					if(spotify == null || NA.equals(spotify)) {
+					if(spotify == null || Utils.NA.equals(spotify)) {
 						track.append("title", track.getString("titleOrig"));
 					}
 				}
 			}
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			log.info("Document " + id + " updated");
 		}
 	}
 
 	private void calculateScore()
 	{
-		LOGGER.info("Calculating podcasts score...");
-		MongoCursor<Document> i = docs.find(Filters.and(Filters.eq("type", "podcast"))).iterator();
+		log.info("Calculating podcasts score...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
@@ -147,19 +146,19 @@ public class PatchLoader extends HumanBeats
 			score = score/tracks.size();
 			page.append("score", score);
 
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + " updated");
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			log.info("Document " + id + " updated");
 		}
 	}
 
 	private void resetTracks(int year)
 	{
-		LOGGER.info("Resetting " + year + " tracks...");
+		log.info("Resetting " + year + " tracks...");
 		LocalDateTime start = LocalDateTime.now().withYear(year).withMonth(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
 		LocalDateTime end = LocalDateTime.now().withYear(year).withMonth(12).withDayOfMonth(31).withHour(23).withMinute(59).withSecond(59);
-		MongoCursor<Document> i = docs.find(Filters.and(
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(
 				Filters.eq("type", "podcast"), 
-				Filters.lt("tracks.score", SCORE),
+				Filters.lt("tracks.score", Utils.SCORE),
 				Filters.gt("date", start),
 				Filters.lt("date", end))).iterator();
 		while(i.hasNext()) 
@@ -173,7 +172,7 @@ public class PatchLoader extends HumanBeats
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score != null && score < SCORE)
+					if(score != null && score < Utils.SCORE)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);
@@ -194,34 +193,34 @@ public class PatchLoader extends HumanBeats
 				}
 			}
 			if(update) {
-				docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-				LOGGER.info("Document " + id + " updated");
+				repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				log.info("Document " + id + " updated");
 			}
 		}
 	}
 
 	private void replaceSpecialChars()
 	{
-		LOGGER.info("Replacing special chars...");
-		MongoCursor<Document> i = docs.find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).iterator();
+		log.info("Replacing special chars...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
 			String id = page.getString("id");
 
 			String title = page.getString("title");
-			title = cleanText(title);
+			title = Utils.cleanText(title);
 			page.append("title", title);
 
 			String artist = page.getString("artist");
-			artist = cleanText(artist);
+			artist = Utils.cleanText(artist);
 			page.append("artist", artist);
 
 			page.append("spartistid", null);
 			page.append("spalbumid", null);
 			page.append("score", null);
-			docs.updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			LOGGER.info("Document " + id + ": " + title + " - " + artist);
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			log.info("Document " + id + ": " + title + " - " + artist);
 		}
 	}
 }

@@ -30,10 +30,8 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class YoutubeLoader //extends HumanBeats
+public class YoutubeLoader
 {
-	//	private static final Logger LOGGER = LogManager.getLogger(YoutubeLoader.class);
-
 	private static final String MATCH1 = "(?i)(.{1,100})[\\(\\[]Official(.{1,10})Video[\\)\\]]";
 	private static final String MATCH2 = "(?i)(.{1,100})[\\(\\[]Video(.{1,10})Ufficiale[\\)\\]]";
 	private static final List<String> MATCH = Lists.newArrayList(MATCH1, MATCH2);
@@ -53,7 +51,6 @@ public class YoutubeLoader //extends HumanBeats
 		}).setApplicationName("humanbeats").build();
 	}
 
-	//	@Override
 	public void load(String... args)
 	{
 		log.info("Loading Youtube...");

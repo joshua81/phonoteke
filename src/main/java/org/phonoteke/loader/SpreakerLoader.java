@@ -28,16 +28,15 @@ public class SpreakerLoader extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
 
-	public static final String CASABERTALLOT = "casabertallot";
-	public static final String ROLLOVERHANGOVER = "rolloverhangover";
-	public static final String BLACKALOT = "blackalot";
-	public static final String CASSABERTALLOT = "cassabertallot";
-	public static final String RESETREFRESH = "resetrefresh";
-	public static final String THETUESDAYTAPES = "thetuesdaytapes";
-	public static final String JAZZTRACKS = "jazztracks";
+	private static final String CASABERTALLOT = "casabertallot";
+	private static final String ROLLOVERHANGOVER = "rolloverhangover";
+	private static final String BLACKALOT = "blackalot";
+	private static final String CASSABERTALLOT = "cassabertallot";
+	private static final String RESETREFRESH = "resetrefresh";
+	private static final String THETUESDAYTAPES = "thetuesdaytapes";
+	private static final String JAZZTRACKS = "jazztracks";
 
 
-	@Override
 	public void load(String... args) 
 	{
 		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 

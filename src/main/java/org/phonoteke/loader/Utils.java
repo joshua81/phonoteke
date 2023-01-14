@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public abstract class Utils
+public class Utils
 {
 	public static final List<String> SEPARATORS = Lists.newArrayList(
 			">", "<", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+",

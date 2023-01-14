@@ -26,11 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OndarockLoader extends AbstractCrawler
 {
-	public static final String SOURCE = "ondarock";
-	public static final String URL = "https://www.ondarock.it/";
+	private static final String SOURCE = "ondarock";
+	private static final String URL = "https://www.ondarock.it/";
 
 
-	@Override
 	public void load(String... args) 
 	{
 		String url = args.length == 0 ? OndarockLoader.URL : (OndarockLoader.URL + args[0]);

@@ -35,15 +35,14 @@ public class RadioRaiLoader extends AbstractCrawler
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
 	private static final String RAI = "rai";
 
-	public static final String BABYLON = "babylon";
-	public static final String MUSICALBOX = "musicalbox";
-	public static final String INTHEMIX = "inthemix";
-	public static final String BATTITI = "battiti";
-	public static final String SEIGRADI = "seigradi";
-	public static final String STEREONOTTE = "stereonotte";
+	private static final String BABYLON = "babylon";
+	private static final String MUSICALBOX = "musicalbox";
+	private static final String INTHEMIX = "inthemix";
+	private static final String BATTITI = "battiti";
+	private static final String SEIGRADI = "seigradi";
+	private static final String STEREONOTTE = "stereonotte";
 
 
-	@Override
 	public void load(String... args) 
 	{
 		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", RAI))).iterator() : 

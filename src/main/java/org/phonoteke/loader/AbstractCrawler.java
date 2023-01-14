@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.phonoteke.loader.Utils.TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -41,22 +42,21 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
+@Component
 @Slf4j
-public abstract class AbstractCrawler extends WebCrawler
+public class AbstractCrawler extends WebCrawler
 {
 	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
 	@Autowired
 	protected MongoRepository repo;
-	
+
 	protected String id;
 	protected String url;
 	protected String artist;
 	protected String source;
 	protected List<String> authors;
 
-	abstract void load(String... args);
-	
 	protected void crawl(String url)
 	{
 		try
@@ -211,7 +211,7 @@ public abstract class AbstractCrawler extends WebCrawler
 				}
 				catch (Throwable t) 
 				{
-					log.error("ERROR parsing page " + url + ": " + t.getMessage());
+					log.error("ERROR parsing page " + url + ": " + t.getMessage(), t);
 					throw new RuntimeException(t);
 				}
 			}
@@ -283,11 +283,6 @@ public abstract class AbstractCrawler extends WebCrawler
 			content.select("div").after(Utils.TRACKS_NEW_LINE);
 
 			String[] chunks = content.text().replace("||", Utils.TRACKS_NEW_LINE).split(Utils.TRACKS_NEW_LINE);
-			if(RadioRaiLoader.SEIGRADI.equals(source))
-			{
-				String str = content.text().replace(Utils.TRACKS_NEW_LINE + " "+ Utils.TRACKS_NEW_LINE, "||").replace(Utils.TRACKS_NEW_LINE, " - ");
-				chunks = str.replace("||", Utils.TRACKS_NEW_LINE).split(Utils.TRACKS_NEW_LINE);
-			}
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
@@ -317,7 +312,7 @@ public abstract class AbstractCrawler extends WebCrawler
 		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= Utils.TRACKS_SIZE, "Number of tracks less than " + Utils.TRACKS_SIZE);
 		return tracks;
 	}
-	
+
 	protected void updateLastEpisodeDate(String source) {
 		MongoCursor<org.bson.Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", source))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1).iterator();
 		Date date = i.next().get("date", Date.class);
@@ -431,7 +426,7 @@ public abstract class AbstractCrawler extends WebCrawler
 				parsedData.setMetaTags(Maps.newHashMap());
 				return parsedData;
 			} catch (IOException e) {
-				log.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
+				log.error("ERROR parsing page " + contextURL + ": " + e.getMessage(), e);
 				throw new ParseException();
 			}
 		}

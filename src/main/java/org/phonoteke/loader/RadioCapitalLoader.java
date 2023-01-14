@@ -30,7 +30,6 @@ public class RadioCapitalLoader extends AbstractCrawler
 	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
 	
 
-	@Override
 	public void load(String... args) 
 	{
 		if(args.length == 0 || "capital".equals(args[0])) {

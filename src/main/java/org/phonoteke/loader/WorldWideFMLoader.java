@@ -31,19 +31,17 @@ public class WorldWideFMLoader extends AbstractCrawler
 {
 	private static final String WWFM = "wwfm";
 
-	public static final String GILLESPETERSON = "gillespeterson";
+	private static final String GILLESPETERSON = "gillespeterson";
 
 	//	private static final String ID = "120803";
 	private static final String URL = "https://worldwidefm.net/";
 	//	private static final String ARTIST = "Gilles Peterson";
 	//	private static final String SOURCE = "wwfm";
 	//	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
-
 	private static final String JSON_EPISODES = "{\"operationName\":\"getRelatedEpisodes\",\"variables\":{\"id\":\"$ID\",\"offset\":0,\"limit\":12},\"query\":\"query getRelatedEpisodes($id: [QueryArgument], $offset: Int, $limit: Int) {\\n  entries(\\n    section: \\\"episode\\\"\\n    episodeCollection: $id\\n    offset: $offset\\n    limit: $limit\\n  ) {\\n    id\\n    title\\n    ... on episode_episode_Entry {\\n      description\\n      uri\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      genreTags {\\n        title\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 	private static final String JSON_EPISODE = "{\"operationName\":\"getEpisode\",\"variables\":{\"slug\":\"$EPISODE\"},\"query\":\"query getEpisode($slug: [String]) {\\n  entry(section: \\\"episode\\\", slug: $slug) {\\n    id\\n    title\\n    postDate @formatDateTime(format: \\\"d.m.y\\\")\\n    ... on episode_episode_Entry {\\n      broadcastDate @formatDateTime(format: \\\"d.m.y\\\")\\n      description\\n      uri\\n      genreTags {\\n        title\\n        slug\\n        __typename\\n      }\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      player\\n      tracklist\\n      bodyText\\n      episodeCollection {\\n        id\\n        title\\n        uri\\n        ... on collectionCategories_Category {\\n          thumbnail {\\n            url @transform(width: 1200, height: 1200, immediately: true)\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 
 
-	@Override
 	public void load(String... args) 
 	{
 		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", WWFM))).iterator() : 

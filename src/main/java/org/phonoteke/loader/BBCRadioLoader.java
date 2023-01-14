@@ -36,10 +36,10 @@ public class BBCRadioLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
+			url = show.getString("url");
+			artist = show.getString("title");
+			source = show.getString("source");
+			authors = show.get("authors", List.class);
 
 			int pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 			log.info("Crawling " + artist + " (" + pages + " pages)");
@@ -53,7 +53,7 @@ public class BBCRadioLoader extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(BBCRadioLoader.url);
 	}
 
 	@Override

@@ -33,26 +33,26 @@ public class RadioCapitalLoader extends AbstractCrawler
 	public void load(String... args) 
 	{
 		if(args.length == 0 || "capital".equals(args[0])) {
-			this.url = BSIDE_URL + "puntate/";
-			this.artist = "B-Side";
-			this.source = "casabertallot";
-			this.authors = Lists.newArrayList("Alessio Bertallot");
-			crawl(this.url);
-			updateLastEpisodeDate(this.source);
+			url = BSIDE_URL + "puntate/";
+			artist = "B-Side";
+			source = "casabertallot";
+			authors = Lists.newArrayList("Alessio Bertallot");
+			crawl(url);
+			updateLastEpisodeDate(source);
 
-			this.url = EXTRA_URL + "puntate/";
-			this.artist = "Extra";
-			this.source = "alexpaletta";
-			this.authors = Lists.newArrayList("Alex Paletta");
-			crawl(this.url);
-			updateLastEpisodeDate(this.source);
+			url = EXTRA_URL + "puntate/";
+			artist = "Extra";
+			source = "alexpaletta";
+			authors = Lists.newArrayList("Alex Paletta");
+			crawl(url);
+			updateLastEpisodeDate(source);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(RadioCapitalLoader.url);
 	}
 
 	@Override
@@ -200,10 +200,10 @@ public class RadioCapitalLoader extends AbstractCrawler
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
 		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;
-		if(this.source.equals("alexpaletta")) {
+		if(source.equals("alexpaletta")) {
 			audio = "https://media.capital.it/" + d1 + "/episodes/extra/extra_" + d2 + "_000000.mp3";
 		}
-		else if(this.source.equals("casabertallot")){
+		else if(source.equals("casabertallot")){
 			audio = "https://media.capital.it/" + d1 + "/episodes/bertallot/bertallot_" + d2 + "_220000.mp3";
 		}
 		log.debug("audio: " + audio);

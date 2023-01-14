@@ -16,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.phonoteke.loader.Utils.TYPE;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
@@ -48,14 +47,13 @@ public class AbstractCrawler extends WebCrawler
 {
 	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
-	@Autowired
-	protected MongoRepository repo;
+	public static MongoRepository repo;
 
-	protected String id;
-	protected String url;
-	protected String artist;
-	protected String source;
-	protected List<String> authors;
+	protected static String id;
+	protected static String url;
+	protected static String artist;
+	protected static String source;
+	protected static List<String> authors;
 
 	protected void crawl(String url)
 	{

@@ -50,15 +50,15 @@ public class RadioRaiLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
+			url = show.getString("url");
+			artist = show.getString("title");
+			source = show.getString("source");
+			authors = show.get("authors", List.class);
 
 			if(source.equals(MUSICALBOX)) {
 				log.info("Crawling " + artist);
-				crawl(this.url);
-				updateLastEpisodeDate(this.source);
+				crawl(url);
+				updateLastEpisodeDate(source);
 			}
 		}
 	}
@@ -66,7 +66,7 @@ public class RadioRaiLoader extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
-		for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
+		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
 			if(url.getURL().toLowerCase().startsWith(u)) {
 				return true;
 			}

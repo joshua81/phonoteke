@@ -49,15 +49,15 @@ public class WorldWideFMLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			this.url = URL;
-			this.id = show.getString("id");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
+			url = URL;
+			id = show.getString("id");
+			artist = show.getString("title");
+			source = show.getString("source");
+			authors = show.get("authors", List.class);
 
-			log.info("Crawling " + this.artist);
-			crawl(this.url);
-			updateLastEpisodeDate(this.source);
+			log.info("Crawling " + artist);
+			crawl(url);
+			updateLastEpisodeDate(source);
 		}
 	}
 

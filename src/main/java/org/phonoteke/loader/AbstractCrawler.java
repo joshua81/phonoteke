@@ -209,7 +209,7 @@ public class AbstractCrawler extends WebCrawler
 				}
 				catch (Throwable t) 
 				{
-					log.error("ERROR parsing page " + url + ": " + t.getMessage(), t);
+					log.error("ERROR parsing page " + url + ": " + t.getMessage());
 					throw new RuntimeException(t);
 				}
 			}
@@ -424,7 +424,7 @@ public class AbstractCrawler extends WebCrawler
 				parsedData.setMetaTags(Maps.newHashMap());
 				return parsedData;
 			} catch (IOException e) {
-				log.error("ERROR parsing page " + contextURL + ": " + e.getMessage(), e);
+				log.error("ERROR parsing page " + contextURL + ": " + e.getMessage());
 				throw new ParseException();
 			}
 		}

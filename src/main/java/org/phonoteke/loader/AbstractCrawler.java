@@ -16,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.phonoteke.loader.Utils.TYPE;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -41,19 +40,17 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
-public class AbstractCrawler extends WebCrawler
+public abstract class AbstractCrawler extends WebCrawler
 {
 	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
-	public static MongoRepository repo;
-
-	protected static String id;
-	protected static String url;
-	protected static String artist;
-	protected static String source;
-	protected static List<String> authors;
+	private MongoRepository repo;
+	
+	
+	protected AbstractCrawler(MongoRepository repo) {
+		this.repo = repo;
+	}
 
 	protected void crawl(String url)
 	{

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class SpreakerLoader extends AbstractCrawler
+public class SpreakerLoader
 {
 	private static final String SPREAKER = "spreaker";
 
@@ -36,6 +37,13 @@ public class SpreakerLoader extends AbstractCrawler
 	private static final String THETUESDAYTAPES = "thetuesdaytapes";
 	private static final String JAZZTRACKS = "jazztracks";
 
+	@Autowired
+	private MongoRepository repo;
+
+	private String artist;
+	private String source;
+	private List<String> authors;
+
 
 	public void load(String... args) 
 	{
@@ -44,114 +52,122 @@ public class SpreakerLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
+			String url = show.getString("url");
 			artist = show.getString("title");
 			source = show.getString("source");
 			authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
-			crawl(url);
-			updateLastEpisodeDate(source);
+			SpreakerCrawler crawler = new SpreakerCrawler(repo);
+			crawler.crawl(url);
+			crawler.updateLastEpisodeDate(source);
 		}
 	}
 
-	@Override
-	protected void crawl(String url)
-	{
-		try
+	public class SpreakerCrawler extends AbstractCrawler {
+
+		protected SpreakerCrawler(MongoRepository repo) {
+			super(repo);
+		}
+
+		@Override
+		protected void crawl(String url)
 		{
-			HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
-			JsonObject gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
-			int pages = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("last_page").getAsInt();
-			for(int page = 1; page <= pages; page++)
+			try
 			{
-				con = (HttpURLConnection)new URL(url + "?page=" + page).openConnection();
-				gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
-				JsonArray results = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("results").getAsJsonArray();
-				results.forEach(item -> {
-					JsonObject doc = (JsonObject)item;
-					String pageUrl = doc.get("site_url").getAsString();
-					TYPE type = TYPE.podcast;
+				HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
+				JsonObject gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+				int pages = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("last_page").getAsInt();
+				for(int page = 1; page <= pages; page++)
+				{
+					con = (HttpURLConnection)new URL(url + "?page=" + page).openConnection();
+					gson = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+					JsonArray results = gson.get("response").getAsJsonObject().get("pager").getAsJsonObject().get("results").getAsJsonArray();
+					results.forEach(item -> {
+						JsonObject doc = (JsonObject)item;
+						String pageUrl = doc.get("site_url").getAsString();
+						TYPE type = TYPE.podcast;
 
-					log.debug("Parsing page " + pageUrl);
-					String id = getId(pageUrl);
-					String title = doc.get("title").getAsString();
+						log.debug("Parsing page " + pageUrl);
+						String id = getId(pageUrl);
+						String title = doc.get("title").getAsString();
 
-					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
-					if(json == null)
-					{
-						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", authors).
-									append("cover", doc.get("image_original_url").getAsString()).
-									append("date", getDate(doc.get("published_at").getAsString())).
-									append("description", title).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
-									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("published_at").getAsString())).
-									append("tracks", getTracks(doc.get("description").getAsString())).
-									append("audio", doc.get("download_url").getAsString());
+						org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+								Filters.eq("url", pageUrl))).iterator().tryNext();
+						if(json == null)
+						{
+							try {
+								json = new org.bson.Document("id", id).
+										append("url", getUrl(pageUrl)).
+										append("type", type.name()).
+										append("artist", artist).
+										append("title", title).
+										append("authors", authors).
+										append("cover", doc.get("image_original_url").getAsString()).
+										append("date", getDate(doc.get("published_at").getAsString())).
+										append("description", title).
+										append("genres", null).
+										append("label", null).
+										append("links", null).
+										append("review", null).
+										append("source", source).
+										append("vote", null).
+										append("year", getYear(doc.get("published_at").getAsString())).
+										append("tracks", getTracks(doc.get("description").getAsString())).
+										append("audio", doc.get("download_url").getAsString());
 
-							repo.getDocs().insertOne(json);
-							log.info(json.getString("type") + " " + pageUrl + " added");
+								repo.getDocs().insertOne(json);
+								log.info(json.getString("type") + " " + pageUrl + " added");
+							}
+							catch(Exception e) {
+								log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+							}
 						}
-						catch(Exception e) {
-							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-						}
-					}
-				});
+					});
+				}
+			}
+			catch (Throwable t) 
+			{
+				log.error("ERROR parsing page " + url + ": " + t.getMessage());
+				throw new RuntimeException(t);
 			}
 		}
-		catch (Throwable t) 
-		{
-			log.error("ERROR parsing page " + url + ": " + t.getMessage());
-			throw new RuntimeException(t);
-		}
-	}
 
-	private Date getDate(String date) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			return sdf.parse(date);
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
-	private Integer getYear(String date) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(sdf.parse(date));
-			return cal.get(Calendar.YEAR);
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
-	private List<org.bson.Document> getTracks(String content) {
-		List<org.bson.Document> tracks = Lists.newArrayList();
-
-		String[] chunks = content.split("\n");
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
-			{
-				String youtube = null;
-				tracks.add(newTrack(title, youtube));
-				log.debug("tracks: " + title + ", youtube: " + youtube);
+		private Date getDate(String date) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				return sdf.parse(date);
+			} catch (ParseException e) {
+				return null;
 			}
 		}
-		return checkTracks(tracks);
+
+		private Integer getYear(String date) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(sdf.parse(date));
+				return cal.get(Calendar.YEAR);
+			} catch (ParseException e) {
+				return null;
+			}
+		}
+
+		private List<org.bson.Document> getTracks(String content) {
+			List<org.bson.Document> tracks = Lists.newArrayList();
+
+			String[] chunks = content.split("\n");
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String title = chunks[i].trim();
+				if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
+				{
+					String youtube = null;
+					tracks.add(newTrack(title, youtube));
+					log.debug("tracks: " + title + ", youtube: " + youtube);
+				}
+			}
+			return checkTracks(tracks);
+		}
 	}
 }

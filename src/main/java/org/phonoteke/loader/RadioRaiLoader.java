@@ -14,6 +14,7 @@ import java.util.Locale;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.phonoteke.loader.Utils.TYPE;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -29,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class RadioRaiLoader extends AbstractCrawler
+public class RadioRaiLoader
 {
 	private static final String URL = "https://www.raiplaysound.it/";
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
@@ -42,6 +43,13 @@ public class RadioRaiLoader extends AbstractCrawler
 	private static final String SEIGRADI = "seigradi";
 	private static final String STEREONOTTE = "stereonotte";
 
+	@Autowired
+	private MongoRepository repo;
+
+	private String artist;
+	private String source;
+	private List<String> authors;
+
 
 	public void load(String... args) 
 	{
@@ -50,142 +58,153 @@ public class RadioRaiLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
+			String url = show.getString("url");
 			artist = show.getString("title");
 			source = show.getString("source");
 			authors = show.get("authors", List.class);
 
 			if(source.equals(MUSICALBOX)) {
 				log.info("Crawling " + artist);
-				crawl(url);
-				updateLastEpisodeDate(source);
+				RadioRaiCrawler crawler = new RadioRaiCrawler(url, repo);
+				crawler.crawl(url);
+				crawler.updateLastEpisodeDate(source);
 			}
 		}
 	}
 
-	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) 
-	{
-		for(String u : Lists.newArrayList(RadioRaiLoader.url, URL_AUDIO)) {
-			if(url.getURL().toLowerCase().startsWith(u)) {
-				return true;
-			}
+	public class RadioRaiCrawler extends AbstractCrawler {
+
+		private String url;
+
+		protected RadioRaiCrawler(String url, MongoRepository repo) {
+			super(repo);
+			this.url = url;
 		}
-		return false;
-	}
 
-	@Override
-	public void visit(Page page) 
-	{
-		if(page.getWebURL().getURL().endsWith(".html")) {
-			try
-			{
-				String url = page.getWebURL().getURL().replace(".html", ".json");
-				HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
-				JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
-				String pageUrl = page.getWebURL().getURL();
-				TYPE type = TYPE.podcast;
-
-				log.debug("Parsing page " + pageUrl);
-				String id = getId(pageUrl);
-
-				Date start = new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2021");
-				if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
-					return;
-
-				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("url", pageUrl))).iterator().tryNext();
-				if(json == null)
-				{
-					try {
-						json = new org.bson.Document("id", id).
-								append("url", getUrl(pageUrl)).
-								append("type", type.name()).
-								append("artist", artist).
-								append("title", doc.get("episode_title").getAsString()).
-								append("authors", authors).
-								append("cover", URL + doc.get("image").getAsString()).
-								append("date", getDate(doc.get("literal_publication_date").getAsString())).
-								append("description", doc.get("description").getAsString()).
-								append("genres", null).
-								append("label", null).
-								append("links", null).
-								append("review", null).
-								append("source", source).
-								append("vote", null).
-								append("year", getYear(doc.get("literal_publication_date").getAsString())).
-								append("tracks", getTracks(null)).
-								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
-
-						repo.getDocs().insertOne(json);
-						log.info(json.getString("type") + " " + pageUrl + " added");
-					}
-					catch(Exception e) {
-						log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-					}
+		@Override
+		public boolean shouldVisit(Page referringPage, WebURL url) 
+		{
+			for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
+				if(url.getURL().toLowerCase().startsWith(u)) {
+					return true;
 				}
 			}
-			catch (Throwable t) 
-			{
-				log.error("ERROR parsing page " + url + ": " + t.getMessage());
-				throw new RuntimeException(t);
+			return false;
+		}
+
+		@Override
+		public void visit(Page page) 
+		{
+			if(page.getWebURL().getURL().endsWith(".html")) {
+				try
+				{
+					String url = page.getWebURL().getURL().replace(".html", ".json");
+					HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
+					JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+					String pageUrl = page.getWebURL().getURL();
+					TYPE type = TYPE.podcast;
+
+					log.debug("Parsing page " + pageUrl);
+					String id = getId(pageUrl);
+
+					Date start = new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2021");
+					if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
+						return;
+
+					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+							Filters.eq("url", pageUrl))).iterator().tryNext();
+					if(json == null)
+					{
+						try {
+							json = new org.bson.Document("id", id).
+									append("url", getUrl(pageUrl)).
+									append("type", type.name()).
+									append("artist", artist).
+									append("title", doc.get("episode_title").getAsString()).
+									append("authors", authors).
+									append("cover", URL + doc.get("image").getAsString()).
+									append("date", getDate(doc.get("literal_publication_date").getAsString())).
+									append("description", doc.get("description").getAsString()).
+									append("genres", null).
+									append("label", null).
+									append("links", null).
+									append("review", null).
+									append("source", source).
+									append("vote", null).
+									append("year", getYear(doc.get("literal_publication_date").getAsString())).
+									append("tracks", getTracks(null)).
+									append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
+
+							repo.getDocs().insertOne(json);
+							log.info(json.getString("type") + " " + pageUrl + " added");
+						}
+						catch(Exception e) {
+							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+						}
+					}
+				}
+				catch (Throwable t) 
+				{
+					log.error("ERROR parsing page " + url + ": " + t.getMessage());
+					throw new RuntimeException(t);
+				}
 			}
 		}
-	}
 
-	@Override
-	protected String getBaseUrl()
-	{
-		return URL;
-	}
-
-	@Override
-	protected String getSource() 
-	{
-		return source;
-	}
-
-	@Override
-	protected String getArtist(String url, Document doc) 
-	{
-		return artist;
-	}
-
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
-	{
-		return authors;
-	}
-
-	protected Date getDate(String date) 
-	{
-		try {
-			return new SimpleDateFormat("dd MMM yyyy", Locale.ITALY).parse(date);
-		} 
-		catch (ParseException e) {
-			throw new RuntimeException(e.getMessage());
+		@Override
+		protected String getBaseUrl()
+		{
+			return URL;
 		}
-	}
 
-	protected Integer getYear(String date)
-	{
-		Calendar year = Calendar.getInstance();
-		year.setTime(getDate(date));
-		return year.get(Calendar.YEAR);
-	}
+		@Override
+		protected String getSource() 
+		{
+			return source;
+		}
 
-	protected List<org.bson.Document> getTracks(JsonArray tracks) 
-	{
-		return Lists.newArrayList();
-	}
+		@Override
+		protected String getArtist(String url, Document doc) 
+		{
+			return artist;
+		}
 
-	protected String getAudio(String url) 
-	{
-		try {
-			Document doc = Jsoup.connect(url).ignoreContentType(true).get();
-			return doc.location();
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
+		@Override
+		protected List<String> getAuthors(String url, Document doc) 
+		{
+			return authors;
+		}
+
+		protected Date getDate(String date) 
+		{
+			try {
+				return new SimpleDateFormat("dd MMM yyyy", Locale.ITALY).parse(date);
+			} 
+			catch (ParseException e) {
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+
+		protected Integer getYear(String date)
+		{
+			Calendar year = Calendar.getInstance();
+			year.setTime(getDate(date));
+			return year.get(Calendar.YEAR);
+		}
+
+		protected List<org.bson.Document> getTracks(JsonArray tracks) 
+		{
+			return Lists.newArrayList();
+		}
+
+		protected String getAudio(String url) 
+		{
+			try {
+				Document doc = Jsoup.connect(url).ignoreContentType(true).get();
+				return doc.location();
+			} catch (IOException e) {
+				throw new RuntimeException(e.getMessage());
+			}
 		}
 	}
 }

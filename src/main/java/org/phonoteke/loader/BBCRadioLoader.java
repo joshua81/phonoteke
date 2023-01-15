@@ -59,7 +59,7 @@ public class BBCRadioLoader
 		}
 	}
 
-	private class BBCRadioCrawler extends AbstractCrawler {
+	public class BBCRadioCrawler extends AbstractCrawler {
 
 		private String url;
 

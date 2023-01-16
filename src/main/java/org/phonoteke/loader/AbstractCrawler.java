@@ -45,12 +45,12 @@ public abstract class AbstractCrawler extends WebCrawler
 {
 	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
-	private MongoRepository repo;
-	
-	
-	protected AbstractCrawler(MongoRepository repo) {
-		this.repo = repo;
-	}
+	public static MongoRepository repo;
+	public static String url;
+	public static String id;
+	public static String artist;
+	public static String source;
+	public static List<String> authors;	
 
 	protected void crawl(String url)
 	{
@@ -74,7 +74,7 @@ public abstract class AbstractCrawler extends WebCrawler
 			throw new RuntimeException(t);
 		}
 	}
-
+	
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{

@@ -64,7 +64,7 @@ public abstract class AbstractCrawler extends WebCrawler
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 			robotstxtConfig.setUserAgentName(USER_AGENT);
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
+			CrawlController controller = new CrawlController(config, pageFetcher, new HumanBeatsParser(config), robotstxtServer);
 			controller.addSeed(url);
 			controller.start(getClass(), HumanBeatsUtils.NUMBER_OF_CRAWLERS);
 		} 
@@ -397,15 +397,15 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	//-------------------------------------------
 
-	private class PhonotekeParser extends Parser {
-		public PhonotekeParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {
-			super(config, new PhonotekeHtmlParser(config));
+	private class HumanBeatsParser extends Parser {
+		public HumanBeatsParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {
+			super(config, new HumanBeatsHtmlParser(config));
 		}
 	}
 
-	private class PhonotekeHtmlParser extends TikaHtmlParser {
+	private class HumanBeatsHtmlParser extends TikaHtmlParser {
 
-		public PhonotekeHtmlParser(CrawlConfig config) throws InstantiationException, IllegalAccessException {
+		public HumanBeatsHtmlParser(CrawlConfig config) throws InstantiationException, IllegalAccessException {
 			super(config);
 		}
 

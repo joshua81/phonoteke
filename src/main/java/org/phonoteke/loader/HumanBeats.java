@@ -30,6 +30,12 @@ public class HumanBeats implements CommandLineRunner {
 
 	@Autowired
 	private SpotifyLoader spotifyLoader;
+	
+	@Autowired
+	private StatsLoader statsLoader;
+	
+	@Autowired
+	private PatchLoader patchLoader;
 
 
 	public static void main(String[] args) {
@@ -70,11 +76,11 @@ public class HumanBeats implements CommandLineRunner {
 				return;
 			}
 			else if("stats".equals(task)) {
-				new StatsLoader().load(subtask);
+				statsLoader.load(subtask);
 				return;
 			}
 			else if("patch".equals(task)) {
-				new PatchLoader().load(subtask);
+				patchLoader.load(subtask);
 				return;
 			}
 		}

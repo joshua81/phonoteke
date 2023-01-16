@@ -41,5 +41,6 @@ public class MongoRepository {
 		docs = db.getCollection("docs");
 		shows = db.getCollection("shows");
 		authors = db.getCollection("authors");
+		stats = db.getCollection("stats");
 	}
 }

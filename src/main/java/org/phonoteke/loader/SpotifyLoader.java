@@ -211,7 +211,7 @@ public class SpotifyLoader
 			String title = page.getString("artist");
 			String description = page.getString("title");
 			Date date = page.getDate("date");
-			title = Utils.format(title, date);
+			title = HumanBeatsUtils.format(title, date);
 			createPlaylist(page, title, description);
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
 		}
@@ -234,7 +234,7 @@ public class SpotifyLoader
 			for(org.bson.Document track : tracks)
 			{
 				String spotify = track.getString("spotify");
-				if(spotify != null && !Utils.NA.equals(spotify))
+				if(spotify != null && !HumanBeatsUtils.NA.equals(spotify))
 				{
 					uris.add("spotify:track:" + spotify);
 				}
@@ -328,8 +328,8 @@ public class SpotifyLoader
 		}
 		else
 		{
-			page.append("spartistid", Utils.NA).
-			append("spalbumid", Utils.NA).
+			page.append("spartistid", HumanBeatsUtils.NA).
+			append("spalbumid", HumanBeatsUtils.NA).
 			append("score", 0);
 		}
 	}
@@ -391,7 +391,7 @@ public class SpotifyLoader
 		}
 		else
 		{
-			page.append("spartistid", Utils.NA).
+			page.append("spartistid", HumanBeatsUtils.NA).
 			append("score", 0);
 		}
 	}
@@ -487,7 +487,7 @@ public class SpotifyLoader
 						}
 						else
 						{
-							track.append("spotify", Utils.NA).
+							track.append("spotify", HumanBeatsUtils.NA).
 							append("artist", null).
 							append("album", null).
 							append("track", null).
@@ -498,8 +498,8 @@ public class SpotifyLoader
 							append("coverS", null).
 							append("title", track.getString("titleOrig")).
 							append("score", 0).
-							append("artistid", Utils.NA).
-							append("youtube", Utils.NA);
+							append("artistid", HumanBeatsUtils.NA).
+							append("youtube", HumanBeatsUtils.NA);
 						}
 					}
 					catch (Exception e) 
@@ -518,7 +518,7 @@ public class SpotifyLoader
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		Set<String> chunks = Utils.parseTrack(title);
+		Set<String> chunks = HumanBeatsUtils.parseTrack(title);
 		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
 		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}
@@ -543,7 +543,7 @@ public class SpotifyLoader
 							String spalbum = track.getAlbum().getName();
 							String spalbumid = track.getAlbum().getId();
 							String spsong = track.getName();
-							for(String match : Utils.FEAT) {
+							for(String match : HumanBeatsUtils.FEAT) {
 								Matcher m = Pattern.compile(match).matcher(spsong);
 								if(m.matches()) {
 									spsong = m.group(1);
@@ -552,7 +552,7 @@ public class SpotifyLoader
 							}
 							String trackid = track.getId();
 							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-							if(score >= Utils.SCORE && !tracksMap.containsKey(score)) {
+							if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {
 								log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
 								Document page = new Document("spotify", trackid);
 								page.append("artist", spartist);

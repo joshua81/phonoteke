@@ -13,7 +13,7 @@ import java.util.Locale;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -27,7 +27,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RadioRaiLoader extends AbstractCrawler
+public class RadioRaiCrawler extends AbstractCrawler
 {
 	private static final String URL = "https://www.raiplaysound.it/";
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
@@ -48,10 +48,10 @@ public class RadioRaiLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			RadioRaiCrawler.url = show.getString("url");
+			RadioRaiCrawler.artist = show.getString("title");
+			RadioRaiCrawler.source = show.getString("source");
+			RadioRaiCrawler.authors = show.get("authors", List.class);
 
 			if(source.equals(MUSICALBOX)) {
 				log.info("Crawling " + artist);

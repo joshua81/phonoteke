@@ -14,13 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class HumanBeats implements CommandLineRunner {
 
-	private OndarockLoader ondarockLoader = new OndarockLoader();
-
 	@Autowired
-	private MongoRepository repo;
-
-	@Autowired
-	private PodcastLoader podcastLoader;
+	private HumanBeatsCrawler crawler;
 
 	@Autowired
 	private YoutubeLoader youtubeLoader;
@@ -67,12 +62,11 @@ public class HumanBeats implements CommandLineRunner {
 				return;
 			}
 			else if("doc".equals(task)) {
-				OndarockLoader.repo = repo;
-				ondarockLoader.load(subtask);
+				crawler.crawlReviews(subtask);
 				return;
 			}
 			else if("pod".equals(task)) {
-				podcastLoader.load(subtask);
+				crawler.crawlPodcasts(subtask);
 				return;
 			}
 			else if("stats".equals(task)) {

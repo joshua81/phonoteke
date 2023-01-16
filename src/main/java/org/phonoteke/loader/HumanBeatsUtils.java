@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class Utils
+public class HumanBeatsUtils
 {
 	public static final List<String> SEPARATORS = Lists.newArrayList(
 			">", "<", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+",

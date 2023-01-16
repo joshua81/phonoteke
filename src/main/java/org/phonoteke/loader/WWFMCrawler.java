@@ -13,7 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class WorldWideFMLoader extends AbstractCrawler
+public class WWFMCrawler extends AbstractCrawler
 {
 	private static final String WWFM = "wwfm";
 
@@ -49,10 +49,10 @@ public class WorldWideFMLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			id = show.getString("id");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			WWFMCrawler.id = show.getString("id");
+			WWFMCrawler.artist = show.getString("title");
+			WWFMCrawler.source = show.getString("source");
+			WWFMCrawler.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(URL);
@@ -176,7 +176,7 @@ public class WorldWideFMLoader extends AbstractCrawler
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
+			if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
 			{
 				tracks.add(newTrack(title, null));
 				log.debug("tracks: " + title);

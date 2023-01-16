@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 
@@ -21,7 +21,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RadioCapitalLoader extends AbstractCrawler
+public class RadioCapitalCrawler extends AbstractCrawler
 {
 	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
 	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
@@ -31,17 +31,17 @@ public class RadioCapitalLoader extends AbstractCrawler
 	public void load(String... args) 
 	{
 		if(args.length == 0 || "capital".equals(args[0])) {
-			url = BSIDE_URL + "puntate/";
-			artist = "B-Side";
-			source = "casabertallot";
-			authors = Lists.newArrayList("Alessio Bertallot");
+			RadioCapitalCrawler.url = BSIDE_URL + "puntate/";
+			RadioCapitalCrawler.artist = "B-Side";
+			RadioCapitalCrawler.source = "casabertallot";
+			RadioCapitalCrawler.authors = Lists.newArrayList("Alessio Bertallot");
 			crawl(url);
 			updateLastEpisodeDate(source);
 
-			url = EXTRA_URL + "puntate/";
-			artist = "Extra";
-			source = "alexpaletta";
-			authors = Lists.newArrayList("Alex Paletta");
+			RadioCapitalCrawler.url = EXTRA_URL + "puntate/";
+			RadioCapitalCrawler.artist = "Extra";
+			RadioCapitalCrawler.source = "alexpaletta";
+			RadioCapitalCrawler.authors = Lists.newArrayList("Alex Paletta");
 			crawl(url);
 			updateLastEpisodeDate(source);
 		}

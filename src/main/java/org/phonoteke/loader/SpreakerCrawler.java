@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -22,7 +22,7 @@ import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SpreakerLoader extends AbstractCrawler
+public class SpreakerCrawler extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
 
@@ -42,10 +42,10 @@ public class SpreakerLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			RadioRaiCrawler.url = show.getString("url");
+			RadioRaiCrawler.artist = show.getString("title");
+			RadioRaiCrawler.source = show.getString("source");
+			RadioRaiCrawler.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(url);
@@ -143,7 +143,7 @@ public class SpreakerLoader extends AbstractCrawler
 		for(int i = 0; i < chunks.length; i++)
 		{
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
+			if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
 			{
 				String youtube = null;
 				tracks.add(newTrack(title, youtube));

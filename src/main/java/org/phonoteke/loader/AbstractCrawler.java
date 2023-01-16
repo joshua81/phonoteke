@@ -15,7 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -58,7 +58,7 @@ public abstract class AbstractCrawler extends WebCrawler
 		{
 			log.info("Crawling " + url);
 			CrawlConfig config = new CrawlConfig();
-			config.setCrawlStorageFolder(Utils.CRAWL_STORAGE_FOLDER);
+			config.setCrawlStorageFolder(HumanBeatsUtils.CRAWL_STORAGE_FOLDER);
 			config.setUserAgentString(USER_AGENT);
 			PageFetcher pageFetcher = new PageFetcher(config);
 			RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
@@ -66,7 +66,7 @@ public abstract class AbstractCrawler extends WebCrawler
 			RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
 			CrawlController controller = new CrawlController(config, pageFetcher, new PhonotekeParser(config), robotstxtServer);
 			controller.addSeed(url);
-			controller.start(getClass(), Utils.NUMBER_OF_CRAWLERS);
+			controller.start(getClass(), HumanBeatsUtils.NUMBER_OF_CRAWLERS);
 		} 
 		catch (Throwable t) 
 		{
@@ -269,19 +269,19 @@ public abstract class AbstractCrawler extends WebCrawler
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		if(content != null)
 		{
-			content.select("br").after(Utils.TRACKS_NEW_LINE);
-			content.select("p").after(Utils.TRACKS_NEW_LINE);
-			content.select("li").after(Utils.TRACKS_NEW_LINE);
-			content.select("h1").after(Utils.TRACKS_NEW_LINE);
-			content.select("h2").after(Utils.TRACKS_NEW_LINE);
-			content.select("h3").after(Utils.TRACKS_NEW_LINE);
-			content.select("div").after(Utils.TRACKS_NEW_LINE);
+			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("li").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("h1").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("h2").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("h3").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+			content.select("div").after(HumanBeatsUtils.TRACKS_NEW_LINE);
 
-			String[] chunks = content.text().replace("||", Utils.TRACKS_NEW_LINE).split(Utils.TRACKS_NEW_LINE);
+			String[] chunks = content.text().replace("||", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
 			for(int i = 0; i < chunks.length; i++)
 			{
 				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title) && Utils.isTrack(title))
+				if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
 				{
 					tracks.add(newTrack(title, null));
 					log.debug("tracks: " + title);
@@ -304,7 +304,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
 	{
-		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= Utils.TRACKS_SIZE, "Number of tracks less than " + Utils.TRACKS_SIZE);
+		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= HumanBeatsUtils.TRACKS_SIZE, "Number of tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
 		return tracks;
 	}
 

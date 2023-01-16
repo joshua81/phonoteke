@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
@@ -22,7 +22,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class OndarockLoader extends AbstractCrawler
+public class OndarockCrawler extends AbstractCrawler
 {
 	private static final String SOURCE = "ondarock";
 	private static final String URL = "https://www.ondarock.it/";

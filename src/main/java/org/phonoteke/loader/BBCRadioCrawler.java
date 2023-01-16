@@ -10,7 +10,7 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;
@@ -21,7 +21,7 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class BBCRadioLoader extends AbstractCrawler
+public class BBCRadioCrawler extends AbstractCrawler
 {
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
@@ -34,10 +34,10 @@ public class BBCRadioLoader extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			url = show.getString("url");
-			artist = show.getString("title");
-			source = show.getString("source");
-			authors = show.get("authors", List.class);
+			BBCRadioCrawler.url = show.getString("url");
+			BBCRadioCrawler.artist = show.getString("title");
+			BBCRadioCrawler.source = show.getString("source");
+			BBCRadioCrawler.authors = show.get("authors", List.class);
 
 			int pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 			log.info("Crawling " + artist + " (" + pages + " pages)");

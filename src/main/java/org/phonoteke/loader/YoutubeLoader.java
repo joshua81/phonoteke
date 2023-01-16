@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
-import org.phonoteke.loader.Utils.TYPE;
+import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -85,13 +85,13 @@ public class YoutubeLoader
 			Integer score = track.getInteger("score");
 			if(youtube == null)
 			{
-				if(!Utils.NA.equals(spotify) && score != null && score >= Utils.THRESHOLD) {
+				if(!HumanBeatsUtils.NA.equals(spotify) && score != null && score >= HumanBeatsUtils.THRESHOLD) {
 					youtube = getYoutubeId(title);
 					track.put("youtube", youtube);
 					log.info("title: " + title + ", youtube: " + youtube);
 				}
 				else {
-					youtube = Utils.NA;
+					youtube = HumanBeatsUtils.NA;
 				}
 			}
 		}
@@ -125,7 +125,7 @@ public class YoutubeLoader
 				String id = searchResult.getId().getVideoId();
 				String title = searchResult.getSnippet().getTitle();
 				int score = FuzzySearch.tokenSetRatio(track, title);
-				if(score >= Utils.THRESHOLD) {
+				if(score >= HumanBeatsUtils.THRESHOLD) {
 					for(String match : MATCH) {
 						if(title.matches(match)) {
 							return id;
@@ -134,6 +134,6 @@ public class YoutubeLoader
 				}
 			}
 		}
-		return Utils.NA;
+		return HumanBeatsUtils.NA;
 	}
 }

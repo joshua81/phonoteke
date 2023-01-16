@@ -92,7 +92,7 @@ public class StatsLoader
 
 				// Artist
 				String artist = t.getString("spartistid");
-				if(artist != null && !Utils.NA.equals(artist)) {
+				if(artist != null && !HumanBeatsUtils.NA.equals(artist)) {
 					BigDecimal score = artistsScore.get(artist);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -104,7 +104,7 @@ public class StatsLoader
 
 				// Album
 				String album = t.getString("spalbumid");
-				if(album != null && !Utils.NA.equals(album)) {
+				if(album != null && !HumanBeatsUtils.NA.equals(album)) {
 					BigDecimal score = albumsScore.get(album);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -116,7 +116,7 @@ public class StatsLoader
 
 				// Song
 				String song = t.getString("spotify");
-				if(song != null && !Utils.NA.equals(song)) {
+				if(song != null && !HumanBeatsUtils.NA.equals(song)) {
 					BigDecimal score = songsScore.get(song);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -128,7 +128,7 @@ public class StatsLoader
 
 				// Video
 				String video = t.getString("youtube");
-				if(video != null && !Utils.NA.equals(video)) {
+				if(video != null && !HumanBeatsUtils.NA.equals(video)) {
 					BigDecimal score = videosScore.get(video);
 					if(score == null) {
 						score = BigDecimal.ZERO;
@@ -292,7 +292,7 @@ public class StatsLoader
 	}
 
 	private String replaceNA(String val) {
-		return Utils.NA.equals(val) ? null : val;
+		return HumanBeatsUtils.NA.equals(val) ? null : val;
 	}
 
 	private List<Document> subList(List<Document> list, int size) {

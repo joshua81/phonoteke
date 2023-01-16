@@ -116,7 +116,7 @@ public class PatchLoader
 				for(org.bson.Document track : tracks)
 				{
 					String spotify = track.getString("spotify");
-					if(spotify == null || Utils.NA.equals(spotify)) {
+					if(spotify == null || HumanBeatsUtils.NA.equals(spotify)) {
 						track.append("title", track.getString("titleOrig"));
 					}
 				}
@@ -158,7 +158,7 @@ public class PatchLoader
 		LocalDateTime end = LocalDateTime.now().withYear(year).withMonth(12).withDayOfMonth(31).withHour(23).withMinute(59).withSecond(59);
 		MongoCursor<Document> i = repo.getDocs().find(Filters.and(
 				Filters.eq("type", "podcast"), 
-				Filters.lt("tracks.score", Utils.SCORE),
+				Filters.lt("tracks.score", HumanBeatsUtils.SCORE),
 				Filters.gt("date", start),
 				Filters.lt("date", end))).iterator();
 		while(i.hasNext()) 
@@ -172,7 +172,7 @@ public class PatchLoader
 				for(org.bson.Document track : tracks)
 				{
 					Integer score = track.getInteger("score");
-					if(score != null && score < Utils.SCORE)
+					if(score != null && score < HumanBeatsUtils.SCORE)
 					{
 						track.append("spotify", null);
 						track.append("artistid", null);
@@ -209,11 +209,11 @@ public class PatchLoader
 			String id = page.getString("id");
 
 			String title = page.getString("title");
-			title = Utils.cleanText(title);
+			title = HumanBeatsUtils.cleanText(title);
 			page.append("title", title);
 
 			String artist = page.getString("artist");
-			artist = Utils.cleanText(artist);
+			artist = HumanBeatsUtils.cleanText(artist);
 			page.append("artist", artist);
 
 			page.append("spartistid", null);

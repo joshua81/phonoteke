@@ -69,7 +69,7 @@ public class MusicbrainzLoader
 		{
 			artistId = getAlbumId(artist + " - " + title, mbalbum);
 		}
-		page.append("artistid", artistId == null ? Utils.NA : artistId);
+		page.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
 		log.info(artist + " - " + title + ": " + artistId);
 	}
 
@@ -95,7 +95,7 @@ public class MusicbrainzLoader
 		{
 			artistId = getArtistId(artist, mbartist);
 		}
-		page.append("artistid", artistId == null ? Utils.NA : artistId);
+		page.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
 		log.info(artist + ": " + artistId);
 	}
 
@@ -167,7 +167,7 @@ public class MusicbrainzLoader
 						artistId = getAlbumId(artist + " - " + album, mbalbum);
 					}
 				}
-				track.append("artistid", artistId == null ? Utils.NA : artistId);
+				track.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
 				log.info(artist + " - " + album + ": " + artistId);
 			}
 		}
@@ -185,14 +185,14 @@ public class MusicbrainzLoader
 				String mbartist = getRecordingArtist(release);
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
-				if(score >= Utils.THRESHOLD && scoreTitle >= Utils.THRESHOLD)
+				if(score >= HumanBeatsUtils.THRESHOLD && scoreTitle >= HumanBeatsUtils.THRESHOLD)
 				{
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? Utils.NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeatsUtils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getArtistId(String name, org.bson.Document artist)
@@ -206,14 +206,14 @@ public class MusicbrainzLoader
 				Integer score = mbartist.getInteger("score");
 				String mbartistname = mbartist.getString("name");
 				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score >= Utils.THRESHOLD && scoreArtist >= Utils.THRESHOLD)
+				if(score >= HumanBeatsUtils.THRESHOLD && scoreArtist >= HumanBeatsUtils.THRESHOLD)
 				{
 					String artistId = mbartist.getString("id");
 					scores.put(score, artistId);
 				}
 			}
 		}
-		return CollectionUtils.isEmpty(scores.keySet()) ? Utils.NA : scores.get(scores.lastEntry().getKey());
+		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeatsUtils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
 	private String getRecordingArtistId(org.bson.Document recording)

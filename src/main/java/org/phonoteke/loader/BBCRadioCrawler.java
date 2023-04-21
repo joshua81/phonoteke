@@ -38,8 +38,8 @@ public class BBCRadioCrawler extends AbstractCrawler
 			BBCRadioCrawler.artist = show.getString("title");
 			BBCRadioCrawler.source = show.getString("source");
 			BBCRadioCrawler.authors = show.get("authors", List.class);
-
-			int pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			BBCRadioCrawler.pages = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			
 			log.info("Crawling " + artist + " (" + pages + " pages)");
 			for(int j = 1; j <= pages; j++) {
 				crawl(url + "?page=" + j);

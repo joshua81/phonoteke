@@ -51,7 +51,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	public static String artist;
 	public static String source;
 	public static List<String> authors;
-	public static Integer pages;
+	public static Integer page;
 
 	protected void crawl(String url)
 	{

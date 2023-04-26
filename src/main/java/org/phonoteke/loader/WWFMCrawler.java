@@ -29,16 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WWFMCrawler extends AbstractCrawler
 {
+	private static final Integer PAGE_SIZE = 20;
 	private static final String WWFM = "wwfm";
-
-	//private static final String GILLESPETERSON = "gillespeterson";
-
-	//	private static final String ID = "120803";
 	private static final String URL = "https://worldwidefm.net/";
-	//	private static final String ARTIST = "Gilles Peterson";
-	//	private static final String SOURCE = "wwfm";
-	//	private static final List<String> AUTHORS = Lists.newArrayList("Gilles Peterson");
-	private static final String JSON_EPISODES = "{\"operationName\":\"getRelatedEpisodes\",\"variables\":{\"id\":\"$ID\",\"offset\":0,\"limit\":$PAGES},\"query\":\"query getRelatedEpisodes($id: [QueryArgument], $offset: Int, $limit: Int) {\\n  entries(\\n    section: \\\"episode\\\"\\n    episodeCollection: $id\\n    offset: $offset\\n    limit: $limit\\n  ) {\\n    id\\n    title\\n    ... on episode_episode_Entry {\\n      description\\n      uri\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      genreTags {\\n        title\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
+	private static final String JSON_EPISODES = "{\"operationName\":\"getRelatedEpisodes\",\"variables\":{\"id\":\"$ID\",\"offset\":$OFFSET,\"limit\":$LIMIT},\"query\":\"query getRelatedEpisodes($id: [QueryArgument], $offset: Int, $limit: Int) {\\n  entries(\\n    section: \\\"episode\\\"\\n    episodeCollection: $id\\n    offset: $offset\\n    limit: $limit\\n  ) {\\n    id\\n    title\\n    ... on episode_episode_Entry {\\n      description\\n      uri\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      genreTags {\\n        title\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 	private static final String JSON_EPISODE = "{\"operationName\":\"getEpisode\",\"variables\":{\"slug\":\"$EPISODE\"},\"query\":\"query getEpisode($slug: [String]) {\\n  entry(section: \\\"episode\\\", slug: $slug) {\\n    id\\n    title\\n    postDate @formatDateTime(format: \\\"d.m.y\\\")\\n    ... on episode_episode_Entry {\\n      broadcastDate @formatDateTime(format: \\\"d.m.y\\\")\\n      description\\n      uri\\n      genreTags {\\n        title\\n        slug\\n        __typename\\n      }\\n      thumbnail {\\n        url @transform(width: 1200, height: 1200, immediately: true)\\n        __typename\\n      }\\n      player\\n      tracklist\\n      bodyText\\n      episodeCollection {\\n        id\\n        title\\n        uri\\n        ... on collectionCategories_Category {\\n          thumbnail {\\n            url @transform(width: 1200, height: 1200, immediately: true)\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
 
 
@@ -53,9 +47,9 @@ public class WWFMCrawler extends AbstractCrawler
 			WWFMCrawler.artist = show.getString("title");
 			WWFMCrawler.source = show.getString("source");
 			WWFMCrawler.authors = show.get("authors", List.class);
-			WWFMCrawler.pages = args.length == 2 ? Integer.parseInt(args[1]) : 12;
+			WWFMCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 			
-			log.info("Crawling " + artist + " (" + pages + " pages)");
+			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
 			updateLastEpisodeDate(source);
 		}
@@ -68,7 +62,11 @@ public class WWFMCrawler extends AbstractCrawler
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpPost httpPost = new HttpPost(url + "/cached_api");
-			httpPost.setEntity(new StringEntity(JSON_EPISODES.replace("$ID", id).replace("$PAGES", pages.toString())));
+			Integer offset = (page-1)*PAGE_SIZE;
+			httpPost.setEntity(new StringEntity(JSON_EPISODES
+					.replace("$ID", id)
+					.replace("$OFFSET", offset.toString())
+					.replace("$LIMIT", PAGE_SIZE.toString())));
 			httpPost.setHeader("Accept", "application/json");
 			httpPost.setHeader("Content-type", "application/json");
 
@@ -82,7 +80,8 @@ public class WWFMCrawler extends AbstractCrawler
 					JsonObject doc = (JsonObject)item;
 					CloseableHttpClient client2 = HttpClients.createDefault();
 					HttpPost httpPost2 = new HttpPost(url + "/api");
-					httpPost2.setEntity(new StringEntity(JSON_EPISODE.replace("$EPISODE", doc.get("uri").getAsString().substring(8))));
+					httpPost2.setEntity(new StringEntity(JSON_EPISODE
+							.replace("$EPISODE", doc.get("uri").getAsString().substring(8))));
 					httpPost2.setHeader("Accept", "application/json");
 					httpPost2.setHeader("Content-type", "application/json");
 

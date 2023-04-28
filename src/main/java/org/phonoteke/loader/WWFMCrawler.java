@@ -48,13 +48,13 @@ public class WWFMCrawler extends AbstractCrawler
 			WWFMCrawler.source = show.getString("source");
 			WWFMCrawler.authors = show.get("authors", List.class);
 			WWFMCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-			
+
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
 			updateLastEpisodeDate(source);
 		}
 	}
-	
+
 	@Override
 	protected void crawl(String url)
 	{
@@ -131,8 +131,6 @@ public class WWFMCrawler extends AbstractCrawler
 				catch (Throwable t) 
 				{
 					log.error("ERROR parsing page " + id + ": " + t.getMessage());
-					t.printStackTrace();
-					throw new RuntimeException(t);
 				}
 			});
 			client.close();
@@ -140,7 +138,6 @@ public class WWFMCrawler extends AbstractCrawler
 		catch (Throwable t) 
 		{
 			log.error("ERROR parsing page " + id + ": " + t.getMessage());
-			t.printStackTrace();
 			throw new RuntimeException(t);
 		}
 	}

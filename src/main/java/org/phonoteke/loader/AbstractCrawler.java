@@ -296,6 +296,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	{
 		if(StringUtils.isNoneEmpty(title)) {
 			title = title.replaceAll("&nbsp;", " ");
+			title = title.replaceAll("\"", "");
 			title = title.trim();
 		}
 		return new org.bson.Document("titleOrig", title).

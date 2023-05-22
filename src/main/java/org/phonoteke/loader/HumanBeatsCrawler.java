@@ -17,6 +17,7 @@ public class HumanBeatsCrawler
 	private WWFMCrawler wwfm = new WWFMCrawler();
 	private RadioCapitalCrawler capital = new RadioCapitalCrawler();
 	private OndarockCrawler ondarock = new OndarockCrawler();
+	private NTSCrawler nts = new NTSCrawler();
 
 	@PostConstruct
 	public void init() {
@@ -26,6 +27,7 @@ public class HumanBeatsCrawler
 		WWFMCrawler.repo = repo;
 		RadioCapitalCrawler.repo = repo;
 		OndarockCrawler.repo = repo;
+		NTSCrawler.repo = repo;
 	}
 
 	public void crawlPodcasts(String... args) {
@@ -34,6 +36,7 @@ public class HumanBeatsCrawler
 		spreaker.load(args);
 		wwfm.load(args);
 		capital.load(args);
+		nts.load(args);
 	}
 
 	public void crawlReviews(String... args) {

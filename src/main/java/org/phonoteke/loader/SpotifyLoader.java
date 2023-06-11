@@ -25,6 +25,7 @@ import com.mongodb.client.model.Filters;
 import com.neovisionaries.i18n.CountryCode;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
+import com.wrapper.spotify.exceptions.detailed.NotFoundException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.AlbumSimplified;
 import com.wrapper.spotify.model_objects.specification.Artist;
@@ -60,7 +61,7 @@ public class SpotifyLoader
 
 	@Value("${spotify.redirect}")
 	private String spotifyRedirect;
-	
+
 	@Autowired
 	private MongoRepository repo;
 
@@ -529,42 +530,47 @@ public class SpotifyLoader
 		if(CollectionUtils.isNotEmpty(titles)) {
 			for(String title : titles) {
 				if(StringUtils.isNotBlank(title)) {
-					SearchTracksRequest request = spotify.searchTracks(title).market(CountryCode.IT).build();
-					Paging<Track> tracks = request.execute();
-					if(tracks.getItems().length == 0) {
-						log.info("Not found: " + title);
-					}
-					for(int i = 0; i < tracks.getItems().length; i++)
-					{
-						Track track = tracks.getItems()[i];
-						if(track != null) {
-							String spartist = track.getArtists()[0].getName();
-							String spartistid = track.getArtists()[0].getId();
-							String spalbum = track.getAlbum().getName();
-							String spalbumid = track.getAlbum().getId();
-							String spsong = track.getName();
-							for(String match : HumanBeatsUtils.FEAT) {
-								Matcher m = Pattern.compile(match).matcher(spsong);
-								if(m.matches()) {
-									spsong = m.group(1);
-									break;
+					try {
+						SearchTracksRequest request = spotify.searchTracks(title).market(CountryCode.IT).build();
+						Paging<Track> tracks = request.execute();
+						if(tracks.getItems().length == 0) {
+							log.info("Not found: " + title);
+						}
+						for(int i = 0; i < tracks.getItems().length; i++)
+						{
+							Track track = tracks.getItems()[i];
+							if(track != null) {
+								String spartist = track.getArtists()[0].getName();
+								String spartistid = track.getArtists()[0].getId();
+								String spalbum = track.getAlbum().getName();
+								String spalbumid = track.getAlbum().getId();
+								String spsong = track.getName();
+								for(String match : HumanBeatsUtils.FEAT) {
+									Matcher m = Pattern.compile(match).matcher(spsong);
+									if(m.matches()) {
+										spsong = m.group(1);
+										break;
+									}
+								}
+								String trackid = track.getId();
+								int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
+								if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {
+									log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
+									Document page = new Document("spotify", trackid);
+									page.append("artist", spartist);
+									page.append("spartistid", spartistid);
+									page.append("album", spalbum);
+									page.append("spalbumid", spalbumid);
+									page.append("track", spsong);
+									page.append("score", score);
+									getImages(page, track.getAlbum().getImages());
+									tracksMap.put(score, page);
 								}
 							}
-							String trackid = track.getId();
-							int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-							if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {
-								log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
-								Document page = new Document("spotify", trackid);
-								page.append("artist", spartist);
-								page.append("spartistid", spartistid);
-								page.append("album", spalbum);
-								page.append("spalbumid", spalbumid);
-								page.append("track", spsong);
-								page.append("score", score);
-								getImages(page, track.getAlbum().getImages());
-								tracksMap.put(score, page);
-							}
 						}
+					}
+					catch(NotFoundException e) {
+						log.error(title + ": " + e.getMessage());
 					}
 					Thread.sleep(100);
 				}

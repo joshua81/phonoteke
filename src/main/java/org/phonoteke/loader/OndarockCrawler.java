@@ -178,24 +178,6 @@ public class OndarockCrawler extends AbstractCrawler
 			bandElement = intestazioneElement.select("h1").first();
 			band = bandElement.html().trim();
 			return band;
-			//		case artist:
-			//		case concert:
-			//		case interview:
-			//			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
-			//			if(intestazioneElement == null)
-			//			{
-			//				intestazioneElement = doc.select("div[id=intestazione]").first();
-			//			}
-			//			if(intestazioneElement == null)
-			//			{
-			//				intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			//			}
-			//			bandElement = intestazioneElement.select("h2").first();
-			//			band = bandElement.html().trim();
-			//			return band;
-			//		case podcast:
-			//			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
-			//				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
 		default:
 			return null;
 		}
@@ -224,26 +206,6 @@ public class OndarockCrawler extends AbstractCrawler
 			titleElement = intestazioneElement.select("h2").first();
 			title = titleElement.html().trim();
 			return title;
-			//		case artist:
-			//		case concert:
-			//		case interview:
-			//			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
-			//			if(intestazioneElement == null)
-			//			{
-			//				intestazioneElement = doc.select("div[id=intestazione]").first();
-			//			}
-			//			if(intestazioneElement == null)
-			//			{
-			//				intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			//			}
-			//			titleElement = intestazioneElement.select("h3").first();
-			//			title = titleElement.html().trim();
-			//			return title;
-			//		case podcast:
-			//			intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			//			titleElement = intestazioneElement.select("h2").first();
-			//			title = titleElement.html().trim();
-			//			return title;
 		default:
 			return null;
 		}
@@ -259,15 +221,6 @@ public class OndarockCrawler extends AbstractCrawler
 			descriptionElement = doc.select("meta[property=og:description]").first();
 			description = descriptionElement.attr("content").trim();
 			return description;
-			//		case artist:
-			//			descriptionElement = doc.select("meta[property=og:description]").first();
-			//			description = descriptionElement.attr("content").trim();
-			//			return description;
-			//		case podcast:
-			//			descriptionElement = doc.select("div[id=intestazione_int]").first();
-			//			descriptionElement = descriptionElement.select("h3").first();
-			//			description = descriptionElement.html().trim();
-			//			return description;
 		default:
 			return null;
 		}
@@ -292,19 +245,6 @@ public class OndarockCrawler extends AbstractCrawler
 					reviewDate = getDate("01/01/" + getYear(url, doc));
 				}
 				return reviewDate;
-				//			case concert:
-				//				reviewElement = doc.select("div[id=intestazione_OR3]").first();
-				//				if(reviewElement == null)
-				//				{
-				//					reviewElement = doc.select("div[id=intestazione]").first();
-				//				}
-				//				if(reviewElement == null)
-				//				{
-				//					reviewElement = doc.select("div[id=intestazione_int]").first();
-				//				}
-				//				reviewElement = reviewElement.select("h4").first();
-				//				reviewDate = getDate(reviewElement.text());
-				//				return reviewDate;
 			default:
 				return null;
 			}
@@ -329,25 +269,6 @@ public class OndarockCrawler extends AbstractCrawler
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
-				//			case artist:
-				//				coverElement = doc.select("div[id=col_right_mono]").first();
-				//				coverElement = coverElement.select("img[src]").first();
-				//				cover = coverElement.attr("src");
-				//				return getUrl(cover);
-				//			case concert:
-				//				coverElement = doc.select("div[class=fotolr]").first();
-				//				coverElement = coverElement.select("img[src]").first();
-				//				cover = coverElement.attr("src");
-				//				return getUrl(cover);
-				//			case interview:
-				//				coverElement = doc.select("div[class=article_foto_cont]").first();
-				//				coverElement = coverElement.select("img[src]").first();
-				//				cover = coverElement.attr("src");
-				//				return getUrl(cover);
-				//			case podcast:
-				//				coverElement = doc.select("meta[property=og:image]").first();
-				//				cover = coverElement.attr("content").trim();
-				//				return getUrl(cover);
 			default:
 				return null;
 			}
@@ -374,19 +295,6 @@ public class OndarockCrawler extends AbstractCrawler
 					return Lists.newArrayList(authorElement.html().trim().split(","));
 				}
 			}
-			//		case artist:
-			//		case concert:
-			//		case interview:
-			//		case podcast:
-			//			authorElement = doc.select("span[class=recensore]").first();
-			//			if(authorElement != null)
-			//			{
-			//				authorElement = authorElement.select("a[href]").first();
-			//				if(authorElement != null)
-			//				{
-			//					return Lists.newArrayList(authorElement.html().trim().split(","));
-			//				}
-			//			}
 		default:
 			return null;
 		}
@@ -446,13 +354,6 @@ public class OndarockCrawler extends AbstractCrawler
 		case album:
 			Elements elements = doc.select("iframe");
 			return getVideos(elements);
-			//		case podcast:
-			//			Element playlist = doc.select("div[id=boxdiscografia_head]").first();
-			//			if("playlist".equalsIgnoreCase(playlist.text())) {
-			//				Element content = doc.select("div[id=boxdiscografia_med]").first();
-			//				return getTracks(content, SOURCE);
-			//			}
-			//			break;
 		default:
 			break;
 		}
@@ -502,30 +403,6 @@ public class OndarockCrawler extends AbstractCrawler
 		{
 			return TYPE.album;
 		}
-		//		else if(getUrl(url).startsWith(URL + "songwriter") || 
-		//				getUrl(url).startsWith(URL + "popmuzik") || 
-		//				getUrl(url).startsWith(URL + "altrisuoni") || 
-		//				getUrl(url).startsWith(URL + "rockedintorni") ||
-		//				getUrl(url).startsWith(URL + "dark") ||
-		//				getUrl(url).startsWith(URL + "italia") ||
-		//				getUrl(url).startsWith(URL + "jazz") ||
-		//				getUrl(url).startsWith(URL + "elettronica"))
-		//		{
-		//			return TYPE.artist;
-		//		}
-		//		else if(getUrl(url).startsWith(URL + "livereport"))
-		//		{
-		//			return TYPE.concert;
-		//		}
-		//		else if(getUrl(url).startsWith(URL + "interviste"))
-		//		{
-		//			return TYPE.interview;
-		//		}
-		//		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
-		//				getUrl(url).startsWith(URL + "speciali/rockinonda"))
-		//		{
-		//			return TYPE.podcast;
-		//		}
 		return TYPE.unknown;
 	}
 }

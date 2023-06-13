@@ -44,10 +44,7 @@ public class HumanBeatsUtils
 	public static final int TRACKS_SIZE = 6;
 
 	public enum TYPE {
-		//		artist,
 		album,
-		//		concert,
-		//		interview,
 		podcast,
 		unknown
 	}

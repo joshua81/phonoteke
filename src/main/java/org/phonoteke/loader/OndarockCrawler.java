@@ -63,13 +63,13 @@ public class OndarockCrawler extends AbstractCrawler
 	protected String getReview(String url, Document doc) 
 	{
 		switch (getType(url)) {
-		case podcast:
+		case unknown:
 			return null;
 		default:
-			Element content = doc.select("div[id=maintext]").first();
+			Element content = doc.select("div[class=main_text]").first();
 			if(content == null)
 			{
-				content = doc.select("div[id=maintext2]").first();
+				content = doc.select("div[class=main_text2]").first();
 			}
 			removeComments(content);
 			removeImages(content);
@@ -91,10 +91,10 @@ public class OndarockCrawler extends AbstractCrawler
 	protected List<String> getLinks(String url, Document doc) 
 	{
 		Set<String> links = Sets.newHashSet();
-		Element node = doc.select("div[id=maintext]").first();
+		Element node = doc.select("div[class=main_text]").first();
 		if(node == null)
 		{
-			node = doc.select("div[id=maintext2]").first();
+			node = doc.select("div[class=main_text2]").first();
 		}
 		Elements elements = node.select("a[href]");
 		for(int i = 0; i < elements.size(); i++)
@@ -174,25 +174,25 @@ public class OndarockCrawler extends AbstractCrawler
 		String band = null;
 		switch (getType(url)) {
 		case album:
-			intestazioneElement = doc.select("div[id=intestazionerec]").first();
+			intestazioneElement = doc.select("div[class=titolo]").first();
 			bandElement = intestazioneElement.select("h1").first();
 			band = bandElement.html().trim();
 			return band;
-		case artist:
-		case concert:
-		case interview:
-			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
-			if(intestazioneElement == null)
-			{
-				intestazioneElement = doc.select("div[id=intestazione]").first();
-			}
-			if(intestazioneElement == null)
-			{
-				intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			}
-			bandElement = intestazioneElement.select("h2").first();
-			band = bandElement.html().trim();
-			return band;
+			//		case artist:
+			//		case concert:
+			//		case interview:
+			//			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
+			//			if(intestazioneElement == null)
+			//			{
+			//				intestazioneElement = doc.select("div[id=intestazione]").first();
+			//			}
+			//			if(intestazioneElement == null)
+			//			{
+			//				intestazioneElement = doc.select("div[id=intestazione_int]").first();
+			//			}
+			//			bandElement = intestazioneElement.select("h2").first();
+			//			band = bandElement.html().trim();
+			//			return band;
 			//		case podcast:
 			//			return getUrl(url).startsWith(URL + "speciali/blahblahblah") ? "Blah Blah Blah" :
 			//				getUrl(url).startsWith(URL + "speciali/rockinonda") ? "Rock in Onda" : null;
@@ -220,30 +220,30 @@ public class OndarockCrawler extends AbstractCrawler
 		String title = null;
 		switch (getType(url)) {
 		case album:
-			intestazioneElement = doc.select("div[id=intestazionerec]").first();
+			intestazioneElement = doc.select("div[class=titolo]").first();
 			titleElement = intestazioneElement.select("h2").first();
 			title = titleElement.html().trim();
 			return title;
-		case artist:
-		case concert:
-		case interview:
-			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
-			if(intestazioneElement == null)
-			{
-				intestazioneElement = doc.select("div[id=intestazione]").first();
-			}
-			if(intestazioneElement == null)
-			{
-				intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			}
-			titleElement = intestazioneElement.select("h3").first();
-			title = titleElement.html().trim();
-			return title;
-		case podcast:
-			intestazioneElement = doc.select("div[id=intestazione_int]").first();
-			titleElement = intestazioneElement.select("h2").first();
-			title = titleElement.html().trim();
-			return title;
+			//		case artist:
+			//		case concert:
+			//		case interview:
+			//			intestazioneElement = doc.select("div[id=intestazione_OR3]").first();
+			//			if(intestazioneElement == null)
+			//			{
+			//				intestazioneElement = doc.select("div[id=intestazione]").first();
+			//			}
+			//			if(intestazioneElement == null)
+			//			{
+			//				intestazioneElement = doc.select("div[id=intestazione_int]").first();
+			//			}
+			//			titleElement = intestazioneElement.select("h3").first();
+			//			title = titleElement.html().trim();
+			//			return title;
+			//		case podcast:
+			//			intestazioneElement = doc.select("div[id=intestazione_int]").first();
+			//			titleElement = intestazioneElement.select("h2").first();
+			//			title = titleElement.html().trim();
+			//			return title;
 		default:
 			return null;
 		}
@@ -259,15 +259,15 @@ public class OndarockCrawler extends AbstractCrawler
 			descriptionElement = doc.select("meta[property=og:description]").first();
 			description = descriptionElement.attr("content").trim();
 			return description;
-		case artist:
-			descriptionElement = doc.select("meta[property=og:description]").first();
-			description = descriptionElement.attr("content").trim();
-			return description;
-		case podcast:
-			descriptionElement = doc.select("div[id=intestazione_int]").first();
-			descriptionElement = descriptionElement.select("h3").first();
-			description = descriptionElement.html().trim();
-			return description;
+			//		case artist:
+			//			descriptionElement = doc.select("meta[property=og:description]").first();
+			//			description = descriptionElement.attr("content").trim();
+			//			return description;
+			//		case podcast:
+			//			descriptionElement = doc.select("div[id=intestazione_int]").first();
+			//			descriptionElement = descriptionElement.select("h3").first();
+			//			description = descriptionElement.html().trim();
+			//			return description;
 		default:
 			return null;
 		}
@@ -281,8 +281,8 @@ public class OndarockCrawler extends AbstractCrawler
 			Date reviewDate = null;
 			switch (getType(url)) {
 			case album:
-				Element reviewElement = doc.select("div[id=maintext]").first();
-				Element reviewDateElement = reviewElement.select("p[style]").last();
+				Element reviewElement = doc.select("div[class=main_text]").first();
+				Element reviewDateElement = reviewElement.select("p[class=data_recensione]").last();
 				if(reviewDateElement != null)
 				{
 					reviewDate = getDate(reviewDateElement.text());
@@ -292,19 +292,19 @@ public class OndarockCrawler extends AbstractCrawler
 					reviewDate = getDate("01/01/" + getYear(url, doc));
 				}
 				return reviewDate;
-			case concert:
-				reviewElement = doc.select("div[id=intestazione_OR3]").first();
-				if(reviewElement == null)
-				{
-					reviewElement = doc.select("div[id=intestazione]").first();
-				}
-				if(reviewElement == null)
-				{
-					reviewElement = doc.select("div[id=intestazione_int]").first();
-				}
-				reviewElement = reviewElement.select("h4").first();
-				reviewDate = getDate(reviewElement.text());
-				return reviewDate;
+				//			case concert:
+				//				reviewElement = doc.select("div[id=intestazione_OR3]").first();
+				//				if(reviewElement == null)
+				//				{
+				//					reviewElement = doc.select("div[id=intestazione]").first();
+				//				}
+				//				if(reviewElement == null)
+				//				{
+				//					reviewElement = doc.select("div[id=intestazione_int]").first();
+				//				}
+				//				reviewElement = reviewElement.select("h4").first();
+				//				reviewDate = getDate(reviewElement.text());
+				//				return reviewDate;
 			default:
 				return null;
 			}
@@ -325,29 +325,29 @@ public class OndarockCrawler extends AbstractCrawler
 			String cover = null;
 			switch (getType(url)) {
 			case album:
-				coverElement = doc.select("div[id=cover_rec]").first();
+				coverElement = doc.select("div[class=copertina]").first();
 				coverElement = coverElement.select("img[src]").first();
 				cover = coverElement.attr("src");
 				return getUrl(cover);
-			case artist:
-				coverElement = doc.select("div[id=col_right_mono]").first();
-				coverElement = coverElement.select("img[src]").first();
-				cover = coverElement.attr("src");
-				return getUrl(cover);
-			case concert:
-				coverElement = doc.select("div[class=fotolr]").first();
-				coverElement = coverElement.select("img[src]").first();
-				cover = coverElement.attr("src");
-				return getUrl(cover);
-			case interview:
-				coverElement = doc.select("div[class=article_foto_cont]").first();
-				coverElement = coverElement.select("img[src]").first();
-				cover = coverElement.attr("src");
-				return getUrl(cover);
-			case podcast:
-				coverElement = doc.select("meta[property=og:image]").first();
-				cover = coverElement.attr("content").trim();
-				return getUrl(cover);
+				//			case artist:
+				//				coverElement = doc.select("div[id=col_right_mono]").first();
+				//				coverElement = coverElement.select("img[src]").first();
+				//				cover = coverElement.attr("src");
+				//				return getUrl(cover);
+				//			case concert:
+				//				coverElement = doc.select("div[class=fotolr]").first();
+				//				coverElement = coverElement.select("img[src]").first();
+				//				cover = coverElement.attr("src");
+				//				return getUrl(cover);
+				//			case interview:
+				//				coverElement = doc.select("div[class=article_foto_cont]").first();
+				//				coverElement = coverElement.select("img[src]").first();
+				//				cover = coverElement.attr("src");
+				//				return getUrl(cover);
+				//			case podcast:
+				//				coverElement = doc.select("meta[property=og:image]").first();
+				//				cover = coverElement.attr("content").trim();
+				//				return getUrl(cover);
 			default:
 				return null;
 			}
@@ -365,7 +365,7 @@ public class OndarockCrawler extends AbstractCrawler
 		Element authorElement = null;
 		switch (getType(url)) {
 		case album:
-			authorElement = doc.select("div[class=recensorerec]").first();
+			authorElement = doc.select("span[class=nome_recensore]").first();
 			if(authorElement != null)
 			{
 				authorElement = authorElement.select("a[href]").first();
@@ -374,19 +374,19 @@ public class OndarockCrawler extends AbstractCrawler
 					return Lists.newArrayList(authorElement.html().trim().split(","));
 				}
 			}
-		case artist:
-		case concert:
-		case interview:
-		case podcast:
-			authorElement = doc.select("span[class=recensore]").first();
-			if(authorElement != null)
-			{
-				authorElement = authorElement.select("a[href]").first();
-				if(authorElement != null)
-				{
-					return Lists.newArrayList(authorElement.html().trim().split(","));
-				}
-			}
+			//		case artist:
+			//		case concert:
+			//		case interview:
+			//		case podcast:
+			//			authorElement = doc.select("span[class=recensore]").first();
+			//			if(authorElement != null)
+			//			{
+			//				authorElement = authorElement.select("a[href]").first();
+			//				if(authorElement != null)
+			//				{
+			//					return Lists.newArrayList(authorElement.html().trim().split(","));
+			//				}
+			//			}
 		default:
 			return null;
 		}
@@ -397,9 +397,9 @@ public class OndarockCrawler extends AbstractCrawler
 	{
 		switch (getType(url)) {
 		case album:
-			Element datiElement = doc.select("div[id=dati]").first();
+			Element datiElement = doc.select("div[class=genere cell small-6]").first();
 			String dati = datiElement.text();
-			return Lists.newArrayList(dati.split("\\|")[1].trim().split(","));
+			return Lists.newArrayList(dati.trim().split(","));
 		default:
 			return null;
 		}
@@ -410,7 +410,7 @@ public class OndarockCrawler extends AbstractCrawler
 	{
 		switch (getType(url)) {
 		case album:
-			Element datiElement = doc.select("div[id=dati]").first();
+			Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
 			if(datiElement != null)
 			{
 				String yearStr = datiElement.text().split(" ")[0].trim();
@@ -427,7 +427,7 @@ public class OndarockCrawler extends AbstractCrawler
 	{
 		switch (getType(url)) {
 		case album:
-			Element datiElement = doc.select("div[id=dati]").first();
+			Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
 			String dati = datiElement.text();
 			dati = datiElement.text();
 			dati = dati.split("\\(")[1].trim();
@@ -446,13 +446,13 @@ public class OndarockCrawler extends AbstractCrawler
 		case album:
 			Elements elements = doc.select("iframe");
 			return getVideos(elements);
-		case podcast:
-			Element playlist = doc.select("div[id=boxdiscografia_head]").first();
-			if("playlist".equalsIgnoreCase(playlist.text())) {
-				Element content = doc.select("div[id=boxdiscografia_med]").first();
-				return getTracks(content, SOURCE);
-			}
-			break;
+			//		case podcast:
+			//			Element playlist = doc.select("div[id=boxdiscografia_head]").first();
+			//			if("playlist".equalsIgnoreCase(playlist.text())) {
+			//				Element content = doc.select("div[id=boxdiscografia_med]").first();
+			//				return getTracks(content, SOURCE);
+			//			}
+			//			break;
 		default:
 			break;
 		}
@@ -466,8 +466,7 @@ public class OndarockCrawler extends AbstractCrawler
 		{
 			switch (getType(url)) {
 			case album:
-				if(url.contains("pietremiliari"))
-				{
+				if(url.contains("pietremiliari")) {
 					return 10F;
 				}
 
@@ -477,17 +476,10 @@ public class OndarockCrawler extends AbstractCrawler
 				format.setDecimalFormatSymbols(symbols);
 
 				Float vote = 0F;
-				Element intestazioneElement = doc.select("div[id=intestazionerec]").first();
-				Element voteElement = intestazioneElement.select("img[src]").first();
-				if(voteElement != null)
-				{
-					String voteStr = voteElement.attr("src");
-					voteStr = voteStr.split("rate_")[1];
-					voteStr = voteStr.substring(0, voteStr.length() - 4);
-					if(!"".equals(voteStr.trim()))
-					{
-						vote = format.parse(voteStr).floatValue();
-					}
+				Element voteElement = doc.select("span[class=voto]").first();
+				if(voteElement != null) {
+					String voteStr = voteElement.text();
+					vote = format.parse(voteStr).floatValue();
 				}
 				return vote;
 			default:
@@ -510,25 +502,25 @@ public class OndarockCrawler extends AbstractCrawler
 		{
 			return TYPE.album;
 		}
-		else if(getUrl(url).startsWith(URL + "songwriter") || 
-				getUrl(url).startsWith(URL + "popmuzik") || 
-				getUrl(url).startsWith(URL + "altrisuoni") || 
-				getUrl(url).startsWith(URL + "rockedintorni") ||
-				getUrl(url).startsWith(URL + "dark") ||
-				getUrl(url).startsWith(URL + "italia") ||
-				getUrl(url).startsWith(URL + "jazz") ||
-				getUrl(url).startsWith(URL + "elettronica"))
-		{
-			return TYPE.artist;
-		}
-		else if(getUrl(url).startsWith(URL + "livereport"))
-		{
-			return TYPE.concert;
-		}
-		else if(getUrl(url).startsWith(URL + "interviste"))
-		{
-			return TYPE.interview;
-		}
+		//		else if(getUrl(url).startsWith(URL + "songwriter") || 
+		//				getUrl(url).startsWith(URL + "popmuzik") || 
+		//				getUrl(url).startsWith(URL + "altrisuoni") || 
+		//				getUrl(url).startsWith(URL + "rockedintorni") ||
+		//				getUrl(url).startsWith(URL + "dark") ||
+		//				getUrl(url).startsWith(URL + "italia") ||
+		//				getUrl(url).startsWith(URL + "jazz") ||
+		//				getUrl(url).startsWith(URL + "elettronica"))
+		//		{
+		//			return TYPE.artist;
+		//		}
+		//		else if(getUrl(url).startsWith(URL + "livereport"))
+		//		{
+		//			return TYPE.concert;
+		//		}
+		//		else if(getUrl(url).startsWith(URL + "interviste"))
+		//		{
+		//			return TYPE.interview;
+		//		}
 		//		else if(getUrl(url).startsWith(URL + "speciali/blahblahblah") || 
 		//				getUrl(url).startsWith(URL + "speciali/rockinonda"))
 		//		{

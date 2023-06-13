@@ -75,7 +75,7 @@ public abstract class AbstractCrawler extends WebCrawler
 			throw new RuntimeException(t);
 		}
 	}
-	
+
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) 
 	{
@@ -136,65 +136,65 @@ public abstract class AbstractCrawler extends WebCrawler
 										append("audio", getAudio(url, doc));
 							}
 							break;
-						case artist:
-							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-									Filters.eq("type", type.name()),
-									Filters.eq("artist", artist))).iterator().hasNext())
-							{
-								json = new org.bson.Document("id", id).
-										append("url", getUrl(url)).
-										append("type", type.name()).
-										append("artist", artist).
-										append("title", title).
-										append("authors", getAuthors(url, doc)).
-										append("cover", getCover(url, doc)).
-										append("date", getDate(url, doc)).
-										append("description", getDescription(url, doc)).
-										append("links", getLinks(url, doc)).
-										append("review", getReview(url, doc)).
-										append("source", getSource());
-							}
-							break;
-						case concert:
-							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-									Filters.eq("type", type.name()),
-									Filters.eq("artist", artist),
-									Filters.eq("title", title))).iterator().hasNext())
-							{
-								json = new org.bson.Document("id", id).
-										append("url", getUrl(url)).
-										append("type", type.name()).
-										append("artist", artist).
-										append("title", title).
-										append("authors", getAuthors(url, doc)).
-										append("cover", getCover(url, doc)).
-										append("date", getDate(url, doc)).
-										//									append("description", getDescription(url, doc)).
-										append("links", getLinks(url, doc)).
-										append("review", getReview(url, doc)).
-										append("source", getSource());
-							}
-							break;
-						case interview:
-							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-									Filters.eq("type", type.name()),
-									Filters.eq("artist", artist),
-									Filters.eq("title", title))).iterator().hasNext())
-							{
-								json = new org.bson.Document("id", id).
-										append("url", getUrl(url)).
-										append("type", type.name()).
-										append("artist", artist).
-										append("title", title).
-										append("authors", getAuthors(url, doc)).
-										append("cover", getCover(url, doc)).
-										//									append("date", getDate(url, doc)).
-										//									append("description", getDescription(url, doc)).
-										append("links", getLinks(url, doc)).
-										append("review", getReview(url, doc)).
-										append("source", getSource());
-							}
-							break;
+							//						case artist:
+							//							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+							//									Filters.eq("type", type.name()),
+							//									Filters.eq("artist", artist))).iterator().hasNext())
+							//							{
+							//								json = new org.bson.Document("id", id).
+							//										append("url", getUrl(url)).
+							//										append("type", type.name()).
+							//										append("artist", artist).
+							//										append("title", title).
+							//										append("authors", getAuthors(url, doc)).
+							//										append("cover", getCover(url, doc)).
+							//										append("date", getDate(url, doc)).
+							//										append("description", getDescription(url, doc)).
+							//										append("links", getLinks(url, doc)).
+							//										append("review", getReview(url, doc)).
+							//										append("source", getSource());
+							//							}
+							//							break;
+							//						case concert:
+							//							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+							//									Filters.eq("type", type.name()),
+							//									Filters.eq("artist", artist),
+							//									Filters.eq("title", title))).iterator().hasNext())
+							//							{
+							//								json = new org.bson.Document("id", id).
+							//										append("url", getUrl(url)).
+							//										append("type", type.name()).
+							//										append("artist", artist).
+							//										append("title", title).
+							//										append("authors", getAuthors(url, doc)).
+							//										append("cover", getCover(url, doc)).
+							//										append("date", getDate(url, doc)).
+							//										//									append("description", getDescription(url, doc)).
+							//										append("links", getLinks(url, doc)).
+							//										append("review", getReview(url, doc)).
+							//										append("source", getSource());
+							//							}
+							//							break;
+							//						case interview:
+							//							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+							//									Filters.eq("type", type.name()),
+							//									Filters.eq("artist", artist),
+							//									Filters.eq("title", title))).iterator().hasNext())
+							//							{
+							//								json = new org.bson.Document("id", id).
+							//										append("url", getUrl(url)).
+							//										append("type", type.name()).
+							//										append("artist", artist).
+							//										append("title", title).
+							//										append("authors", getAuthors(url, doc)).
+							//										append("cover", getCover(url, doc)).
+							//										//									append("date", getDate(url, doc)).
+							//										//									append("description", getDescription(url, doc)).
+							//										append("links", getLinks(url, doc)).
+							//										append("review", getReview(url, doc)).
+							//										append("source", getSource());
+							//							}
+							//							break;
 						default:
 							break;
 						}

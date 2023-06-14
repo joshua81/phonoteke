@@ -110,7 +110,8 @@ public abstract class AbstractCrawler extends WebCrawler
 						switch(type)
 						{
 						case album:
-							if(!repo.getDocs().find(Filters.and(Filters.eq("source", source),
+						case podcast:
+							if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(Filters.eq("source", source),
 									Filters.eq("type", type.name()),
 									Filters.eq("artist", artist),
 									Filters.eq("title", title))).iterator().hasNext())

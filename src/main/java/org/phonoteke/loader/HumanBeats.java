@@ -22,6 +22,9 @@ public class HumanBeats implements CommandLineRunner {
 
 	@Autowired
 	private MusicbrainzLoader musicbrainzLoader;
+	
+	@Autowired
+	private DiscogsLoader discogsLoader;
 
 	@Autowired
 	private SpotifyLoader spotifyLoader;
@@ -47,6 +50,10 @@ public class HumanBeats implements CommandLineRunner {
 			String[] subtask = Arrays.copyOfRange(args[0].split(":"), 1, args[0].split(":").length);
 			if("mb".equals(task)) {
 				musicbrainzLoader.load(subtask);
+				return;
+			}
+			else if("dg".equals(task)) {
+				discogsLoader.load(subtask);
 				return;
 			}
 			else if("sp".equals(task)) {

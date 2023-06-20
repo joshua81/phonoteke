@@ -25,21 +25,18 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 public class MusicbrainzLoader
 {
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
-	
+
 	@Autowired
 	private MongoRepository repo;
 
 
-	//	@Override
-	public void load(String... args) 
-	{
+	public void load(String... args) {
 		log.info("Loading Musicbrainz...");
 		MongoCursor<Document> i = repo.getDocs().find(Filters.or(
 				Filters.and(Filters.ne("type", "podcast"), Filters.eq("artistid", null)),
 				Filters.and(Filters.eq("type", "podcast"), Filters.eq("tracks.artistid", null)))).iterator();
 
-		while(i.hasNext())
-		{
+		while(i.hasNext()) {
 			Document page = i.next();
 			String id = page.getString("id"); 
 			String type = page.getString("type");
@@ -49,97 +46,60 @@ public class MusicbrainzLoader
 			else if("podcast".equals(type)) {
 				loadTracksMBId(page);
 			}
-			else {
-				loadArtistMBId(page);
-			}
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 		}
 	}
 
-	private void loadAlbumMBId(org.bson.Document page)
-	{
+	private void loadAlbumMBId(org.bson.Document page) {
 		String id = page.getString("id");
 		String artist = page.getString("artist");
 		String artistId = page.getString("artistid");
+		String albumId = page.getString("albumid");
 		String title = page.getString("title");
 
 		log.debug("Loading Album " + id);
 		org.bson.Document mbalbum = getAlbum(artist, title);
-		if(mbalbum != null && mbalbum.getInteger("count") > 0)
-		{
-			artistId = getAlbumId(artist + " - " + title, mbalbum);
+		if(mbalbum != null && mbalbum.getInteger("count") > 0) {
+			artistId = getArtistId(artist + " - " + title, mbalbum);
+			albumId = getAlbumId(artist + " - " + title, mbalbum);
 		}
 		page.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
-		log.info(artist + " - " + title + ": " + artistId);
+		page.append("albumid", albumId == null ? HumanBeatsUtils.NA : albumId);
+		log.info(artist + " - " + title + ": " + artistId + " - " + albumId);
 	}
 
-	private org.bson.Document getAlbum(String artist, String title)
-	{
-		if(StringUtils.isBlank(artist) || StringUtils.isBlank(title))
-		{
+	private org.bson.Document getAlbum(String artist, String title) {
+		if(StringUtils.isBlank(artist) || StringUtils.isBlank(title)) {
 			return null;
 		}
 		String url = MUSICBRAINZ + "/release/?query=artist:" + artist.trim().replace(" ", "%20") + "%20AND%20release:" + title.trim().replace(" ", "%20") + "&fmt=json";
 		return callMusicbrainz(url);
 	}
 
-	private void loadArtistMBId(org.bson.Document page)
-	{
-		String id = page.getString("id");
-		String artist = page.getString("artist");
-		String artistId = page.getString("artistid");
-
-		log.debug("Loading Artist: " + id);
-		org.bson.Document mbartist = getArtist(artist);
-		if(mbartist != null && mbartist.getInteger("count") > 0)
-		{
-			artistId = getArtistId(artist, mbartist);
-		}
-		page.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
-		log.info(artist + ": " + artistId);
-	}
-
-	private org.bson.Document getArtist(String artist)
-	{
-		if(StringUtils.isBlank(artist))
-		{
-			return null;
-		}
-		String url = MUSICBRAINZ + "/artist/?query=artist:" + artist.trim().replace(" ", "%20") + "&fmt=json";
-		return callMusicbrainz(url);
-	}
-
-	private org.bson.Document callMusicbrainz(String url)
-	{
+	private org.bson.Document callMusicbrainz(String url) {
 		HttpURLConnection con;
-		try 
-		{
+		try {
 			con = (HttpURLConnection)new URL(url).openConnection();
 		} 
-		catch(Throwable t)
-		{
+		catch(Throwable t) {
 			log.error("ERROR: " + t.getMessage());
 			return null;
 		}
 
-		try(BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()));)
-		{
+		try(BufferedReader rd = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
 			String json = "";
 			String line = null;
-			while ((line = rd.readLine()) != null) 
-			{
+			while ((line = rd.readLine()) != null) {
 				json += line;
 			}
 			org.bson.Document doc = org.bson.Document.parse(json);
 			return (doc != null && doc.getInteger("count") > 0) ? doc : null;
 		}
-		catch(Throwable t)
-		{
+		catch(Throwable t) {
 			log.error("ERROR: " + t.getMessage());
 			return null;
 		}
-		finally
-		{
+		finally {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -148,45 +108,39 @@ public class MusicbrainzLoader
 		}
 	}
 
-	private void loadTracksMBId(org.bson.Document page)
-	{
+	private void loadTracksMBId(org.bson.Document page) {
 		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		for(org.bson.Document track : tracks)
-		{
+		for(org.bson.Document track : tracks) {
 			String artistId = track.getString("artistid");
+			String albumId = track.getString("albumid");
 			String album = track.getString("album");
 			String artist = track.getString("artist");
-			if(artistId == null)
-			{
-				if(album != null && artist != null)
-				{
+			if(artistId == null || albumId == null) {
+				if(album != null && artist != null) {
 					log.debug("Loading Album " + artist + " - " + album);
 					org.bson.Document mbalbum = getAlbum(artist, album);
-					if(mbalbum != null && mbalbum.getInteger("count") > 0)
-					{
-						artistId = getAlbumId(artist + " - " + album, mbalbum);
+					if(mbalbum != null && mbalbum.getInteger("count") > 0) {
+						artistId = getArtistId(artist + " - " + album, mbalbum);
+						albumId = getAlbumId(artist + " - " + album, mbalbum);
 					}
 				}
 				track.append("artistid", artistId == null ? HumanBeatsUtils.NA : artistId);
-				log.info(artist + " - " + album + ": " + artistId);
+				track.append("albumid", albumId == null ? HumanBeatsUtils.NA : albumId);
+				log.info(artist + " - " + album + ": " + artistId + " - " + albumId);
 			}
 		}
 	}
 
-	private String getAlbumId(String title, org.bson.Document album)
-	{
+	private String getArtistId(String title, org.bson.Document album) {
 		TreeMap<Integer, String> scores = Maps.newTreeMap();
 		List<org.bson.Document> releases = album.get("releases", List.class);
-		if(CollectionUtils.isNotEmpty(releases))
-		{
-			for(org.bson.Document release : releases)
-			{
-				int score = getRecordingScore(release);
+		if(CollectionUtils.isNotEmpty(releases)) {
+			for(org.bson.Document release : releases) {
+				int score = release == null ? 0 : release.getInteger("score");
 				String mbartist = getRecordingArtist(release);
 				String mbtitle = getRecordingTitle(release);
 				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
-				if(score >= HumanBeatsUtils.THRESHOLD && scoreTitle >= HumanBeatsUtils.THRESHOLD)
-				{
+				if(score >= HumanBeatsUtils.THRESHOLD && scoreTitle >= HumanBeatsUtils.THRESHOLD) {
 					String artistId =  getRecordingArtistId(release);
 					scores.put(scoreTitle, artistId);
 				}
@@ -195,50 +149,41 @@ public class MusicbrainzLoader
 		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeatsUtils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
-	private String getArtistId(String name, org.bson.Document artist)
-	{
+	private String getAlbumId(String title, org.bson.Document album) {
 		TreeMap<Integer, String> scores = Maps.newTreeMap();
-		List<org.bson.Document> mbartists = artist.get("artists", List.class);
-		if(CollectionUtils.isNotEmpty(mbartists))
-		{
-			for(org.bson.Document mbartist : mbartists)
-			{
-				Integer score = mbartist.getInteger("score");
-				String mbartistname = mbartist.getString("name");
-				int scoreArtist = FuzzySearch.tokenSetRatio(name, mbartistname);
-				if(score >= HumanBeatsUtils.THRESHOLD && scoreArtist >= HumanBeatsUtils.THRESHOLD)
-				{
-					String artistId = mbartist.getString("id");
-					scores.put(score, artistId);
+		List<org.bson.Document> releases = album.get("releases", List.class);
+		if(CollectionUtils.isNotEmpty(releases)) {
+			for(org.bson.Document release : releases) {
+				int score = release == null ? 0 : release.getInteger("score");
+				String mbartist = getRecordingArtist(release);
+				String mbtitle = getRecordingTitle(release);
+				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
+				if(score >= HumanBeatsUtils.THRESHOLD && scoreTitle >= HumanBeatsUtils.THRESHOLD) {
+					String albumId =  getRecordingAlbumId(release);
+					scores.put(scoreTitle, albumId);
 				}
 			}
 		}
 		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeatsUtils.NA : scores.get(scores.lastEntry().getKey());
 	}
 
-	private String getRecordingArtistId(org.bson.Document recording)
-	{
-		return CollectionUtils.isEmpty(recording.get("artist-credit", List.class)) ? null : ((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
+	private String getRecordingArtistId(org.bson.Document recording) {
+		return CollectionUtils.isEmpty(recording.get("artist-credit", List.class)) ? null : 
+			((org.bson.Document)recording.get("artist-credit", List.class).get(0)).get("artist", org.bson.Document.class).getString("id");
 	}
 
-	private Integer getRecordingScore(org.bson.Document recording) 
-	{
-		return recording == null ? 0 : recording.getInteger("score");
+	private String getRecordingAlbumId(org.bson.Document recording) {
+		return recording.get("release-group", org.bson.Document.class).getString("id");
 	}
 
-	private String getRecordingArtist(org.bson.Document recording) 
-	{
+	private String getRecordingArtist(org.bson.Document recording) {
 		String artist = "";
-		if(recording != null)
-		{
-			if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class)))
-			{
-				for(org.bson.Document credit : (List<org.bson.Document>)recording.get("artist-credit", List.class))
-				{
+		if(recording != null) {
+			if(CollectionUtils.isNotEmpty(recording.get("artist-credit", List.class))) {
+				for(org.bson.Document credit : (List<org.bson.Document>)recording.get("artist-credit", List.class)) {
 					artist += credit.getString("name");
 					String joinphrase = credit.getString("joinphrase");
-					if(joinphrase != null)
-					{
+					if(joinphrase != null) {
 						artist += joinphrase;
 					}
 				}
@@ -247,11 +192,9 @@ public class MusicbrainzLoader
 		return artist;
 	}
 
-	private String getRecordingTitle(org.bson.Document recording) 
-	{
+	private String getRecordingTitle(org.bson.Document recording) {
 		String title = "";
-		if(recording != null)
-		{
+		if(recording != null) {
 			title = recording.getString("title");
 		}
 		return title;

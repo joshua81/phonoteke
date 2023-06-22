@@ -224,11 +224,17 @@ async function findDoc(id) {
 		if(doc.artistid == 'na') {
 			doc.artistid = null;
 		}
+		if(doc.albumid == 'na') {
+			doc.albumid = null;
+		}
 		if(doc.spartistid == 'na') {
 			doc.spartistid = null;
 		}
 		if(doc.spalbumid == 'na') {
 			doc.spalbumid = null;
+		}
+		if(doc.dgalbumid == 'na') {
+			doc.dgalbumid = null;
 		}
 		if(doc.tracks) {
 			doc.tracks.forEach(function(track) {
@@ -239,6 +245,12 @@ async function findDoc(id) {
 				}
 				if(track.artistid == 'na') {
 					track.artistid = null;
+				}
+				if(track.albumid == 'na') {
+					track.albumid = null;
+				}
+				if(track.dgalbumid == 'na') {
+					track.dgalbumid = null;
 				}
 				if(track.youtube == 'na') {
 					track.youtube = null;

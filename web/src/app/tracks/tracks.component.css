@@ -102,6 +102,17 @@ span.songkick {
     background: #F80046;
     cursor: pointer;
 }
+  
+span.discogs {
+    display: inline-block;
+    mask: url("/images/discogs.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    background: #000000;
+    cursor: pointer;
+  }
 
 .counter {
     width: 20px;

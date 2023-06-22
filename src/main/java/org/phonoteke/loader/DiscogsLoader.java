@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -28,9 +27,9 @@ public class DiscogsLoader
 
 	public void load(String... args) {
 		log.info("Loading Discogs...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.or(
-				Filters.and(Filters.eq("type", "album"), Filters.ne("albumid", null), Filters.ne("albumid", HumanBeatsUtils.NA)),
-				Filters.and(Filters.eq("type", "podcast"), Filters.ne("tracks.albumtid", null), Filters.ne("tracks.albumtid", HumanBeatsUtils.NA)))).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(//Filters.or(
+				//Filters.and(Filters.eq("type", "album"), Filters.ne("albumid", null), Filters.ne("albumid", HumanBeatsUtils.NA)),
+				Filters.and(Filters.eq("type", "podcast"), Filters.exists("tracks.albumid"), Filters.exists("tracks.dgalbumid", false))).iterator();
 
 		while(i.hasNext()) {
 			Document page = i.next();
@@ -54,16 +53,16 @@ public class DiscogsLoader
 		org.bson.Document dgalbum = getAlbum(albumId);
 		if(dgalbum != null) {
 			dgalbumId = getAlbumId(dgalbum);
+			page.append("dgalbumid", dgalbumId == null ? HumanBeatsUtils.NA : dgalbumId);
+			log.info(albumId + ": " + dgalbumId);
 		}
-		page.append("dgalbumid", dgalbumId == null ? HumanBeatsUtils.NA : dgalbumId);
-		log.info(albumId + ": " + dgalbumId);
 	}
 
 	private org.bson.Document getAlbum(String albumId) {
-		if(StringUtils.isBlank(albumId)) {
+		if(StringUtils.isBlank(albumId) || albumId.equals(HumanBeatsUtils.NA)) {
 			return null;
 		}
-		String url = MUSICBRAINZ + "/release-group/" + albumId.trim() + "?fmt=json";
+		String url = MUSICBRAINZ + "/release-group/" + albumId.trim() + "?inc=url-rels&fmt=json";
 		return callMusicbrainz(url);
 	}
 
@@ -99,8 +98,7 @@ public class DiscogsLoader
 	}
 
 	private void loadTracksDGId(org.bson.Document page) {
-		List<org.bson.Document> tracks = page.get("tracks", List.class);
-		for(org.bson.Document track : tracks) {
+		page.getList("tracks", org.bson.Document.class).forEach(track -> {
 			String albumId = track.getString("albumid");
 			String dgalbumId = page.getString("dgalbumid");
 
@@ -108,30 +106,14 @@ public class DiscogsLoader
 			org.bson.Document dgalbum = getAlbum(albumId);
 			if(dgalbum != null) {
 				dgalbumId = getAlbumId(dgalbum);
+				track.append("dgalbumid", dgalbumId == null ? HumanBeatsUtils.NA : dgalbumId);
+				log.info(albumId + ": " + dgalbumId);
 			}
-			track.append("dgalbumid", dgalbumId == null ? HumanBeatsUtils.NA : dgalbumId);
-			log.info(albumId + ": " + dgalbumId);
-		}
+		});
 	}
 
 	private String getAlbumId(org.bson.Document album) {
-		// ex. https://musicbrainz.org/ws/2/release-group/3bd76d40-7f0e-36b7-9348-91a33afee20e?inc=url-rels&fmt=json
-		// relations[].type = 'discogs' -> relations[].url.resource
-		return null;
-		//		TreeMap<Integer, String> scores = Maps.newTreeMap();
-		//		List<org.bson.Document> releases = album.get("releases", List.class);
-		//		if(CollectionUtils.isNotEmpty(releases)) {
-		//			for(org.bson.Document release : releases) {
-		//				int score = release == null ? 0 : release.getInteger("score");
-		//				String mbartist = getRecordingArtist(release);
-		//				String mbtitle = getRecordingTitle(release);
-		//				int scoreTitle = FuzzySearch.tokenSetRatio(title, mbartist + " - " + mbtitle);
-		//				if(score >= HumanBeatsUtils.THRESHOLD && scoreTitle >= HumanBeatsUtils.THRESHOLD) {
-		//					String albumId =  getRecordingAlbumId(release);
-		//					scores.put(scoreTitle, albumId);
-		//				}
-		//			}
-		//		}
-		//		return CollectionUtils.isEmpty(scores.keySet()) ? HumanBeatsUtils.NA : scores.get(scores.lastEntry().getKey());
+		org.bson.Document discogs = album.getList("relations", org.bson.Document.class).stream().filter(r -> r.get("type").equals("discogs")).findFirst().orElse(null);
+		return discogs == null ? null : discogs.get("url", org.bson.Document.class).getString("resource");
 	}
 }

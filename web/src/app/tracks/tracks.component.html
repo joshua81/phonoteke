@@ -22,6 +22,9 @@
                 <div *ngIf="track.youtube" class="d-flex flex-row align-items-center justify-content-center mr-1" (click)="app.playYoutube(track.youtube)">
                     <span class="youtube"></span>
                 </div>
+                <a *ngIf="track.dgalbumid" href="{{track.dgalbumid}}" target="_blank">
+                    <span class="discogs"></span>
+                </a>
                 <!--div *ngIf="track.artistid" class="d-flex flex-row align-items-center justify-content-center ml-1 mr-1" (click)="app.loadEvents(track.artistid)">
                     <span class="songkick"></span>
                 </div-->

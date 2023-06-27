@@ -138,7 +138,6 @@ public class WWFMCrawler extends AbstractCrawler
 		catch (Throwable t) 
 		{
 			log.error("ERROR parsing page " + id + ": " + t.getMessage());
-			throw new RuntimeException(t);
 		}
 	}
 

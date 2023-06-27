@@ -26,14 +26,6 @@ public class SpreakerCrawler extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
 
-	private static final String CASABERTALLOT = "casabertallot";
-	private static final String ROLLOVERHANGOVER = "rolloverhangover";
-	private static final String BLACKALOT = "blackalot";
-	private static final String CASSABERTALLOT = "cassabertallot";
-	private static final String RESETREFRESH = "resetrefresh";
-	private static final String THETUESDAYTAPES = "thetuesdaytapes";
-	private static final String JAZZTRACKS = "jazztracks";
-
 
 	public void load(String... args) 
 	{
@@ -112,7 +104,6 @@ public class SpreakerCrawler extends AbstractCrawler
 		catch (Throwable t) 
 		{
 			log.error("ERROR parsing page " + url + ": " + t.getMessage());
-			throw new RuntimeException(t);
 		}
 	}
 

@@ -72,7 +72,6 @@ public abstract class AbstractCrawler extends WebCrawler
 		catch (Throwable t) 
 		{
 			log.error("ERROR crawling " + url + ": " + t.getMessage());
-			throw new RuntimeException(t);
 		}
 	}
 

@@ -1,8 +1,16 @@
-<div class="d-flex flex-row flex-nowrap hscroll w-100 pt-2">
-  <div *ngFor="let video of tracks">
-    <div *ngIf="video.youtube" class="cover mr-2" (click)="app.playYoutube(video.youtube)">
-      <img class="cover" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
-      <span class="youtube"></span>
+<div *ngIf="tracks && tracks.length != 0" class="video">
+  <div *ngIf="app.isDesktop" class="backward" (click)="previous()">
+    <span class="previous"></span>
+  </div>
+  <div id="videos" class="d-flex flex-row flex-nowrap hscroll w-100 pt-2">
+    <div *ngFor="let video of tracks">
+      <div *ngIf="video.youtube" class="cover mr-2" (click)="app.playYoutube(video.youtube)">
+        <img class="cover" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
+        <span class="youtube"></span>
+      </div>
     </div>
+  </div>
+  <div *ngIf="app.isDesktop" class="forward" (click)="next()">
+    <span class="next"></span>
   </div>
 </div>

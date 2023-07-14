@@ -1,3 +1,7 @@
+.video {
+  position: relative;
+}
+
 div.cover {
   position: relative;
   cursor: pointer;

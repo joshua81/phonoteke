@@ -43,57 +43,67 @@ app.use(robots({
 }));
 
 app.get('/api/stats', async(req, res)=>{
+	console.log('/api/stats');
 	var result = await stats.find({'source': null}).toArray();
 	res.send(result[0]);
 });
 
 app.get('/api/stats/:source', async(req, res)=>{
+	console.log('/api/stats/' + req.params.source);
 	var result = await stats.find({'source': req.params.source}).toArray();
 	res.send(result[0]);
 });
 
 app.get('/api/albums', async(req, res)=>{
+	console.log('/api/albums');
 	var result = await findDocs('album', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/artists', async(req, res)=>{
+	console.log('/api/artists');
 	var result = await findDocs('artist', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/concerts', async(req, res)=>{
+	console.log('/api/concerts');
 	var result = await findDocs('concert', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/interviews', async(req, res)=>{
+	console.log('/api/interviews');
 	var result = await findDocs('interview', req.query.p, req.query.q, req.query.s);
 	res.send(result);
 });
 
 app.get('/api/podcasts', async(req, res)=>{
+	console.log('/api/podcasts');
 	var result = await authors.find().project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).sort({"lastEpisodeDate":-1, "name":1}).toArray();
 	res.send(result);
 });
 
 app.get('/api/podcasts/:source', async(req, res)=>{
+	console.log('/api/podcasts/' + req.params.source);
 	var result = await authors.find({'source': req.params.source}).project({source: 1, name: 1, cover: 1, lastEpisodeDate: 1}).toArray();
 	res.send(result);
 });
 
 app.get('/api/podcasts/:source/episodes', async(req, res)=>{
+	console.log('/api/podcasts/' + req.params.source + '/episodes');
 	var result = await findDocs('podcast', req.query.p, req.query.q, req.params.source);
 	res.send(result);
 });
 
 app.get('/api/events/:id', async(req, res)=>{
+	console.log('/api/events/' + req.params.id);
 	const json = await findEvents(req.params.id);
 	res.send(json && json.resultsPage.results.event ? json.resultsPage.results.event : []);
 });
 
 app.get('/api/login', async(req, res)=>{
-	console.log('Login to Spotify');
+	console.log('/api/login (login to Spotify...)');
 	res.redirect('https://accounts.spotify.com/authorize?' +
 			'response_type=code&' + 
 			'scope=user-library-read%20user-library-modify%20user-read-private%20user-read-playback-state%20user-modify-playback-state&' + 
@@ -107,7 +117,7 @@ app.get('/api/login/spotify', async(req,res)=>{
 		res.send(req.query.error);
 	}
 	else if(req.query.code) {
-		console.log('Login to Spotify done: ' + req.query.code);
+		console.log('Login to Spotify succeded: ' + req.query.code);
 		var options = {
 				url: 'https://accounts.spotify.com/api/token',
 				form: {
@@ -216,7 +226,6 @@ module.exports = app;
 //-----------------------------------------------
 
 async function findDoc(id) {
-	console.log('Docs: id=' + id);
 	var result = await docs.find({'id': id}).toArray();
 	if(result && result[0]) {
 		// reset 'na' values
@@ -264,8 +273,6 @@ async function findDoc(id) {
 async function findDocs(t, p, q, s) {
 	var result = null;
 	var nql = null;
-
-	console.log('Docs: page=' + p + ', query=' + q + ', type=' + t + ', source=' + s);
 	var page = Number(p) > 0 ? Number(p) : 0;
 	if(q != null && t != null) {
 		q = '.*' + q + '.*';
@@ -296,7 +303,6 @@ async function findDocs(t, p, q, s) {
 }
 
 async function findEvents(id) {
-	console.log('Events: id=' + id);
 	var result = null;
 	if(id != null && id != 'na') {
 		result = await new Promise((resolve, reject) => {
@@ -319,7 +325,6 @@ async function findEvents(id) {
 }
 
 async function findLinks(id) {
-	console.log('Links: id=' + id);
 	const doc = await docs.find({'id': id}).toArray();
 	if(doc && doc[0]) {
 		var artists = [];

@@ -33,9 +33,10 @@ import { AlbumComponent } from './album/album.component';
     BrowserModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent},
-      {path: ':source', component: HomeComponent},
       {path: 'albums/:id', component: AlbumComponent},
-      {path: 'episodes/:id', component: EpisodeComponent}]),
+      {path: ':section', component: HomeComponent},
+      {path: ':source/:section', component: HomeComponent},
+      {path: ':source/episodes/:id', component: EpisodeComponent}]),
     FormsModule,
     HttpClientModule,
     InfiniteScrollModule,

@@ -13,7 +13,7 @@ import { AppComponent } from '../app.component';
 })
 export class HomeComponent implements OnInit {
   spalbumid:string = null;
-  status:string = "albums";
+  status:string = null;
   source:string = null;
   name:string = null;
   albums = [];
@@ -29,11 +29,19 @@ export class HomeComponent implements OnInit {
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
-    .pipe(map(params => ({source: params[0].source})))
+    .pipe(map(params => ({
+      source: params[0].source, 
+      section: params[0].section})))
     .subscribe(params => {
       window.scrollTo(0, 0);
       if(params.source != undefined && params.source != null) {
         this.source = params.source;
+      }
+      if(params.section != undefined && params.section != null) {
+        this.setStatus(params.section);
+      }
+      else {
+        this.setStatus(this.source == null ? "shows" : "episodes");
       }
       this.reset();
       this.loadStats();
@@ -45,7 +53,7 @@ export class HomeComponent implements OnInit {
   }
 
   reset() {
-    this.setStatus(this.source == null ? "shows" : "episodes");
+    //this.setStatus(this.source == null ? "shows" : "episodes");
     this.name = null;
     this.spalbumid = null;
     this.albums = [];

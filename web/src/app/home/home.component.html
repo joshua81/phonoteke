@@ -10,21 +10,31 @@
 
     <!-- menu -->
     <div class="menu d-flex flex-row justify-content-center w-100">
-      <div *ngIf="source == null && shows.length > 0" class="menu-item" [ngClass]="{'selected': status == 'shows'}" (click)="setStatus('shows')">
-        <h3 class="pl-2 pr-2 text-white">Shows</h3>
-      </div>
-      <div *ngIf="source != null && episodes.length > 0" class="menu-item" [ngClass]="{'selected': status == 'episodes'}" (click)="setStatus('episodes')">
-        <h3 class="pl-2 pr-2 text-white">Episodes</h3>
-      </div>
-      <div *ngIf="albums.length > 0" class="menu-item" [ngClass]="{'selected': status == 'albums'}" (click)="setStatus('albums')">
-        <h3 class="pl-2 pr-2 text-white">Albums</h3>
-      </div>
-      <div *ngIf="tracks.length > 0" class="menu-item" [ngClass]="{'selected': status == 'tracks'}" (click)="setStatus('tracks')">
-        <h3 class="pl-2 pr-2 text-white">Tracks</h3>
-      </div>
-      <div *ngIf="videos.length > 0" class="menu-item" [ngClass]="{'selected': status == 'videos'}" (click)="setStatus('videos')">
-        <h3 class="pl-2 pr-2 text-white">Videos</h3>
-      </div>
+      <a *ngIf="source == null" [routerLink]="['/shows']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
+          <h3 class="pl-2 pr-2 text-white">Shows</h3>
+        </div>
+      </a>
+      <a *ngIf="source != null" [routerLink]="['/' + source + '/episodes']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
+          <h3 class="pl-2 pr-2 text-white">Episodes</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/albums' : '/' + source + '/albums']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
+          <h3 class="pl-2 pr-2 text-white">Albums</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/tracks' : '/' + source + '/tracks']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'tracks'}">
+          <h3 class="pl-2 pr-2 text-white">Tracks</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/videos' : '/' + source + '/videos']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
+          <h3 class="pl-2 pr-2 text-white">Videos</h3>
+        </div>
+      </a>
     </div>
   </div>
 
@@ -77,7 +87,7 @@
   <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let show of shows">
       <div class="show">
-        <a [routerLink]="['/' + show.source]">
+        <a [routerLink]="['/' + show.source + '/episodes']">
           <img class="show" src="{{show.cover}}" loading="lazy"/>
           <h2 class="font-weight-normal text-white">{{show.name}}</h2>
         </a>

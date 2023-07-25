@@ -34,12 +34,14 @@ app.set('view engine', 'ejs');
 app.use('/images', express.static('images'));
 app.use('/css', express.static('css'));
 app.use('/js', express.static('js'));
+app.use('/robots', express.static('robots'));
 app.use('/', express.static('web'));
 app.use(cookieParser());
 app.use(robots({
 	UserAgent: '*',
-	Disallow: '/',
-	CrawlDelay: '5'
+	//Disallow: '/',
+	CrawlDelay: '5',
+	Sitemap: 'https://humanbeats.appspot.com/robots/sitemap.xml',
 }));
 
 app.get('/api/stats', async(req, res)=>{

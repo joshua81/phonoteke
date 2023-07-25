@@ -5,7 +5,7 @@
 <!-- Spotify player -->
 <div *ngIf="track" class="fixed-bottom">
   <div class="player-spotify d-flex flex-row align-items-center">
-    <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
+    <a class="cover" [routerLink]="doc == null ? ['/'] : ['/shows/' + doc.source + '/episodes/' + doc.id]">
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
     <div class="cover d-flex flex-row align-items-center" (click)="playPauseSpotify(spalbumid)">
@@ -37,7 +37,7 @@
 <!-- Podcast player -->
 <div *ngIf="audio" class="fixed-bottom">
   <div class="player-spotify d-flex flex-row align-items-center">
-    <a class="cover" [routerLink]="doc == null ? ['/'] : ['/episodes/' + doc.id]">
+    <a class="cover" [routerLink]="doc == null ? ['/'] : ['/shows/' + doc.source + '/episodes/' + doc.id]">
       <img class="cover" src="{{audio.cover}}"/>
     </a>
     <div class="cover d-flex flex-row align-items-center" (click)="playPauseAudio()">

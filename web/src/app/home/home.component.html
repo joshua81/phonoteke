@@ -10,27 +10,27 @@
 
     <!-- menu -->
     <div class="menu d-flex flex-row justify-content-center w-100">
-      <a *ngIf="source == null" [routerLink]="['/shows']">
+      <a *ngIf="source == null" [routerLink]="['/']">
         <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
           <h3 class="pl-2 pr-2 text-white">Shows</h3>
         </div>
       </a>
-      <a *ngIf="source != null" [routerLink]="['/' + source + '/episodes']">
+      <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
         <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
           <h3 class="pl-2 pr-2 text-white">Episodes</h3>
         </div>
       </a>
-      <a [routerLink]="[source == null ? '/albums' : '/' + source + '/albums']">
+      <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
         <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
           <h3 class="pl-2 pr-2 text-white">Albums</h3>
         </div>
       </a>
-      <a [routerLink]="[source == null ? '/tracks' : '/' + source + '/tracks']">
+      <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
         <div class="menu-item" [ngClass]="{'selected': status == 'tracks'}">
           <h3 class="pl-2 pr-2 text-white">Tracks</h3>
         </div>
       </a>
-      <a [routerLink]="[source == null ? '/videos' : '/' + source + '/videos']">
+      <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
         <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
           <h3 class="pl-2 pr-2 text-white">Videos</h3>
         </div>
@@ -87,7 +87,7 @@
   <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let show of shows">
       <div class="show">
-        <a [routerLink]="['/' + show.source + '/episodes']">
+        <a [routerLink]="['/shows/' + show.source]">
           <img class="show" src="{{show.cover}}" loading="lazy"/>
           <h2 class="font-weight-normal text-white">{{show.name}}</h2>
         </a>

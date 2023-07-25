@@ -5,7 +5,7 @@
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
     <div *ngFor="let link of links" class="mr-2">
       <div class="cover card">
-        <a class="cover" [routerLink]="[type == 'albums' ? '/albums/' + link.id : '/' + link.source + '/episodes/' + link.id]">
+        <a class="cover" [routerLink]="[type == 'albums' ? '/albums/' + link.id : '/shows/' + link.source + '/episodes/' + link.id]">
           <img *ngIf="link.coverM == null" class="cover card-img-top" src="{{link.cover}}" loading="lazy"/>
           <img *ngIf="link.coverM != null" class="cover card-img-top" src="{{link.coverM}}" loading="lazy"/>
         </a>

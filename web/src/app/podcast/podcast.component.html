@@ -1,7 +1,7 @@
 <div infinite-scroll (scrolled)="scrollEpisodes()" class="d-flex flex-wrap justify-content-center w-100 pt-2">
   <div *ngFor="let doc of docs">
     <div class="cover card">
-      <a class="cover" [routerLink]="['/' + source + '/episodes/' + doc.id]">
+      <a class="cover" [routerLink]="['/shows/' + source + '/episodes/' + doc.id]">
         <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}" loading="lazy"/>
         <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}" loading="lazy"/>
       </a>

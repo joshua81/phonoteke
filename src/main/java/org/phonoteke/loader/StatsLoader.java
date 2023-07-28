@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Maps;
+import com.google.api.client.util.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -30,6 +33,8 @@ public class StatsLoader
 {
 	@Autowired
 	private MongoRepository repo;
+
+	private Map<String, Set<String>> affinity = Maps.newHashMap();
 
 	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
 	private Map<String, Document> artistsDocs = Maps.newHashMap();
@@ -48,22 +53,44 @@ public class StatsLoader
 	private List<String> videosList = Lists.newArrayList();
 
 
-	public void load(String... args)
-	{
+	public void load(String... args) {
 		if(args.length == 0) {
 			calculateStats(null);
-
 			MongoCursor<Document> i = repo.getAuthors().find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				String source = page.getString("source");
 				calculateStats(source);
 			}
+			calculateAffinity();
 		}
 		else {
 			String source = args[0];
 			calculateStats(source);
 		}
+	}
+
+	private void calculateAffinity() {
+		affinity.keySet().forEach(artist1 -> {
+			affinity.keySet().forEach(artist2 -> {
+				if(!artist1.equals(artist2)) {
+					Set<String> set1 = new HashSet<String>(affinity.get(artist1));
+					Set<String> set2 = new HashSet<String>(affinity.get(artist2));
+					if(set1.size() >= set2.size()) {
+						int size = set1.size();
+						set1.retainAll(set2);
+						BigDecimal affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+						log.info("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
+					}
+					else {
+						int size = set2.size();
+						set2.retainAll(set1);
+						BigDecimal affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+						log.info("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
+					}
+				}
+			});
+		});
 	}
 
 	private void calculateStats(String source) {
@@ -122,6 +149,11 @@ public class StatsLoader
 					artistsScore.put(artist, score.add(BigDecimal.ONE));
 					artistsDocs.put(artist, t);
 					artistsList.add(artist);
+
+					if(source != null) {
+						affinity.putIfAbsent(source, Sets.newHashSet());
+						affinity.get(source).add(artist);
+					}
 				}
 
 				// Album

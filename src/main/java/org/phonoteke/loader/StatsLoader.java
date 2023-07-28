@@ -1,6 +1,7 @@
 package org.phonoteke.loader;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,54 +32,78 @@ public class StatsLoader
 	private MongoRepository repo;
 
 	private Map<String, BigDecimal> artistsScore = Maps.newHashMap();
-	private Map<String, Document> artists = Maps.newHashMap();
+	private Map<String, Document> artistsDocs = Maps.newHashMap();
+	private List<String> artistsList = Lists.newArrayList();
 
 	private Map<String, BigDecimal> albumsScore = Maps.newHashMap();
-	private Map<String, Document> albums = Maps.newHashMap();
+	private Map<String, Document> albumsDocs = Maps.newHashMap();
+	private List<String> albumsList = Lists.newArrayList();
 
 	private Map<String, BigDecimal> songsScore = Maps.newHashMap();
-	private Map<String, Document> songs = Maps.newHashMap();
+	private Map<String, Document> songsDocs = Maps.newHashMap();
+	private List<String> songsList = Lists.newArrayList();
 
 	private Map<String, BigDecimal> videosScore = Maps.newHashMap();
-	private Map<String, Document> videos = Maps.newHashMap();
+	private Map<String, Document> videosDocs = Maps.newHashMap();
+	private List<String> videosList = Lists.newArrayList();
 
 
 	public void load(String... args)
 	{
 		if(args.length == 0) {
-			loadPodcast(null);
+			calculateStats(null);
 
 			MongoCursor<Document> i = repo.getAuthors().find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				String source = page.getString("source");
-				loadPodcast(source);
+				calculateStats(source);
 			}
 		}
 		else {
 			String source = args[0];
-			loadPodcast(source);
+			calculateStats(source);
 		}
 	}
 
-	private void loadPodcast(String source) {
+	private void calculateStats(String source) {
 		log.info("Calculating stats " + source + "...");
+		collectData(source);
+
+		MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
+		Document doc = j.next();
+		doc.append("artists", getTopArtists());
+		doc.append("artistsVar", getArtistsVar());
+		doc.append("albums", getTopAlbums());
+		doc.append("albumsVar", getAlbumsVar());
+		doc.append("tracks", getTopTracks());
+		doc.append("tracksVar", getTracksVar());
+		doc.append("videos", getTopVideos());
+		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+		log.info(source + " updated");
+	}
+
+	private void collectData(String source) {
+		artistsScore = Maps.newHashMap();
+		artistsDocs = Maps.newHashMap();
+		artistsList = Lists.newArrayList();
+
+		albumsScore = Maps.newHashMap();
+		albumsDocs = Maps.newHashMap();
+		albumsList = Lists.newArrayList();
+
+		songsScore = Maps.newHashMap();
+		songsDocs = Maps.newHashMap();
+		songsList = Lists.newArrayList();
+
+		videosScore = Maps.newHashMap();
+		videosDocs = Maps.newHashMap();
+		videosList = Lists.newArrayList();
+
 		MongoCursor<Document> i = getDocs(source);
 		if(!i.hasNext()) {
 			return;
 		}
-
-		artistsScore = Maps.newHashMap();
-		artists = Maps.newHashMap();
-
-		albumsScore = Maps.newHashMap();
-		albums = Maps.newHashMap();
-
-		songsScore = Maps.newHashMap();
-		songs = Maps.newHashMap();
-
-		videosScore = Maps.newHashMap();
-		videos = Maps.newHashMap();
 
 		i.forEachRemaining(page -> {
 			List<Document> tracks = page.get("tracks", List.class);
@@ -86,7 +111,6 @@ public class StatsLoader
 				return;
 			}
 
-			String s = page.getString("source");
 			Date date = page.getDate("date");
 			tracks.forEach(t -> {
 				t.put("date", date);
@@ -96,7 +120,8 @@ public class StatsLoader
 				if(artist != null && !HumanBeatsUtils.NA.equals(artist)) {
 					BigDecimal score = artistsScore.getOrDefault(artist, BigDecimal.ZERO);
 					artistsScore.put(artist, score.add(BigDecimal.ONE));
-					artists.put(artist, t);
+					artistsDocs.put(artist, t);
+					artistsList.add(artist);
 				}
 
 				// Album
@@ -104,7 +129,8 @@ public class StatsLoader
 				if(album != null && !HumanBeatsUtils.NA.equals(album)) {
 					BigDecimal score = albumsScore.getOrDefault(album, BigDecimal.ZERO);
 					albumsScore.put(album, score.add(BigDecimal.ONE));
-					albums.put(album, t);
+					albumsDocs.put(album, t);
+					albumsList.add(album);
 				}
 
 				// Song
@@ -112,7 +138,8 @@ public class StatsLoader
 				if(song != null && !HumanBeatsUtils.NA.equals(song)) {
 					BigDecimal score = songsScore.getOrDefault(song, BigDecimal.ZERO);
 					songsScore.put(song, score.add(BigDecimal.ONE));
-					songs.put(song, t);
+					songsDocs.put(song, t);
+					songsList.add(song);
 				}
 
 				// Video
@@ -120,74 +147,29 @@ public class StatsLoader
 				if(video != null && !HumanBeatsUtils.NA.equals(video)) {
 					BigDecimal score = videosScore.getOrDefault(video, BigDecimal.ZERO);
 					videosScore.put(video, score.add(BigDecimal.ONE));
-					videos.put(video, t);
+					videosDocs.put(video, t);
+					videosList.add(video);
 				}
 			});
 		});
+	}
 
-		MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
-		final Document doc = j.next();
+	private BigDecimal getArtistsVar() {
+		return new BigDecimal(artistsDocs.keySet().size()).divide(new BigDecimal(artistsList.size()), 4, RoundingMode.HALF_UP);
+	}
 
-		// Artists
-		List<Document> jsonArtists = Lists.newArrayList(artists.values());
-		Collections.sort(jsonArtists, new Comparator<Document>() {
-			@Override
-			public int compare(Document a1, Document a2) {
-				int res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
-			}
-		});
-		doc.append("artists", Lists.newArrayList());
-		subList(jsonArtists, 100).forEach(a -> {
-			log.info("Artist: " + a.getString("artist") + ": " + artistScore(a));
-			doc.get("artists", List.class).add(getArtist(a));
-		});
+	private BigDecimal getAlbumsVar() {
+		return new BigDecimal(albumsDocs.keySet().size()).divide(new BigDecimal(albumsList.size()), 4, RoundingMode.HALF_UP);
+	}
 
-		// Albums
-		List<Document> jsonAlbums = Lists.newArrayList(albums.values());
-		Collections.sort(jsonAlbums, new Comparator<Document>() {
-			@Override
-			public int compare(Document a1, Document a2) {
-				int res = albumScore(a2).compareTo(albumScore(a1));
-				if(res != 0) {
-					return res;
-				}
-				res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
-			}
-		});
-		doc.append("albums", Lists.newArrayList());
-		subList(jsonAlbums, 100).forEach(a -> {
-			log.info("Album: " + a.getString("artist") + " - " + a.getString("album") + ": " + albumScore(a));
-			doc.get("albums", List.class).add(getAlbum(a));
-		});
+	private BigDecimal getTracksVar() {
+		return new BigDecimal(songsDocs.keySet().size()).divide(new BigDecimal(songsList.size()), 4, RoundingMode.HALF_UP);
+	}
 
-		// Tracks
-		List<Document> jsonSongs = Lists.newArrayList(songs.values());
-		Collections.sort(jsonSongs, new Comparator<Document>() {
-			@Override
-			public int compare(Document s1, Document s2) {
-				int res = trackScore(s2).compareTo(trackScore(s1));
-				if(res != 0) {
-					return res;
-				}
-				res = albumScore(s2).compareTo(albumScore(s1));
-				if(res != 0) {
-					return res;
-				}
-				res = artistScore(s2).compareTo(artistScore(s1));
-				return res != 0 ? res : trackDate(s2).compareTo(trackDate(s1));
-			}
-		});
-		doc.append("tracks", Lists.newArrayList());
-		subList(jsonSongs, 100).forEach(s -> {
-			log.info("Track: " + s.getString("artist") + " - " + s.getString("album") + " - " + s.getString("track") + ": " + trackScore(s));
-			doc.get("tracks", List.class).add(getTrack(s));
-		});
-
-		// Videos
+	private List<Document> getTopVideos() {
+		List<Document> topVideos = Lists.newArrayList();
 		if(MapUtils.isNotEmpty(videosScore)) {
-			List<Document> jsonVideos = Lists.newArrayList(videos.values());
+			List<Document> jsonVideos = Lists.newArrayList(videosDocs.values());
 			Collections.sort(jsonVideos, new Comparator<Document>() {
 				@Override
 				public int compare(Document v1, Document v2) {
@@ -203,15 +185,79 @@ public class StatsLoader
 					return res != 0 ? res : trackDate(v2).compareTo(trackDate(v1));
 				}
 			});
-			doc.append("videos", Lists.newArrayList());
+
 			subList(jsonVideos, 100).forEach(v -> {
-				log.info("Video: " + v.getString("artist") + " - " + v.getString("album") + " - " + v.getString("track") + ": " + videoScore(v));
-				doc.get("videos", List.class).add(getVideo(v));
+				log.debug("Video: " + v.getString("artist") + " - " + v.getString("album") + " - " + v.getString("track") + ": " + videoScore(v));
+				topVideos.add(getVideo(v));
 			});
 		}
+		return topVideos;
+	}
 
-		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-		log.info(source + " updated");
+	private List<Document> getTopTracks() {
+		List<Document> jsonSongs = Lists.newArrayList(songsDocs.values());
+		Collections.sort(jsonSongs, new Comparator<Document>() {
+			@Override
+			public int compare(Document s1, Document s2) {
+				int res = trackScore(s2).compareTo(trackScore(s1));
+				if(res != 0) {
+					return res;
+				}
+				res = albumScore(s2).compareTo(albumScore(s1));
+				if(res != 0) {
+					return res;
+				}
+				res = artistScore(s2).compareTo(artistScore(s1));
+				return res != 0 ? res : trackDate(s2).compareTo(trackDate(s1));
+			}
+		});
+
+		List<Document> topTracks = Lists.newArrayList();
+		subList(jsonSongs, 100).forEach(s -> {
+			log.debug("Track: " + s.getString("artist") + " - " + s.getString("album") + " - " + s.getString("track") + ": " + trackScore(s));
+			topTracks.add(getTrack(s));
+		});
+		return topTracks;
+	}
+
+	private List<Document> getTopAlbums() {
+		List<Document> jsonAlbums = Lists.newArrayList(albumsDocs.values());
+		Collections.sort(jsonAlbums, new Comparator<Document>() {
+			@Override
+			public int compare(Document a1, Document a2) {
+				int res = albumScore(a2).compareTo(albumScore(a1));
+				if(res != 0) {
+					return res;
+				}
+				res = artistScore(a2).compareTo(artistScore(a1));
+				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
+			}
+		});
+
+		List<Document> topAlbums = Lists.newArrayList();
+		subList(jsonAlbums, 100).forEach(a -> {
+			log.debug("Album: " + a.getString("artist") + " - " + a.getString("album") + ": " + albumScore(a));
+			topAlbums.add(getAlbum(a));
+		});
+		return topAlbums;
+	}
+
+	private List<Document> getTopArtists() {
+		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
+		Collections.sort(jsonArtists, new Comparator<Document>() {
+			@Override
+			public int compare(Document a1, Document a2) {
+				int res = artistScore(a2).compareTo(artistScore(a1));
+				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
+			}
+		});
+
+		List<Document> topArtists = Lists.newArrayList();
+		subList(jsonArtists, 100).forEach(a -> {
+			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
+			topArtists.add(getArtist(a));
+		});
+		return topArtists;
 	}
 
 	private MongoCursor<Document> getDocs(String source) {

@@ -71,48 +71,47 @@ public class StatsLoader
 	}
 
 	private void calculateAffinities() {
-		affinity.keySet().forEach(artist1 -> {
-			log.info("Calculating affinities " + artist1 + "...");
-			List<BigDecimal> affinityTot = Lists.newArrayList();
-			List<Document> affinities = Lists.newArrayList();
-			affinity.keySet().forEach(artist2 -> {
-				BigDecimal affinity = calculateAffinity(artist1, artist2);
-				if(affinity != null) {
-					affinityTot.add(affinity);
-					affinities.add(new Document("source", artist2)
-							.append("affinity", affinity.doubleValue()));
-				}
-			});
+		affinity.keySet().forEach(source -> {
+			log.info("Calculating affinities " + source + "...");
+			Map<String, BigDecimal> affinities = calculateAffinities(source);
+			BigDecimal affinitiesTot = affinities.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
-			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", artist1))).iterator();
+			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 			Document doc = j.next();
-			doc.append("affinities", affinities);
-			doc.append("affinityTot", affinityTot.stream().reduce(BigDecimal.ZERO, BigDecimal::add).doubleValue());
-			repo.getStats().updateOne(Filters.eq("source", artist1), new org.bson.Document("$set", doc));
-			log.info(artist1 + " updated");
+			List<Document> docs = Lists.newArrayList();
+			affinities.keySet().forEach(artist -> {
+				docs.add(new Document("source", artist)
+						.append("affinity", affinities.get(artist).doubleValue()));
+			});
+			doc.append("affinities", docs);
+			doc.append("affinitiesTot", affinitiesTot.doubleValue());
+			repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+			log.info(source + " updated");
 		});
 	}
 
-	private BigDecimal calculateAffinity(String artist1, String artist2) {
-		if(!artist1.equals(artist2)) {
-			Set<String> set1 = new HashSet<String>(affinity.get(artist1));
-			Set<String> set2 = new HashSet<String>(affinity.get(artist2));
-			if(set1.size() >= set2.size()) {
-				int size = set1.size();
-				set1.retainAll(set2);
-				BigDecimal affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-				log.debug("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
-				return affinity;
+	private Map<String, BigDecimal> calculateAffinities(String source) {
+		Map<String, BigDecimal> affinities = Maps.newHashMap();
+		affinity.keySet().forEach(artist -> {
+			if(!source.equals(artist)) {
+				Set<String> set1 = new HashSet<String>(affinity.get(source));
+				Set<String> set2 = new HashSet<String>(affinity.get(artist));
+				BigDecimal affinity;
+				if(set1.size() >= set2.size()) {
+					int size = set1.size();
+					set1.retainAll(set2);
+					affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+				}
+				else {
+					int size = set2.size();
+					set2.retainAll(set1);
+					affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+				}
+				log.debug("affinity(" + source + ", " + artist + "): " + affinity);
+				affinities.put(artist, affinity);
 			}
-			else {
-				int size = set2.size();
-				set2.retainAll(set1);
-				BigDecimal affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-				log.debug("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
-				return affinity;
-			}
-		}
-		return null;
+		});
+		return affinities;
 	}
 
 	private void calculateStats(String source) {

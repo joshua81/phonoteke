@@ -72,6 +72,7 @@ public class StatsLoader
 
 	private void calculateAffinities() {
 		affinity.keySet().forEach(artist1 -> {
+			log.info("Calculating affinities " + artist1 + "...");
 			List<Document> affinities = Lists.newArrayList();
 			affinity.keySet().forEach(artist2 -> {
 				BigDecimal affinity = calculateAffinity(artist1, artist2);

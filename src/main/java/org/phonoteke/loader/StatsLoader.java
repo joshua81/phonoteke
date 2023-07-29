@@ -73,10 +73,12 @@ public class StatsLoader
 	private void calculateAffinities() {
 		affinity.keySet().forEach(artist1 -> {
 			log.info("Calculating affinities " + artist1 + "...");
+			List<BigDecimal> affinityTot = Lists.newArrayList();
 			List<Document> affinities = Lists.newArrayList();
 			affinity.keySet().forEach(artist2 -> {
 				BigDecimal affinity = calculateAffinity(artist1, artist2);
 				if(affinity != null) {
+					affinityTot.add(affinity);
 					affinities.add(new Document("source", artist2)
 							.append("affinity", affinity.doubleValue()));
 				}
@@ -85,6 +87,7 @@ public class StatsLoader
 			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", artist1))).iterator();
 			Document doc = j.next();
 			doc.append("affinities", affinities);
+			doc.append("affinityTot", affinityTot.stream().reduce(BigDecimal.ZERO, BigDecimal::add).doubleValue());
 			repo.getStats().updateOne(Filters.eq("source", artist1), new org.bson.Document("$set", doc));
 			log.info(artist1 + " updated");
 		});

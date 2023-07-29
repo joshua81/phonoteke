@@ -78,12 +78,12 @@ public class StatsLoader
 
 			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 			Document doc = j.next();
-			List<Document> docs = Lists.newArrayList();
+			List<Document> affinitiesDoc = Lists.newArrayList();
 			affinities.keySet().forEach(artist -> {
-				docs.add(new Document("source", artist)
+				affinitiesDoc.add(new Document("source", artist)
 						.append("affinity", affinities.get(artist).doubleValue()));
 			});
-			doc.append("affinities", docs);
+			doc.append("affinities", affinitiesDoc);
 			doc.append("affinitiesTot", affinitiesTot.doubleValue());
 			repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 			log.info(source + " updated");
@@ -94,18 +94,18 @@ public class StatsLoader
 		Map<String, BigDecimal> affinities = Maps.newHashMap();
 		affinity.keySet().forEach(artist -> {
 			if(!source.equals(artist)) {
-				Set<String> set1 = new HashSet<String>(affinity.get(source));
-				Set<String> set2 = new HashSet<String>(affinity.get(artist));
+				Set<String> artists1 = new HashSet<String>(affinity.get(source));
+				Set<String> artists2 = new HashSet<String>(affinity.get(artist));
 				BigDecimal affinity;
-				if(set1.size() >= set2.size()) {
-					int size = set1.size();
-					set1.retainAll(set2);
-					affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+				if(artists1.size() >= artists2.size()) {
+					int size = artists1.size();
+					artists1.retainAll(artists2);
+					affinity = new BigDecimal(artists1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
 				}
 				else {
-					int size = set2.size();
-					set2.retainAll(set1);
-					affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+					int size = artists2.size();
+					artists2.retainAll(artists1);
+					affinity = new BigDecimal(artists2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
 				}
 				log.debug("affinity(" + source + ", " + artist + "): " + affinity);
 				affinities.put(artist, affinity);

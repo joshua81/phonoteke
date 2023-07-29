@@ -62,7 +62,7 @@ public class StatsLoader
 				String source = page.getString("source");
 				calculateStats(source);
 			}
-			calculateAffinity();
+			calculateAffinities();
 		}
 		else {
 			String source = args[0];
@@ -70,27 +70,45 @@ public class StatsLoader
 		}
 	}
 
-	private void calculateAffinity() {
+	private void calculateAffinities() {
 		affinity.keySet().forEach(artist1 -> {
+			List<Document> affinities = Lists.newArrayList();
 			affinity.keySet().forEach(artist2 -> {
-				if(!artist1.equals(artist2)) {
-					Set<String> set1 = new HashSet<String>(affinity.get(artist1));
-					Set<String> set2 = new HashSet<String>(affinity.get(artist2));
-					if(set1.size() >= set2.size()) {
-						int size = set1.size();
-						set1.retainAll(set2);
-						BigDecimal affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-						log.info("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
-					}
-					else {
-						int size = set2.size();
-						set2.retainAll(set1);
-						BigDecimal affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-						log.info("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
-					}
+				BigDecimal affinity = calculateAffinity(artist1, artist2);
+				if(affinity != null) {
+					affinities.add(new Document("source", artist2)
+							.append("affinity", affinity.doubleValue()));
 				}
 			});
+
+			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", artist1))).iterator();
+			Document doc = j.next();
+			doc.append("affinities", affinities);
+			repo.getStats().updateOne(Filters.eq("source", artist1), new org.bson.Document("$set", doc));
+			log.info(artist1 + " updated");
 		});
+	}
+
+	private BigDecimal calculateAffinity(String artist1, String artist2) {
+		if(!artist1.equals(artist2)) {
+			Set<String> set1 = new HashSet<String>(affinity.get(artist1));
+			Set<String> set2 = new HashSet<String>(affinity.get(artist2));
+			if(set1.size() >= set2.size()) {
+				int size = set1.size();
+				set1.retainAll(set2);
+				BigDecimal affinity = new BigDecimal(set1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+				log.debug("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
+				return affinity;
+			}
+			else {
+				int size = set2.size();
+				set2.retainAll(set1);
+				BigDecimal affinity = new BigDecimal(set2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
+				log.debug("affinity(" + artist1 + ", " + artist2 + "): " + affinity);
+				return affinity;
+			}
+		}
+		return null;
 	}
 
 	private void calculateStats(String source) {
@@ -100,11 +118,11 @@ public class StatsLoader
 		MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 		Document doc = j.next();
 		doc.append("artists", getTopArtists());
-		doc.append("artistsVar", getArtistsVar());
+		doc.append("artistsVar", getArtistsVar().doubleValue());
 		doc.append("albums", getTopAlbums());
-		doc.append("albumsVar", getAlbumsVar());
+		doc.append("albumsVar", getAlbumsVar().doubleValue());
 		doc.append("tracks", getTopTracks());
-		doc.append("tracksVar", getTracksVar());
+		doc.append("tracksVar", getTracksVar().doubleValue());
 		doc.append("videos", getTopVideos());
 		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 		log.info(source + " updated");

@@ -96,17 +96,9 @@ public class StatsLoader
 			if(!source.equals(artist)) {
 				Set<String> artists1 = new HashSet<String>(affinity.get(source));
 				Set<String> artists2 = new HashSet<String>(affinity.get(artist));
-				BigDecimal affinity;
-				if(artists1.size() >= artists2.size()) {
-					int size = artists1.size();
-					artists1.retainAll(artists2);
-					affinity = new BigDecimal(artists1.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-				}
-				else {
-					int size = artists2.size();
-					artists2.retainAll(artists1);
-					affinity = new BigDecimal(artists2.size()).divide(new BigDecimal(size), 4, RoundingMode.HALF_UP);
-				}
+				int originalSize = artists1.size();
+				artists1.retainAll(artists2);
+				BigDecimal affinity = new BigDecimal(artists1.size()).divide(new BigDecimal(originalSize), 4, RoundingMode.HALF_UP);
 				log.debug("affinity(" + source + ", " + artist + "): " + affinity);
 				affinities.put(artist, affinity);
 			}

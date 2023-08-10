@@ -76,8 +76,8 @@ public class StatsLoader
 			Map<String, BigDecimal> affinities = calculateAffinities(source);
 			BigDecimal affinitiesTot = affinities.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
-			MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
-			Document doc = j.next();
+			MongoCursor<Document> i = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
+			Document doc = i.next();
 			List<Document> affinitiesDoc = Lists.newArrayList();
 			affinities.keySet().forEach(artist -> {
 				affinitiesDoc.add(new Document("source", artist)
@@ -110,15 +110,16 @@ public class StatsLoader
 		log.info("Calculating stats " + source + "...");
 		collectData(source);
 
-		MongoCursor<Document> j = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
-		Document doc = j.next();
-		doc.append("artists", getTopArtists());
+		MongoCursor<Document> i = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
+		Document doc = i.next();
+		doc.append("artists", getArtists());
 		doc.append("artistsVar", getArtistsVar().doubleValue());
-		doc.append("albums", getTopAlbums());
+		doc.append("albums", getAlbums());
 		doc.append("albumsVar", getAlbumsVar().doubleValue());
-		doc.append("tracks", getTopTracks());
+		doc.append("tracks", getTracks());
 		doc.append("tracksVar", getTracksVar().doubleValue());
-		doc.append("videos", getTopVideos());
+		doc.append("videos", getVideos());
+		doc.append("reviews", getReviews());
 		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 		log.info(source + " updated");
 	}
@@ -211,7 +212,7 @@ public class StatsLoader
 		return new BigDecimal(songsDocs.keySet().size()).divide(new BigDecimal(songsList.size()), 4, RoundingMode.HALF_UP);
 	}
 
-	private List<Document> getTopVideos() {
+	private List<Document> getVideos() {
 		List<Document> topVideos = Lists.newArrayList();
 		if(MapUtils.isNotEmpty(videosScore)) {
 			List<Document> jsonVideos = Lists.newArrayList(videosDocs.values());
@@ -239,7 +240,24 @@ public class StatsLoader
 		return topVideos;
 	}
 
-	private List<Document> getTopTracks() {
+	private List<Document> getReviews() {
+		List<Document> topReviews = Lists.newArrayList();
+		if(MapUtils.isNotEmpty(artistsScore)) {
+			List<String> artists = Lists.newArrayList(artistsScore.keySet());
+			MongoCursor<Document> i = repo.getDocs().find(
+					Filters.and(Filters.eq("source", "ondarock"), 
+							Filters.eq("type", "album"), 
+							Filters.in("spartistid", artists)))
+					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
+			while(i.hasNext()) {
+				Document page = i.next();
+				topReviews.add(getReview(page));
+			}
+		}
+		return topReviews;
+	}
+
+	private List<Document> getTracks() {
 		List<Document> jsonSongs = Lists.newArrayList(songsDocs.values());
 		Collections.sort(jsonSongs, new Comparator<Document>() {
 			@Override
@@ -265,7 +283,7 @@ public class StatsLoader
 		return topTracks;
 	}
 
-	private List<Document> getTopAlbums() {
+	private List<Document> getAlbums() {
 		List<Document> jsonAlbums = Lists.newArrayList(albumsDocs.values());
 		Collections.sort(jsonAlbums, new Comparator<Document>() {
 			@Override
@@ -287,7 +305,7 @@ public class StatsLoader
 		return topAlbums;
 	}
 
-	private List<Document> getTopArtists() {
+	private List<Document> getArtists() {
 		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
 		Collections.sort(jsonArtists, new Comparator<Document>() {
 			@Override
@@ -326,8 +344,7 @@ public class StatsLoader
 
 	private Document getArtist(Document track) {
 		return new Document("artist", track.getString("artist"))
-				.append("spartistid", track.getString("spartistid"))
-				.append("artistid", replaceNA(track.getString("artistid")));
+				.append("spartistid", track.getString("spartistid"));
 	}
 
 	private Document getAlbum(Document track) {
@@ -335,8 +352,7 @@ public class StatsLoader
 				.append("album", track.getString("album"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("spalbumid", track.getString("spalbumid"))
-				.append("cover", track.getString("coverM"))
-				.append("artistid", replaceNA(track.getString("artistid")));
+				.append("cover", track.getString("coverM"));
 	}
 
 	private Document getTrack(Document track) {
@@ -347,8 +363,7 @@ public class StatsLoader
 				.append("spalbumid", track.getString("spalbumid"))
 				.append("spotify", track.getString("spotify"))
 				.append("cover", track.getString("coverS"))
-				.append("youtube", replaceNA(track.getString("youtube")))
-				.append("artistid", replaceNA(track.getString("artistid")));
+				.append("youtube", replaceNA(track.getString("youtube")));
 	}
 
 	private Document getVideo(Document track) {
@@ -357,8 +372,20 @@ public class StatsLoader
 				.append("track", track.getString("track"))
 				.append("spartistid", track.getString("spartistid"))
 				.append("spalbumid", track.getString("spalbumid"))
-				.append("youtube", track.getString("youtube"))
-				.append("artistid", replaceNA(track.getString("artistid")));
+				.append("youtube", track.getString("youtube"));
+	}
+
+	private Document getReview(Document review) {
+		log.debug("Review: " + review.getString("artist") + " - " + review.getString("title"));
+		return new Document("id", review.getString("id"))
+				.append("artist", review.getString("artist"))
+				.append("album", review.getString("title"))
+				//.append("spartistid", review.getString("spartistid"))
+				//.append("spalbumid", review.getString("spalbumid"))
+				.append("cover", review.getString("coverM"))
+				//.append("description", review.getString("description"))
+				//.append("vote", review.getDouble("vote"))
+				.append("year", review.getInteger("year"));
 	}
 
 	private String replaceNA(String val) {

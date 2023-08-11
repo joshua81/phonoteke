@@ -23,7 +23,6 @@ import com.google.api.client.util.Sets;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.internal.operation.OrderBy;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -244,11 +243,11 @@ public class StatsLoader
 		List<Document> topReviews = Lists.newArrayList();
 		if(MapUtils.isNotEmpty(artistsScore)) {
 			List<String> artists = Lists.newArrayList(artistsScore.keySet());
-			MongoCursor<Document> i = repo.getDocs().find(
-					Filters.and(Filters.eq("source", "ondarock"), 
-							Filters.eq("type", "album"), 
-							Filters.in("spartistid", artists)))
-					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(100).iterator();
+			MongoCursor<Document> i = repo.getDocs().find(Filters.and(
+					Filters.eq("source", "ondarock"), 
+					Filters.eq("type", "album"), 
+					Filters.in("spartistid", artists)))
+					.sort(new BasicDBObject("year", -1).append("date", -1)).limit(100).iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
 				topReviews.add(getReview(page));
@@ -331,13 +330,13 @@ public class StatsLoader
 					Filters.eq("type", "podcast"),
 					Filters.gte("date", start),
 					Filters.lte("date", end)))
-					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).iterator();
+					.sort(new BasicDBObject("date", -1)).iterator();
 		}
 		else {
 			return repo.getDocs().find(Filters.and(
 					Filters.eq("type", "podcast"),
 					Filters.eq("source", source)))
-					.sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation()))
+					.sort(new BasicDBObject("date", -1))
 					.limit(30).iterator();
 		}
 	}

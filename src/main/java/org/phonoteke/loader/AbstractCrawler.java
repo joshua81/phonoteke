@@ -24,7 +24,6 @@ import com.google.common.hash.Hashing;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
-import com.mongodb.internal.operation.OrderBy;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -251,7 +250,10 @@ public abstract class AbstractCrawler extends WebCrawler
 	}
 
 	protected void updateLastEpisodeDate(String source) {
-		MongoCursor<org.bson.Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.eq("source", source))).sort(new BasicDBObject("date", OrderBy.DESC.getIntRepresentation())).limit(1).iterator();
+		MongoCursor<org.bson.Document> i = repo.getDocs().find(Filters.and(
+				Filters.eq("type", "podcast"), 
+				Filters.eq("source", source)))
+				.sort(new BasicDBObject("date", -1)).limit(1).iterator();
 		Date date = i.next().get("date", Date.class);
 		i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
 		org.bson.Document doc = i.next();

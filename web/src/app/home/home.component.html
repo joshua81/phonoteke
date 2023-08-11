@@ -25,6 +25,11 @@
           <h3 class="pl-2 pr-2 text-white">Albums</h3>
         </div>
       </a>
+      <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'reviews'}">
+          <h3 class="pl-2 pr-2 text-white">Reviews</h3>
+        </div>
+      </a>
       <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
         <div class="menu-item" [ngClass]="{'selected': status == 'tracks'}">
           <h3 class="pl-2 pr-2 text-white">Tracks</h3>
@@ -51,6 +56,17 @@
       </div>
       <div class="text-truncate-1 font-weight-bold">{{album.album}}</div>
       <div class="text-truncate-1">{{album.artist}}</div>
+    </div>
+  </div>
+
+  <!-- reviews -->
+  <div *ngIf="status=='reviews'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+    <div *ngFor="let review of reviews" class="album">
+      <a [routerLink]="['/albums/' + review.id]">
+        <img class="album" src="{{review.cover}}" loading="lazy"/>
+      </a>
+      <div class="text-truncate-1 font-weight-bold">{{review.year + ' | ' + review.album}}</div>
+      <div class="text-truncate-1">{{review.artist}}</div>
     </div>
   </div>
 

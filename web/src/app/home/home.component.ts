@@ -17,15 +17,12 @@ export class HomeComponent implements OnInit {
   source:string = null;
   name:string = null;
   albums = [];
-  albumsPage:number = 0;
   videos = [];
-  videosPage:number = 0;
   tracks = [];
-  tracksPpage:number = 0;
   shows = [];
-  showsPage:number = 0;
   episodes = [];
   episodesPage:number = 0;
+  reviews = [];
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
@@ -56,15 +53,12 @@ export class HomeComponent implements OnInit {
     this.name = null;
     this.spalbumid = null;
     this.albums = [];
-    this.albumsPage = 0;
     this.videos = [];
-    this.videosPage = 0;
     this.tracks = [];
-    this.tracksPpage = 0;
     this.shows = [];
-    this.showsPage = 0;
     this.episodes = [];
     this.episodesPage = 0;
+    this.reviews = [];
   }
 
   setStatus(status:string) {
@@ -99,13 +93,13 @@ export class HomeComponent implements OnInit {
     this.albums.push.apply(this.albums, data.albums);
     this.videos.push.apply(this.videos, data.videos);
     this.tracks.push.apply(this.tracks, data.tracks);
+    this.reviews.push.apply(this.reviews, data.reviews);
     this.app.loading = false;
   }
   
   loadPodcasts() {
     if(this.source == null && this.shows.length == 0) {
       this.shows = [];
-      this.showsPage = 0;
       this.app.loading = true;
       this.http.get('/api/podcasts').subscribe(
         (data: any) => {

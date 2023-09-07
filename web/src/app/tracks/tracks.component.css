@@ -59,7 +59,11 @@ span.album {
     cursor: pointer;
 }
 
-span.love {
+a.love {
+    color: #E83E8C;
+}
+
+/*span.love {
     display: inline-block;
     mask: url("/images/love-selected.svg") no-repeat;
     width: 20px;
@@ -112,7 +116,7 @@ span.discogs {
     padding: 0px;
     background: #000000;
     cursor: pointer;
-  }
+  }*/
 
 .counter {
     width: 20px;

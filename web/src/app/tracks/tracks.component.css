@@ -59,11 +59,7 @@ span.album {
     cursor: pointer;
 }
 
-a.love {
-    color: #E83E8C;
-}
-
-/*span.love {
+span.love {
     display: inline-block;
     mask: url("/images/love-selected.svg") no-repeat;
     width: 20px;
@@ -85,7 +81,7 @@ span.love-selected {
     cursor: pointer;
 }
 
-span.youtube {
+/*span.youtube {
     display: inline-block;
     mask: url("/images/youtube.svg") no-repeat;
     width: 20px;

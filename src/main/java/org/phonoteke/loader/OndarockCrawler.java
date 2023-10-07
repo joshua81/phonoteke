@@ -378,6 +378,9 @@ public class OndarockCrawler extends AbstractCrawler
 
 				Float vote = 0F;
 				Element voteElement = doc.select("span[class=voto]").first();
+				if(voteElement == null) {
+					voteElement = doc.select("span[class=voto red]").first();
+				}
 				if(voteElement != null) {
 					String voteStr = voteElement.text();
 					vote = format.parse(voteStr).floatValue();

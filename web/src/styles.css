@@ -17,7 +17,7 @@
 .form-control:focus {
     outline: none;
     box-shadow: none;
-    border-color: rgb(206, 212, 218);
+    border-color: rgb(206,212,218);
 }
 
 html, body {
@@ -41,8 +41,7 @@ html, body {
 .navbar {
     padding: 0px;
     height: 40px;
-    background: rgba(233,240,242,1);
-    opacity: 0.9;
+    background: rgba(233,240,242,.9);
 }
 
 .hscroll {
@@ -141,7 +140,7 @@ h3 {
     width: 100vw;
     height: 100vh;
     z-index: 2000;
-    background-color: rgb(233,240,242,0.5);
+    background-color: rgba(233,240,242,.5);
     cursor: pointer;
 }
 

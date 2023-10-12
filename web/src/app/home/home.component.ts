@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
   episodes = [];
   episodesPage:number = 0;
   reviews = [];
+  showMenu:boolean = false;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
@@ -64,6 +65,7 @@ export class HomeComponent implements OnInit {
   setStatus(status:string) {
     if(status != null) {
       this.status = status;
+      this.showMenu = false;
     }
   }
 
@@ -139,5 +141,9 @@ export class HomeComponent implements OnInit {
     this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts/' + data.source });
     this.meta.updateTag({ name: 'og:image', content: data.cover });
     this.meta.updateTag({ name: 'og:description', content: 'Human Beats - ' + data.name });
+  }
+
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
   }
 }

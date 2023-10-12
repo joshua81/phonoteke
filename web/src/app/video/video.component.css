@@ -24,7 +24,6 @@ span.youtube {
   padding: 0px;
   left: 96px;
   top: 52px;
-  background: #FFFFFF;
-  opacity: 0.6;
+  background: rgba(255,255,255,.6);
   cursor: pointer;
 }

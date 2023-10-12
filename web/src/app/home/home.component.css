@@ -12,8 +12,7 @@ h2 {
     bottom: 0px;
     left: 0px;
     right: 0px;
-    background-color: #000000;
-    opacity: 0.7;
+    background-color: rgba(0,0,0,.6);
 }
 
 h3 {
@@ -36,25 +35,22 @@ img.wallpaper {
 
 div.title {
     position: absolute;
-    bottom: 50px;
+    bottom: 0px;
     left: 0px;
-    background-color: #000000;
-    opacity: 0.7;
+    background-color: rgba(0,0,0,.6);
 }
 
 div.menu {
     position: absolute;
-    bottom: 4px;
+    border-radius: 2px;
+    width: 100px;
+    top: 35px;
+    right: 5px;
+    background-color: rgb(255,255,255,.8);
 }
 
 div.menu-item {
     cursor: pointer;
-}
-
-div.selected {
-    border-style: solid;
-    border-width: 0px 0px 2px 0px;
-    border-color: #FFFFFF;
 }
 
 div.show {
@@ -103,8 +99,8 @@ span.play {
     padding: 0px;
     left: 92px;
     top: 92px;
-    background: #FFFFFF;
-    opacity: 0.6;
+    background: rgb(255,255,255);
+    opacity: 0.8;
     cursor: pointer;
 }
 
@@ -118,7 +114,7 @@ span.play {
     height: 30px;
     top: 5px;
     left: 5px;
-    background: #000000;
+    background: rgb(0,0,0);
     opacity: 0.8;
     cursor: pointer;
 }
@@ -130,6 +126,32 @@ span.previous {
     height: 15px;
     margin: 0;
     padding: 0;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+div.bars {
+    position: absolute;
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 2px;
+  
+    width: 30px;
+    height: 30px;
+    top: 5px;
+    right: 5px;
+    background: rgb(0,0,0);
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+span.bars {
+    display: inline-block;
+    mask: url("/images/bars.svg") no-repeat;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    padding: 0px;
     background: #FFFFFF;
     cursor: pointer;
 }
@@ -186,7 +208,6 @@ span.youtube {
     padding: 0px;
     left: 39px;
     top: 18px;
-    background: #FFFFFF;
-    opacity: 0.6;
+    background: rgba(255,255,255,.6);
     cursor: pointer;
 }

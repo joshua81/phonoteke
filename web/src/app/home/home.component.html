@@ -7,48 +7,45 @@
       <span class="previous"></span>
     </div>
 
-    <!-- menu -->
-    <div class="bars d-flex flex-row justify-content-center align-items-center" (click)="toggleMenu()">
-      <span class="bars"></span>
-    </div>
-    <div *ngIf="showMenu" class="menu p-2">      
-      <a *ngIf="source == null" [routerLink]="['/']">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'shows'}">Shows</h3>
-        </div>
-      </a>
-      <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'episodes'}">Episodes</h3>
-        </div>
-      </a>
-      <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'albums'}">Albums</h3>
-        </div>
-      </a>
-      <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'reviews'}">Reviews</h3>
-        </div>
-      </a>
-      <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'tracks'}">Tracks</h3>
-        </div>
-      </a>
-      <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
-        <div class="menu-item text-right p-1">
-          <h3 [ngClass]="{'font-weight-bold': status == 'videos'}">Videos</h3>
-        </div>
-      </a>
-    </div>
-
     <div *ngIf="source != null" class="title text-left"><h1 class="text-white">{{name}}</h1></div>
   </div>
 
+  <!-- menu -->
+  <div class="menu d-flex flex-row justify-content-center w-100">
+    <a *ngIf="source == null" [routerLink]="['/']">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'shows'}">
+        <h3 class="pl-2 pr-2">Shows</h3>
+      </div>
+    </a>
+    <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'episodes'}">
+        <h3 class="pl-2 pr-2">Episodes</h3>
+      </div>
+    </a>
+    <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'albums'}">
+        <h3 class="pl-2 pr-2">Albums</h3>
+      </div>
+    </a>
+    <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'reviews'}">
+        <h3 class="pl-2 pr-2">Reviews</h3>
+      </div>
+    </a>
+    <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'tracks'}">
+        <h3 class="pl-2 pr-2">Tracks</h3>
+      </div>
+    </a>
+    <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
+      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'videos'}">
+        <h3 class="pl-2 pr-2">Videos</h3>
+      </div>
+    </a>
+  </div>
+
   <!-- albums -->
-  <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100">
     <div *ngFor="let album of albums" class="album">
       <a *ngIf="!app.isDesktop" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
         <img class="album" src="{{album.cover}}" loading="lazy"/>

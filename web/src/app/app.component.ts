@@ -356,6 +356,26 @@ export class AppComponent {
     }
   }
 
+  loadAffinities(shows: any) {
+    const token = this.cookieService.get('spotify-token');
+    if(token != null && token != '') {
+      const options = {
+        headers: new HttpHeaders({'Authorization': 'Bearer ' + token}),
+      };
+      this.http.get('https://api.spotify.com/v1/me/top/artists?limit=50&offset=0', options).subscribe(
+        (data: any) => {
+          var artists = data.items.map((item) => item.id);
+          this.http.get('/api/affinities?artists=' + artists.join()).subscribe(
+            (data: any) => {
+              this.loading = false;
+            });
+        },
+        error => {
+          this.refreshToken();
+        });
+    }
+  }
+
   setCurrentTimeAudio(e: any){
     var obj = e.target;
     var left = 0;

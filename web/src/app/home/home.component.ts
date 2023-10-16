@@ -104,6 +104,7 @@ export class HomeComponent implements OnInit {
       this.http.get('/api/podcasts').subscribe(
         (data: any) => {
           this.shows.push.apply(this.shows, data);
+          this.app.loadAffinities(this.shows);
           this.app.loading = false;
         });
     }

@@ -44,6 +44,26 @@ app.use(robots({
 	Sitemap: 'https://humanbeats.appspot.com/robots/sitemap.xml',
 }));
 
+app.get('/api/affinities', async(req, res)=>{
+	console.log('/api/affinities');
+	var statistics = await stats.find().project({source: 1, artists: 1}).toArray();
+	var affinities = [];
+	statistics.forEach(function(stat) {
+		if(stat.source != null) {
+			const set1 = new Set(stat.artists);
+			const set2 = new Set(req.query.artists.split(','));
+			const intersect = new Set(); 
+			for (let i of set1) { 
+				if (set2.has(i.spartistid)) { 
+					intersect.add(i); 
+				}
+			}
+			affinities.push({source: stat.source, affinity: intersect.size/set2.size});
+		}
+	});
+	res.send(affinities);
+});
+
 app.get('/api/stats', async(req, res)=>{
 	console.log('/api/stats');
 	var result = await stats.find({'source': null}).toArray();

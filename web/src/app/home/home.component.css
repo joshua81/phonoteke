@@ -166,6 +166,39 @@ span.spotify {
     background: #18A2B8;
 }
 
+.affinity-high {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #008450;
+}
+
+.affinity-medium {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #EFB700;
+}
+
+.affinity-low {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #B81D13;
+}
+
 div.video {
     position: relative;
     cursor: pointer;

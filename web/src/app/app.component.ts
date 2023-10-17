@@ -367,6 +367,10 @@ export class AppComponent {
           var artists = data.items.map((item) => item.id);
           this.http.get('/api/affinities?artists=' + artists.join()).subscribe(
             (data: any) => {
+              shows.forEach(function(show) {
+                var affinity = data.filter((i) => i.source == show.source)[0].affinity;
+                show.affinity = affinity;
+              });
               this.loading = false;
             });
         },

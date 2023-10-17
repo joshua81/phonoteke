@@ -155,7 +155,7 @@ span.spotify {
     cursor: pointer;
 }
 
-.yesterday {
+/*.yesterday {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -164,7 +164,7 @@ span.spotify {
     width: 10px;
     height: 10px;
     background: #18A2B8;
-}
+}*/
 
 .affinity-high {
     position: absolute;
@@ -187,17 +187,6 @@ span.spotify {
     height: 10px;
     background: #EFB700;
 }
-
-/*.affinity-low {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    background: #B81D13;
-}*/
 
 div.video {
     position: relative;

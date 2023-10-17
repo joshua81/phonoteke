@@ -13,32 +13,32 @@
   <!-- menu -->
   <div class="menu d-flex flex-row justify-content-center w-100">
     <a *ngIf="source == null" [routerLink]="['/']">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'shows'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
         <h3 class="pl-2 pr-2">Shows</h3>
       </div>
     </a>
     <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'episodes'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
         <h3 class="pl-2 pr-2">Episodes</h3>
       </div>
     </a>
     <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'albums'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
         <h3 class="pl-2 pr-2">Albums</h3>
       </div>
     </a>
     <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'reviews'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'reviews'}">
         <h3 class="pl-2 pr-2">Reviews</h3>
       </div>
     </a>
     <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'tracks'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'tracks'}">
         <h3 class="pl-2 pr-2">Tracks</h3>
       </div>
     </a>
     <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
-      <div class="menu-item" [ngClass]="{'font-weight-bold, selected': status == 'videos'}">
+      <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
         <h3 class="pl-2 pr-2">Videos</h3>
       </div>
     </a>
@@ -55,7 +55,6 @@
         <!--div *ngIf="app.gtYesterday(show.lastEpisodeDate)" class="yesterday"></div-->
         <div *ngIf="show.affinity && show.affinity >= 0.2" class="affinity-high"></div>
         <div *ngIf="show.affinity && show.affinity < 0.2 && show.affinity >= 0.1" class="affinity-medium"></div>
-        <!--div *ngIf="show.affinity && show.affinity < 0.1" class="affinity-low"></div-->
       </div>
     </div>
   </div>

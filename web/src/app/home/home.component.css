@@ -188,7 +188,7 @@ span.spotify {
     background: #EFB700;
 }
 
-.affinity-low {
+/*.affinity-low {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -197,7 +197,7 @@ span.spotify {
     width: 10px;
     height: 10px;
     background: #B81D13;
-}
+}*/
 
 div.video {
     position: relative;

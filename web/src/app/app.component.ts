@@ -368,8 +368,16 @@ export class AppComponent {
           this.http.get('/api/affinities?artists=' + artists.join()).subscribe(
             (data: any) => {
               shows.forEach(function(show) {
-                var affinity = data.filter((i) => i.source == show.source)[0].affinity;
-                show.affinity = affinity;
+                show.affinity = data.filter((i) => i.source == show.source)[0].affinity;
+              });
+              shows.sort((s1,s2) => {
+                // affinity desc
+                return ((s1.affinity >= 0.1 || s2.affinity >= 0.1) && s1.affinity < s2.affinity) ? 1 : 
+                ((s1.affinity >= 0.1 || s2.affinity >= 0.1) && s1.affinity > s2.affinity) ? -1 :
+                // lastEpisodeDate desc
+                (s1.lastEpisodeDate < s2.lastEpisodeDate) ? 1 : (s1.lastEpisodeDate > s2.lastEpisodeDate) ? -1 :
+                // name asc
+                (s1.name < s2.name) ? -1 : (s1.name > s2.name) ? 1 : 0;
               });
               this.loading = false;
             });

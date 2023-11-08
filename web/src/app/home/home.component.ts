@@ -22,17 +22,25 @@ export class HomeComponent implements OnInit {
   shows = [];
   episodes = [];
   episodesPage:number = 0;
+  episodesQuery:string = null;
   reviews = [];
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({
       source: params[0].source, 
-      section: params[0].section})))
+      section: params[0].section,
+      query: params[1].q})))
     .subscribe(params => {
       window.scrollTo(0, 0);
       if(params.source != undefined && params.source != null) {
         this.source = params.source;
+      }
+      if(params.query != undefined && params.query != null) {
+        this.episodesQuery = params.query;
+      }
+      else {
+        this.episodesQuery = null;
       }
       if(params.section != undefined && params.section != null) {
         this.setStatus(params.section);
@@ -115,7 +123,9 @@ export class HomeComponent implements OnInit {
       this.episodes = [];
       this.episodesPage = 0;
       this.app.loading = true;
-      this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
+      this.http.get('/api/podcasts/' + this.source + '/episodes' + 
+      '?p=' + this.episodesPage +
+      '&q=' + (this.episodesQuery == null ? '' : this.episodesQuery)).subscribe(
         (data: any) => {
           this.episodes.push.apply(this.episodes, data);
           this.app.loading = false;
@@ -126,7 +136,9 @@ export class HomeComponent implements OnInit {
   scrollEpisodes() {
     if(this.source != null && this.episodes.length > 0) {
       this.episodesPage++;
-      this.http.get('/api/podcasts/' + this.source + '/episodes?p=' + this.episodesPage).subscribe(
+      this.http.get('/api/podcasts/' + this.source + '/episodes' + 
+      '?p=' + this.episodesPage +
+      '&q=' + (this.episodesQuery == null ? '' : this.episodesQuery)).subscribe(
         (data: any) => {
           this.episodes.push.apply(this.episodes, data);
         });

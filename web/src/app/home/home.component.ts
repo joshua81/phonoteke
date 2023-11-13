@@ -30,18 +30,11 @@ export class HomeComponent implements OnInit {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({
       source: params[0].source, 
-      section: params[0].section,
-      query: params[1].q})))
+      section: params[0].section})))
     .subscribe(params => {
       window.scrollTo(0, 0);
       if(params.source != undefined && params.source != null) {
         this.source = params.source;
-      }
-      if(params.query != undefined && params.query != null) {
-        this.episodesQuery = params.query;
-      }
-      else {
-        this.episodesQuery = null;
       }
       if(params.section != undefined && params.section != null) {
         this.setStatus(params.section);
@@ -149,7 +142,7 @@ export class HomeComponent implements OnInit {
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
-    if(!this.showSearch) {
+    if(!this.showSearch && this.episodesQuery != null) {
       this.episodesQuery = null;
       this.episodes = [];
       this.loadEpisodes();

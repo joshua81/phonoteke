@@ -124,12 +124,49 @@ span.play {
     opacity: 0.8;
     cursor: pointer;
 }
+
+.finder {
+    position: absolute;
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 2px;
+  
+    width: 30px;
+    height: 30px;
+    top: 5px;
+    right: 5px;
+    background: rgb(0,0,0);
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.finder-input {
+    position: absolute;
+  
+    width: calc(100% - 80px);
+    height: 30px;
+    top: 5px;
+    right: 40px;
+    left: 40px;
+    opacity: 0.8;
+}
   
 span.previous {
     display: inline-block;
     mask: url("/images/previous.svg") no-repeat;
     width: 10px;
     height: 15px;
+    margin: 0;
+    padding: 0;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+span.search {
+    display: inline-block;
+    mask: url("/images/search.svg") no-repeat;
+    width: 12px;
+    height: 12px;
     margin: 0;
     padding: 0;
     background: #FFFFFF;

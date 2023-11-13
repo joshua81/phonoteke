@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   episodesPage:number = 0;
   episodesQuery:string = null;
   reviews = [];
+  showSearch = false;
 
   constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
     combineLatest(this.route.params, this.route.queryParams)
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit {
     this.shows = [];
     this.episodes = [];
     this.episodesPage = 0;
+    this.showSearch = false;
     this.reviews = [];
   }
 
@@ -143,6 +145,21 @@ export class HomeComponent implements OnInit {
           this.episodes.push.apply(this.episodes, data);
         });
     }
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+    if(!this.showSearch) {
+      this.episodesQuery = null;
+      this.episodes = [];
+      this.loadEpisodes();
+    }
+  }
+
+  onSearch(event: KeyboardEvent) {
+    this.episodesQuery = (event.target as HTMLInputElement).value;
+    this.episodes = [];
+    this.loadEpisodes();
   }
 
   setMeta(data:any) {

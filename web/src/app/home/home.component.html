@@ -6,6 +6,13 @@
     <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="app.back()">
       <span class="previous"></span>
     </div>
+    <!-- finder -->
+    <div *ngIf="showSearch" class="finder-input">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keyup.enter)="onSearch($event)">
+    </div>
+    <div *ngIf="source != null" class="finder d-flex flex-row justify-content-center align-items-center" (click)="toggleSearch()">
+      <span class="search"></span>
+    </div>
 
     <div *ngIf="source != null" class="title text-left"><h1 class="text-white">{{name}}</h1></div>
   </div>

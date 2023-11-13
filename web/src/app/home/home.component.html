@@ -8,7 +8,7 @@
     </div>
     <!-- finder -->
     <div *ngIf="showSearch" class="finder-input">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keyup.enter)="onSearch($event)">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
     </div>
     <div *ngIf="source != null" class="finder d-flex flex-row justify-content-center align-items-center" (click)="toggleSearch()">
       <span class="search"></span>

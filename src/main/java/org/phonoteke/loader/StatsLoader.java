@@ -154,6 +154,7 @@ public class StatsLoader
 			Date date = page.getDate("date");
 			tracks.forEach(t -> {
 				t.put("date", date);
+				t.put("index", tracks.indexOf(t));
 
 				// Artist
 				String artist = t.getString("spartistid");
@@ -183,7 +184,9 @@ public class StatsLoader
 				if(song != null && !HumanBeatsUtils.NA.equals(song)) {
 					BigDecimal score = songsScore.getOrDefault(song, BigDecimal.ZERO);
 					songsScore.put(song, score.add(BigDecimal.ONE));
-					songsDocs.put(song, t);
+					if(!songsDocs.containsKey(song)) {
+						songsDocs.put(song, t);
+					}
 					songsList.add(song);
 				}
 
@@ -192,7 +195,9 @@ public class StatsLoader
 				if(video != null && !HumanBeatsUtils.NA.equals(video)) {
 					BigDecimal score = videosScore.getOrDefault(video, BigDecimal.ZERO);
 					videosScore.put(video, score.add(BigDecimal.ONE));
-					videosDocs.put(video, t);
+					if(!videosDocs.containsKey(video)) {
+						videosDocs.put(video, t);
+					}
 					videosList.add(video);
 				}
 			});
@@ -218,21 +223,13 @@ public class StatsLoader
 			Collections.sort(jsonVideos, new Comparator<Document>() {
 				@Override
 				public int compare(Document v1, Document v2) {
-					int res = videoScore(v2).compareTo(videoScore(v1));
-					if(res != 0) {
-						return res;
-					}
-					res = albumScore(v2).compareTo(albumScore(v1));
-					if(res != 0) {
-						return res;
-					}
-					res = artistScore(v2).compareTo(artistScore(v1));
-					return res != 0 ? res : trackDate(v2).compareTo(trackDate(v1));
+					int res = trackDate(v2).compareTo(trackDate(v1));
+					return res != 0 ? res : trackIndex(v1).compareTo(trackIndex(v2));
 				}
 			});
 
 			subList(jsonVideos, 100).forEach(v -> {
-				log.debug("Video: " + v.getString("artist") + " - " + v.getString("album") + " - " + v.getString("track") + ": " + videoScore(v));
+				log.debug("Video: " + v.getString("artist") + " - " + v.getString("album") + " - " + v.getString("track"));
 				topVideos.add(getVideo(v));
 			});
 		}
@@ -261,22 +258,14 @@ public class StatsLoader
 		Collections.sort(jsonSongs, new Comparator<Document>() {
 			@Override
 			public int compare(Document s1, Document s2) {
-				int res = trackScore(s2).compareTo(trackScore(s1));
-				if(res != 0) {
-					return res;
-				}
-				res = albumScore(s2).compareTo(albumScore(s1));
-				if(res != 0) {
-					return res;
-				}
-				res = artistScore(s2).compareTo(artistScore(s1));
-				return res != 0 ? res : trackDate(s2).compareTo(trackDate(s1));
+				int res = trackDate(s2).compareTo(trackDate(s1));
+				return res != 0 ? res : trackIndex(s1).compareTo(trackIndex(s2));
 			}
 		});
 
 		List<Document> topTracks = Lists.newArrayList();
 		subList(jsonSongs, 100).forEach(s -> {
-			log.debug("Track: " + s.getString("artist") + " - " + s.getString("album") + " - " + s.getString("track") + ": " + trackScore(s));
+			log.debug("Track: " + s.getString("artist") + " - " + s.getString("album") + " - " + s.getString("track"));
 			topTracks.add(getTrack(s));
 		});
 		return topTracks;
@@ -287,18 +276,14 @@ public class StatsLoader
 		Collections.sort(jsonAlbums, new Comparator<Document>() {
 			@Override
 			public int compare(Document a1, Document a2) {
-				int res = albumScore(a2).compareTo(albumScore(a1));
-				if(res != 0) {
-					return res;
-				}
-				res = artistScore(a2).compareTo(artistScore(a1));
+				int res = artistScore(a2).compareTo(artistScore(a1));
 				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
 			}
 		});
 
 		List<Document> topAlbums = Lists.newArrayList();
 		subList(jsonAlbums, 100).forEach(a -> {
-			log.debug("Album: " + a.getString("artist") + " - " + a.getString("album") + ": " + albumScore(a));
+			log.debug("Album: " + a.getString("artist") + " - " + a.getString("album"));
 			topAlbums.add(getAlbum(a));
 		});
 		return topAlbums;
@@ -399,19 +384,23 @@ public class StatsLoader
 		return artistsScore.getOrDefault(track.get("spartistid"), BigDecimal.ZERO);
 	}
 
-	private BigDecimal albumScore(Document track) {
-		return albumsScore.getOrDefault(track.get("spalbumid"), BigDecimal.ZERO);
-	}
-
-	private BigDecimal videoScore(Document track) {
-		return videosScore.getOrDefault(track.get("youtube"), BigDecimal.ZERO);
-	}
-
-	private BigDecimal trackScore(Document track) {
-		return songsScore.getOrDefault(track.get("spotify"), BigDecimal.ZERO);
-	}
+	//	private BigDecimal albumScore(Document track) {
+	//		return albumsScore.getOrDefault(track.get("spalbumid"), BigDecimal.ZERO);
+	//	}
+	//
+	//	private BigDecimal videoScore(Document track) {
+	//		return videosScore.getOrDefault(track.get("youtube"), BigDecimal.ZERO);
+	//	}
+	//
+	//	private BigDecimal trackScore(Document track) {
+	//		return songsScore.getOrDefault(track.get("spotify"), BigDecimal.ZERO);
+	//	}
 
 	private Date trackDate(Document track) {
 		return track.getDate("date");
+	}
+
+	private Integer trackIndex(Document track) {
+		return track.getInteger("index");
 	}
 }

@@ -223,8 +223,8 @@ public class StatsLoader
 			Collections.sort(jsonVideos, new Comparator<Document>() {
 				@Override
 				public int compare(Document v1, Document v2) {
-					int res = trackDate(v2).compareTo(trackDate(v1));
-					return res != 0 ? res : trackIndex(v1).compareTo(trackIndex(v2));
+					int res = documentDate(v2).compareTo(documentDate(v1));
+					return res != 0 ? res : documentIndex(v1).compareTo(documentIndex(v2));
 				}
 			});
 
@@ -258,8 +258,8 @@ public class StatsLoader
 		Collections.sort(jsonSongs, new Comparator<Document>() {
 			@Override
 			public int compare(Document s1, Document s2) {
-				int res = trackDate(s2).compareTo(trackDate(s1));
-				return res != 0 ? res : trackIndex(s1).compareTo(trackIndex(s2));
+				int res = documentDate(s2).compareTo(documentDate(s1));
+				return res != 0 ? res : documentIndex(s1).compareTo(documentIndex(s2));
 			}
 		});
 
@@ -277,7 +277,7 @@ public class StatsLoader
 			@Override
 			public int compare(Document a1, Document a2) {
 				int res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
+				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
 			}
 		});
 
@@ -295,7 +295,7 @@ public class StatsLoader
 			@Override
 			public int compare(Document a1, Document a2) {
 				int res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : trackDate(a2).compareTo(trackDate(a1));
+				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
 			}
 		});
 
@@ -396,11 +396,11 @@ public class StatsLoader
 	//		return songsScore.getOrDefault(track.get("spotify"), BigDecimal.ZERO);
 	//	}
 
-	private Date trackDate(Document track) {
-		return track.getDate("date");
+	private Date documentDate(Document doc) {
+		return doc.getDate("date");
 	}
 
-	private Integer trackIndex(Document track) {
-		return track.getInteger("index");
+	private Integer documentIndex(Document doc) {
+		return doc.getInteger("index");
 	}
 }

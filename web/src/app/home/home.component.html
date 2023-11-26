@@ -7,10 +7,10 @@
       <span class="previous"></span>
     </div>
     <!-- finder -->
-    <div *ngIf="source != null" class="finder-input">
+    <div *ngIf="source != null && status=='episodes'" class="finder-input">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
     </div>
-    <div *ngIf="source != null" class="finder d-flex flex-row justify-content-center align-items-center" (click)="resetSearch()">
+    <div *ngIf="source != null && status=='episodes'" class="finder d-flex flex-row justify-content-center align-items-center" (click)="resetSearch()">
       <span class="search"></span>
     </div>
 

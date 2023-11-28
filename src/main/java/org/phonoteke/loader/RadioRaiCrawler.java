@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
@@ -33,14 +34,6 @@ public class RadioRaiCrawler extends AbstractCrawler
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
 	private static final String RAI = "rai";
 
-	private static final String BABYLON = "babylon";
-	private static final String MUSICALBOX = "musicalbox";
-	private static final String INTHEMIX = "inthemix";
-	private static final String BATTITI = "battiti";
-	private static final String SEIGRADI = "seigradi";
-	private static final String STEREONOTTE = "stereonotte";
-
-
 	public void load(String... args) 
 	{
 		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", RAI))).iterator() : 
@@ -53,11 +46,9 @@ public class RadioRaiCrawler extends AbstractCrawler
 			RadioRaiCrawler.source = show.getString("source");
 			RadioRaiCrawler.authors = show.get("authors", List.class);
 
-			if(source.equals(MUSICALBOX)) {
-				log.info("Crawling " + artist);
-				crawl(url);
-				updateLastEpisodeDate(source);
-			}
+			log.info("Crawling " + artist);
+			crawl(url);
+			updateLastEpisodeDate(source);
 		}
 	}
 
@@ -87,7 +78,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 				log.debug("Parsing page " + pageUrl);
 				String id = getId(pageUrl);
 
-				Date start = new SimpleDateFormat("dd/MM/yyyy").parse("05/12/2021");
+				Date start = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2022");
 				if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
 					return;
 
@@ -112,7 +103,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 								append("source", source).
 								append("vote", null).
 								append("year", getYear(doc.get("literal_publication_date").getAsString())).
-								append("tracks", getTracks(null)).
+								append("tracks", getTracks(doc.get("description").getAsString())).
 								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
 
 						repo.getDocs().insertOne(json);
@@ -172,9 +163,24 @@ public class RadioRaiCrawler extends AbstractCrawler
 		return year.get(Calendar.YEAR);
 	}
 
-	protected List<org.bson.Document> getTracks(JsonArray tracks) 
+	protected List<org.bson.Document> getTracks(String content) 
 	{
-		return Lists.newArrayList();
+		List<org.bson.Document> tracks = Lists.newArrayList();
+		if(content != null)
+		{
+			String[] chunks = content.replace("//", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
+			for(int i = 0; i < chunks.length; i++)
+			{
+				String title = chunks[i].trim();
+				if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
+				{
+					tracks.add(newTrack(title, null));
+					log.debug("tracks: " + title);
+				}
+			}
+			return checkTracks(tracks);
+		}
+		return tracks;
 	}
 
 	protected String getAudio(String url) 

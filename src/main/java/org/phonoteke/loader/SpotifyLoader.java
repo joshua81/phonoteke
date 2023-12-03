@@ -204,20 +204,20 @@ public class SpotifyLoader
 
 	private void createPlaylists()
 	{
-		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			String title = page.getString("artist");
-			String description = page.getString("title");
-			Date date = page.getDate("date");
-			title = HumanBeatsUtils.format(title, date);
-			createPlaylist(page, title, description);
-			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-		}
+//		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
+//		while(i.hasNext()) 
+//		{ 
+//			Document page = i.next();
+//			String id = page.getString("id");
+//			String title = page.getString("artist");
+//			String description = page.getString("title");
+//			Date date = page.getDate("date");
+//			title = HumanBeatsUtils.format(title, date);
+//			createPlaylist(page, title, description);
+//			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+//		}
 
-		i = repo.getStats().find().iterator();
+		MongoCursor<Document> i = repo.getStats().find().iterator();
 		while(i.hasNext()) { 
 			Document page = i.next();
 			String name = page.getString("name");

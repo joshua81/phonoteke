@@ -18,7 +18,6 @@ import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -33,6 +32,8 @@ public class RadioRaiCrawler extends AbstractCrawler
 	private static final String URL = "https://www.raiplaysound.it/";
 	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
 	private static final String RAI = "rai";
+
+	private static final String MUSICALBOX = "musicalbox";
 
 	public void load(String... args) 
 	{
@@ -166,6 +167,10 @@ public class RadioRaiCrawler extends AbstractCrawler
 	protected List<org.bson.Document> getTracks(String content) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
+		if(MUSICALBOX.equals(RadioRaiCrawler.source)) {
+			return tracks;
+		}
+
 		if(content != null)
 		{
 			String[] chunks = content.replace("//", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
@@ -178,9 +183,8 @@ public class RadioRaiCrawler extends AbstractCrawler
 					log.debug("tracks: " + title);
 				}
 			}
-			return checkTracks(tracks);
 		}
-		return tracks;
+		return checkTracks(tracks);
 	}
 
 	protected String getAudio(String url) 

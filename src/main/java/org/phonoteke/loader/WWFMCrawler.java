@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -162,7 +163,8 @@ public class WWFMCrawler extends AbstractCrawler
 	}
 
 	private String getAudio(JsonObject doc) {
-		return doc.get("player").isJsonNull() ? null : "https://www.mixcloud.com" + doc.get("player").getAsString();
+		Preconditions.checkArgument(!doc.get("player").isJsonNull(), "Audio is null");
+		return "https://www.mixcloud.com" + doc.get("player").getAsString();
 	}
 
 	private List<org.bson.Document> getTracks(String content) {

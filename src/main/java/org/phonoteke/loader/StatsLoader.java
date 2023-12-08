@@ -152,8 +152,10 @@ public class StatsLoader
 			}
 
 			Date date = page.getDate("date");
+			String src = page.getString("source");
 			tracks.forEach(t -> {
 				t.put("date", date);
+				t.put("source", src);
 				t.put("index", tracks.indexOf(t));
 
 				// Artist
@@ -259,6 +261,10 @@ public class StatsLoader
 			@Override
 			public int compare(Document s1, Document s2) {
 				int res = documentDate(s2).compareTo(documentDate(s1));
+				if(res != 0) {
+					return res;
+				}
+				res = documentSource(s1).compareTo(documentSource(s2));
 				return res != 0 ? res : documentIndex(s1).compareTo(documentIndex(s2));
 			}
 		});
@@ -402,5 +408,9 @@ public class StatsLoader
 
 	private Integer documentIndex(Document doc) {
 		return doc.getInteger("index");
+	}
+
+	private String documentSource(Document doc) {
+		return doc.getString("source");
 	}
 }

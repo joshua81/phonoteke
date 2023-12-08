@@ -245,7 +245,10 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
 	{
-		Preconditions.checkArgument(CollectionUtils.isNotEmpty(tracks) && tracks.size() >= HumanBeatsUtils.TRACKS_SIZE, "Number of tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
+		Preconditions.checkArgument(
+				CollectionUtils.isNotEmpty(tracks) && 
+				tracks.size() >= HumanBeatsUtils.TRACKS_SIZE, 
+				"Number of tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
 		return tracks;
 	}
 

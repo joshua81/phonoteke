@@ -37,6 +37,7 @@ export class HomeComponent implements OnInit {
       source: params[0].source, 
       section: params[0].section})))
     .subscribe(params => {
+      window.scrollTo(0, 0);
       if(params.source != undefined && params.source != null) {
         this.source = params.source;
       }

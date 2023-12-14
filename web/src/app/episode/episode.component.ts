@@ -25,6 +25,7 @@ export class EpisodeComponent implements OnInit {
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({id: params[0].id})))
     .subscribe(params => {
+      window.scrollTo(0, 0);
       var id:string = null;
       if(params.id != undefined && params.id != null) {
         id = params.id;

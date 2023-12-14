@@ -1,6 +1,4 @@
 import {Component} from '@angular/core';
-import { Location } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
@@ -13,8 +11,6 @@ import Hls from 'hls.js';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  private history:string[] = [];
-
   isDesktop:boolean = false;
   youtube:SafeResourceUrl = null;
   wwfm:SafeResourceUrl = null;
@@ -33,31 +29,15 @@ export class AppComponent {
   error = null;
   loading:boolean = false;
 
-  constructor(private router: Router, private location: Location, private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private cookieService: CookieService) {
     this.isDesktop = !AppComponent.hasTouchScreen();
     this.loadDevices();
-
-    this.router.events.subscribe((event) => {
-      //console.log(event);
-      if (event instanceof NavigationEnd) {
-        this.history.push(event.urlAfterRedirects);
-      }
-    });
   }
   
   ngOnInit() {
     // nothing to do
   }
-
-  back(): void {
-    this.history.pop();
-    if (this.history.length > 0) {
-      this.location.back();
-    } else {
-      this.router.navigateByUrl('/');
-    }
-  }
-
+  
   refreshToken() {
     const token = this.cookieService.get('spotify-token');
     console.log('Old token: ' + token);

@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -15,11 +15,16 @@ export class EpisodeComponent implements OnInit {
   doc:any = null;
   links:any = null;
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
+  constructor(public app: AppComponent, 
+    private http: HttpClient, 
+    private route: ActivatedRoute, 
+    private title: Title, 
+    private meta: Meta, 
+    private router: Router) {
+
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({id: params[0].id})))
     .subscribe(params => {
-      window.scrollTo(0, 0);
       var id:string = null;
       if(params.id != undefined && params.id != null) {
         id = params.id;
@@ -83,5 +88,9 @@ export class EpisodeComponent implements OnInit {
 
   formatDate(date: string) {
     return AppComponent.formatDate(date);
+  }
+
+  back() {
+    this.router.navigate(['/shows/' + this.doc.source]);
   }
 }

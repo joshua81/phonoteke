@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { combineLatest } from 'rxjs';
+import { Location } from '@angular/common'
 import { map } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
 
@@ -15,11 +16,16 @@ export class AlbumComponent implements OnInit {
   doc:any = null;
   links:any = null;
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
+  constructor(public app: AppComponent, 
+    private http: HttpClient, 
+    private route: ActivatedRoute, 
+    private title: Title, 
+    private meta: Meta, 
+    private location: Location) {
+
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({id: params[0].id})))
     .subscribe(params => {
-      window.scrollTo(0, 0);
       var id:string = null;
       if(params.id != undefined && params.id != null) {
         id = params.id;
@@ -83,5 +89,9 @@ export class AlbumComponent implements OnInit {
 
   formatDate(date: string) {
     return AppComponent.formatDate(date);
+  }
+
+  back() {
+    this.location.back();
   }
 }

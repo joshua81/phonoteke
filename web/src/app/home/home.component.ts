@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -25,13 +25,18 @@ export class HomeComponent implements OnInit {
   episodesQuery:string = null;
   reviews = [];
 
-  constructor(public app: AppComponent, private http: HttpClient, private route: ActivatedRoute, private title: Title, private meta: Meta) {
+  constructor(public app: AppComponent, 
+    private http: HttpClient, 
+    private route: ActivatedRoute, 
+    private title: Title, 
+    private meta: Meta,
+    private router: Router) {
+
     combineLatest(this.route.params, this.route.queryParams)
     .pipe(map(params => ({
       source: params[0].source, 
       section: params[0].section})))
     .subscribe(params => {
-      window.scrollTo(0, 0);
       if(params.source != undefined && params.source != null) {
         this.source = params.source;
       }
@@ -159,5 +164,9 @@ export class HomeComponent implements OnInit {
     this.meta.updateTag({ name: 'og:url', content: 'https://humanbeats.appspot.com/podcasts/' + data.source });
     this.meta.updateTag({ name: 'og:image', content: data.cover });
     this.meta.updateTag({ name: 'og:description', content: 'Human Beats - ' + data.name });
+  }
+
+  back() {
+    this.router.navigate(['/']);
   }
 }

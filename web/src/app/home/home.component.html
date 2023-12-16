@@ -97,18 +97,14 @@
   </div>
 
   <!-- videos -->
-  <div *ngIf="status=='videos'" class="d-flex flex-column justify-content-center w-100 pt-2">
-    <div *ngFor="let video of videos" class="mt-1 mb-1">
-      <div class="d-flex flex-row align-items-center m-0">
-        <div class="video" (click)="app.playYoutube(video.youtube)">
-          <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
-          <span class="youtube"></span>
-        </div>
-        <div class="w-100 ml-2 mr-2">
-          <div class="text-truncate-1">{{video.track + ' | '}}<span class="font-weight-bold">{{video.album}}</span></div>
-          <div class="text-truncate-1">{{video.artist}}</div>
-        </div>
+  <div *ngIf="status=='videos'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+    <div *ngFor="let video of videos" class="video">
+      <div (click)="app.playYoutube(video.youtube)">
+        <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
+        <span class="youtube"></span>
       </div>
+      <div class="text-truncate-1 font-weight-bold">{{video.track + ' | ' + video.album}}</div>
+      <div class="text-truncate-1">{{video.artist}}</div>
     </div>
   </div>
 

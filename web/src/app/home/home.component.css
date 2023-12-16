@@ -7,7 +7,7 @@ h2 {
     font-size: 24px;
     line-height: 0.9;
     position: absolute;
-    margin: 2px;
+    margin: 0px;
     padding: 2px;
     bottom: 0px;
     left: 0px;
@@ -65,14 +65,14 @@ div.show {
     max-width: 200px;
     height: 200px;
     max-height: 200px;
-    padding: 2px;
+    margin: 2px;
     background: none;
     cursor: pointer;
 }
   
 img.show {
-    width: 196px;
-    max-width: 196px;
+    width: 200px;
+    max-width: 200px;
     object-fit:cover;
 }
 
@@ -82,16 +82,16 @@ div.album {
     max-width: 200px;
     height: 240px;
     max-height: 240px;
-    padding: 2px;
+    margin: 2px;
     background: none;
     cursor: pointer;
 }
   
 img.album {
-    width: 196px;
-    max-width: 196px;
-    height: 196px;
-    max-height: 196px;
+    width: 200px;
+    max-width: 200px;
+    height: 200px;
+    max-height: 200px;
     object-fit:cover;
 }
 
@@ -105,7 +105,7 @@ span.play {
     padding: 0px;
     left: 92px;
     top: 92px;
-    background: rgb(255,255,255);
+    background: rgb(255,255,255,.6);
     cursor: pointer;
 }
 
@@ -224,13 +224,19 @@ span.spotify {
 
 div.video {
     position: relative;
+    width: 200px;
+    max-width: 200px;
+    height: 160px;
+    max-height: 160px;
+    margin: 2px;
+    background: none;
     cursor: pointer;
 }
   
 img.video {
     object-fit:cover;
-    width: 108px;
-    height: 60px;
+    width: 200px;
+    height: 120px;
     cursor: pointer;
 }
   
@@ -242,8 +248,8 @@ span.youtube {
     height: 30px;
     margin: 0px;
     padding: 0px;
-    left: 39px;
-    top: 18px;
+    left: 85px;
+    top: 45px;
     background: rgba(255,255,255,.6);
     cursor: pointer;
 }

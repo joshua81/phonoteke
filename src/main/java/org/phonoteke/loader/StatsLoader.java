@@ -51,28 +51,32 @@ public class StatsLoader
 	private Map<String, Document> videosDocs = Maps.newHashMap();
 	private List<String> videosList = Lists.newArrayList();
 
+	private String source;
+	private Integer year;
+
 
 	public void load(String... args) {
 		if(args.length == 0) {
-			calculateStats(null);
+			calculateStats();
 			MongoCursor<Document> i = repo.getAuthors().find().iterator();
 			while(i.hasNext()) {
 				Document page = i.next();
-				String source = page.getString("source");
-				calculateStats(source);
+				source = page.getString("source");
+				calculateStats();
 			}
 			calculateAffinities();
 		}
 		else {
-			String source = args[0];
-			calculateStats(source);
+			source = args[0];
+			year = args.length == 2 ? Integer.parseInt(args[1]) : null;
+			calculateStats();
 		}
 	}
 
 	private void calculateAffinities() {
 		affinity.keySet().forEach(source -> {
 			log.info("Calculating affinities " + source + "...");
-			Map<String, BigDecimal> affinities = calculateAffinities(source);
+			Map<String, BigDecimal> affinities = calculateAffinitiesInternal();
 			BigDecimal affinitiesTot = affinities.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
 			MongoCursor<Document> i = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
@@ -89,7 +93,7 @@ public class StatsLoader
 		});
 	}
 
-	private Map<String, BigDecimal> calculateAffinities(String source) {
+	private Map<String, BigDecimal> calculateAffinitiesInternal() {
 		Map<String, BigDecimal> affinities = Maps.newHashMap();
 		affinity.keySet().forEach(artist -> {
 			if(!source.equals(artist)) {
@@ -105,25 +109,39 @@ public class StatsLoader
 		return affinities;
 	}
 
-	private void calculateStats(String source) {
-		log.info("Calculating stats " + source + "...");
-		collectData(source);
+	private void calculateStats() {
+		log.info("Calculating stats: " + source + ", " + year + "...");
+		collectData();
 
 		MongoCursor<Document> i = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 		Document doc = i.next();
-		doc.append("artists", getArtists());
-		doc.append("artistsVar", getArtistsVar().doubleValue());
-		doc.append("albums", getAlbums());
-		doc.append("albumsVar", getAlbumsVar().doubleValue());
-		doc.append("tracks", getTracks());
-		doc.append("tracksVar", getTracksVar().doubleValue());
-		doc.append("videos", getVideos());
-		doc.append("reviews", getReviews());
+		if(year == null) {
+			doc.append("artists", getArtists());
+			doc.append("artistsVar", getArtistsVar().doubleValue());
+			doc.append("albums", getAlbums());
+			doc.append("albumsVar", getAlbumsVar().doubleValue());
+			doc.append("tracks", getTracks());
+			doc.append("tracksVar", getTracksVar().doubleValue());
+			doc.append("videos", getVideos());
+			doc.append("reviews", getReviews());
+		}
+		else {
+			Document yearDoc = new Document();
+			yearDoc.append("artists", getArtists());
+			yearDoc.append("artistsVar", getArtistsVar().doubleValue());
+			yearDoc.append("albums", getAlbums());
+			yearDoc.append("albumsVar", getAlbumsVar().doubleValue());
+			yearDoc.append("tracks", getTracks());
+			yearDoc.append("tracksVar", getTracksVar().doubleValue());
+			yearDoc.append("videos", getVideos());
+			yearDoc.append("reviews", getReviews());
+			doc.append(year.toString(), yearDoc);
+		}
 		repo.getStats().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 		log.info(source + " updated");
 	}
 
-	private void collectData(String source) {
+	private void collectData() {
 		artistsScore = Maps.newHashMap();
 		artistsDocs = Maps.newHashMap();
 		artistsList = Lists.newArrayList();
@@ -140,7 +158,7 @@ public class StatsLoader
 		videosDocs = Maps.newHashMap();
 		videosList = Lists.newArrayList();
 
-		MongoCursor<Document> i = getDocs(source);
+		MongoCursor<Document> i = getDocs();
 		if(!i.hasNext()) {
 			return;
 		}
@@ -230,7 +248,7 @@ public class StatsLoader
 				}
 			});
 
-			subList(jsonVideos, 100).forEach(v -> {
+			subList(jsonVideos).forEach(v -> {
 				log.debug("Video: " + v.getString("artist") + " - " + v.getString("album") + " - " + v.getString("track"));
 				topVideos.add(getVideo(v));
 			});
@@ -270,7 +288,7 @@ public class StatsLoader
 		});
 
 		List<Document> topTracks = Lists.newArrayList();
-		subList(jsonSongs, 100).forEach(s -> {
+		subList(jsonSongs).forEach(s -> {
 			log.debug("Track: " + s.getString("artist") + " - " + s.getString("album") + " - " + s.getString("track"));
 			topTracks.add(getTrack(s));
 		});
@@ -288,7 +306,7 @@ public class StatsLoader
 		});
 
 		List<Document> topAlbums = Lists.newArrayList();
-		subList(jsonAlbums, 100).forEach(a -> {
+		subList(jsonAlbums).forEach(a -> {
 			log.debug("Album: " + a.getString("artist") + " - " + a.getString("album"));
 			topAlbums.add(getAlbum(a));
 		});
@@ -306,14 +324,15 @@ public class StatsLoader
 		});
 
 		List<Document> topArtists = Lists.newArrayList();
-		subList(jsonArtists, 100).forEach(a -> {
+		subList(jsonArtists).forEach(a -> {
 			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
 			topArtists.add(getArtist(a));
 		});
 		return topArtists;
 	}
 
-	private MongoCursor<Document> getDocs(String source) {
+	private MongoCursor<Document> getDocs() {
+		// all episodes in the last month
 		if(source == null) {
 			LocalDateTime end = LocalDateTime.now();
 			LocalDateTime start = end.minusMonths(1);
@@ -323,12 +342,24 @@ public class StatsLoader
 					Filters.lte("date", end)))
 					.sort(new BasicDBObject("date", -1)).iterator();
 		}
-		else {
+		// last 30 episodes
+		else if(year == null){
 			return repo.getDocs().find(Filters.and(
 					Filters.eq("type", "podcast"),
 					Filters.eq("source", source)))
 					.sort(new BasicDBObject("date", -1))
 					.limit(30).iterator();
+		}
+		// all episodes in the specified year
+		else {
+			LocalDateTime end = LocalDateTime.of(year, 12, 31, 23, 59);
+			LocalDateTime start = LocalDateTime.of(year, 1, 1, 0, 0);
+			return repo.getDocs().find(Filters.and(
+					Filters.eq("type", "podcast"),
+					Filters.eq("source", source),
+					Filters.gte("date", start),
+					Filters.lte("date", end)))
+					.sort(new BasicDBObject("date", -1)).iterator();
 		}
 	}
 
@@ -382,8 +413,8 @@ public class StatsLoader
 		return HumanBeatsUtils.NA.equals(val) ? null : val;
 	}
 
-	private List<Document> subList(List<Document> list, int size) {
-		return list.size() <= size ? list : list.subList(0, size);
+	private List<Document> subList(List<Document> list) {
+		return (year != null || list.size() <= 100) ? list : list.subList(0, 100);
 	}
 
 	private BigDecimal artistScore(Document track) {

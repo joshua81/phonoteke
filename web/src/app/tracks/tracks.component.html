@@ -2,7 +2,7 @@
     <div *ngFor="let track of tracks" class="mt-1 mb-1">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
-                <div *ngIf="track.spotify == null" class="d-flex flex-row align-items-center justify-content-center">
+                <div *ngIf="track.spotify == null" class="player d-flex flex-row align-items-center justify-content-center">
                     <span class="album"></span>
                 </div>
                 <img *ngIf="track.spotify && track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>

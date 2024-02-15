@@ -19,7 +19,7 @@ export class TracksComponent implements OnInit {
     // nothing to do
   }
 
-  playPauseSpotify(track:string) {
+  /*playPauseSpotify(track:string) {
     if(this.spalbumid != null && track != null) {
       var pos:number = 0;
       for(var j:number=0; j < this.tracks.length; j++) {
@@ -34,5 +34,5 @@ export class TracksComponent implements OnInit {
         this.app.playPauseSpotify(this.spalbumid, 'playlist', pos, track);
       }
     }
-  }
+  }*/
 }

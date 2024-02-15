@@ -19,7 +19,7 @@ img.cover {
     height: 60px;
 }
 
-.player {
+/*.player {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -35,9 +35,9 @@ img.cover {
 }
 .player:hover {
     opacity: 1;
-}
+}*/
   
-span.play {
+/*span.play {
     display: inline-block;
     mask: url("/images/play.svg") no-repeat;
     width: 16px;
@@ -46,7 +46,7 @@ span.play {
     padding: 0px;
     background: #FFFFFF;
     cursor: pointer;
-}
+}*/
 
 span.album {
     display: inline-block;
@@ -56,7 +56,7 @@ span.album {
     margin: 0px;
     padding: 0px;
     background: #FFFFFF;
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 
 span.love {
@@ -114,10 +114,10 @@ span.discogs {
     cursor: pointer;
   }*/
 
-.counter {
+/*.counter {
     width: 20px;
     min-width: 20px;
     height: 20px;
     min-height: 20px;
-}
+}*/
 

@@ -16,13 +16,14 @@ export class HomeComponent implements OnInit {
   status:string = null;
   source:string = null;
   name:string = null;
+  episodesPage:number = 0;
+  episodesQuery:string = null;
+  showSearch:boolean = false;
   albums = [];
   videos = [];
   tracks = [];
   shows = [];
   episodes = [];
-  episodesPage:number = 0;
-  episodesQuery:string = null;
   reviews = [];
 
   constructor(public app: AppComponent, 
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit {
     this.episodes = [];
     this.episodesPage = 0;
     this.reviews = [];
+    this.showSearch = false;
   }
 
   setStatus(status:string) {
@@ -144,7 +146,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  resetSearch() {
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
     if(this.episodesQuery != null) {
       this.episodesQuery = null;
       this.episodes = [];

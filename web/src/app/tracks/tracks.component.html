@@ -2,14 +2,14 @@
     <div *ngFor="let track of tracks" class="mt-1 mb-1">
         <div class="d-flex flex-row align-items-center m-0">
             <div class="cover">
-                <div *ngIf="track.spotify == null" class="player d-flex flex-row align-items-center justify-content-center">
+                <div *ngIf="track.spotify == null" class="d-flex flex-row align-items-center justify-content-center">
                     <span class="album"></span>
                 </div>
                 <img *ngIf="track.spotify && track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
                 <img *ngIf="track.spotify && track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
-                <div *ngIf="track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="playPauseSpotify(track.spotify)">
+                <!--div *ngIf="track.spotify" class="player d-flex flex-row align-items-center justify-content-center" (click)="playPauseSpotify(track.spotify)">
                     <span class="play"></span>
-                </div>
+                </div-->
             </div>
             <!--div *ngIf="app.track == null || app.track.item.id != track.spotify" class="counter justify-content-center text-center font-weight-bold ml-1 mr-1">{{i+1}}</div>
             <img *ngIf="app.track != null && app.track.item.id == track.spotify" class="counter ml-1 mr-1" src="/images/equalizer.gif"-->

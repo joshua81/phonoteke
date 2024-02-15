@@ -7,10 +7,10 @@
       <span class="previous"></span>
     </div>
     <!-- finder -->
-    <div *ngIf="source != null && status=='episodes'" class="finder-input">
+    <div *ngIf="source != null && status=='episodes' && showSearch" class="finder-input">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
     </div>
-    <div *ngIf="source != null && status=='episodes'" class="finder d-flex flex-row justify-content-center align-items-center" (click)="resetSearch()">
+    <div *ngIf="source != null && status=='episodes'" class="finder d-flex flex-row justify-content-center align-items-center" (click)="toggleSearch()">
       <span class="search"></span>
     </div>
 
@@ -103,7 +103,7 @@
         <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
         <span class="youtube"></span>
       </div>
-      <div class="text-truncate-1 font-weight-bold">{{video.track + ' | ' + video.album}}</div>
+      <div class="text-truncate-1 font-weight-bold">{{video.track}}</div>
       <div class="text-truncate-1">{{video.artist}}</div>
     </div>
   </div>

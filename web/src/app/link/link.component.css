@@ -4,28 +4,29 @@
 
 div.cover {
   width: 120px;
+  max-width: 120px;
+  height: 220px;
+  max-height: 220px;
   position: relative;
-}
 
-a.cover {
-  width: 120px;
-  height: 120px;
+  border-style: solid;
+  border-radius: 0% 0% 2% 2%;
+  border-width: 1px 1px 1px 1px;
+  border-color: rgb(200, 200, 200);
+  background: rgb(233,240,242);
 }
 
 img.cover {
-  width: 120px;
-  height: 120px;
+  width: 118px;
+  max-width: 118px;
+  height: 118px;
+  max-height: 118px;
   object-fit:cover;
-}
-
-.card {
-  border-style: none;
+  cursor: pointer;
 }
 
 .card-body {
-  position: relative;
-  width: 120px;
-  height: 100px;
+  padding: 4px;
 }
 
 .card-footer {

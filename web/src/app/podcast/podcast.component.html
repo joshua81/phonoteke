@@ -1,18 +1,16 @@
 <div infinite-scroll (scrolled)="scrollEpisodes()" class="d-flex flex-wrap justify-content-center w-100 pt-2">
-  <div *ngFor="let doc of docs">
-    <div class="cover card">
-      <a class="cover" [routerLink]="['/shows/' + source + '/episodes/' + doc.id]">
-        <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}" loading="lazy"/>
-        <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}" loading="lazy"/>
-      </a>
-      <div class="card-body p-1">
-        <!--h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3-->
-        <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-        <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
-        <h3 class="card-footer text-muted text-lowercase p-0">{{formatDate(doc.date)}}</h3>
-      </div>
-      <div *ngIf="app.gtYesterday(doc.date)" class="yesterday"></div>
+  <div *ngFor="let doc of docs" class="cover">
+    <a [routerLink]="['/shows/' + source + '/episodes/' + doc.id]">
+      <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}" loading="lazy"/>
+      <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}" loading="lazy"/>
+    </a>
+    <div class="card-body p-1">
+      <!--h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3-->
+      <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+      <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
+      <h3 class="card-footer text-muted text-lowercase p-0">{{formatDate(doc.date)}}</h3>
     </div>
+    <div *ngIf="app.gtYesterday(doc.date)" class="yesterday"></div>
   </div>
 </div>
 <div *ngIf="!app.loading && docs.length == 0" class="msg d-flex justify-content-center align-items-center">

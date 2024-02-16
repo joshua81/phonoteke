@@ -4,34 +4,31 @@ p {
 }
 
 div.cover {
-    width: 50vw;
-    max-width: 200px;
-    padding: 2px;
     position: relative;
-}
-  
-a.cover {
-    width: calc(50vw - 4px);
-    height: calc(50vw - 4px);
+    width: 196px;
     max-width: 196px;
-    max-height: 196px;
+    height: 320px;
+    max-height: 320px;
+    margin: 2px;
+
+    border-style: solid;
+    border-radius: 0% 0% 2% 2%;
+    border-width: 1px 1px 1px 1px;
+    border-color: rgb(200, 200, 200);
+    background: rgb(233,240,242);
 }
   
 img.cover {
-    width: calc(50vw - 4px);
-    height: calc(50vw - 4px);
-    max-width: 196px;
-    max-height: 196px;
+    width: 194px;
+    max-width: 194px;
+    height: 194px;
+    max-height: 194px;
     object-fit:cover;
-}
-
-.card {
-    border-style: none;
+    cursor: pointer;
 }
   
 .card-body {
-    height: 120px;
-    position: relative;
+    padding: 4px;
 }
   
 .card-footer {

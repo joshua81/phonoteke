@@ -80,8 +80,10 @@
         <img class="album" src="{{album.cover}}" loading="lazy"/>
         <span class="play"></span>
       </div>
-      <div class="text-truncate-1 font-weight-bold">{{album.album}}</div>
-      <div class="text-truncate-1">{{album.artist}}</div>
+      <div class="card-body">
+        <div class="text-truncate-1 font-weight-bold">{{album.album}}</div>
+        <div class="text-truncate-1">{{album.artist}}</div>
+      </div>
     </div>
   </div>
 
@@ -91,8 +93,10 @@
       <a [routerLink]="['/albums/' + review.id]">
         <img class="album" src="{{review.cover}}" loading="lazy"/>
       </a>
-      <div class="text-truncate-1 font-weight-bold">{{review.album}}</div>
-      <div class="text-truncate-1">{{review.artist}}</div>
+      <div class="card-body">
+        <div class="text-truncate-1 font-weight-bold">{{review.album}}</div>
+        <div class="text-truncate-1">{{review.artist}}</div>
+      </div>
     </div>
   </div>
 
@@ -103,8 +107,10 @@
         <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
         <span class="youtube"></span>
       </div>
-      <div class="text-truncate-1 font-weight-bold">{{video.track}}</div>
-      <div class="text-truncate-1">{{video.artist}}</div>
+      <div class="card-body">
+        <div class="text-truncate-1 font-weight-bold">{{video.track}}</div>
+        <div class="text-truncate-1">{{video.artist}}</div>
+      </div>
     </div>
   </div>
 

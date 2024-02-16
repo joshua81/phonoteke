@@ -80,19 +80,28 @@ div.album {
     position: relative;
     width: 196px;
     max-width: 196px;
-    height: 236px;
-    max-height: 236px;
+    height: 240px;
+    max-height: 240px;
     margin: 2px;
-    background: none;
-    cursor: pointer;
+
+    border-style: solid;
+    border-radius: 0% 0% 2% 2%;
+    border-width: 1px 1px 1px 1px;
+    border-color: rgb(200, 200, 200);
+    background: rgb(233,240,242);
 }
   
 img.album {
-    width: 196px;
-    max-width: 196px;
-    height: 196px;
-    max-height: 196px;
+    width: 194px;
+    max-width: 194px;
+    height: 194px;
+    max-height: 194px;
     object-fit:cover;
+    cursor: pointer;
+}
+
+.card-body {
+    padding: 4px;
 }
 
 span.play {
@@ -226,17 +235,21 @@ div.video {
     position: relative;
     width: 196px;
     max-width: 196px;
-    height: 156px;
-    max-height: 156px;
+    height: 160px;
+    max-height: 160px;
     margin: 2px;
-    background: none;
-    cursor: pointer;
+
+    border-style: solid;
+    border-radius: 0% 0% 2% 2%;
+    border-width: 1px 1px 1px 1px;
+    border-color: rgb(200, 200, 200);
+    background: rgb(233,240,242);
 }
   
 img.video {
+    width: 194px;
+    height: 114px;
     object-fit:cover;
-    width: 196px;
-    height: 116px;
     cursor: pointer;
 }
   

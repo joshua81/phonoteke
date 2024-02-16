@@ -22,7 +22,7 @@
 
 html, body {
     height: 100%;
-    background: rgba(233,240,242,1);
+    background: rgb(233,240,242);
 }
 
 .container {

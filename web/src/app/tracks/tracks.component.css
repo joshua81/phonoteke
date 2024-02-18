@@ -1,22 +1,33 @@
+div.track {
+    position: relative;
+    width: 100%;
+    height: 70px;
+    max-height: 70px;
+    margin: 0px;
+
+    border-style: solid;
+    border-radius: 0% 4px 4px 0%;
+    border-width: 1px 1px 1px 1px;
+    border-color: rgb(200, 200, 200);
+    background: rgb(233,240,242);
+}
+
 div.cover {
     position: relative;
-    width: 62px;
-    min-width: 62px;
-    height: 62px;
-    min-height: 62px;
+    width: 68px;
+    min-width: 68px;
+    height: 68px;
+    min-height: 68px;
     margin: 0px;
     padding: 0px;
     
     background: #282D32;
-    border-width: 1px;
-    border-color: #9c9c9c;
-    border-style: solid;
     object-fit:cover;
 }
 
 img.cover {
-    width: 60px;
-    height: 60px;
+    width: 68px;
+    height: 68px;
 }
 
 .player {
@@ -26,22 +37,11 @@ img.cover {
     margin: 0px;
     padding: 0px;
 
-    width: 60px;
-    min-width: 60px;
-    height: 60px;
-    min-height: 60px;
+    width: 68px;
+    min-width: 68px;
+    height: 68px;
+    min-height: 68px;
 }
-  
-/*span.play {
-    display: inline-block;
-    mask: url("/images/play.svg") no-repeat;
-    width: 16px;
-    height: 16px;
-    margin: 0px;
-    padding: 0px;
-    background: #FFFFFF;
-    cursor: pointer;
-}*/
 
 span.album {
     display: inline-block;
@@ -74,44 +74,3 @@ span.love-selected {
     background: #F80046;
     cursor: pointer;
 }
-
-/*span.youtube {
-    display: inline-block;
-    mask: url("/images/youtube.svg") no-repeat;
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #FF0000;
-    cursor: pointer;
-}
-
-span.songkick {
-    display: inline-block;
-    mask: url("/images/songkick.svg") no-repeat;
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #F80046;
-    cursor: pointer;
-}
-  
-span.discogs {
-    display: inline-block;
-    mask: url("/images/discogs.svg") no-repeat;
-    width: 20px;
-    height: 20px;
-    margin: 0px;
-    padding: 0px;
-    background: #000000;
-    cursor: pointer;
-  }*/
-
-/*.counter {
-    width: 20px;
-    min-width: 20px;
-    height: 20px;
-    min-height: 20px;
-}*/
-

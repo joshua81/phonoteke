@@ -104,7 +104,7 @@ img.cover {
   height: 40px;
   bottom: 4px;
   left: 4px;
-  background: rgb(0,0,0);
+  background: #000000;
   cursor: pointer;
 }
 
@@ -118,7 +118,7 @@ img.cover {
   height: 30px;
   top: 5px;
   left: 5px;
-  background: rgb(0,0,0);
+  background: #000000;
   cursor: pointer;
 }
 

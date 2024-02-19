@@ -17,12 +17,12 @@
 .form-control:focus {
     outline: none;
     box-shadow: none;
-    border-color: rgb(206,212,218);
+    border-color: #ced4da;
 }
 
 html, body {
     height: 100%;
-    background: rgb(233,240,242);
+    background: #FFF2CC;
 }
 
 .container {

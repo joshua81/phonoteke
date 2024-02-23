@@ -10,7 +10,7 @@ div.wallpaper {
   background: #FFFFFF;
 }
 
-span.songkick {
+/*span.songkick {
   display: inline-block;
   mask: url("/images/songkick.svg") no-repeat;
   width: 30px;
@@ -19,17 +19,17 @@ span.songkick {
   padding: 0px;
   background: #F80046;
   cursor: pointer;
-}
+}*/
 
-.spotify {
+/*.spotify {
   width: 30px;
   height: 30px;
   margin: 0px;
   padding: 0px;
   cursor: pointer;
-}
+}*/
 
-span.spotify {
+/*span.spotify {
   display: inline-block;
   mask: url("/images/spotify.svg") no-repeat;
   width: 30px;
@@ -38,7 +38,7 @@ span.spotify {
   padding: 0px;
   background: #1DB954;
   cursor: pointer;
-}
+}*/
 
 .vote {
   position: absolute;
@@ -56,6 +56,10 @@ span.spotify {
   text-align: center;
   padding-top: 4px;
   margin: 0px;
+}
+
+a h2 {
+  color: #007bff;
 }
 
 h2.vote {

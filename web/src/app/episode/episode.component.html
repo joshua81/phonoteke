@@ -33,11 +33,11 @@
   </div>
 
   <!-- source + spotify + songkick -->
-  <div *ngIf="doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
+  <!--div *ngIf="doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
     <a *ngIf="doc.spalbumid" class="spotify ml-1 mr-1" href="{{'https://open.spotify.com/playlist/' + doc.spalbumid}}" target="_blank">
       <span class="spotify"></span>
     </a>
-  </div>
+  </div-->
 
   <app-tracks [doc]="doc" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
   <app-link *ngIf="links && links.albums.length > 0" [links]="links.albums" type="albums"></app-link>

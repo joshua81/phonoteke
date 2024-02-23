@@ -27,17 +27,20 @@
   <!-- info -->
   <div class="text-center w-100">
     <h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3>
-    <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+    <h2 *ngIf="!doc.spalbumid" class="text-truncate-2" [innerHTML]="doc.title"></h2>
+    <a *ngIf="doc.spalbumid" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
+      <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
+    </a>
     <h3 *ngIf="doc.label" class="mx-auto">{{doc.label + ' | ' + doc.year + ' | ' + doc.genres}}</h3>
     <h3 *ngIf="doc.authors" class="text-muted mx-auto">{{doc.authors}}</h3>
   </div>
 
   <!-- source + spotify + songkick -->
-  <div *ngIf="doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
+  <!--div *ngIf="doc.spalbumid" class="d-flex flex-row justify-content-center align-items-center mt-3">
     <a *ngIf="doc.spalbumid" class="spotify ml-1 mr-1" href="{{'https://open.spotify.com/album/' + doc.spalbumid}}" target="_blank">
       <span class="spotify"></span>
     </a>
-  </div>
+  </div-->
 
   <p class="text-justify mt-3" [innerHTML]="doc.review"></p>
   

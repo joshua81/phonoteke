@@ -1,7 +1,6 @@
 package org.phonoteke.loader;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -315,7 +314,7 @@ public class SpotifyLoader
 		// check if the article was already crawled
 		log.debug("Loading album " + artist + " - " + album);
 		Document spotify = loadAlbum(artist, album);
-		if(spotify != null)
+		if(spotify != null && spotify.getInteger("score") >= HumanBeatsUtils.SCORE)
 		{
 			String artistId = spotify.getString("spartistid");
 			String albumId = spotify.getString("spalbumid");

@@ -41,6 +41,9 @@ public class PatchLoader
 		else if("deleteEmptyPlaylist".equals(args[0])) {
 			deleteEmptyPlaylists();
 		}
+		else if("resetAlbums".equals(args[0])) {
+			resetAlbums();
+		}
 	}
 
 	private void deleteEmptyPlaylists()
@@ -221,6 +224,31 @@ public class PatchLoader
 			page.append("score", null);
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			log.info("Document " + id + ": " + title + " - " + artist);
+		}
+	}
+	
+	private void resetAlbums()
+	{
+		log.info("Resetting albums score...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(
+				Filters.eq("type", "album"), 
+				Filters.lt("score", HumanBeatsUtils.SCORE),
+				Filters.gt("score", 0))).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			int score = page.getInteger("score");
+			String id = page.getString("id");
+			page.append("spartistid", HumanBeatsUtils.NA).
+			append("spalbumid", HumanBeatsUtils.NA).
+			append("artistid", HumanBeatsUtils.NA).
+			append("coverL", HumanBeatsUtils.NA).
+			append("coverM", HumanBeatsUtils.NA).
+			append("coverS", HumanBeatsUtils.NA).
+			append("score", 0);
+
+			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+			log.info("Document " + id + " updated score" + score);
 		}
 	}
 }

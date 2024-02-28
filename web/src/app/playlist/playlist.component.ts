@@ -2,11 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { AppComponent } from '../app.component';
 
 @Component({
-  selector: 'app-tracks',
-  templateUrl: './tracks.component.html',
-  styleUrls: ['./tracks.component.css']
+  selector: 'app-playlist',
+  templateUrl: './playlist.component.html',
+  styleUrls: ['./playlist.component.css']
 })
-export class TracksComponent implements OnInit {
+export class PlaylistComponent implements OnInit {
   @Input() spalbumid = null;
   @Input() tracks = null;
 

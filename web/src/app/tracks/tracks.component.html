@@ -1,12 +1,21 @@
 <div *ngIf="tracks && tracks.length > 0" class="d-flex flex-column justify-content-center w-100 pt-2">
     <div *ngFor="let track of tracks" class="track d-flex flex-row align-items-center mt-1 mb-1">
+        <!-- cover -->
         <div class="cover">
-            <div *ngIf="track.spotify == null" class="player d-flex flex-row align-items-center justify-content-center">
+            <div *ngIf="!track.spotify" class="player d-flex flex-row align-items-center justify-content-center">
                 <span class="album"></span>
             </div>
-            <img *ngIf="track.spotify && track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
-            <img *ngIf="track.spotify && track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
+            <a *ngIf="track.spotify && !app.player" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
+                <img *ngIf="track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
+                <img *ngIf="track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
+            </a>
+            <div *ngIf="track.spotify && app.player" (click)="app.playPauseSpotify(spalbumid, 'playlist')">
+                <img *ngIf="track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
+                <img *ngIf="track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
+                <span class="play"></span>
+            </div>
         </div>
+        <!-- title -->
         <div class="w-100 ml-2 mr-2">
             <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
             <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' | '}}<span class="font-weight-bold">{{track.album}}</span></div>
@@ -17,6 +26,7 @@
                 <a *ngIf="track.dgalbumid" class="font-weight-bold mr-2" href="{{track.dgalbumid}}" target="_blank">Discogs</a>
             </div>
         </div>
+        <!-- love -->
         <div *ngIf="app.player && track.spotify" class="d-flex flex-row align-items-center justify-content-center mr-2">
             <span *ngIf="!track?.saved" class="love" (click)="app.saveTrack(track, true)"></span>
             <span *ngIf="track?.saved" class="love-selected" (click)="app.saveTrack(track, false)"></span>

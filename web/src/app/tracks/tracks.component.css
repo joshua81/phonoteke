@@ -23,6 +23,7 @@ div.cover {
     
     background: #282D32;
     object-fit:cover;
+    cursor: pointer;
 }
 
 img.cover {
@@ -72,5 +73,19 @@ span.love-selected {
     margin: 0px;
     padding: 0px;
     background: #F80046;
+    cursor: pointer;
+}
+
+span.play {
+    position: absolute;
+    display: inline-block;
+    mask: url("/images/play.svg") no-repeat;
+    width: 16px;
+    height: 16px;
+    margin: 0px;
+    padding: 0px;
+    left: 26px;
+    top: 26px;
+    background: rgb(255,255,255,.6);
     cursor: pointer;
 }

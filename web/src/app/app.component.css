@@ -77,11 +77,11 @@ span.spotify-disabled {
     cursor: pointer;
 }
 
-span.songkick {
+/*span.songkick {
     display: inline-block;
     mask: url("/images/songkick-wp.svg") no-repeat;
     width: 100px;
     height: 30px;
     background: #F80046;
     cursor: pointer;
-}
+}*/

@@ -72,11 +72,10 @@
   <!-- albums -->
   <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let album of albums" class="album">
-      <a *ngIf="!app.isDesktop" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
+      <a *ngIf="!app.player" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
-        <span class="play"></span>
       </a>
-      <div *ngIf="app.isDesktop" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
+      <div *ngIf="app.player" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
         <span class="play"></span>
       </div>
@@ -114,15 +113,8 @@
     </div>
   </div>
 
-  <!-- tracks -->
-  <div *ngIf="status=='tracks'" class="w-100 pt-2">
-    <div class="d-flex flex-row justify-content-center align-items-center">
-      <a *ngIf="spalbumid" class="spotify" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
-        <span class="spotify"></span>
-      </a>
-    </div>
-    <app-tracks [tracks]="tracks" [spalbumid]="spalbumid"></app-tracks>
-  </div>
+  <!-- playlist -->
+  <app-playlist *ngIf="status=='tracks'" [tracks]="tracks" [spalbumid]="spalbumid"></app-playlist>
 </div>
 <!-- footer -->
 <app-footer></app-footer>

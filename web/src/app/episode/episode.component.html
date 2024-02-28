@@ -39,7 +39,7 @@
     </a>
   </div-->
 
-  <app-tracks [doc]="doc" [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
+  <app-tracks [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
   <app-link *ngIf="links && links.albums.length > 0" [links]="links.albums" type="albums"></app-link>
   <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>
 </div>

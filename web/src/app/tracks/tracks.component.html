@@ -5,11 +5,15 @@
             <div *ngIf="!track.spotify" class="player d-flex flex-row align-items-center justify-content-center">
                 <span class="album"></span>
             </div>
-            <a *ngIf="track.spotify && !app.player" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
+            <div *ngIf="track.spotify && !spalbumid">
+                <img *ngIf="track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
+                <img *ngIf="track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
+            </div>
+            <a *ngIf="track.spotify && spalbumid && !app.player" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
                 <img *ngIf="track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
                 <img *ngIf="track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
             </a>
-            <div *ngIf="track.spotify && app.player" (click)="app.playPauseSpotify(spalbumid, 'playlist')">
+            <div *ngIf="track.spotify && spalbumid && app.player" (click)="app.playPauseSpotify(spalbumid, 'playlist')">
                 <img *ngIf="track.cover" class="cover" src="{{track.cover}}" loading="lazy"/>
                 <img *ngIf="track.coverS" class="cover" src="{{track.coverS}}" loading="lazy"/>
                 <span class="play"></span>

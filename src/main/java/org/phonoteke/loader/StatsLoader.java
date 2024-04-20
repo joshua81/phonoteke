@@ -116,8 +116,8 @@ public class StatsLoader
 		MongoCursor<Document> i = repo.getStats().find(Filters.and(Filters.eq("source", source))).iterator();
 		Document doc = i.next();
 		if(year == null) {
-			doc.append("artists", getArtists());
-			doc.append("artistsVar", getArtistsVar().doubleValue());
+			doc.append("artists", null);//getArtists());
+			doc.append("artistsVar", null);//getArtistsVar().doubleValue());
 			doc.append("albums", getAlbums());
 			doc.append("albumsVar", getAlbumsVar().doubleValue());
 			doc.append("tracks", getTracks());
@@ -127,8 +127,8 @@ public class StatsLoader
 		}
 		else {
 			Document yearDoc = new Document();
-			yearDoc.append("artists", getArtists());
-			yearDoc.append("artistsVar", getArtistsVar().doubleValue());
+//			yearDoc.append("artists", getArtists());
+//			yearDoc.append("artistsVar", getArtistsVar().doubleValue());
 			yearDoc.append("albums", getAlbums());
 			yearDoc.append("albumsVar", getAlbumsVar().doubleValue());
 			yearDoc.append("tracks", getTracks());
@@ -224,9 +224,9 @@ public class StatsLoader
 		});
 	}
 
-	private BigDecimal getArtistsVar() {
-		return new BigDecimal(artistsDocs.keySet().size()).divide(new BigDecimal(artistsList.size()), 4, RoundingMode.HALF_UP);
-	}
+//	private BigDecimal getArtistsVar() {
+//		return new BigDecimal(artistsDocs.keySet().size()).divide(new BigDecimal(artistsList.size()), 4, RoundingMode.HALF_UP);
+//	}
 
 	private BigDecimal getAlbumsVar() {
 		return new BigDecimal(albumsDocs.keySet().size()).divide(new BigDecimal(albumsList.size()), 4, RoundingMode.HALF_UP);
@@ -313,23 +313,23 @@ public class StatsLoader
 		return topAlbums;
 	}
 
-	private List<Document> getArtists() {
-		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
-		Collections.sort(jsonArtists, new Comparator<Document>() {
-			@Override
-			public int compare(Document a1, Document a2) {
-				int res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
-			}
-		});
-
-		List<Document> topArtists = Lists.newArrayList();
-		subList(jsonArtists).forEach(a -> {
-			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
-			topArtists.add(getArtist(a));
-		});
-		return topArtists;
-	}
+//	private List<Document> getArtists() {
+//		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
+//		Collections.sort(jsonArtists, new Comparator<Document>() {
+//			@Override
+//			public int compare(Document a1, Document a2) {
+//				int res = artistScore(a2).compareTo(artistScore(a1));
+//				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
+//			}
+//		});
+//
+//		List<Document> topArtists = Lists.newArrayList();
+//		subList(jsonArtists).forEach(a -> {
+//			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
+//			topArtists.add(getArtist(a));
+//		});
+//		return topArtists;
+//	}
 
 	private MongoCursor<Document> getDocs() {
 		// all episodes in the last month
@@ -363,10 +363,10 @@ public class StatsLoader
 		}
 	}
 
-	private Document getArtist(Document track) {
-		return new Document("artist", track.getString("artist"))
-				.append("spartistid", track.getString("spartistid"));
-	}
+//	private Document getArtist(Document track) {
+//		return new Document("artist", track.getString("artist"))
+//				.append("spartistid", track.getString("spartistid"));
+//	}
 
 	private Document getAlbum(Document track) {
 		return new Document("artist", track.getString("artist"))

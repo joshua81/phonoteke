@@ -61,9 +61,8 @@ div.selected {
 
 div.show {
     position: relative;
-    width: 196px;
+    width: 48%;
     max-width: 196px;
-    height: 196px;
     max-height: 196px;
     margin: 2px;
     background: none;
@@ -71,16 +70,15 @@ div.show {
 }
   
 img.show {
-    width: 196px;
-    max-width: 196px;
+    aspect-ratio: 1/1;
+    width: 100%;
     object-fit:cover;
 }
 
 div.album {
     position: relative;
-    width: 196px;
+    width: 48%;
     max-width: 196px;
-    height: 240px;
     max-height: 240px;
     margin: 2px;
 
@@ -89,15 +87,13 @@ div.album {
     border-width: 1px 1px 1px 1px;
     border-color: #c8c8c8;
     background: #e9f0f2;
+    cursor: pointer;
 }
   
 img.album {
-    width: 194px;
-    max-width: 194px;
-    height: 194px;
-    max-height: 194px;
+    aspect-ratio: 1/1;
+    width: 100%;
     object-fit:cover;
-    cursor: pointer;
 }
 
 .card-body {
@@ -179,36 +175,6 @@ span.search {
     cursor: pointer;
 }
 
-/*.spotify {
-    width: 30px;
-    height: 30px;
-    margin: 0px;
-    padding: 0px;
-    cursor: pointer;
-}
-  
-span.spotify {
-    display: inline-block;
-    mask: url("/images/spotify.svg") no-repeat;
-    width: 30px;
-    height: 30px;
-    margin: 0px;
-    padding: 0px;
-    background: #1DB954;
-    cursor: pointer;
-}*/
-
-/*.yesterday {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    background: #18A2B8;
-}*/
-
 .affinity-high {
     position: absolute;
     top: 5px;
@@ -233,9 +199,8 @@ span.spotify {
 
 div.video {
     position: relative;
-    width: 196px;
+    width: 48%;
     max-width: 196px;
-    height: 160px;
     max-height: 160px;
     margin: 2px;
 
@@ -244,13 +209,13 @@ div.video {
     border-width: 1px 1px 1px 1px;
     border-color: #c8c8c8;
     background: #e9f0f2;
+    cursor: pointer;
 }
   
 img.video {
-    width: 194px;
-    height: 114px;
+    aspect-ratio: 16/9;
+    width: 100%;
     object-fit:cover;
-    cursor: pointer;
 }
   
 span.youtube {
@@ -261,8 +226,8 @@ span.youtube {
     height: 30px;
     margin: 0px;
     padding: 0px;
-    left: 83px;
-    top: 43px;
+    left: calc(50% - 15px);
+    top: calc(50% - 15px);
     background: rgba(255,255,255,.6);
     cursor: pointer;
 }

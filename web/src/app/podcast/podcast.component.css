@@ -5,9 +5,8 @@ p {
 
 div.cover {
     position: relative;
-    width: 196px;
+    width: 48%;
     max-width: 196px;
-    height: 320px;
     max-height: 320px;
     margin: 2px;
 
@@ -16,15 +15,13 @@ div.cover {
     border-width: 1px 1px 1px 1px;
     border-color: #c8c8c8;
     background: #e9f0f2;
+    cursor: pointer;
 }
   
 img.cover {
-    width: 194px;
-    max-width: 194px;
-    height: 194px;
-    max-height: 194px;
+    aspect-ratio: 1/1;
+    width: 100%;
     object-fit:cover;
-    cursor: pointer;
 }
   
 .card-body {

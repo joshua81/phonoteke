@@ -7,7 +7,7 @@
     <div class="card-body p-1">
       <!--h3 class="text-truncate-2" [innerHTML]="doc.artist"></h3-->
       <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
-      <p *ngIf="doc.description != null" class="text-truncate-3 mt-2 mb-0" [innerHTML]="doc.description"></p>
+      <p *ngIf="doc.description != null" class="text-truncate-2 mt-2 mb-5" [innerHTML]="doc.description"></p>
       <h3 class="card-footer text-muted text-lowercase p-0">{{formatDate(doc.date)}}</h3>
     </div>
     <div *ngIf="app.gtYesterday(doc.date)" class="yesterday"></div>

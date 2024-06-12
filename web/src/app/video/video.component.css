@@ -3,15 +3,16 @@
 }
 
 div.cover {
+  width: 216px;
+
   position: relative;
   cursor: pointer;
 }
 
 img.cover {
+  aspect-ratio: 16/9;
+  width: 100%;
   object-fit:cover;
-  width: 216px;
-  height: 120px;
-  cursor: pointer;
 }
 
 span.youtube {

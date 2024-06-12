@@ -1,4 +1,6 @@
 p {
+    height: 60px;
+
     font-family: 'Lato', sans-serif;
     font-size: 12px;
 }
@@ -7,7 +9,6 @@ div.cover {
     position: relative;
     width: 48%;
     max-width: 196px;
-    max-height: 320px;
     margin: 2px;
 
     border-style: solid;

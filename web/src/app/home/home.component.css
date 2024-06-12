@@ -63,7 +63,6 @@ div.show {
     position: relative;
     width: 48%;
     max-width: 196px;
-    max-height: 196px;
     margin: 2px;
     background: none;
     cursor: pointer;
@@ -79,7 +78,6 @@ div.album {
     position: relative;
     width: 48%;
     max-width: 196px;
-    max-height: 240px;
     margin: 2px;
 
     border-style: solid;
@@ -92,6 +90,26 @@ div.album {
   
 img.album {
     aspect-ratio: 1/1;
+    width: 100%;
+    object-fit:cover;
+}
+
+div.video {
+    position: relative;
+    width: 48%;
+    max-width: 196px;
+    margin: 2px;
+
+    border-style: solid;
+    border-radius: 0% 0% 2% 2%;
+    border-width: 1px 1px 1px 1px;
+    border-color: #c8c8c8;
+    background: #e9f0f2;
+    cursor: pointer;
+}
+  
+img.video {
+    aspect-ratio: 16/9;
     width: 100%;
     object-fit:cover;
 }
@@ -195,27 +213,6 @@ span.search {
     width: 10px;
     height: 10px;
     background: #EFB700;
-}
-
-div.video {
-    position: relative;
-    width: 48%;
-    max-width: 196px;
-    max-height: 160px;
-    margin: 2px;
-
-    border-style: solid;
-    border-radius: 0% 0% 2% 2%;
-    border-width: 1px 1px 1px 1px;
-    border-color: #c8c8c8;
-    background: #e9f0f2;
-    cursor: pointer;
-}
-  
-img.video {
-    aspect-ratio: 16/9;
-    width: 100%;
-    object-fit:cover;
 }
   
 span.youtube {

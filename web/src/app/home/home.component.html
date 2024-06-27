@@ -100,7 +100,7 @@
   <!-- videos -->
   <div *ngIf="status=='videos'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
     <div *ngFor="let video of videos" class="video">
-      <div (click)="app.playYoutube(video.youtube)">
+      <div (click)="app.playYoutube(video.youtube)" class="position-relative">
         <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>
         <span class="youtube"></span>
       </div>

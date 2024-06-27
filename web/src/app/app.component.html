@@ -74,8 +74,8 @@
 
 <!-- Youtube player -->
 <div *ngIf="youtube" class="d-flex justify-content-center modal-bg" (click)="close()">
-  <div class="align-self-center">
-    <iframe [src]='youtube' type="text/html" width="450px" height="300px" frameborder="0"></iframe>
+  <div class="align-self-center youtube">
+    <iframe [src]='youtube' width="100%" height="100%" frameborder="0"></iframe>
   </div>
 </div>
 

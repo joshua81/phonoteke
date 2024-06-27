@@ -77,11 +77,8 @@ span.spotify-disabled {
     cursor: pointer;
 }
 
-/*span.songkick {
-    display: inline-block;
-    mask: url("/images/songkick-wp.svg") no-repeat;
-    width: 100px;
-    height: 30px;
-    background: #F80046;
-    cursor: pointer;
-}*/
+div.youtube {
+    aspect-ratio: 16/9;
+    width: 100%;
+    max-width: 600px;
+}

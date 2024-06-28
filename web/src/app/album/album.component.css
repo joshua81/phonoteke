@@ -10,36 +10,6 @@ div.wallpaper {
   background: #FFFFFF;
 }
 
-/*span.songkick {
-  display: inline-block;
-  mask: url("/images/songkick.svg") no-repeat;
-  width: 30px;
-  height: 30px;
-  margin: 0px;
-  padding: 0px;
-  background: #F80046;
-  cursor: pointer;
-}*/
-
-/*.spotify {
-  width: 30px;
-  height: 30px;
-  margin: 0px;
-  padding: 0px;
-  cursor: pointer;
-}*/
-
-/*span.spotify {
-  display: inline-block;
-  mask: url("/images/spotify.svg") no-repeat;
-  width: 30px;
-  height: 30px;
-  margin: 0px;
-  padding: 0px;
-  background: #1DB954;
-  cursor: pointer;
-}*/
-
 .vote {
   position: absolute;
   top: 5px;

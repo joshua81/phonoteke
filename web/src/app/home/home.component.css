@@ -126,8 +126,8 @@ span.play {
     height: 16px;
     margin: 0px;
     padding: 0px;
-    left: 90px;
-    top: 90px;
+    right:5px;
+    bottom: 5px;
     background: rgb(255,255,255,.6);
     cursor: pointer;
 }

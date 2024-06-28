@@ -73,7 +73,7 @@
       <a *ngIf="!app.player" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
       </a>
-      <div *ngIf="app.player" (click)="app.playPauseSpotify(album.spalbumid, 'album')">
+      <div *ngIf="app.player" (click)="app.playPauseSpotify(album.spalbumid, 'album')" class="position-relative">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
         <span class="play"></span>
       </div>

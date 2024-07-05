@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
@@ -74,20 +73,20 @@ public class RadioRaheemCrawler extends AbstractCrawler
 								append("artist", artist).
 								append("title", title).
 								append("authors", authors).
-//								append("cover", doc.get("image_original_url").getAsString()).
-//								append("date", getDate(doc.get("published_at").getAsString())).
+								append("cover", doc.get("gds_featured_image").getAsJsonObject().get("url").getAsString()).
+								append("date", getDate(doc.get("date").getAsString())).
 								append("description", title).
 								append("genres", null).
 								append("label", null).
 								append("links", null).
 								append("review", null).
 								append("source", source).
-								append("vote", null);
-//								append("year", getYear(doc.get("published_at").getAsString())).
-//								append("tracks", getTracks(doc.get("description").getAsString())).
-//								append("audio", doc.get("download_url").getAsString())
-//
-//						repo.getDocs().insertOne(json);
+								append("vote", null).
+								append("year", getYear(doc.get("date").getAsString())).
+								append("tracks", getTracks(doc.get("acf").getAsJsonObject().get("tracklist").getAsJsonArray())).
+								append("audio", getAudio(doc.get("acf").getAsJsonObject().get("mixcloud_iframe").getAsString()));
+
+						repo.getDocs().insertOne(json);
 						log.info(json.getString("type") + " " + pageUrl + " added");
 					}
 					catch(Exception e) {
@@ -104,7 +103,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 
 	private Date getDate(String date) {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			return sdf.parse(date);
 		} catch (ParseException e) {
 			return null;
@@ -113,7 +112,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 
 	private Integer getYear(String date) {
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(sdf.parse(date));
 			return cal.get(Calendar.YEAR);
@@ -122,20 +121,21 @@ public class RadioRaheemCrawler extends AbstractCrawler
 		}
 	}
 
-	private List<org.bson.Document> getTracks(String content) {
+	private String getAudio(String doc) {
+		String feed = doc.split("feed=")[1].split("\"")[0].replace("%2F", "/");
+		return "https://www.mixcloud.com" + feed;
+	}
+
+	private List<org.bson.Document> getTracks(JsonArray content) {
 		List<org.bson.Document> tracks = Lists.newArrayList();
 
-		String[] chunks = content.split("\n");
-		for(int i = 0; i < chunks.length; i++)
-		{
-			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
-			{
-				String youtube = null;
-				tracks.add(newTrack(title, youtube));
-				log.debug("tracks: " + title + ", youtube: " + youtube);
-			}
-		}
+		content.forEach(item -> {
+			JsonObject doc = (JsonObject)item;
+			String youtube = null;
+			String title = doc.get("titolo").getAsString() + " - " + doc.get("sottotitolo").getAsString();
+			tracks.add(newTrack(title, youtube));
+			log.debug("tracks: " + title + ", youtube: " + youtube);
+		});
 		return checkTracks(tracks);
 	}
 }

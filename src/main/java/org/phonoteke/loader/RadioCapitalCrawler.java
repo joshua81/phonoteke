@@ -15,6 +15,8 @@ import org.jsoup.select.Elements;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -23,25 +25,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RadioCapitalCrawler extends AbstractCrawler
 {
+	private static final String CAPITAL = "capital";
 	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
-	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
-	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
+	//	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
+	//	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
 
 
 	public void load(String... args) 
 	{
-		if(args.length == 0 || "capital".equals(args[0])) {
-			RadioCapitalCrawler.url = BSIDE_URL + "puntate/";
-			RadioCapitalCrawler.artist = "B-Side";
-			RadioCapitalCrawler.source = "casabertallot";
-			RadioCapitalCrawler.authors = Lists.newArrayList("Alessio Bertallot");
-			crawl(url);
-			updateLastEpisodeDate(source);
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
+		{
+			org.bson.Document show = i.next();
+			RadioCapitalCrawler.url = show.getString("url");
+			RadioCapitalCrawler.artist = show.getString("title");
+			RadioCapitalCrawler.source = show.getString("source");
+			RadioCapitalCrawler.authors = show.get("authors", List.class);
 
-			RadioCapitalCrawler.url = EXTRA_URL + "puntate/";
-			RadioCapitalCrawler.artist = "Extra";
-			RadioCapitalCrawler.source = "alexpaletta";
-			RadioCapitalCrawler.authors = Lists.newArrayList("Alex Paletta");
+			log.info("Crawling " + artist);
 			crawl(url);
 			updateLastEpisodeDate(source);
 		}
@@ -56,10 +58,9 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	@Override
 	public void visit(Page page) 
 	{
-		if(page.getWebURL().getURL().startsWith(BSIDE_URL + "puntate/b-side-del") ||
-				page.getWebURL().getURL().startsWith(BSIDE_URL + "puntate/puntata-del") || 
-				page.getWebURL().getURL().startsWith(EXTRA_URL + "puntate/extra-del") ||
-				page.getWebURL().getURL().startsWith(EXTRA_URL + "puntate/puntata-del")) {
+		if(page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/b-side-del") ||
+				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/extra-del") ||
+				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/puntata-del")) {
 			super.visit(page);
 		}
 	}
@@ -147,15 +148,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		try {
 			String date = new SimpleDateFormat("yyyy-MM-dd").format(getDate(url, doc));
-			if(url.startsWith(BSIDE_URL)) {
-				doc = Jsoup.connect(BSIDE_URL + "playlist/dettaglio/" + date).ignoreContentType(true).get();
-			}
-			else if(url.startsWith(EXTRA_URL)) {
-				doc = Jsoup.connect(EXTRA_URL + "playlist/dettaglio/" + date).ignoreContentType(true).get();
-			}
-			else {
-				throw new RuntimeException("Unknown url: " + url);
-			}
+			doc = Jsoup.connect(RadioCapitalCrawler.url + "playlist/dettaglio/" + date).ignoreContentType(true).get();
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();

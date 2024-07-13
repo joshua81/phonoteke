@@ -27,8 +27,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 {
 	private static final String CAPITAL = "capital";
 	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
-	//	private static final String BSIDE_URL = CAPITAL_URL + "b-side/";
-	//	private static final String EXTRA_URL = CAPITAL_URL + "extra/";
 
 
 	public void load(String... args) 

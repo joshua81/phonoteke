@@ -37,9 +37,9 @@ public class HumanBeatsCrawler
 		rai.load(args);
 		spreaker.load(args);
 		wwfm.load(args);
-		capital.load(args);
 		nts.load(args);
 		raheem.load(args);
+		capital.load(args);
 	}
 
 	public void crawlReviews(String... args) {

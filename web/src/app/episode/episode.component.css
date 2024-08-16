@@ -10,12 +10,6 @@ div.wallpaper {
   background: #FFFFFF;
 }
 
-img.wallpaper {
-  width: 100%;
-  height: 300px;
-  object-fit: none;
-}
-
 div.title {
   position: absolute;
   bottom: 50px;

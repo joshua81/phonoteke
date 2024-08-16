@@ -2,8 +2,8 @@
   <div class="wallpaper w-100">
     <div class="d-flex flex-row justify-content-center align-items-center w-100">
       <div class="cover">  
-        <img *ngIf="doc.coverM == null" class="cover card-img-top" src="{{doc.cover}}"/>
-        <img *ngIf="doc.coverM != null" class="cover card-img-top" src="{{doc.coverM}}"/>
+        <img *ngIf="doc.coverM == null" class="cover" src="{{doc.cover}}"/>
+        <img *ngIf="doc.coverM != null" class="cover" src="{{doc.coverM}}"/>
         <div>
           <h2 *ngIf="doc.vote && doc.vote != 10" class="vote">{{doc.vote}}</h2>
           <div *ngIf="doc.vote && doc.vote == 10" class="vote"><span class="star"></span></div>

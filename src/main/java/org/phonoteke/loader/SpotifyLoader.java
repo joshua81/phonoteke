@@ -102,7 +102,12 @@ public class SpotifyLoader
 			log.info("Following Spotify playlists...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[2]).build();
 			followPlaylist(args[1]);
-		}		
+		}
+		else if("unfollow".equals(args[0])) {
+			log.info("Unfollowing Spotify playlists...");
+			spotify = new SpotifyApi.Builder().setAccessToken(args[1]).build();
+			unfollowPlaylists();
+		}	
 		else if("rename".equals(args[0])) {
 			log.info("Renaming Spotify playlists...");
 			spotify = new SpotifyApi.Builder().setAccessToken(args[1]).build();
@@ -156,28 +161,24 @@ public class SpotifyLoader
 	//		}
 	//	}
 
-	//	private void unfollowPlaylists()
-	//	{
-	//		try {
-	//			for(int i = 0; i < 10; i++) {
-	//				GetListOfCurrentUsersPlaylistsRequest req = spotify.getListOfCurrentUsersPlaylists().offset(0).limit(50).build();
-	//				Paging<PlaylistSimplified> playlists = req.execute();
-	//				for(PlaylistSimplified p : playlists.getItems()) {
-	//					try {
-	//						UnfollowPlaylistRequest req2 = spotify.unfollowPlaylist(p.getId()).build();
-	//						req2.execute();
-	//						log.info("Playlist " + p.getId() + " unfollowed");
-	//					}
-	//					catch (Exception e) {
-	//						log.error("ERROR unfollowing playlist " + p.getId() + ": " + e.getMessage());
-	//					}
-	//				}
-	//			}
-	//		}
-	//		catch (Exception e) {
-	//			log.error("ERROR getting the list of playlists: " + e.getMessage());
-	//		}
-	//	}
+	private void unfollowPlaylists()
+	{
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("spalbumid", null), Filters.ne("spalbumid", "na"))).iterator();
+		while(i.hasNext()) 
+		{ 
+			Document page = i.next();
+			String id = page.getString("id");
+			String spid = page.getString("spalbumid");
+			try {
+				log.info("Unfollowing playlist " + spid);
+				spotify.unfollowPlaylist(spid).build().execute();
+				log.info("Playlist " + spid + " unfollowed");
+			}
+			catch (Exception e) {
+				log.error("ERROR unfollowing playlist " + spid + ": " + e.getMessage());
+			}
+		}
+	}
 
 	private void renamePlaylists()
 	{
@@ -203,18 +204,18 @@ public class SpotifyLoader
 
 	private void createPlaylists()
 	{
-//		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
-//		while(i.hasNext()) 
-//		{ 
-//			Document page = i.next();
-//			String id = page.getString("id");
-//			String title = page.getString("artist");
-//			String description = page.getString("title");
-//			Date date = page.getDate("date");
-//			title = HumanBeatsUtils.format(title, date);
-//			createPlaylist(page, title, description);
-//			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
-//		}
+		//		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("dirty", false))).iterator();
+		//		while(i.hasNext()) 
+		//		{ 
+		//			Document page = i.next();
+		//			String id = page.getString("id");
+		//			String title = page.getString("artist");
+		//			String description = page.getString("title");
+		//			Date date = page.getDate("date");
+		//			title = HumanBeatsUtils.format(title, date);
+		//			createPlaylist(page, title, description);
+		//			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page)); 
+		//		}
 
 		MongoCursor<Document> i = repo.getStats().find().iterator();
 		while(i.hasNext()) { 

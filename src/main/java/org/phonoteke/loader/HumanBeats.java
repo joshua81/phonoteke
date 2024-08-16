@@ -42,6 +42,19 @@ public class HumanBeats implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		log.info("                    #*++              **++                     ");
+		log.info("                   *##+++++++    ******++++                    ");
+		log.info("                  #####+++++*####*****++++++                   ");
+		log.info("                 *####################*++++++                  ");
+		log.info("                *##########################*++                 ");
+		log.info("                 ############################                  ");
+		log.info("                   ########################                    ");
+		log.info("                     ####################                      ");
+		log.info("                       ################                        ");
+		log.info("                        ##############                         ");
+		log.info("                          ##########                           ");
+		log.info("                            ######                             ");
+		log.info("                              ##                               ");
 		log.info(" ------------------------------------------------------------- ");
 		log.info("| HUMAN BEATS - music designed by humans, assembled by robots |");
 		log.info(" ------------------------------------------------------------- ");

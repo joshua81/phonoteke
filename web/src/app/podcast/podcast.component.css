@@ -27,6 +27,7 @@ img.cover {
   
 .card-body {
     padding: 4px;
+    height: 120px;
 }
   
 .card-footer {

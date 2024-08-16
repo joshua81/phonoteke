@@ -16,7 +16,6 @@ import { LinkComponent } from './link/link.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { AlbumComponent } from './album/album.component';
-import { PlaylistComponent } from './playlist/playlist.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +24,6 @@ import { PlaylistComponent } from './playlist/playlist.component';
     PodcastComponent,
     EpisodeComponent,
     AlbumComponent,
-    PlaylistComponent,
     TracksComponent,
     VideoComponent,
     LinkComponent,

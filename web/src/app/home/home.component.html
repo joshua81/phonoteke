@@ -39,11 +39,6 @@
         <h3 class="pl-2 pr-2">Reviews</h3>
       </div>
     </a>
-    <a [routerLink]="[source == null ? '/tracks' : '/shows/' + source + '/tracks']">
-      <div class="menu-item" [ngClass]="{'selected': status == 'tracks'}">
-        <h3 class="pl-2 pr-2">Tracks</h3>
-      </div>
-    </a>
     <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
       <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
         <h3 class="pl-2 pr-2">Videos</h3>
@@ -110,9 +105,6 @@
       </div>
     </div>
   </div>
-
-  <!-- playlist -->
-  <app-playlist *ngIf="status=='tracks'" [tracks]="tracks" [spalbumid]="spalbumid"></app-playlist>
 </div>
 <!-- footer -->
 <app-footer></app-footer>

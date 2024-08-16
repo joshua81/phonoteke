@@ -21,7 +21,7 @@
         </div>
         <!-- title -->
         <div class="w-100 ml-2 mr-2">
-            <div *ngIf="track.spotify == null" class="text-muted">{{track.title}}</div>
+            <div *ngIf="track.spotify == null" class="text-truncate-3 text-muted">{{track.title}}</div>
             <div *ngIf="track.spotify" class="text-truncate-1">{{track.track + ' | '}}<span class="font-weight-bold">{{track.album}}</span></div>
             <div *ngIf="track.spotify" class="text-truncate-1">{{track.artist}}</div>
             <div class="d-flex flex-row">

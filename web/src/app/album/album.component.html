@@ -43,7 +43,6 @@
   </div-->
 
   <p class="text-justify mt-3" [innerHTML]="doc.review"></p>
-  
   <app-video [tracks]="doc.tracks"></app-video>
   <app-link *ngIf="links && links.albums.length > 0" [links]="links.albums" type="albums"></app-link>
   <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>

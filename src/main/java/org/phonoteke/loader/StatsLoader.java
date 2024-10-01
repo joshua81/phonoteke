@@ -243,7 +243,11 @@ public class StatsLoader
 			Collections.sort(jsonVideos, new Comparator<Document>() {
 				@Override
 				public int compare(Document v1, Document v2) {
+					// date desc
 					int res = documentDate(v2).compareTo(documentDate(v1));
+					// source asc
+					res = res != 0 ? res : documentSource(v1).compareTo(documentSource(v2));
+					// index asc
 					return res != 0 ? res : documentIndex(v1).compareTo(documentIndex(v2));
 				}
 			});

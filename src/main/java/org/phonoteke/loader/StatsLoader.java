@@ -127,8 +127,8 @@ public class StatsLoader
 		}
 		else {
 			Document yearDoc = new Document();
-//			yearDoc.append("artists", getArtists());
-//			yearDoc.append("artistsVar", getArtistsVar().doubleValue());
+			//			yearDoc.append("artists", getArtists());
+			//			yearDoc.append("artistsVar", getArtistsVar().doubleValue());
 			yearDoc.append("albums", getAlbums());
 			yearDoc.append("albumsVar", getAlbumsVar().doubleValue());
 			yearDoc.append("tracks", getTracks());
@@ -224,9 +224,9 @@ public class StatsLoader
 		});
 	}
 
-//	private BigDecimal getArtistsVar() {
-//		return new BigDecimal(artistsDocs.keySet().size()).divide(new BigDecimal(artistsList.size()), 4, RoundingMode.HALF_UP);
-//	}
+	//	private BigDecimal getArtistsVar() {
+	//		return new BigDecimal(artistsDocs.keySet().size()).divide(new BigDecimal(artistsList.size()), 4, RoundingMode.HALF_UP);
+	//	}
 
 	private BigDecimal getAlbumsVar() {
 		return new BigDecimal(albumsDocs.keySet().size()).divide(new BigDecimal(albumsList.size()), 4, RoundingMode.HALF_UP);
@@ -278,11 +278,11 @@ public class StatsLoader
 		Collections.sort(jsonSongs, new Comparator<Document>() {
 			@Override
 			public int compare(Document s1, Document s2) {
+				// date desc
 				int res = documentDate(s2).compareTo(documentDate(s1));
-				if(res != 0) {
-					return res;
-				}
-				res = documentSource(s1).compareTo(documentSource(s2));
+				// source asc
+				res = res != 0 ? res : documentSource(s1).compareTo(documentSource(s2));
+				// index asc
 				return res != 0 ? res : documentIndex(s1).compareTo(documentIndex(s2));
 			}
 		});
@@ -300,8 +300,10 @@ public class StatsLoader
 		Collections.sort(jsonAlbums, new Comparator<Document>() {
 			@Override
 			public int compare(Document a1, Document a2) {
+				// artist score desc
 				int res = artistScore(a2).compareTo(artistScore(a1));
-				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
+				// artist asc
+				return res != 0 ? res : documentArtist(a1).compareTo(documentArtist(a2));
 			}
 		});
 
@@ -313,23 +315,23 @@ public class StatsLoader
 		return topAlbums;
 	}
 
-//	private List<Document> getArtists() {
-//		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
-//		Collections.sort(jsonArtists, new Comparator<Document>() {
-//			@Override
-//			public int compare(Document a1, Document a2) {
-//				int res = artistScore(a2).compareTo(artistScore(a1));
-//				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
-//			}
-//		});
-//
-//		List<Document> topArtists = Lists.newArrayList();
-//		subList(jsonArtists).forEach(a -> {
-//			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
-//			topArtists.add(getArtist(a));
-//		});
-//		return topArtists;
-//	}
+	//	private List<Document> getArtists() {
+	//		List<Document> jsonArtists = Lists.newArrayList(artistsDocs.values());
+	//		Collections.sort(jsonArtists, new Comparator<Document>() {
+	//			@Override
+	//			public int compare(Document a1, Document a2) {
+	//				int res = artistScore(a2).compareTo(artistScore(a1));
+	//				return res != 0 ? res : documentDate(a2).compareTo(documentDate(a1));
+	//			}
+	//		});
+	//
+	//		List<Document> topArtists = Lists.newArrayList();
+	//		subList(jsonArtists).forEach(a -> {
+	//			log.debug("Artist: " + a.getString("artist") + ": " + artistScore(a));
+	//			topArtists.add(getArtist(a));
+	//		});
+	//		return topArtists;
+	//	}
 
 	private MongoCursor<Document> getDocs() {
 		// all episodes in the last month
@@ -363,10 +365,10 @@ public class StatsLoader
 		}
 	}
 
-//	private Document getArtist(Document track) {
-//		return new Document("artist", track.getString("artist"))
-//				.append("spartistid", track.getString("spartistid"));
-//	}
+	//	private Document getArtist(Document track) {
+	//		return new Document("artist", track.getString("artist"))
+	//				.append("spartistid", track.getString("spartistid"));
+	//	}
 
 	private Document getAlbum(Document track) {
 		return new Document("artist", track.getString("artist"))
@@ -443,5 +445,9 @@ public class StatsLoader
 
 	private String documentSource(Document doc) {
 		return doc.getString("source");
+	}
+
+	private String documentArtist(Document doc) {
+		return doc.getString("artist");
 	}
 }

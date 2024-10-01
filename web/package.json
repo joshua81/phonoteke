@@ -22,7 +22,7 @@
     "@angular/youtube-player": "^8.2.3",
     "@fortawesome/fontawesome-free": "^5.15.1",
     "angular-font-awesome": "^3.1.2",
-    "bootstrap": "^4.5.3",
+    "bootstrap": "^5.0.0",
     "font-awesome": "^4.7.0",
     "hls.js": "^1.1.5-0.canary.8315",
     "ngx-cookie-service": "^10.1.1",

@@ -21,7 +21,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -132,15 +131,11 @@ public abstract class AbstractCrawler extends WebCrawler
 										append("year", getYear(url, doc)).
 										append("tracks", getTracks(url, doc)).
 										append("audio", getAudio(url, doc));
+								insertEpisode(json);
 							}
 							break;
 						default:
 							break;
-						}
-						if(json != null)
-						{
-							repo.getDocs().insertOne(json);
-							log.info(json.getString("type") + " " + url + " added");
 						}
 					}
 				}
@@ -252,16 +247,15 @@ public abstract class AbstractCrawler extends WebCrawler
 		return tracks;
 	}
 
-	protected void updateLastEpisodeDate(String source) {
-		MongoCursor<org.bson.Document> i = repo.getDocs().find(Filters.and(
-				Filters.eq("type", "podcast"), 
-				Filters.eq("source", source)))
-				.sort(new BasicDBObject("date", -1)).limit(1).iterator();
-		Date date = i.next().get("date", Date.class);
-		i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+	protected void insertEpisode(org.bson.Document json) {
+		repo.getDocs().insertOne(json);
+
+		// update last episode date
+		MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
 		org.bson.Document doc = i.next();
-		doc.append("lastEpisodeDate", date);
+		doc.append("lastEpisodeDate", json.getDate("date"));
 		repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+		log.info(json.getString("type") + " " + url + " added");
 	}
 
 	//---------------------------------

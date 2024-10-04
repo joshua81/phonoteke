@@ -42,7 +42,6 @@ public class RadioRaheemCrawler extends AbstractCrawler
 
 			log.info("Crawling " + artist);
 			crawl(url);
-			updateLastEpisodeDate(source);
 		}
 	}
 

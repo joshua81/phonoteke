@@ -52,7 +52,6 @@ public class WWFMCrawler extends AbstractCrawler
 
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
-			updateLastEpisodeDate(source);
 		}
 	}
 

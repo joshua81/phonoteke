@@ -49,7 +49,6 @@ public class NTSCrawler extends AbstractCrawler
 
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
-			updateLastEpisodeDate(source);
 		}
 	}
 

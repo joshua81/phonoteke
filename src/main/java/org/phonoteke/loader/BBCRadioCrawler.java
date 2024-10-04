@@ -42,7 +42,6 @@ public class BBCRadioCrawler extends AbstractCrawler
 
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(url + "?page=" + page);
-			updateLastEpisodeDate(source);
 		}
 	}
 

@@ -41,7 +41,6 @@ public class SpreakerCrawler extends AbstractCrawler
 
 			log.info("Crawling " + artist);
 			crawl(url);
-			updateLastEpisodeDate(source);
 		}
 	}
 

@@ -274,7 +274,7 @@ export class AppComponent {
       }
       else if(doc.audio.startsWith('https://soundcloud.com/')) {
         this.close();
-        this.wwfm = this.sanitizer.bypassSecurityTrustResourceUrl('https://w.soundcloud.com/player/?url=' + doc.audio);
+        this.nts = this.sanitizer.bypassSecurityTrustResourceUrl('https://w.soundcloud.com/player/?url=' + doc.audio);
       }
       else if(this.audio == null || this.audio.source != doc.audio) {
         this.close();

@@ -14,6 +14,7 @@ export class AppComponent {
   isDesktop:boolean = false;
   youtube:SafeResourceUrl = null;
   wwfm:SafeResourceUrl = null;
+  nts:SafeResourceUrl = null;
   
   doc:any = null;
   player:any = null;
@@ -271,6 +272,10 @@ export class AppComponent {
         this.close();
         this.wwfm = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.mixcloud.com/widget/iframe/?&autoplay=1&hide_cover=1&mini=1&dark=1&feed=' + doc.audio.substring(24));
       }
+      else if(doc.audio.startsWith('https://soundcloud.com/')) {
+        this.close();
+        this.wwfm = this.sanitizer.bypassSecurityTrustResourceUrl('https://w.soundcloud.com/player/?url=' + doc.audio);
+      }
       else if(this.audio == null || this.audio.source != doc.audio) {
         this.close();
         if(!Hls.isSupported() || doc.audio.endsWith(".mp3")) {
@@ -404,6 +409,7 @@ export class AppComponent {
   close() {
     this.youtube = null;
     this.wwfm = null;
+    this.nts = null;
 
     // podcast player
     if(this.audio) {

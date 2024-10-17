@@ -128,8 +128,16 @@ h3 {
 
 .close {
     position: absolute;
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
     top: 0px;
-    right: 8px;
+    right: 0px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 0px;
+    padding-bottom: 6px;
     cursor: pointer;
 }
 

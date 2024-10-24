@@ -111,9 +111,7 @@ public class NTSCrawler extends AbstractCrawler
 									append("year", getYear(doc.get("broadcast").getAsString())).
 									append("tracks", getTracks(doc.getAsJsonObject("embeds").getAsJsonObject("tracklist").getAsJsonArray("results"))).
 									append("audio", getAudio(doc));
-
-							repo.getDocs().insertOne(json);
-							log.info(json.getString("type") + " " + pageUrl + " added");
+							insertDoc(json);
 						}
 						catch(Exception e) {
 							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

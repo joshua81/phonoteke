@@ -105,9 +105,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 								append("year", getYear(doc.get("literal_publication_date").getAsString())).
 								append("tracks", getTracks(doc.get("description").getAsString())).
 								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
-
-						repo.getDocs().insertOne(json);
-						log.info(json.getString("type") + " " + pageUrl + " added");
+						insertDoc(json);
 					}
 					catch(Exception e) {
 						log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

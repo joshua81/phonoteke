@@ -89,9 +89,7 @@ public class SpreakerCrawler extends AbstractCrawler
 									append("year", getYear(doc.get("published_at").getAsString())).
 									append("tracks", getTracks(doc.get("description").getAsString())).
 									append("audio", doc.get("download_url").getAsString());
-
-							repo.getDocs().insertOne(json);
-							log.info(json.getString("type") + " " + pageUrl + " added");
+							insertDoc(json);
 						}
 						catch(Exception e) {
 							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

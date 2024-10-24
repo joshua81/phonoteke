@@ -84,9 +84,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 								append("year", getYear(doc.get("date").getAsString())).
 								append("tracks", getTracks(doc.get("acf").getAsJsonObject().get("tracklist").getAsJsonArray())).
 								append("audio", getAudio(doc.get("acf").getAsJsonObject().get("mixcloud_iframe").getAsString()));
-
-						repo.getDocs().insertOne(json);
-						log.info(json.getString("type") + " " + pageUrl + " added");
+						insertDoc(json);
 					}
 					catch(Exception e) {
 						log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());

@@ -22,15 +22,13 @@ import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
-import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class RadioRaiCrawler extends AbstractCrawler
 {
 	private static final String URL = "https://www.raiplaysound.it/";
-	private static final String URL_AUDIO = "https://www.raiplaysound.it/audio";
+	private static final String URL2 = "https://www.raiplaysound.it";
 	private static final String RAI = "rai";
 
 	private static final String MUSICALBOX = "musicalbox";
@@ -53,40 +51,26 @@ public class RadioRaiCrawler extends AbstractCrawler
 	}
 
 	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) 
+	protected void crawl(String url)
 	{
-		for(String u : Lists.newArrayList(this.url, URL_AUDIO)) {
-			if(url.getURL().toLowerCase().startsWith(u)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public void visit(Page page) 
-	{
-		if(page.getWebURL().getURL().endsWith(".html")) {
-			try
-			{
-				String url = page.getWebURL().getURL().replace(".html", ".json");
-				HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
-				JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
-				String pageUrl = page.getWebURL().getURL();
+		try
+		{
+			HttpURLConnection con = (HttpURLConnection)new URL(url + ".json").openConnection();
+			JsonObject episodes = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+			episodes.get("block").getAsJsonObject().get("cards").getAsJsonArray().forEach(c -> {
+				String pageUrl = URL2 + ((JsonObject)c).get("weblink").getAsString();
 				TYPE type = TYPE.podcast;
+				try {
+					log.debug("Parsing page " + pageUrl);
+					String id = getId(pageUrl);
 
-				log.debug("Parsing page " + pageUrl);
-				String id = getId(pageUrl);
-
-				Date start = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2022");
-				if(!getDate(doc.get("literal_publication_date").getAsString()).after(start))
-					return;
-
-				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("url", pageUrl))).iterator().tryNext();
-				if(json == null)
-				{
-					try {
+					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+							Filters.eq("url", pageUrl))).iterator().tryNext();
+					if(json == null)
+					{
+						HttpURLConnection con2 = (HttpURLConnection)new URL(pageUrl.replace(".html", ".json")).openConnection();
+						JsonObject doc = new Gson().fromJson(new InputStreamReader(con2.getInputStream()), JsonObject.class);
+						
 						json = new org.bson.Document("id", id).
 								append("url", getUrl(pageUrl)).
 								append("type", type.name()).
@@ -107,16 +91,15 @@ public class RadioRaiCrawler extends AbstractCrawler
 								append("audio", getAudio(doc.get("audio").getAsJsonObject().get("url").getAsString()));
 						insertDoc(json);
 					}
-					catch(Exception e) {
-						log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-					}
 				}
-			}
-			catch (Throwable t) 
-			{
-				log.error("ERROR parsing page " + url + ": " + t.getMessage());
-				throw new RuntimeException(t);
-			}
+				catch(Exception e) {
+					log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+				}
+			});
+		}
+		catch (Throwable t) {
+			log.error("ERROR parsing page " + url + ": " + t.getMessage());
+			throw new RuntimeException(t);
 		}
 	}
 

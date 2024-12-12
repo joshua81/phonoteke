@@ -143,9 +143,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	protected List<org.bson.Document> getTracks(String url, Document doc) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
+		Date date = getDate(url, doc);
 		try {
-			String date = new SimpleDateFormat("yyyy-MM-dd").format(getDate(url, doc));
-			doc = Jsoup.connect(RadioCapitalCrawler.url + "playlist/dettaglio/" + date).ignoreContentType(true).get();
+			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
+			doc = Jsoup.connect(RadioCapitalCrawler.url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();
@@ -157,6 +158,14 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				}
 			}
 		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+
+		try {
+			if(source.equals("alexpaletta") && date.after(new SimpleDateFormat("yyyy-MM-dd").parse("2024-11-30"))) {
+				return tracks;
+			}
+		} catch (ParseException e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		return checkTracks(tracks);

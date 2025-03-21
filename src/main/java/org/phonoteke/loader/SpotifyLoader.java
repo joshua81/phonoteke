@@ -32,6 +32,7 @@ import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
 import com.wrapper.spotify.model_objects.specification.Image;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Playlist;
+import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.Track;
 import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.follow.FollowPlaylistRequest;
@@ -163,20 +164,24 @@ public class SpotifyLoader
 
 	private void unfollowPlaylists()
 	{
-		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"), Filters.ne("spalbumid", null), Filters.ne("spalbumid", "na"))).iterator();
-		while(i.hasNext()) 
-		{ 
-			Document page = i.next();
-			String id = page.getString("id");
-			String spid = page.getString("spalbumid");
-			try {
-				log.info("Unfollowing playlist " + spid);
-				spotify.unfollowPlaylist(spid).build().execute();
-				log.info("Playlist " + spid + " unfollowed");
+		try {
+			for(int j = 0; j < 100; j++) {
+				Paging<PlaylistSimplified> playlists = spotify.getListOfCurrentUsersPlaylists().build().execute();
+				for(int i = 0; i < playlists.getItems().length; i++) {
+					PlaylistSimplified playlist = playlists.getItems()[i];
+					if(playlist.getName().contains("Ep.202")) {
+						String spid = playlist.getId();
+						log.info("Delete playlist " + playlist.getName());
+						spotify.unfollowPlaylist(spid).build().execute();
+					}
+					else {
+						log.info("Keep playlist " + playlist.getName());
+					}
+				}
 			}
-			catch (Exception e) {
-				log.error("ERROR unfollowing playlist " + spid + ": " + e.getMessage());
-			}
+		}
+		catch (Exception e) {
+			log.error("ERROR unfollowing playlist: " + e.getMessage());
 		}
 	}
 

@@ -169,13 +169,14 @@ public class SpotifyLoader
 				Paging<PlaylistSimplified> playlists = spotify.getListOfCurrentUsersPlaylists().build().execute();
 				for(int i = 0; i < playlists.getItems().length; i++) {
 					PlaylistSimplified playlist = playlists.getItems()[i];
-					if(playlist.getName().contains("Ep.202")) {
+					if(playlist.getName().contains("Ep.20")) {
 						String spid = playlist.getId();
-						log.info("Delete playlist " + playlist.getName());
 						spotify.unfollowPlaylist(spid).build().execute();
+						log.info("Deleted playlist " + playlist.getName());
+						Thread.sleep(100);
 					}
 					else {
-						log.info("Keep playlist " + playlist.getName());
+						log.info("Kept playlist " + playlist.getName());
 					}
 				}
 			}

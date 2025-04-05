@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   name:string = null;
   episodesPage:number = 0;
   episodesQuery:string = null;
-  showSearch:boolean = false;
+  //showSearch:boolean = false;
   albums = [];
   videos = [];
   tracks = [];
@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
     this.episodes = [];
     this.episodesPage = 0;
     this.reviews = [];
-    this.showSearch = false;
+    //this.showSearch = false;
   }
 
   setStatus(status:string) {
@@ -146,14 +146,14 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  toggleSearch() {
+  /*toggleSearch() {
     this.showSearch = !this.showSearch;
     if(this.episodesQuery != null) {
       this.episodesQuery = null;
       this.episodes = [];
       this.loadEpisodes();
     }
-  }
+  }*/
 
   onSearch(event: KeyboardEvent) {
     this.episodesQuery = (event.target as HTMLInputElement).value;

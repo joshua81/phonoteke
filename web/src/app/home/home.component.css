@@ -23,39 +23,42 @@ h3 {
 div.wallpaper {
     position: relative;
     width: 100%;
-    height: 300px;
+    height: 450px;
     background: #ce9393;
 }
 
 img.wallpaper {
     width: 100%;
-    height: 300px;
+    height: 450px;
     object-fit: none;
 }
 
 div.title {
     position: absolute;
-    bottom: 0px;
+    bottom: 30px;
     left: 0px;
     background-color: rgba(0,0,0,.6);
 }
 
 div.menu {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
     height: 30px;
+    background-color: rgba(0,0,0,.6);
 }
 
-div.menu-item {
+/*div.menu-item {
     border-style: solid;
-    border-width: 2px 0px 0px 0px;
-    border-color: #FFFFFF;
+    border-width: 0px 0px 2px 0px;
+    border-color: rgba(0,0,0,.6);
     cursor: pointer;
-}
+}*/
 
 div.selected {
-    font-weight: bold;
     border-style: solid;
-    border-width: 2px 0px 0px 0px;
-    border-color: #000000;
+    border-width: 0px 0px 2px 0px;
+    border-color: #FFFFFF;
     cursor: pointer;
 }
 
@@ -157,7 +160,7 @@ span.play {
     top: 5px;
     right: 5px;
     background: #000000;
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 
 .finder-input {
@@ -227,4 +230,15 @@ span.youtube {
     bottom: 0px;
     background: rgba(255,255,255,.6);
     cursor: pointer;
+}
+
+.yesterday {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #18A2B8;
 }

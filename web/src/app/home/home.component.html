@@ -1,59 +1,58 @@
-<div class="container p-2">
+<div class="container p-0">
   <div class="wallpaper w-100 text-center">
+    <!-- wallpaper -->
     <img class="wallpaper" src="{{'https://storage.googleapis.com/humanbeats/' + (source == null ? 'humanbeats' : source) + '-wp.jpg'}}"/>
-
     <!-- back -->
     <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="back()">
       <span class="previous"></span>
     </div>
     <!-- finder -->
-    <div *ngIf="source != null && status=='episodes' && showSearch" class="finder-input">
+    <div *ngIf="source != null && status=='episodes'" class="finder-input">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
     </div>
-    <div *ngIf="source != null && status=='episodes'" class="finder d-flex flex-row justify-content-center align-items-center" (click)="toggleSearch()">
+    <div *ngIf="source != null && status=='episodes'" class="finder d-flex flex-row justify-content-center align-items-center">
       <span class="search"></span>
     </div>
-
-    <div *ngIf="source != null" class="title text-left"><h1 class="text-white">{{name}}</h1></div>
-  </div>
-
-  <!-- menu -->
-  <div class="menu d-flex flex-row justify-content-center w-100">
-    <a *ngIf="source == null" [routerLink]="['/']">
-      <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
-        <h3 class="pl-2 pr-2">Shows</h3>
-      </div>
-    </a>
-    <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
-      <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
-        <h3 class="pl-2 pr-2">Episodes</h3>
-      </div>
-    </a>
-    <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
-      <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
-        <h3 class="pl-2 pr-2">Albums</h3>
-      </div>
-    </a>
-    <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
-      <div class="menu-item" [ngClass]="{'selected': status == 'reviews'}">
-        <h3 class="pl-2 pr-2">Reviews</h3>
-      </div>
-    </a>
-    <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
-      <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
-        <h3 class="pl-2 pr-2">Videos</h3>
-      </div>
-    </a>
+    <!-- menu -->
+    <div class="menu d-flex flex-row justify-content-center w-100">
+      <a *ngIf="source == null" [routerLink]="['/']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
+          <h3 class="pl-2 pr-2 text-white">Shows</h3>
+        </div>
+      </a>
+      <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
+        <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
+          <h3 class="pl-2 pr-2 text-white">Episodes</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
+          <h3 class="pl-2 pr-2 text-white">Albums</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'reviews'}">
+          <h3 class="pl-2 pr-2 text-white">Reviews</h3>
+        </div>
+      </a>
+      <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
+        <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
+          <h3 class="pl-2 pr-2 text-white">Videos</h3>
+        </div>
+      </a>
+    </div>
+    <!-- title -->
+    <div *ngIf="source != null" class="title text-left w-100"><h1 class="text-white pl-1">{{name}}</h1></div>
   </div>
 
   <!-- shows -->
-  <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='shows'" class="d-flex flex-wrap justify-content-center w-100 p-2">
     <div *ngFor="let show of shows" class="show">
       <a [routerLink]="['/shows/' + show.source]">
         <img class="show" src="{{show.cover}}" loading="lazy"/>
         <h2 class="font-weight-normal text-white">{{show.name}}</h2>
       </a>
-      <!--div *ngIf="app.gtYesterday(show.lastEpisodeDate)" class="yesterday"></div-->
+      <div *ngIf="app.gtYesterday(show.lastEpisodeDate)" class="yesterday"></div>
       <div *ngIf="show.affinity && show.affinity >= 0.2" class="affinity-high"></div>
       <div *ngIf="show.affinity && show.affinity < 0.2 && show.affinity >= 0.1" class="affinity-medium"></div>
     </div>
@@ -63,7 +62,7 @@
   <app-podcasts *ngIf="status=='episodes'" [source]="source" [docs]="episodes"></app-podcasts>
 
   <!-- albums -->
-  <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='albums'" class="d-flex flex-wrap justify-content-center w-100 p-2">
     <div *ngFor="let album of albums" class="album">
       <a *ngIf="!app.player" href="{{'https://open.spotify.com/album/' + album.spalbumid}}" target="_blank">
         <img class="album" src="{{album.cover}}" loading="lazy"/>
@@ -80,7 +79,7 @@
   </div>
 
   <!-- reviews -->
-  <div *ngIf="status=='reviews'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='reviews'" class="d-flex flex-wrap justify-content-center w-100 p-2">
     <div *ngFor="let review of reviews" class="album">
       <a [routerLink]="['/albums/' + review.id]">
         <img class="album" src="{{review.cover}}" loading="lazy"/>
@@ -93,7 +92,7 @@
   </div>
 
   <!-- videos -->
-  <div *ngIf="status=='videos'" class="d-flex flex-wrap justify-content-center w-100 pt-2">
+  <div *ngIf="status=='videos'" class="d-flex flex-wrap justify-content-center w-100 p-2">
     <div *ngFor="let video of videos" class="video">
       <div (click)="app.playYoutube(video.youtube)" class="position-relative">
         <img class="video" src="{{'https://img.youtube.com/vi/' + video.youtube + '/mqdefault.jpg'}}" loading="lazy"/>

@@ -28,7 +28,7 @@
   </div>
 
   <!-- info -->
-  <div class="text-center w-100">
+  <div class="text-center w-100 p-2">
     <h3>{{formatDate(doc.date)}}</h3>
     <h2 class="text-truncate-2" [innerHTML]="doc.title"></h2>
     <h3 *ngIf="doc.authors" class="text-muted mx-auto">{{doc.authors}}</h3>
@@ -41,9 +41,11 @@
     </a>
   </div-->
 
-  <app-tracks [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
-  <!--app-video [tracks]="doc.tracks"></app-video-->
-  <app-link *ngIf="links && links.albums.length > 0" [links]="links.albums" type="albums"></app-link>
-  <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>
+  <div class="p-2">
+    <app-tracks [spalbumid]="doc.spalbumid" [tracks]="doc.tracks"></app-tracks>
+    <!--app-video [tracks]="doc.tracks"></app-video-->
+    <app-link *ngIf="links && links.albums.length > 0" [links]="links.albums" type="albums"></app-link>
+    <app-link *ngIf="links && links.podcasts.length > 0" [links]="links.podcasts" type="episodes"></app-link>
+  </div>
 </div>
 <app-footer></app-footer>

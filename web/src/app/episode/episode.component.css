@@ -38,7 +38,7 @@ img.cover {
   height: 40px;
   bottom: 4px;
   left: 4px;
-  background: #000000;
+  background: rgba(0,0,0,.6);
   cursor: pointer;
 }
 

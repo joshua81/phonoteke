@@ -36,7 +36,10 @@ public class PatchLoader
 			replaceSpecialChars();
 		}
 		else if("deleteDoc".equals(args[0])) {
-			deleteDoc(null);
+			deleteDoc(args[1]);
+		}
+		else if("deleteDocs".equals(args[0])) {
+			deleteDocs(args[1]);
 		}
 		else if("deleteEmptyPlaylist".equals(args[0])) {
 			deleteEmptyPlaylists();
@@ -78,10 +81,10 @@ public class PatchLoader
 		log.info("Document " + id + " deleted");	
 	}
 
-	private void deleteDocs()
+	private void deleteDocs(String source)
 	{
 		log.info("Deleting repo.getDocs()...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", "worldwidefm")).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", source)).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();

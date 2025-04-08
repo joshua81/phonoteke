@@ -31,13 +31,12 @@ img.cover {
 .player {
   position: absolute;
   border-radius: 5px;
-  border-style: solid;
-  border-width: 2px;
+  border-style: none;
 
   width: 60px;
   height: 40px;
-  bottom: 4px;
-  left: 4px;
+  bottom: 5px;
+  left: 5px;
   background: rgba(0,0,0,.6);
   cursor: pointer;
 }

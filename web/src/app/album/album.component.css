@@ -58,8 +58,7 @@ img.cover {
 .player {
   position: absolute;
   border-radius: 5px;
-  border-style: solid;
-  border-width: 2px;
+  border-style: none;
 
   width: 60px;
   height: 40px;

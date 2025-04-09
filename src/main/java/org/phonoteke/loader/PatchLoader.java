@@ -47,6 +47,9 @@ public class PatchLoader
 		else if("resetAlbums".equals(args[0])) {
 			resetAlbums();
 		}
+		else if("resetAlbumsCover".equals(args[0])) {
+			resetAlbumsCover();
+		}
 	}
 
 	private void deleteEmptyPlaylists()
@@ -129,6 +132,24 @@ public class PatchLoader
 			}
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			log.info("Document " + id + " updated");
+		}
+	}
+	
+	private void resetAlbumsCover()
+	{
+		log.info("Resetting albums cover...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("source", "gillespeterson"))).iterator();
+		while(i.hasNext()) 
+		{
+			Document page = i.next();
+			String id = page.getString("id");
+			String cover = page.getString("cover");
+			if(cover.startsWith("https://optimise2.assets-servd.host/vague-roadrunner/")) {
+				cover = cover.replace("https://optimise2.assets-servd.host/vague-roadrunner/", "https://vague-roadrunner.transforms.svdcdn.com/");
+				page.append("cover", cover);
+				repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				log.info("Document " + id + " updated");
+			}
 		}
 	}
 

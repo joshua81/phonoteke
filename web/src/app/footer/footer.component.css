@@ -8,44 +8,10 @@
   cursor: pointer;
 }
 
-span.cc {
-  display: inline-block;
-  mask: url("/images/cc.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background: #282D32;
-}
-
-span.github {
-  display: inline-block;
-  mask: url("/images/github.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background: #282D32;
-}
-
-span.twitter {
-  display: inline-block;
-  mask: url("/images/twitter.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background: #282D32;
-}
-
-span.telegram {
-  display: inline-block;
-  mask: url("/images/telegram.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background: #282D32;
-}
-
-span.linkedin {
-  display: inline-block;
-  mask: url("/images/linkedin.svg") no-repeat;
-  width: 20px;
-  height: 20px;
-  background: #282D32;
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
 }
 
 .api {

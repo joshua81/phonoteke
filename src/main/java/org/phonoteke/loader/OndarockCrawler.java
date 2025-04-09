@@ -166,23 +166,6 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected String getArtist(String url, Document doc) 
-	{
-		Element intestazioneElement = null;
-		Element bandElement = null;
-		String band = null;
-		switch (getType(url)) {
-		case album:
-			intestazioneElement = doc.select("div[class=titolo]").first();
-			bandElement = intestazioneElement.select("h1").first();
-			band = bandElement.html().trim();
-			return band;
-		default:
-			return null;
-		}
-	}
-
 	private Date getDate(String dateTxt)
 	{
 		String[] dates = dateTxt.replace("\\", "/").replace("-", "/").replace(")", "").replace("(", "").trim().split("/");
@@ -195,6 +178,32 @@ public class OndarockCrawler extends AbstractCrawler
 	}
 
 	@Override
+	protected String getArtist(String url, Document doc) 
+	{
+		Element intestazioneElement = null;
+		Element bandElement = null;
+		String band = null;
+		switch (getType(url)) {
+		case album:
+			intestazioneElement = doc.select("div[class=titolo]").first();
+			// <h1>artist</h1><h2>title</h2>
+			if(intestazioneElement.select("h2").first() != null) {
+				bandElement = intestazioneElement.select("h1").first();
+				band = bandElement.html().trim();
+				return band;
+			}
+			// <h1>artist - title</h1>
+			else {
+				bandElement = intestazioneElement.select("h1").first();
+				band = bandElement.html().trim();
+				return band.split("-")[0].trim();
+			}
+		default:
+			return null;
+		}
+	}
+
+	@Override
 	protected String getTitle(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
@@ -203,9 +212,18 @@ public class OndarockCrawler extends AbstractCrawler
 		switch (getType(url)) {
 		case album:
 			intestazioneElement = doc.select("div[class=titolo]").first();
-			titleElement = intestazioneElement.select("h2").first();
-			title = titleElement.html().trim();
-			return title;
+			// <h1>artist</h1><h2>title</h2>
+			if(intestazioneElement.select("h2").first() != null) {
+				titleElement = intestazioneElement.select("h2").first();
+				title = titleElement.html().trim();
+				return title;
+			}
+			// <h1>artist - title</h1>
+			else {
+				titleElement = intestazioneElement.select("h1").first();
+				title = titleElement.html().trim();
+				return title.split("-")[1].trim();
+			}
 		default:
 			return null;
 		}

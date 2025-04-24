@@ -138,7 +138,7 @@ public class PatchLoader
 	private void resetAlbumsCover()
 	{
 		log.info("Resetting albums cover...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("source", "gillespeterson"))).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("source", "nicolaconte"))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();

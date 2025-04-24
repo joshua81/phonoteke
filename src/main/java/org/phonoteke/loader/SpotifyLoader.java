@@ -546,31 +546,33 @@ public class SpotifyLoader
 						{
 							Track track = tracks.getItems()[i];
 							if(track != null) {
-								String spartist = track.getArtists()[0].getName();
-								String spartistid = track.getArtists()[0].getId();
-								String spalbum = track.getAlbum().getName();
-								String spalbumid = track.getAlbum().getId();
-								String spsong = track.getName();
-								for(String match : HumanBeatsUtils.FEAT) {
-									Matcher m = Pattern.compile(match).matcher(spsong);
-									if(m.matches()) {
-										spsong = m.group(1);
-										break;
+								for(int j = 0; j < track.getArtists().length; j++) {
+									String spartist = track.getArtists()[j].getName();
+									String spartistid = track.getArtists()[j].getId();
+									String spalbum = track.getAlbum().getName();
+									String spalbumid = track.getAlbum().getId();
+									String spsong = track.getName();
+									for(String match : HumanBeatsUtils.FEAT) {
+										Matcher m = Pattern.compile(match).matcher(spsong);
+										if(m.matches()) {
+											spsong = m.group(1);
+											break;
+										}
 									}
-								}
-								String trackid = track.getId();
-								int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
-								if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {
-									log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
-									Document page = new Document("spotify", trackid);
-									page.append("artist", spartist);
-									page.append("spartistid", spartistid);
-									page.append("album", spalbum);
-									page.append("spalbumid", spalbumid);
-									page.append("track", spsong);
-									page.append("score", score);
-									getImages(page, track.getAlbum().getImages());
-									tracksMap.put(score, page);
+									String trackid = track.getId();
+									int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
+									if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {
+										log.info("Found: " + title + " | " + spartist + " " + spsong + " | score: " + score);
+										Document page = new Document("spotify", trackid);
+										page.append("artist", spartist);
+										page.append("spartistid", spartistid);
+										page.append("album", spalbum);
+										page.append("spalbumid", spalbumid);
+										page.append("track", spsong);
+										page.append("score", score);
+										getImages(page, track.getAlbum().getImages());
+										tracksMap.put(score, page);
+									}
 								}
 							}
 						}

@@ -232,6 +232,20 @@ span.youtube {
     cursor: pointer;
 }
 
+a.spotify {
+    width: 20px;
+    height: 20px;
+}
+
+span.spotify {
+    display: inline-block;
+    mask: url("/images/spotify.svg") no-repeat;
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
 .yesterday {
     position: absolute;
     top: 5px;

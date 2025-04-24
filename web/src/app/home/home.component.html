@@ -2,10 +2,12 @@
   <div class="wallpaper w-100 text-center">
     <!-- wallpaper -->
     <img class="wallpaper" src="{{'https://storage.googleapis.com/humanbeats/' + (source == null ? 'humanbeats' : source) + '-wp.jpg'}}"/>
+    
     <!-- back -->
     <div *ngIf="source != null" class="back d-flex flex-row justify-content-center align-items-center" (click)="back()">
       <span class="previous"></span>
     </div>
+    
     <!-- finder -->
     <div *ngIf="source != null" class="finder-input">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
@@ -13,6 +15,7 @@
     <div *ngIf="source != null" class="finder d-flex flex-row justify-content-center align-items-center">
       <span class="search"></span>
     </div>
+    
     <!-- menu -->
     <div class="menu d-flex flex-row justify-content-center w-100">
       <a *ngIf="source == null" [routerLink]="['/']">
@@ -41,8 +44,14 @@
         </div>
       </a>
     </div>
+
     <!-- title -->
-    <div *ngIf="source != null" class="title text-left w-100"><h1 class="text-white pl-1">{{name}}</h1></div>
+    <div *ngIf="source != null" class="title text-left d-flex flex-row align-items-center w-100">
+      <h1 class="text-white pl-2 pr-2">{{name}}</h1>
+      <a class="spotify" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
+        <span class="spotify"></span>
+      </a>
+    </div>
   </div>
 
   <!-- shows -->

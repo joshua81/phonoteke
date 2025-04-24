@@ -186,13 +186,14 @@ public class OndarockCrawler extends AbstractCrawler
 		switch (getType(url)) {
 		case album:
 			intestazioneElement = doc.select("div[class=titolo]").first();
-			// <h1>artist</h1><h2>title</h2>
-			if(intestazioneElement.select("h2").first() != null) {
+			//<h1>artist</h1><h2>title</h2>
+			if(intestazioneElement.select("h2").first() != null && 
+					!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
 				bandElement = intestazioneElement.select("h1").first();
 				band = bandElement.html().trim();
 				return band;
 			}
-			// <h1>artist - title</h1>
+			//<h1>artist - title</h1>
 			else {
 				bandElement = intestazioneElement.select("h1").first();
 				band = bandElement.html().trim();
@@ -213,12 +214,13 @@ public class OndarockCrawler extends AbstractCrawler
 		case album:
 			intestazioneElement = doc.select("div[class=titolo]").first();
 			// <h1>artist</h1><h2>title</h2>
-			if(intestazioneElement.select("h2").first() != null) {
+			if(intestazioneElement.select("h2").first() != null &&
+					!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
 				titleElement = intestazioneElement.select("h2").first();
 				title = titleElement.html().trim();
 				return title;
 			}
-			// <h1>artist - title</h1>
+			//<h1>artist - title</h1>
 			else {
 				titleElement = intestazioneElement.select("h1").first();
 				title = titleElement.html().trim();

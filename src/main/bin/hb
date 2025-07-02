@@ -10,7 +10,7 @@ do
 	 	;;
 	"deploy")
 	 	cd $HOME/workspace/phonoteke/web
-		ng build --prod=true
+		ng build --configuration production
 		rm -rf $HOME/workspace/phonoteke/node/web
 		cp -r dist/web $HOME/workspace/phonoteke/node/
 		cd $HOME/workspace/phonoteke/node/

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class PatchLoader
 {
 	@Autowired
 	private MongoRepository repo;
-	
+
 	public void load(String... args) 
 	{
 		if("resetTracksTitle".equals(args[0])) {
@@ -49,6 +50,9 @@ public class PatchLoader
 		}
 		else if("resetAlbumsCover".equals(args[0])) {
 			resetAlbumsCover();
+		}
+		else if("fixYoutube".equals(args[0])) {
+			fixYoutube();
 		}
 	}
 
@@ -134,7 +138,7 @@ public class PatchLoader
 			log.info("Document " + id + " updated");
 		}
 	}
-	
+
 	private void resetAlbumsCover()
 	{
 		log.info("Resetting albums cover...");
@@ -226,10 +230,44 @@ public class PatchLoader
 		}
 	}
 
+	private void fixYoutube()
+	{
+		log.info("Fixing youtube tracks...");
+		MongoCursor<Document> i = repo.getDocs().find(Filters.and(
+				Filters.regex("tracks.youtube", "\\?"), 
+				Filters.eq("type", "album"))).iterator();
+		log.info("Found " + i.available() + " albums");
+		while(i.hasNext()) 
+		{
+			boolean update = false;
+			Document page = i.next();
+			String id = page.getString("id");
+			List<org.bson.Document> tracks = page.get("tracks", List.class);
+			if(CollectionUtils.isNotEmpty(tracks))
+			{
+				for(org.bson.Document track : tracks)
+				{
+					String youtube = track.getString("youtube");
+					if(StringUtils.isNotBlank(youtube) && youtube.contains("?"))
+					{
+						track.append("youtube", youtube.split("\\?")[0]);
+						update = true;
+					}
+				}
+			}
+			if(update) {
+				repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
+				log.info("Document " + id + " updated");
+			}
+		}
+	}
+
 	private void replaceSpecialChars()
 	{
 		log.info("Replacing special chars...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.or(Filters.regex("title", ".*&.*;.*"), Filters.regex("artist", ".*&.*;.*"))).iterator();
+		MongoCursor<Document> i = repo.getDocs().find(Filters.or(
+				Filters.regex("title", ".*&.*;.*"), 
+				Filters.regex("artist", ".*&.*;.*"))).iterator();
 		while(i.hasNext()) 
 		{ 
 			Document page = i.next();
@@ -250,7 +288,7 @@ public class PatchLoader
 			log.info("Document " + id + ": " + title + " - " + artist);
 		}
 	}
-	
+
 	private void resetAlbums()
 	{
 		log.info("Resetting albums score...");

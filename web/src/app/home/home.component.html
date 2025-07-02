@@ -10,7 +10,7 @@
     
     <!-- finder -->
     <div *ngIf="source != null" class="finder-input">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
+      <input class="form-control me-sm-2" type="search" placeholder="Search" aria-label="Search" (keydown.enter)="onSearch($event)">
     </div>
     <div *ngIf="source != null" class="finder d-flex flex-row justify-content-center align-items-center">
       <span class="search"></span>
@@ -20,34 +20,34 @@
     <div class="menu d-flex flex-row justify-content-center w-100">
       <a *ngIf="source == null" [routerLink]="['/']">
         <div class="menu-item" [ngClass]="{'selected': status == 'shows'}">
-          <h3 class="pl-2 pr-2 text-white">Shows</h3>
+          <h3 class="ps-2 pe-2 text-white">Shows</h3>
         </div>
       </a>
       <a *ngIf="source != null" [routerLink]="['/shows/' + source]">
         <div class="menu-item" [ngClass]="{'selected': status == 'episodes'}">
-          <h3 class="pl-2 pr-2 text-white">Episodes</h3>
+          <h3 class="ps-2 pe-2 text-white">Episodes</h3>
         </div>
       </a>
       <a [routerLink]="[source == null ? '/albums' : '/shows/' + source + '/albums']">
         <div class="menu-item" [ngClass]="{'selected': status == 'albums'}">
-          <h3 class="pl-2 pr-2 text-white">Albums</h3>
+          <h3 class="ps-2 pe-2 text-white">Albums</h3>
         </div>
       </a>
       <a [routerLink]="[source == null ? '/reviews' : '/shows/' + source + '/reviews']">
         <div class="menu-item" [ngClass]="{'selected': status == 'reviews'}">
-          <h3 class="pl-2 pr-2 text-white">Reviews</h3>
+          <h3 class="ps-2 pe-2 text-white">Reviews</h3>
         </div>
       </a>
       <a [routerLink]="[source == null ? '/videos' : '/shows/' + source + '/videos']">
         <div class="menu-item" [ngClass]="{'selected': status == 'videos'}">
-          <h3 class="pl-2 pr-2 text-white">Videos</h3>
+          <h3 class="ps-2 pe-2 text-white">Videos</h3>
         </div>
       </a>
     </div>
 
     <!-- title -->
     <div *ngIf="source != null" class="title text-left d-flex flex-row align-items-center w-100">
-      <h1 class="text-white pl-2 pr-2">{{name}}</h1>
+      <h1 class="text-white ps-2 pe-2">{{name}}</h1>
       <a class="spotify" href="{{'https://open.spotify.com/playlist/' + spalbumid}}" target="_blank">
         <span class="spotify"></span>
       </a>
@@ -59,7 +59,7 @@
     <div *ngFor="let show of shows" class="show">
       <a [routerLink]="['/shows/' + show.source]">
         <img class="show" src="{{show.cover}}" loading="lazy"/>
-        <h2 class="font-weight-normal text-white">{{show.name}}</h2>
+        <h2 class="text-white">{{show.name}}</h2>
       </a>
       <div *ngIf="app.gtYesterday(show.lastEpisodeDate)" class="yesterday"></div>
       <div *ngIf="show.affinity && show.affinity >= 0.2" class="affinity-high"></div>

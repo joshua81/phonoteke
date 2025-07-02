@@ -3,7 +3,7 @@
     <span class="previous"></span>
   </div>
   <div id="{{type}}" class="d-flex flex-row flex-nowrap hscroll mt-2">
-    <div *ngFor="let link of links" class="cover mr-2">
+    <div *ngFor="let link of links" class="cover me-2">
       <a [routerLink]="[type == 'albums' ? '/albums/' + link.id : '/shows/' + link.source + '/episodes/' + link.id]">
         <img *ngIf="link.coverM == null" class="cover" src="{{link.cover}}" loading="lazy"/>
         <img *ngIf="link.coverM != null" class="cover" src="{{link.coverM}}" loading="lazy"/>

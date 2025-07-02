@@ -9,18 +9,18 @@
       <img class="cover" src="{{track.item.album.images[2].url}}"/>
     </a>
     <div class="cover d-flex flex-row align-items-center" (click)="playPauseSpotify(spalbumid)">
-      <div class="player-button ml-auto mr-auto">
+      <div class="player-button ms-auto me-auto">
         <span *ngIf="!track.is_playing" class="player-play"></span>
         <span *ngIf="track.is_playing" class="player-pause"></span>
       </div>
     </div>
-    <div class="pr-1 pt-1 pb-1 w-100">
+    <div class="pe-1 pt-1 pb-1 w-100">
       <h2 class="text-white text-truncate-1">{{track.item.artists[0].name + ' | ' + track.item.name}}</h2>
       <div class="d-flex flex-row align-items-center">
         <div class="player-button" (click)="previousSpotify()">
           <span class="player-backward"></span>
         </div>
-        <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeSpotify($event)">
+        <div class="progress w-100 ms-2 me-2" (click)="setCurrentTimeSpotify($event)">
           <div class="progress-bar bg-warning" role="progressbar" [style.width.%]="[100*track.progress_ms/track.item.duration_ms]"></div>
         </div>
         <div class="player-button" (click)="nextSpotify()">
@@ -41,16 +41,16 @@
       <img class="cover" src="{{audio.cover}}"/>
     </a>
     <div class="cover d-flex flex-row align-items-center" (click)="playPauseAudio()">
-      <div class="player-button ml-auto mr-auto">
+      <div class="player-button ms-auto me-auto">
         <span *ngIf="audio == null || audio.paused" class="player-play"></span>
         <span *ngIf="audio != null && !audio.paused" class="player-pause"></span>
       </div>
     </div>
-    <div class="pr-1 pt-1 pb-1 w-100">
+    <div class="pe-1 pt-1 pb-1 w-100">
       <h2 class="text-white text-truncate-1">{{audio.artist + ' | ' + audio.title}}</h2>
       <div class="d-flex flex-row align-items-center">
         <div class="text-white">{{currentTime}}</div>
-        <div class="progress w-100 ml-2 mr-2" (click)="setCurrentTimeAudio($event)">
+        <div class="progress w-100 ms-2 me-2" (click)="setCurrentTimeAudio($event)">
           <div class="progress-bar bg-warning" role="progressbar" [style.width.%]="[100*audio.currentTime/audio.duration]"></div>
         </div>
         <div class="text-white">{{duration}}</div>
@@ -91,7 +91,7 @@
 
 <!-- Error -->
 <div *ngIf="error" class="fixed-bottom">
-  <div class="d-flex flex-row justify-content-center ml-auto mr-auto">
+  <div class="d-flex flex-row justify-content-center ms-auto me-auto">
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
       <p class="text-center">{{error}}</p>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">

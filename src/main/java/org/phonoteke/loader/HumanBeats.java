@@ -118,5 +118,6 @@ public class HumanBeats implements CommandLineRunner {
 		System.out.println("- patch:calculateScore (patches db)");
 		System.out.println("- patch:resetTracks (patches db)");
 		System.out.println("- patch:replaceSpecialChars (patches db)");
+		System.out.println("- patch:fixYoutube (patches db)");
 	}
 }

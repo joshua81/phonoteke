@@ -64,6 +64,7 @@ p {
     font-family: "Times New Roman", Times, serif;
     font-size: 16px;
     line-height: 1.6;
+    text-align: justify;
 }
 
 p blockquote, p em, p span {
@@ -71,6 +72,7 @@ p blockquote, p em, p span {
     font-size: 16px;
     line-height: 1.6;
     font-style: italic;
+    text-align: justify;
 }
   
 h1 {

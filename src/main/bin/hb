@@ -20,7 +20,7 @@ do
 		;;
 	"test")
 		cd $HOME/workspace/phonoteke/web
-		ng build --prod=false
+		ng build
 		rm -rf $HOME/workspace/phonoteke/node/web
 		cp -r dist/web $HOME/workspace/phonoteke/node/
 		cd $HOME/workspace/phonoteke/node/

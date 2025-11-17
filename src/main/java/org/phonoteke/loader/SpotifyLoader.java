@@ -340,41 +340,43 @@ public class SpotifyLoader
 
 	private Document loadAlbum(String artist, String album)
 	{
-		TreeMap<Integer, Document> albumsMap = Maps.newTreeMap();
-		try
-		{
-			login();
-			String q = artist + " " + album;
-			SearchAlbumsRequest request = spotify.searchAlbums(q).market(CountryCode.IT).build();
-			Paging<AlbumSimplified> albums = request.execute();
-			for(int j = 0; j < albums.getItems().length; j++)
-			{
-				AlbumSimplified a = albums.getItems()[j];
-				ArtistSimplified[] artists = a.getArtists();
-				for(int k = 0; k < artists.length; k++)
-				{
-					String spartist = artists[k].getName();
-					String artistid = artists[k].getId();
-					String spalbum = a.getName();
-					String albumid = a.getId();
-					int score = FuzzySearch.tokenSortRatio(artist + " " + album, spartist + " " + spalbum);
-					Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
-					page.append("score", score);
-					getImages(page, a.getImages());
+		login();
 
-					if(!albumsMap.containsKey(score)) {
-						log.info(artist + " - " + album + " | " + spartist + " - " + spalbum + ": " + score);
-						albumsMap.put(score, page);
+		TreeMap<Integer, Document> albumsMap = Maps.newTreeMap();
+		HumanBeatsUtils.parseTitle(artist + " " + album).forEach(title -> {
+			try
+			{
+				SearchAlbumsRequest request = spotify.searchAlbums(title).market(CountryCode.IT).build();
+				Paging<AlbumSimplified> albums = request.execute();
+				for(int j = 0; j < albums.getItems().length; j++)
+				{
+					AlbumSimplified a = albums.getItems()[j];
+					ArtistSimplified[] artists = a.getArtists();
+					for(int k = 0; k < artists.length; k++)
+					{
+						String spartist = artists[k].getName();
+						String artistid = artists[k].getId();
+						String spalbum = a.getName();
+						String albumid = a.getId();
+						int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spalbum);
+						Document page = new Document("spartistid", artistid).append("spalbumid", albumid);
+						page.append("score", score);
+						getImages(page, a.getImages());
+
+						if(!albumsMap.containsKey(score)) {
+							log.info(title + " | " + spartist + " - " + spalbum + ": " + score);
+							albumsMap.put(score, page);
+						}
 					}
 				}
 			}
-		}
-		catch (Exception e) 
-		{
-			log.error("ERROR loading " + artist + " - " + album + ": " + e.getMessage(), e);
-			relogin();
-		}
-		return albumsMap.isEmpty() ?  null : albumsMap.descendingMap().firstEntry().getValue();
+			catch (Exception e) 
+			{
+				log.error("ERROR loading " + title + ": " + e.getMessage(), e);
+				relogin();
+			}
+		});
+		return albumsMap.isEmpty() ? null : albumsMap.descendingMap().firstEntry().getValue();
 	}
 
 	private void loadArtist(Document page)
@@ -522,7 +524,7 @@ public class SpotifyLoader
 
 	private org.bson.Document getTrack(String title) throws Exception
 	{
-		Set<String> chunks = HumanBeatsUtils.parseTrack(title);
+		Set<String> chunks = HumanBeatsUtils.parseTitle(title);
 		TreeMap<Integer, Document> tracksMap = loadTrack(chunks);
 		return tracksMap.isEmpty() ? null : tracksMap.descendingMap().firstEntry().getValue();
 	}

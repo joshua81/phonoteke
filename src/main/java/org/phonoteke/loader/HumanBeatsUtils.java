@@ -41,8 +41,9 @@ public class HumanBeatsUtils
 	}
 
 	public static void main(String[] args) {
-		String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
-		Set<String> tracks = parseTrack(track);
+		//String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
+		String track = "Psychedelic Porn Crumpets - Pogo, Rodeo";
+		Set<String> tracks = parseTitle(track);
 		tracks.forEach(t -> System.out.println(t));
 	}
 
@@ -60,20 +61,20 @@ public class HumanBeatsUtils
 		return false;
 	}
 
-	public static Set<String> parseTrack(String track) 
+	public static Set<String> parseTitle(String title) 
 	{
-		track = cleanText(track);
+		title = cleanText(title);
 		Set<String> matches = Sets.newHashSet();
-		matches.add(track);
+		matches.add(title);
 
 		for(String s : SEPARATORS) {
-			track = track.replaceAll(s, "|");
+			title = title.replaceAll(s, "|");
 		}
 		for(String match : MATCHS) {
-			Matcher m = Pattern.compile(match).matcher(track);
+			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
-				track = m.group(2)+ "|" + m.group(3);
-				List<String> chunks = Arrays.asList(track.split("\\|"));
+				title = m.group(2)+ "|" + m.group(3);
+				List<String> chunks = Arrays.asList(title.split("\\|"));
 				Generator.subset(chunks).simple().stream().forEach(subset -> {
 					if(subset.size() > 1) {
 						matches.add(cleanChunks(subset));
@@ -87,7 +88,7 @@ public class HumanBeatsUtils
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
-	public static String cleanChunks(List<String> chunks)
+	private static String cleanChunks(List<String> chunks)
 	{
 		List<String> cleanChunks = Lists.newArrayList();
 		chunks.forEach(c -> {

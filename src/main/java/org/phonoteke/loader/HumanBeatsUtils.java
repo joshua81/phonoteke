@@ -111,9 +111,4 @@ public class HumanBeatsUtils
 		text = text.replaceAll("\\p{C}", "");
 		return text.toLowerCase().trim();
 	}
-
-	//	public static String format(String title, Date date) {
-	//		Preconditions.checkNotNull(title);
-	//		return date == null ? title.trim() : (title.trim() + " Ep." + new SimpleDateFormat("yyyy.MM.dd").format(date));
-	//	}
 }

@@ -73,10 +73,6 @@ public class HumanBeats implements CommandLineRunner {
 				spotifyLoader.load(subtask);
 				return;
 			}
-			//			else if("tw".equals(task)) {
-			//				new SocialNetworkLoader().load(subtask);
-			//				return;
-			//			}
 			else if("yt".equals(task)) {
 				youtubeLoader.load(subtask);
 				return;
@@ -108,7 +104,7 @@ public class HumanBeats implements CommandLineRunner {
 		System.out.println("- test (deploys test)");
 		System.out.println("- mb (loads Music Brainz)");
 		System.out.println("- sp (loads Spotify)");
-		System.out.println("- sp:playlist (loads Spotify playlists)");
+		System.out.println("- sp:<token> (creates Spotify playlists)");
 		System.out.println("- yt (loads Youtube)");
 		System.out.println("- doc (loads documents)");
 		System.out.println("- pod (loads podcasts)");

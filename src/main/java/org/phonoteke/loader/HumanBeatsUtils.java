@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
+import org.paukov.combinatorics3.Generator;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -49,6 +49,12 @@ public class HumanBeatsUtils
 		unknown
 	}
 
+	public static void main(String[] args) {
+		String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
+		Set<String> tracks = parseTrack(track);
+		tracks.forEach(t -> System.out.println(t));
+	}
+
 	public static boolean isTrack(String title)
 	{
 		title = cleanText(title);
@@ -77,44 +83,31 @@ public class HumanBeatsUtils
 			if(m.matches()) {
 				track = m.group(2)+ "|" + m.group(3);
 				List<String> chunks = Arrays.asList(track.split("\\|"));
-				for(int i = 1; i < chunks.size(); i++) {
-					for(int k = 1; k <= i; k++) {
-						String artist = String.join(" ", chunks.subList(0, k));
-						for(int j = i+1; j <= chunks.size(); j++) {
-							String song = String.join(" ", chunks.subList(i, j));
-							if(StringUtils.isNotBlank(artist) && StringUtils.isNotBlank(song)) {
-								matches.add(parseArtistSong(artist, song));
-							}
-						}
+				Generator.subset(chunks).simple().stream().forEach(subset -> {
+					if(subset.size() > 1) {
+						matches.add(parseChunks(subset));
 					}
-				}
+				});
 			}
 		}
 		return matches;
 	}
 
-	public static String parseArtistSong(String artist, String song)
+	public static String parseChunks(List<String> chunks)
 	{
-		// artist
-		artist = cleanText(artist);
-		for(String match : FEAT) {
-			Matcher matcher = Pattern.compile(match).matcher(artist);
-			if(matcher.matches()) {
-				artist = matcher.group(1);
-				break;
+		List<String> cleanChunks = Lists.newArrayList();
+		chunks.forEach(c -> {
+			c = cleanText(c);
+			for(String match : FEAT) {
+				Matcher matcher = Pattern.compile(match).matcher(c);
+				if(matcher.matches()) {
+					c = matcher.group(1);
+					break;
+				}
 			}
-		}
-
-		// song
-		song = cleanText(song);
-		for(String match : FEAT) {
-			Matcher matcher = Pattern.compile(match).matcher(song);
-			if(matcher.matches()) {
-				song = matcher.group(1);
-				break;
-			}
-		}
-		return cleanText(artist) + " " + cleanText(song);
+			cleanChunks.add(c);
+		});
+		return String.join(" ", cleanChunks);
 	}
 
 	public static String cleanText(String text) 

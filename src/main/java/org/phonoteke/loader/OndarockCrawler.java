@@ -224,7 +224,7 @@ public class OndarockCrawler extends AbstractCrawler
 			else {
 				titleElement = intestazioneElement.select("h1").first();
 				title = titleElement.html().trim();
-				return title.split("-")[1].trim();
+				return title.substring(title.indexOf("-")+1).trim();
 			}
 		default:
 			return null;

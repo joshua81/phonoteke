@@ -21,12 +21,10 @@ public class PatchLoader
 	@Autowired
 	private MongoRepository repo;
 
+
 	public void load(String... args) 
 	{
-		if("resetTracksTitle".equals(args[0])) {
-			resetTracksTitle();
-		}
-		else if("calculateScore".equals(args[0])) {
+		if("calculateScore".equals(args[0])) {
 			calculateScore();
 		}
 		else if("resetTracks".equals(args[0])) {
@@ -101,44 +99,6 @@ public class PatchLoader
 		}
 	}
 
-	private void renameSource()
-	{
-		log.info("Renaming source...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", "bbcradio6stevelamacq")).iterator();
-		while(i.hasNext()) 
-		{
-			Document page = i.next();
-			String id = page.getString("id");
-			page.append("source", "stevelamacq");
-			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			log.info("Document " + id + " updated");
-		}
-	}
-
-	private void resetTracksTitle()
-	{
-		log.info("Resetting tracks title...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.and(Filters.eq("type", "podcast"))).iterator();
-		while(i.hasNext()) 
-		{
-			Document page = i.next();
-			String id = page.getString("id");
-			List<org.bson.Document> tracks = page.get("tracks", List.class);
-			if(CollectionUtils.isNotEmpty(tracks))
-			{
-				for(org.bson.Document track : tracks)
-				{
-					String spotify = track.getString("spotify");
-					if(spotify == null || HumanBeatsUtils.NA.equals(spotify)) {
-						track.append("title", track.getString("titleOrig"));
-					}
-				}
-			}
-			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			log.info("Document " + id + " updated");
-		}
-	}
-
 	private void resetAlbumsCover()
 	{
 		log.info("Resetting albums cover...");
@@ -202,23 +162,12 @@ public class PatchLoader
 			{
 				for(org.bson.Document track : tracks)
 				{
+					String title = track.getString("titleOrig");
 					Integer score = track.getInteger("score");
 					if(score != null && score < HumanBeatsUtils.SCORE)
 					{
-						track.append("spotify", null);
-						track.append("artistid", null);
-						track.append("youtube", null);
-						track.append("spotify", null);
-						track.append("artist", null);
-						track.append("album", null);
-						track.append("track", null);
-						track.append("spartistid", null);
-						track.append("spalbumid", null);
-						track.append("coverL", null);
-						track.append("coverM", null);
-						track.append("coverS", null);
-						track.append("artistid", null);
-						track.append("score", null);
+						track.clear();
+						track.append("titleOrig", title);
 						update = true;
 					}
 				}
@@ -280,10 +229,10 @@ public class PatchLoader
 			String artist = page.getString("artist");
 			artist = HumanBeatsUtils.cleanText(artist);
 			page.append("artist", artist);
+			page.remove("spartistid");
+			page.remove("spalbumid");
+			page.remove("score");
 
-			page.append("spartistid", null);
-			page.append("spalbumid", null);
-			page.append("score", null);
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			log.info("Document " + id + ": " + title + " - " + artist);
 		}
@@ -301,13 +250,13 @@ public class PatchLoader
 			Document page = i.next();
 			int score = page.getInteger("score");
 			String id = page.getString("id");
-			page.append("spartistid", HumanBeatsUtils.NA).
-			append("spalbumid", HumanBeatsUtils.NA).
-			append("artistid", HumanBeatsUtils.NA).
-			append("coverL", HumanBeatsUtils.NA).
-			append("coverM", HumanBeatsUtils.NA).
-			append("coverS", HumanBeatsUtils.NA).
-			append("score", 0);
+			page.remove("spartistid");
+			page.remove("spalbumid");
+			page.remove("artistid");
+			page.remove("coverL");
+			page.remove("coverM");
+			page.remove("coverS");
+			page.remove("score");
 
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			log.info("Document " + id + " updated score" + score);

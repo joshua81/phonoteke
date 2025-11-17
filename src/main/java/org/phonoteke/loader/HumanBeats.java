@@ -22,16 +22,16 @@ public class HumanBeats implements CommandLineRunner {
 
 	@Autowired
 	private MusicbrainzLoader musicbrainzLoader;
-	
+
 	@Autowired
 	private DiscogsLoader discogsLoader;
 
 	@Autowired
 	private SpotifyLoader spotifyLoader;
-	
+
 	@Autowired
 	private StatsLoader statsLoader;
-	
+
 	@Autowired
 	private PatchLoader patchLoader;
 
@@ -109,14 +109,12 @@ public class HumanBeats implements CommandLineRunner {
 		System.out.println("- mb (loads Music Brainz)");
 		System.out.println("- sp (loads Spotify)");
 		System.out.println("- sp:playlist (loads Spotify playlists)");
-		System.out.println("- tw (loads Twitter)");
 		System.out.println("- yt (loads Youtube)");
 		System.out.println("- doc (loads documents)");
 		System.out.println("- pod (loads podcasts)");
 		System.out.println("- stats (loads stats)");
-		System.out.println("- patch:resetTracksTitle (patches db)");
 		System.out.println("- patch:calculateScore (patches db)");
-		System.out.println("- patch:resetTracks (patches db)");
+		System.out.println("- patch:resetTracks:<year> (patches db)");
 		System.out.println("- patch:replaceSpecialChars (patches db)");
 		System.out.println("- patch:fixYoutube (patches db)");
 	}

@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -34,7 +32,6 @@ import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Playlist;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.Track;
-import com.wrapper.spotify.requests.data.artists.GetArtistRequest;
 import com.wrapper.spotify.requests.data.follow.FollowPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.AddItemsToPlaylistRequest;
 import com.wrapper.spotify.requests.data.playlists.CreatePlaylistRequest;
@@ -437,28 +434,28 @@ public class SpotifyLoader
 		return artistsMap.isEmpty() ?  null : artistsMap.descendingMap().firstEntry().getValue();
 	}
 
-	private void loadArtistDetails(Document page)
-	{
-		String artistId = page.getString("spartistid");
-		if(artistId != null) {
-			try
-			{
-				login();
-				GetArtistRequest request = spotify.getArtist(artistId).build();
-				Artist artist = request.execute();
-				if(artist != null) {
-					String artistid = artist.getId();
-					Document detail = new Document("spartistid", artistid);
-					getImages(detail, artist.getImages());
-				}
-			}
-			catch (Exception e) 
-			{
-				log.error("ERROR loading " + artistId + ": " + e.getMessage());
-				relogin();
-			}
-		}
-	}
+	//	private void loadArtistDetails(Document page)
+	//	{
+	//		String artistId = page.getString("spartistid");
+	//		if(artistId != null) {
+	//			try
+	//			{
+	//				login();
+	//				GetArtistRequest request = spotify.getArtist(artistId).build();
+	//				Artist artist = request.execute();
+	//				if(artist != null) {
+	//					String artistid = artist.getId();
+	//					Document detail = new Document("spartistid", artistid);
+	//					getImages(detail, artist.getImages());
+	//				}
+	//			}
+	//			catch (Exception e) 
+	//			{
+	//				log.error("ERROR loading " + artistId + ": " + e.getMessage());
+	//				relogin();
+	//			}
+	//		}
+	//	}
 
 	private void loadTracks(Document page)
 	{
@@ -552,13 +549,13 @@ public class SpotifyLoader
 									String spalbum = track.getAlbum().getName();
 									String spalbumid = track.getAlbum().getId();
 									String spsong = track.getName();
-									for(String match : HumanBeatsUtils.FEAT) {
-										Matcher m = Pattern.compile(match).matcher(spsong);
-										if(m.matches()) {
-											spsong = m.group(1);
-											break;
-										}
-									}
+									//									for(String match : HumanBeatsUtils.FEAT) {
+									//										Matcher m = Pattern.compile(match).matcher(spsong);
+									//										if(m.matches()) {
+									//											spsong = m.group(1);
+									//											break;
+									//										}
+									//									}
 									String trackid = track.getId();
 									int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
 									if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {

@@ -122,20 +122,20 @@ public class WWFMCrawler extends AbstractCrawler
 							insertDoc(json);
 						}
 						catch(Exception e) {
-							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+							log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 						}
 					}
 				}
 				catch (Throwable t) 
 				{
-					log.error("ERROR parsing page " + id + ": " + t.getMessage());
+					log.debug("ERROR parsing page " + id + ": " + t.getMessage());
 				}
 			});
 			client.close();
 		}
 		catch (Throwable t) 
 		{
-			log.error("ERROR parsing page " + id + ": " + t.getMessage());
+			log.debug("ERROR parsing page " + id + ": " + t.getMessage());
 		}
 	}
 

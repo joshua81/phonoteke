@@ -92,7 +92,7 @@ public class SpreakerCrawler extends AbstractCrawler
 							insertDoc(json);
 						}
 						catch(Exception e) {
-							log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+							log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 						}
 					}
 				});
@@ -100,7 +100,7 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 		catch (Throwable t) 
 		{
-			log.error("ERROR parsing page " + url + ": " + t.getMessage());
+			log.debug("ERROR parsing page " + url + ": " + t.getMessage());
 		}
 	}
 

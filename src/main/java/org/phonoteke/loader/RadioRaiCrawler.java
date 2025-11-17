@@ -70,7 +70,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 					{
 						HttpURLConnection con2 = (HttpURLConnection)new URL(pageUrl.replace(".html", ".json")).openConnection();
 						JsonObject doc = new Gson().fromJson(new InputStreamReader(con2.getInputStream()), JsonObject.class);
-						
+
 						json = new org.bson.Document("id", id).
 								append("url", getUrl(pageUrl)).
 								append("type", type.name()).
@@ -93,12 +93,12 @@ public class RadioRaiCrawler extends AbstractCrawler
 					}
 				}
 				catch(Exception e) {
-					log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+					log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 				}
 			});
 		}
 		catch (Throwable t) {
-			log.error("ERROR parsing page " + url + ": " + t.getMessage());
+			log.debug("ERROR parsing page " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}

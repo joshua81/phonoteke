@@ -549,13 +549,6 @@ public class SpotifyLoader
 									String spalbum = track.getAlbum().getName();
 									String spalbumid = track.getAlbum().getId();
 									String spsong = track.getName();
-									//									for(String match : HumanBeatsUtils.FEAT) {
-									//										Matcher m = Pattern.compile(match).matcher(spsong);
-									//										if(m.matches()) {
-									//											spsong = m.group(1);
-									//											break;
-									//										}
-									//									}
 									String trackid = track.getId();
 									int score = FuzzySearch.tokenSortRatio(title, spartist + " " + spsong);
 									if(score >= HumanBeatsUtils.SCORE && !tracksMap.containsKey(score)) {

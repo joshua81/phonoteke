@@ -128,11 +128,9 @@ public class SpreakerCrawler extends AbstractCrawler
 		List<org.bson.Document> tracks = Lists.newArrayList();
 
 		String[] chunks = content.split("\n");
-		for(int i = 0; i < chunks.length; i++)
-		{
+		for(int i = 0; i < chunks.length; i++) {
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
-			{
+			if(StringUtils.isNotBlank(title)) {
 				String youtube = null;
 				tracks.add(newTrack(title, youtube));
 				log.debug("tracks: " + title + ", youtube: " + youtube);

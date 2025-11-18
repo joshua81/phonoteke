@@ -151,14 +151,11 @@ public class RadioRaiCrawler extends AbstractCrawler
 			return tracks;
 		}
 
-		if(content != null)
-		{
+		if(content != null) {
 			String[] chunks = content.replace("//", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
-			for(int i = 0; i < chunks.length; i++)
-			{
+			for(int i = 0; i < chunks.length; i++) {
 				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
-				{
+				if(StringUtils.isNotBlank(title)) {
 					tracks.add(newTrack(title, null));
 					log.debug("tracks: " + title);
 				}

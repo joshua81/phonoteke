@@ -168,11 +168,9 @@ public class WWFMCrawler extends AbstractCrawler
 		List<org.bson.Document> tracks = Lists.newArrayList();
 
 		String[] chunks = cleanHTML(content).split("\n");
-		for(int i = 0; i < chunks.length; i++)
-		{
+		for(int i = 0; i < chunks.length; i++) {
 			String title = chunks[i].trim();
-			if(StringUtils.isNotBlank(title) && HumanBeatsUtils.isTrack(title))
-			{
+			if(StringUtils.isNotBlank(title)) {
 				tracks.add(newTrack(title, null));
 				log.debug("tracks: " + title);
 			}

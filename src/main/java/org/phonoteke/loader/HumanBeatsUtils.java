@@ -14,14 +14,14 @@ import com.google.common.collect.Sets;
 
 public class HumanBeatsUtils
 {
-	public static final List<String> SEPARATORS = Lists.newArrayList(
+	private static final List<String> SEPARATORS = Lists.newArrayList(
 			"→", ">", "<", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+",
 			"\\band\\b", "\\bwith\\b", "\\be\\b", "\\by\\b", "\\bx\\b", "\\baka\\b", "\\bvs[.]{0,1}\\b",
 			"\\feat[.]{0,1}\\b", "\\ft[.]{0,1}\\b", "\\featuring\\b");
 
-	public static final String MATCH1 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
-	public static final String MATCH2 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
-	public static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
+	private static final String MATCH1 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
+	private static final String MATCH2 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
+	private static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -39,23 +39,9 @@ public class HumanBeatsUtils
 	}
 
 	public static void main(String[] args) {
-		String track = "KHALAB & M'BERRA ENSEMBLE - Reste À L'Ombre";
+		String track = "KHALAB & M'BERRA ENSEMBLE - Reste À L'Ombre (bla bla bla)";
 		Set<String> tracks = parseTitle(track);
 		tracks.forEach(t -> System.out.println(t));
-	}
-
-	public static boolean isTrack(String title)
-	{
-		title = cleanText(title);
-		for(String s : SEPARATORS) {
-			title = title.replaceAll(s, "|");
-		}
-		for(String match : MATCHS) {
-			if(title.matches(match)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public static Set<String> parseTitle(String title) 
@@ -88,10 +74,7 @@ public class HumanBeatsUtils
 	private static String cleanChunks(Set<String> chunks)
 	{
 		List<String> cleanChunks = Lists.newArrayList();
-		chunks.forEach(c -> {
-			cleanChunks.add(cleanText(c));
-
-		});
+		chunks.forEach(c -> cleanChunks.add(cleanText(c)));
 		return String.join(" ", cleanChunks);
 	}
 

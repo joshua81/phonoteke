@@ -9,10 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.paukov.combinatorics3.Generator;
-
-import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class HumanBeatsUtils
 {
@@ -41,8 +39,8 @@ public class HumanBeatsUtils
 	}
 
 	public static void main(String[] args) {
-		//String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
-		String track = "Psychedelic Porn Crumpets - Pogo, Rodeo";
+		String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
+		//String track = "Psychedelic Porn Crumpets - Pogo, Rodeo";
 		Set<String> tracks = parseTitle(track);
 		tracks.forEach(t -> System.out.println(t));
 	}
@@ -74,8 +72,8 @@ public class HumanBeatsUtils
 			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				title = m.group(2)+ "|" + m.group(3);
-				List<String> chunks = Arrays.asList(title.split("\\|"));
-				Generator.subset(chunks).simple().stream().forEach(subset -> {
+				Set<String> chunks = Sets.newLinkedHashSet(Arrays.asList(title.split("\\|")));
+				Sets.powerSet(chunks).stream().forEach(subset -> {
 					if(subset.size() > 1) {
 						matches.add(cleanChunks(subset));
 					}
@@ -88,7 +86,7 @@ public class HumanBeatsUtils
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
-	private static String cleanChunks(List<String> chunks)
+	private static String cleanChunks(Set<String> chunks)
 	{
 		List<String> cleanChunks = Lists.newArrayList();
 		chunks.forEach(c -> {

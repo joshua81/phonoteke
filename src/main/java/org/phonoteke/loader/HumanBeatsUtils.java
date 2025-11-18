@@ -39,8 +39,7 @@ public class HumanBeatsUtils
 	}
 
 	public static void main(String[] args) {
-		String track = "RAINBOW ISLAND, Gombo Riddims, da Exotic Ésotérique Vol.3 - Artetetra";
-		//String track = "Psychedelic Porn Crumpets - Pogo, Rodeo";
+		String track = "KHALAB & M'BERRA ENSEMBLE - Reste À L'Ombre";
 		Set<String> tracks = parseTitle(track);
 		tracks.forEach(t -> System.out.println(t));
 	}

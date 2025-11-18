@@ -21,7 +21,7 @@ public class HumanBeatsUtils
 
 	private static final String MATCH1 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
 	private static final String MATCH2 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
-	private static final List<String> MATCHS = Lists.newArrayList(MATCH1, MATCH2);
+	private static final List<String> MATCHES = Lists.newArrayList(MATCH1, MATCH2);
 
 	public static final String NA = "na";
 	public static final String CRAWL_STORAGE_FOLDER = "data/phonoteke";
@@ -53,7 +53,7 @@ public class HumanBeatsUtils
 		for(String s : SEPARATORS) {
 			title = title.replaceAll(s, "|");
 		}
-		for(String match : MATCHS) {
+		for(String match : MATCHES) {
 			Matcher m = Pattern.compile(match).matcher(title);
 			if(m.matches()) {
 				title = m.group(2)+ "|" + m.group(3);

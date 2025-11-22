@@ -17,7 +17,7 @@ public class HumanBeatsUtils
 	private static final List<String> SEPARATORS = Lists.newArrayList(
 			"→", ">", "<", ":", "–", "-", ",", ";", "\"", "'", "“", "”", "‘", "’", "/", "&", "\\+",
 			"\\band\\b", "\\bwith\\b", "\\be\\b", "\\by\\b", "\\bx\\b", "\\baka\\b", "\\bvs[.]{0,1}\\b",
-			"\\feat[.]{0,1}\\b", "\\ft[.]{0,1}\\b", "\\featuring\\b");
+			"\\bfeat[.]{0,1}\\b", "\\bft[.]{0,1}\\b", "\\bfeaturing\\b");
 
 	private static final String MATCH1 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,100})\\(.{1,200}\\)";
 	private static final String MATCH2 = "([0-9]{1,2}[\\._)•*-\\|]{0,1}){0,1}(.{1,100})\\|(.{1,200})";
@@ -39,7 +39,7 @@ public class HumanBeatsUtils
 	}
 
 	public static void main(String[] args) {
-		String track = "KHALAB & M'BERRA ENSEMBLE - Reste À L'Ombre (bla bla bla)";
+		String track = "GALATHEA feat. GIULIA LA ROSA - SACRED LOVE";
 		Set<String> tracks = parseTitle(track);
 		tracks.forEach(t -> System.out.println(t));
 	}

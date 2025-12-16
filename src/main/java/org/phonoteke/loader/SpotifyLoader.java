@@ -64,6 +64,16 @@ public class SpotifyLoader
 
 	private ClientCredentials credentials;
 	private SpotifyApi spotify;
+	
+	public static void main(String[] args) {
+		String track = "Eiko Ishibashi e Jim O' Rourke - Pareidolia";
+		Set<String> tracks = HumanBeatsUtils.parseTitle(track);
+		tracks.forEach(t -> System.out.println(t));
+		
+		track = "Eiko Ishibashi e Jim O' Rourke Pareidolia";
+		tracks = HumanBeatsUtils.parseTitle(track);
+		tracks.forEach(t -> System.out.println(t));
+	}
 
 	@PostConstruct
 	public void init() {
@@ -343,7 +353,7 @@ public class SpotifyLoader
 		login();
 
 		TreeMap<Integer, Document> albumsMap = Maps.newTreeMap();
-		HumanBeatsUtils.parseTitle(artist + " " + album).forEach(title -> {
+		HumanBeatsUtils.parseTitle(artist + " - " + album).forEach(title -> {
 			try
 			{
 				SearchAlbumsRequest request = spotify.searchAlbums(title).market(CountryCode.IT).build();

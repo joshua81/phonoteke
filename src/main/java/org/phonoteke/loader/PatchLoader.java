@@ -81,15 +81,15 @@ public class PatchLoader
 
 	private void deleteDoc(String id)
 	{
-		log.info("Deleting doc...");
+		log.info("Deleting doc " + id);
 		repo.getDocs().deleteOne(Filters.eq("id", id));
 		log.info("Document " + id + " deleted");	
 	}
 
-	private void deleteDocs(String source)
+	private void deleteDocs(String type)
 	{
-		log.info("Deleting repo.getDocs()...");
-		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("source", source)).iterator();
+		log.info("Deleting docs of type " + type);
+		MongoCursor<Document> i = repo.getDocs().find(Filters.eq("type", type)).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
@@ -229,9 +229,14 @@ public class PatchLoader
 			String artist = page.getString("artist");
 			artist = HumanBeatsUtils.cleanText(artist);
 			page.append("artist", artist);
-			page.remove("spartistid");
-			page.remove("spalbumid");
-			page.remove("score");
+			page.replace("spartistid", null);
+			page.replace("spalbumid", null);
+			page.replace("artistid", null);
+			page.replace("albumid", null);
+			page.replace("coverL", null);
+			page.replace("coverM", null);
+			page.replace("coverS", null);
+			page.replace("score", null);
 
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
 			log.info("Document " + id + ": " + title + " - " + artist);
@@ -243,23 +248,23 @@ public class PatchLoader
 		log.info("Resetting albums score...");
 		MongoCursor<Document> i = repo.getDocs().find(Filters.and(
 				Filters.eq("type", "album"), 
-				Filters.lt("score", HumanBeatsUtils.SCORE),
-				Filters.gt("score", 0))).iterator();
+				Filters.lt("score", HumanBeatsUtils.SCORE))).iterator();
 		while(i.hasNext()) 
 		{
 			Document page = i.next();
 			int score = page.getInteger("score");
 			String id = page.getString("id");
-			page.remove("spartistid");
-			page.remove("spalbumid");
-			page.remove("artistid");
-			page.remove("coverL");
-			page.remove("coverM");
-			page.remove("coverS");
-			page.remove("score");
+			page.replace("spartistid", null);
+			page.replace("spalbumid", null);
+			page.replace("artistid", null);
+			page.replace("albumid", null);
+			page.replace("coverL", null);
+			page.replace("coverM", null);
+			page.replace("coverS", null);
+			page.replace("score", null);
 
 			repo.getDocs().updateOne(Filters.eq("id", id), new org.bson.Document("$set", page));
-			log.info("Document " + id + " updated score" + score);
+			log.info("Document " + id + " reset score: " + score);
 		}
 	}
 }

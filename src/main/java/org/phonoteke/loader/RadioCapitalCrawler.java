@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RadioCapitalCrawler extends AbstractCrawler
 {
 	private static final String CAPITAL = "capital";
-	private static final String CAPITAL_URL = "https://www.capital.it/programmi/";
+	private static final String URL = "https://www.capital.it/programmi/";
 
 
 	public void load(String... args) 
@@ -65,7 +65,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	@Override
 	protected String getBaseUrl()
 	{
-		return CAPITAL_URL;
+		return URL;
 	}
 
 	@Override

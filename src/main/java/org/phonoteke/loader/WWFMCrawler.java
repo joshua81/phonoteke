@@ -79,7 +79,7 @@ public class WWFMCrawler extends AbstractCrawler
 
 			log.debug("WebDriver initialized successfully");
 		} catch (Exception e) {
-			log.error("Failed to initialize WebDriver: " + e.getMessage(), e);
+			log.error("Failed to initialize WebDriver: " + e.getMessage());
 			throw new RuntimeException("WebDriver initialization failed", e);
 		}
 	}
@@ -96,7 +96,7 @@ public class WWFMCrawler extends AbstractCrawler
 				log.debug("WebDriver cleaned up successfully");
 			}
 		} catch (Exception e) {
-			log.error("Error during WebDriver cleanup: " + e.getMessage(), e);
+			log.error("Error during WebDriver cleanup: " + e.getMessage());
 		}
 	}
 
@@ -265,7 +265,7 @@ public class WWFMCrawler extends AbstractCrawler
 			log.debug("Extracted " + playlistData.getTracks().size() + " tracks from playlist");
 		} 
 		catch (Exception e) {
-			log.error("Error extracting playlist tracks: " + e.getMessage(), e);
+			log.error("Error extracting playlist tracks: " + e.getMessage());
 		}
 
 		Preconditions.checkArgument(CollectionUtils.isNotEmpty(playlistData.getTracks()), "Empty playlist!");
@@ -292,7 +292,7 @@ public class WWFMCrawler extends AbstractCrawler
 			log.debug("Extracted audio: " + playlistData.getAudio());
 		} 
 		catch (Exception e) {
-			log.error("Error extracting audio: " + e.getMessage(), e);
+			log.error("Error extracting audio: " + e.getMessage());
 		}
 
 		Preconditions.checkNotNull(playlistData.getAudio(), "Audio not found!");

@@ -42,7 +42,7 @@ public class WWFMCrawler extends AbstractCrawler
 	private static final String URL = "https://www.worldwidefm.net/";
 	private static final int TIMEOUT_SECONDS = 10;
 
-	private static final String CODO_MARIA = "breakfast-club-coco";
+	private static final String COCO_MARIA = "breakfast-club-coco";
 	private static final String GILLES_PETERSON = "gilles-peterson";
 
 	private WebDriver driver;
@@ -344,15 +344,14 @@ public class WWFMCrawler extends AbstractCrawler
 	}
 
 	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) {
-		return url.getURL().toLowerCase().contains("worldwidefm.net/episode");
+	public boolean shouldVisit(Page page, WebURL url) {
+		return url.getURL().contains("worldwidefm.net/episode");
 	}
 
 	@Override
-	public void visit(Page page) 
-	{
-		if(page.getWebURL().getURL().contains(CODO_MARIA) || 
-				page.getWebURL().getURL().contains(GILLES_PETERSON)) {
+	public void visit(Page page) {
+		String url = page.getWebURL().getURL();
+		if(url.contains(COCO_MARIA) || url.contains(GILLES_PETERSON)) {
 			super.visit(page);
 		}
 	}

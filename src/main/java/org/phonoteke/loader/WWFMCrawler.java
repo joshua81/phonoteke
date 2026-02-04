@@ -351,7 +351,7 @@ public class WWFMCrawler extends AbstractCrawler
 	@Override
 	public void visit(Page page) {
 		String url = page.getWebURL().getURL();
-		if(url.contains(COCO_MARIA) || url.contains(GILLES_PETERSON)) {
+		if(url.contains("worldwidefm.net/episode") && (url.contains(COCO_MARIA) || url.contains(GILLES_PETERSON))) {
 			super.visit(page);
 		}
 	}

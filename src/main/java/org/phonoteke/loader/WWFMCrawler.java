@@ -115,7 +115,7 @@ public class WWFMCrawler extends AbstractCrawler
 			initializeWebDriver();
 
 			// Navigate to the episode page
-			log.info("Navigating to episode: " + episodeUrl);
+			log.info("Crawling episode: " + episodeUrl);
 			driver.get(episodeUrl);
 
 			// Wait for page to load

@@ -15,7 +15,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.AbstractCrawler.PlaylistData;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.base.Preconditions;
@@ -137,37 +136,31 @@ public abstract class AbstractCrawler extends WebCrawler
 			{
 				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("id", id))).iterator().tryNext();
-				if(json == null)
-				{
+				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
 					switch(type)
 					{
 					case album:
 					case podcast:
-						if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(
-								Filters.eq("id", id),
-								Filters.eq("type", type.name()))).iterator().hasNext())
-						{
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(url)).
-									append("type", type.name()).
-									append("artist", getArtist(url, doc)).
-									append("title", getTitle(url, doc)).
-									append("authors", getAuthors(url, doc)).
-									append("cover", getCover(url, doc)).
-									append("date", getDate(url, doc)).
-									append("description", getDescription(url, doc)).
-									append("genres", getGenres(url, doc)).
-									append("label", getLabel(url, doc)).
-									append("links", getLinks(url, doc)).
-									append("review", getReview(url, doc)).
-									append("source", getSource()).
-									append("vote", getVote(url, doc)).
-									append("year", getYear(url, doc)).
-									append("tracks", getTracks(url, doc)).
-									append("audio", getAudio(url, doc));
-							insertDoc(json);
-						}
+						json = new org.bson.Document("id", id).
+						append("url", getUrl(url)).
+						append("type", type.name()).
+						append("artist", getArtist(url, doc)).
+						append("title", getTitle(url, doc)).
+						append("authors", getAuthors(url, doc)).
+						append("cover", getCover(url, doc)).
+						append("date", getDate(url, doc)).
+						append("description", getDescription(url, doc)).
+						append("genres", getGenres(url, doc)).
+						append("label", getLabel(url, doc)).
+						append("links", getLinks(url, doc)).
+						append("review", getReview(url, doc)).
+						append("source", getSource()).
+						append("vote", getVote(url, doc)).
+						append("year", getYear(url, doc)).
+						append("tracks", getTracks(url, doc)).
+						append("audio", getAudio(url, doc));
+						insertDoc(json);
 						break;
 					default:
 						break;

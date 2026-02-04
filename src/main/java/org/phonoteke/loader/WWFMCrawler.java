@@ -41,7 +41,6 @@ public class WWFMCrawler extends AbstractCrawler
 	private static final String WWFM = "wwfm";
 	private static final String URL = "https://www.worldwidefm.net/";
 	private static final int TIMEOUT_SECONDS = 10;
-	//	private static final int RETRY_ATTEMPTS = 3;
 
 	private static final String CODO_MARIA = "breakfast-club-coco";
 	private static final String GILLES_PETERSON = "gilles-peterson";

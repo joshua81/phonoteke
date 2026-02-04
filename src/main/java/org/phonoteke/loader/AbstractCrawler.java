@@ -15,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.phonoteke.loader.AbstractCrawler.PlaylistData;
 import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.base.Preconditions;
@@ -61,14 +62,24 @@ public abstract class AbstractCrawler extends WebCrawler
 	@Data
 	@Builder
 	public static class PlaylistData {
+		private String id;
+		private TYPE type;
+		private String source;
+		private String artist;
 		private String title;
 		private String description;
 		private String url;
 		private Date date;
 		private String cover;
+		private String label;
+		private String review;
+		private Float vote;
 		private String audio;
 		private Integer year;
 		private List<TrackInfo> tracks;
+		private List<String> authors;
+		private List<String> genres;
+		private List<String> links;
 	}
 
 	/**
@@ -115,64 +126,59 @@ public abstract class AbstractCrawler extends WebCrawler
 	{
 		if(page.getParseData() instanceof HtmlParseData) 
 		{
-			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-			String html = htmlParseData.getHtml();
 			String url = page.getWebURL().getURL();
+			log.debug("Parsing page " + url);
+
+			String id = getId(url);
 			String source = getSource();
 			TYPE type = getType(url);
 
-			if(!TYPE.unknown.equals(type))
+			try
 			{
-				try
+				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
+						Filters.eq("id", id))).iterator().tryNext();
+				if(json == null)
 				{
-					log.debug("Parsing page " + url);
-					String id = getId(url);
-					Document doc = Jsoup.parse(html);
-
-					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("id", id))).iterator().tryNext();
-					if(json == null)
+					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
+					switch(type)
 					{
-						switch(type)
+					case album:
+					case podcast:
+						if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(
+								Filters.eq("id", id),
+								Filters.eq("type", type.name()))).iterator().hasNext())
 						{
-						case album:
-						case podcast:
-							if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(
-									Filters.eq("id", id),
-									Filters.eq("type", type.name()))).iterator().hasNext())
-							{
-								json = new org.bson.Document("id", id).
-										append("url", getUrl(url)).
-										append("type", type.name()).
-										append("artist", getArtist(url, doc)).
-										append("title", getTitle(url, doc)).
-										append("authors", getAuthors(url, doc)).
-										append("cover", getCover(url, doc)).
-										append("date", getDate(url, doc)).
-										append("description", getDescription(url, doc)).
-										append("genres", getGenres(url, doc)).
-										append("label", getLabel(url, doc)).
-										append("links", getLinks(url, doc)).
-										append("review", getReview(url, doc)).
-										append("source", getSource()).
-										append("vote", getVote(url, doc)).
-										append("year", getYear(url, doc)).
-										append("tracks", getTracks(url, doc)).
-										append("audio", getAudio(url, doc));
-								insertDoc(json);
-							}
-							break;
-						default:
-							break;
+							json = new org.bson.Document("id", id).
+									append("url", getUrl(url)).
+									append("type", type.name()).
+									append("artist", getArtist(url, doc)).
+									append("title", getTitle(url, doc)).
+									append("authors", getAuthors(url, doc)).
+									append("cover", getCover(url, doc)).
+									append("date", getDate(url, doc)).
+									append("description", getDescription(url, doc)).
+									append("genres", getGenres(url, doc)).
+									append("label", getLabel(url, doc)).
+									append("links", getLinks(url, doc)).
+									append("review", getReview(url, doc)).
+									append("source", getSource()).
+									append("vote", getVote(url, doc)).
+									append("year", getYear(url, doc)).
+									append("tracks", getTracks(url, doc)).
+									append("audio", getAudio(url, doc));
+							insertDoc(json);
 						}
+						break;
+					default:
+						break;
 					}
 				}
-				catch (Throwable t) {
-					throw new RuntimeException("ERROR parsing page " + url, t);
-				}
-				finally {
-					cleanup();
-				}
+			}
+			catch (Throwable t) {
+				throw new RuntimeException("ERROR parsing page " + url, t);
+			}
+			finally {
+				cleanup();
 			}
 		}
 	}
@@ -306,7 +312,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected TYPE getType(String url) 
 	{
-		return TYPE.unknown;
+		return null;
 	}
 
 	protected String getArtist(String url, Document doc) {

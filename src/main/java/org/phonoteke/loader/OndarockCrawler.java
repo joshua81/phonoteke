@@ -63,8 +63,6 @@ public class OndarockCrawler extends AbstractCrawler
 	protected String getReview(String url, Document doc) 
 	{
 		switch (getType(url)) {
-		case unknown:
-			return null;
 		default:
 			Element content = doc.select("div[class=main_text]").first();
 			if(content == null)
@@ -420,12 +418,6 @@ public class OndarockCrawler extends AbstractCrawler
 	@Override
 	protected TYPE getType(String url) 
 	{
-		if(getUrl(url).startsWith(URL + "pietremiliari") || 
-				getUrl(url).startsWith(URL + "recensioni") ||
-				getUrl(url).startsWith(URL + "jazz/recensioni"))
-		{
-			return TYPE.album;
-		}
-		return TYPE.unknown;
+		return TYPE.album;
 	}
 }

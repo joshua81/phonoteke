@@ -34,8 +34,7 @@ public class HumanBeatsUtils
 
 	public enum TYPE {
 		album,
-		podcast,
-		unknown
+		podcast
 	}
 
 	public static void main(String[] args) {

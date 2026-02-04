@@ -102,7 +102,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Crawl a specific Worldwide FM episode URL and extract playlist
 	 */
-	public PlaylistData crawlEpisode(String episodeUrl) {
+	public PlaylistData crawlEpisode(String url) {
 		if(playlistData != null) {
 			return playlistData;
 		}
@@ -110,12 +110,12 @@ public class WWFMCrawler extends AbstractCrawler
 		try {
 			playlistData = PlaylistData.builder()
 					.tracks(Lists.newArrayList())
-					.url(episodeUrl).build();
+					.url(url).build();
 			initializeWebDriver();
 
 			// Navigate to the episode page
-			log.info("Crawling episode: " + episodeUrl);
-			driver.get(episodeUrl);
+			log.info("Crawling episode: " + url);
+			driver.get(url);
 
 			// Wait for page to load
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
@@ -137,8 +137,8 @@ public class WWFMCrawler extends AbstractCrawler
 
 			return playlistData;
 		} catch (Exception e) {
-			log.error("Error crawling episode " + episodeUrl + ": " + e.getMessage());
-			throw new RuntimeException("Error crawling episode " + episodeUrl + ": " + e.getMessage(), e);
+			log.error("Error crawling episode " + url + ": " + e.getMessage());
+			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage(), e);
 		} finally {
 			cleanupWebDriver();
 		}

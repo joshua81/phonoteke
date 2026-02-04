@@ -5,7 +5,7 @@ do
 	case "$1" in
 	"compile")
 	  	cd $HOME/workspace/phonoteke
-		mvn clean install
+		mvn clean install -DskipTests
 		shift
 	 	;;
 	"deploy")

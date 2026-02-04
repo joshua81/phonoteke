@@ -36,6 +36,8 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,6 +52,35 @@ public abstract class AbstractCrawler extends WebCrawler
 	public static String source;
 	public static List<String> authors;
 	public static Integer page;
+
+	protected PlaylistData playlistData;
+
+	/**
+	 * Playlist data structure to hold extracted track information
+	 */
+	@Data
+	@Builder
+	public static class PlaylistData {
+		private String title;
+		private String description;
+		private String url;
+		private Date date;
+		private String cover;
+		private String audio;
+		private Integer year;
+		private List<TrackInfo> tracks;
+	}
+
+	/**
+	 * Track information structure
+	 */
+	@Data
+	@Builder
+	public static class TrackInfo {
+		private String artist;
+		private String title;
+		private String fullTitle;
+	}
 
 	protected void crawl(String url)
 	{
@@ -97,27 +128,24 @@ public abstract class AbstractCrawler extends WebCrawler
 					log.debug("Parsing page " + url);
 					String id = getId(url);
 					Document doc = Jsoup.parse(html);
-					String artist = getArtist(url, doc);
-					String title = getTitle(url, doc);
 
 					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", url))).iterator().tryNext();
+							Filters.eq("id", id))).iterator().tryNext();
 					if(json == null)
 					{
 						switch(type)
 						{
 						case album:
 						case podcast:
-							if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(Filters.eq("source", source),
-									Filters.eq("type", type.name()),
-									Filters.eq("artist", artist),
-									Filters.eq("title", title))).iterator().hasNext())
+							if(type.equals(TYPE.podcast) || !repo.getDocs().find(Filters.and(
+									Filters.eq("id", id),
+									Filters.eq("type", type.name()))).iterator().hasNext())
 							{
 								json = new org.bson.Document("id", id).
 										append("url", getUrl(url)).
 										append("type", type.name()).
-										append("artist", artist).
-										append("title", title).
+										append("artist", getArtist(url, doc)).
+										append("title", getTitle(url, doc)).
 										append("authors", getAuthors(url, doc)).
 										append("cover", getCover(url, doc)).
 										append("date", getDate(url, doc)).
@@ -139,13 +167,18 @@ public abstract class AbstractCrawler extends WebCrawler
 						}
 					}
 				}
-				catch (Throwable t) 
-				{
-					log.debug("ERROR parsing page " + url + ": " + t.getMessage());
-					throw new RuntimeException(t);
+				catch (Throwable t) {
+					throw new RuntimeException("ERROR parsing page " + url, t);
+				}
+				finally {
+					cleanup();
 				}
 			}
 		}
+	}
+
+	protected void cleanup() {
+		playlistData = null;
 	}
 
 	protected String getId(String url) 
@@ -246,7 +279,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected void insertDoc(org.bson.Document json) {
 		repo.getDocs().insertOne(json);
-		log.info(json.getString("type") + " " + url + " added");
+		log.info(json.getString("type") + " " + json.getString("url") + " added");
 
 		// update last episode date
 		if(TYPE.podcast.name().equals(json.getString("type"))) {

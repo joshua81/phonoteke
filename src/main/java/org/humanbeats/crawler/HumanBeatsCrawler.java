@@ -1,7 +1,8 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import javax.annotation.PostConstruct;
 
+import org.humanbeats.loader.MongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

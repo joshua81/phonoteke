@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.loader;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,7 +7,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
+import org.humanbeats.util.HumanBeatsUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

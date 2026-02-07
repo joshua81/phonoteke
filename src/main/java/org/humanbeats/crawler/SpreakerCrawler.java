@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;

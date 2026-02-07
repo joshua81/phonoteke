@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,7 +22,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;

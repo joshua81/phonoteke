@@ -1,14 +1,15 @@
-package org.phonoteke.loader;
+package org.humanbeats.test.crawler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.humanbeats.crawler.WWFMCrawler;
+import org.humanbeats.crawler.AbstractCrawler.PlaylistData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.phonoteke.loader.AbstractCrawler.PlaylistData;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,7 +1,14 @@
-package org.phonoteke.loader;
+package org.humanbeats;
 
 import java.util.Arrays;
 
+import org.humanbeats.crawler.HumanBeatsCrawler;
+import org.humanbeats.loader.DiscogsLoader;
+import org.humanbeats.loader.MusicbrainzLoader;
+import org.humanbeats.loader.PatchLoader;
+import org.humanbeats.loader.SpotifyLoader;
+import org.humanbeats.loader.StatsLoader;
+import org.humanbeats.loader.YoutubeLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

@@ -104,7 +104,7 @@
 							<addClasspath>true</addClasspath>
 							<useUniqueVersions>false</useUniqueVersions>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>org.phonoteke.PhonotekeCrawler</mainClass>
+							<mainClass>org.humanbeats.HumanBeats</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

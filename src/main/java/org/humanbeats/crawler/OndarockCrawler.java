@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;

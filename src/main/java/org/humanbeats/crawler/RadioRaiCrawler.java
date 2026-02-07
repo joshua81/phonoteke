@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.util.HumanBeatsUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;

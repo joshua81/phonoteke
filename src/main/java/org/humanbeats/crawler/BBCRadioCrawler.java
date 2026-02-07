@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCursor;

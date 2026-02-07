@@ -1,4 +1,4 @@
-package org.phonoteke.loader;
+package org.humanbeats.crawler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,11 +11,13 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.loader.MongoRepository;
+import org.humanbeats.util.HumanBeatsUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.phonoteke.loader.HumanBeatsUtils.TYPE;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

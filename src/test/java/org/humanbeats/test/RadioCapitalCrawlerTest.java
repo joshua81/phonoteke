@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.humanbeats.crawler.WWFMCrawler;
+import org.humanbeats.crawler.RadioCapitalCrawler;
 import org.humanbeats.model.HBDocument;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,13 @@ import org.junit.jupiter.api.Test;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Test class for WWFMCrawler
- * Tests the core functionality of crawling Worldwide FM episodes and extracting playlists
+ * Test class for RadioCapitalCrawler
+ * Tests the core functionality of crawling Radio Capital episodes and extracting playlists
  */
 @Slf4j
-public class WWFMCrawlerTest {
+public class RadioCapitalCrawlerTest {
 
-	private static final String TEST_EPISODE_URL = "https://www.worldwidefm.net/episode/breakfast-club-coco-06012026";
+	private static final String TEST_EPISODE_URL = "https://www.capital.it/programmi/extra/puntate/extra-del-07-02-2026/";
 
 	@BeforeEach
 	void setUp() {
@@ -35,7 +37,8 @@ public class WWFMCrawlerTest {
 	@Test
 	void testCrawlEpisode() {
 		try {
-			HBDocument result = new WWFMCrawler(null).crawlDocument(TEST_EPISODE_URL, null);
+			Document doc = Jsoup.connect(TEST_EPISODE_URL).ignoreContentType(true).get();
+			HBDocument result = new RadioCapitalCrawler(null).crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure
 			assertNotNull(result, "Playlist data should not be null");

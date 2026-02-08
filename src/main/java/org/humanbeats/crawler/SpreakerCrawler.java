@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bson.Document;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;

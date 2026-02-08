@@ -147,8 +147,16 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		List<HBTrack> tracks = Lists.newArrayList();
 		Date date = getDate(doc);
 		try {
+			String show = null;
+			if("alexpaletta".equals(source)) {
+				show = "extra";
+			}
+			else if("casabertallot".equals(source)){
+				show = "bertallot";
+			}
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
-			doc = Jsoup.connect(url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
+			doc = Jsoup.connect(URL + show + "/playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
+
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();
@@ -160,14 +168,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				}
 			}
 		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
-		}
-
-		try {
-			if(source.equals("alexpaletta") && date.after(new SimpleDateFormat("yyyy-MM-dd").parse("2024-11-30"))) {
-				return tracks;
-			}
-		} catch (ParseException e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		return tracks;
@@ -191,10 +191,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
 		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;
-		if(source.equals("alexpaletta")) {
+		if("alexpaletta".equals(source)) {
 			audio = "https://media.capital.it/" + d1 + "/episodes/extra/extra_" + d2 + "_000000.mp3";
 		}
-		else if(source.equals("casabertallot")){
+		else if("casabertallot".equals(source)){
 			audio = "https://media.capital.it/" + d1 + "/episodes/bertallot/bertallot_" + d2 + "_220000.mp3";
 		}
 		log.debug("audio: " + audio);

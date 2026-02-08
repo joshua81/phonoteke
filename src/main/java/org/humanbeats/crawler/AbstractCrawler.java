@@ -41,7 +41,6 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
 	protected MongoRepository repo;
-
 	protected String url;
 	protected String id;
 	protected String artist;

@@ -59,17 +59,6 @@ public class NTSCrawler extends AbstractCrawler
 	}
 
 	@Override
-	protected String getBaseUrl() {
-		return URL;
-	}
-
-	@Override
-	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	protected void crawl(String url)
 	{
 		try
@@ -99,34 +88,26 @@ public class NTSCrawler extends AbstractCrawler
 					doc = gson2.getAsJsonObject();
 
 					String pageUrl = episodeUrl.replace("api/v2/", "");
-					TYPE type = TYPE.podcast;
-
-					log.debug("Parsing page " + pageUrl);
 					String id = getId(pageUrl);
-					String title = doc.get("name").getAsString();
+					log.debug("Parsing page " + pageUrl);
 
 					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
+							Filters.eq("id", id))).iterator().tryNext();
 					if(json == null)
 					{
 						try {
 							json = new org.bson.Document("id", id).
 									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
+									append("type", TYPE.podcast.name()).
 									append("artist", artist).
-									append("title", title).
+									append("title", getTitle(doc)).
 									append("authors", authors).
-									append("cover", doc.getAsJsonObject("media").get("picture_medium_large").getAsString()).
-									append("date", getDate(doc.get("broadcast").getAsString())).
-									append("description", doc.get("description").getAsString()).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
+									append("cover", getCover(doc)).
+									append("date", getDate(doc)).
+									append("description", getDescription(doc)).
 									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("broadcast").getAsString())).
-									append("tracks", getTracks(doc.getAsJsonObject("embeds").getAsJsonObject("tracklist").getAsJsonArray("results"))).
+									append("year", getYear(doc)).
+									append("tracks", getTracks(doc)).
 									append("audio", getAudio(doc));
 							insertDoc(json);
 						}
@@ -148,19 +129,42 @@ public class NTSCrawler extends AbstractCrawler
 		}
 	}
 
-	private Date getDate(String date) 
+	@Override
+	protected String getBaseUrl() {
+		return URL;
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+		// nothing to do
+		return null;
+	}
+
+	private String getTitle(JsonObject doc) {
+		return doc.get("name").getAsString();
+	}
+
+	private String getDescription(JsonObject doc) {
+		return doc.get("description").getAsString();
+	}
+
+	private String getCover(JsonObject doc) {
+		return doc.getAsJsonObject("media").get("picture_medium_large").getAsString();
+	}
+
+	private Date getDate(JsonObject doc) 
 	{
 		try {
+			String date = doc.get("broadcast").getAsString();
 			return new SimpleDateFormat("yyyy-MM-dd").parse(date.split("T")[0]);
 		} catch (ParseException e) {
 			return null;
 		}
 	}
 
-	private Integer getYear(String date) 
-	{
+	private Integer getYear(JsonObject doc) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(getDate(date));
+		cal.setTime(getDate(doc));
 		return cal.get(Calendar.YEAR);
 	}
 
@@ -168,7 +172,8 @@ public class NTSCrawler extends AbstractCrawler
 		return doc.getAsJsonArray("audio_sources").get(0).getAsJsonObject().get("url").getAsString();
 	}
 
-	private List<HBTrack> getTracks(JsonArray content) {
+	private List<HBTrack> getTracks(JsonObject doc) {
+		JsonArray content = doc.getAsJsonObject("embeds").getAsJsonObject("tracklist").getAsJsonArray("results");
 		List<HBTrack> tracks = Lists.newArrayList();
 		content.forEach(c -> {
 			String title = c.getAsJsonObject().get("artist") + " - " + c.getAsJsonObject().get("title");

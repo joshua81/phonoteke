@@ -130,58 +130,6 @@ public abstract class AbstractCrawler extends WebCrawler
 		} 
 	}
 
-//	protected List<HBTrack> getVideos(Elements elements) 
-//	{
-//		List<HBTrack> tracks = Lists.newArrayList();
-//		for(int i = 0; i < elements.size(); i++)
-//		{
-//			String src = elements.get(i).attr("src");
-//			if(src != null && src.contains("youtube.com")) 
-//			{
-//				String youtube = null;
-//				if(src.startsWith("https://www.youtube.com/embed/"))
-//				{
-//					int ix = "https://www.youtube.com/embed/".length();
-//					youtube = src.substring(ix);
-//					tracks.add(HBTrack.builder().youtube(youtube).build());
-//					log.debug("tracks: youtube: " + youtube);
-//				}
-//				else if(src.startsWith("//www.youtube.com/embed/"))
-//				{
-//					int ix = "//www.youtube.com/embed/".length();
-//					youtube = src.substring(ix);
-//					tracks.add(HBTrack.builder().youtube(youtube).build());
-//					log.debug("tracks: youtube: " + youtube);
-//				}
-//			}
-//		}
-//		return tracks;
-//	}
-
-	//	protected List<HBTrack> getTracks(Element content, String source) 
-	//	{
-	//		List<HBTrack> tracks = Lists.newArrayList();
-	//		if(content != null) {
-	//			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("li").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("h1").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("h2").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("h3").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			content.select("div").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//
-	//			String[] chunks = content.text().replace("||", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
-	//			for(int i = 0; i < chunks.length; i++) {
-	//				String title = chunks[i].trim();
-	//				if(StringUtils.isNotBlank(title)) {
-	//					tracks.add(HBTrack.newInstance(title));
-	//					log.debug("tracks: " + title);
-	//				}
-	//			}
-	//		}
-	//		return tracks;
-	//	}
-
 	protected void insertDoc(org.bson.Document json) {
 		repo.getDocs().insertOne(json);
 		log.info(json.getString("type") + " " + json.getString("url") + " added");
@@ -199,10 +147,6 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected abstract String getBaseUrl();
 
 	public abstract HBDocument crawlDocument(String url, Document doc);
-
-	protected String cleanHTML(String html) {
-		return Jsoup.parse(html).wholeText();
-	}
 
 	private class HumanBeatsParser extends Parser {
 		public HumanBeatsParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {

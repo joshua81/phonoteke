@@ -12,6 +12,7 @@ import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -364,8 +365,8 @@ public class OndarockCrawler extends AbstractCrawler
 			return 0F;
 		}
 	}
-	
-	protected List<HBTrack> getVideos(Elements elements) 
+
+	private List<HBTrack> getVideos(Elements elements) 
 	{
 		List<HBTrack> tracks = Lists.newArrayList();
 		for(int i = 0; i < elements.size(); i++)
@@ -391,5 +392,9 @@ public class OndarockCrawler extends AbstractCrawler
 			}
 		}
 		return tracks;
+	}
+
+	private String cleanHTML(String html) {
+		return Jsoup.parse(html).wholeText();
 	}
 }

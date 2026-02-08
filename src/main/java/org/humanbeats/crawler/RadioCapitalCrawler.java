@@ -54,8 +54,21 @@ public class RadioCapitalCrawler extends AbstractCrawler
 
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
-		// TODO Auto-generated method stub
-		return null;
+		HBDocument playlistData = HBDocument.builder()
+				.id(id)
+				.url(url)
+				.source(source)
+				.type(TYPE.podcast)
+				.artist(artist)
+				.authors(authors)
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.description(getDescription(doc))
+				.title(getTitle(doc))
+				.cover(getCover(doc))
+				.audio(getAudio(doc))
+				.tracks(getTracks(doc)).build();
+		return playlistData;
 	}
 
 	@Override
@@ -79,21 +92,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	{
 		return URL;
 	}
-
-	//	private String getSource() 
-	//	{
-	//		return source;
-	//	}
-	//
-	//	private String getArtist(String url, Document doc) 
-	//	{
-	//		return artist;
-	//	}
-	//
-	//	private List<String> getAuthors(String url, Document doc) 
-	//	{
-	//		return authors;
-	//	}
 
 	private Date getDate(Document doc) 
 	{
@@ -185,11 +183,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		}
 		log.debug("cover: " + cover);
 		return cover;
-	}
-
-	private TYPE getType(String url) 
-	{
-		return TYPE.podcast;
 	}
 
 	private String getAudio(Document doc) 

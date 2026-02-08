@@ -3,12 +3,12 @@ package org.humanbeats;
 import java.util.Arrays;
 
 import org.humanbeats.crawler.HumanBeatsCrawler;
-import org.humanbeats.loader.DiscogsLoader;
-import org.humanbeats.loader.MusicbrainzLoader;
-import org.humanbeats.loader.PatchLoader;
-import org.humanbeats.loader.SpotifyLoader;
-import org.humanbeats.loader.StatsLoader;
-import org.humanbeats.loader.YoutubeLoader;
+import org.humanbeats.indexer.DiscogsIndexer;
+import org.humanbeats.indexer.MusicbrainzIndexer;
+import org.humanbeats.indexer.SpotifyIndexer;
+import org.humanbeats.indexer.YoutubeIndexer;
+import org.humanbeats.service.PatchService;
+import org.humanbeats.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,22 +25,22 @@ public class HumanBeats implements CommandLineRunner {
 	private HumanBeatsCrawler crawler;
 
 	@Autowired
-	private YoutubeLoader youtubeLoader;
+	private YoutubeIndexer youtubeLoader;
 
 	@Autowired
-	private MusicbrainzLoader musicbrainzLoader;
+	private MusicbrainzIndexer musicbrainzLoader;
 
 	@Autowired
-	private DiscogsLoader discogsLoader;
+	private DiscogsIndexer discogsLoader;
 
 	@Autowired
-	private SpotifyLoader spotifyLoader;
+	private SpotifyIndexer spotifyLoader;
 
 	@Autowired
-	private StatsLoader statsLoader;
+	private StatsService statsLoader;
 
 	@Autowired
-	private PatchLoader patchLoader;
+	private PatchService patchLoader;
 
 
 	public static void main(String[] args) {

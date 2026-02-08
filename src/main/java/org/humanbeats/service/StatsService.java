@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class StatsLoader
+public class StatsService
 {
 	@Autowired
 	private MongoRepository repo;

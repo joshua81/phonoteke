@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class YoutubeLoader
+public class YoutubeIndexer
 {
 	private static final String MATCH1 = "(?i)(.{1,100})[\\(\\[]Official(.{1,10})Video[\\)\\]]";
 	private static final String MATCH2 = "(?i)(.{1,100})[\\(\\[]Video(.{1,10})Ufficiale[\\)\\]]";

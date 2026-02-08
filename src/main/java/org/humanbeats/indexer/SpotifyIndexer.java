@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +47,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class SpotifyLoader
+public class SpotifyIndexer
 {
 	@Value("${spotify.user}")
 	private String spotifyUser;

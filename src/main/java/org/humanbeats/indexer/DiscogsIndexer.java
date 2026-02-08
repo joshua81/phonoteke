@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class DiscogsLoader
+public class DiscogsIndexer
 {
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
 

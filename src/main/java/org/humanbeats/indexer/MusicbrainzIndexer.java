@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,7 +24,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class MusicbrainzLoader
+public class MusicbrainzIndexer
 {
 	private static final String MUSICBRAINZ = "http://musicbrainz.org/ws/2";
 

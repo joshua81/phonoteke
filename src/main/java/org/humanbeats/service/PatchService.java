@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PatchLoader
+public class PatchService
 {
 	@Autowired
 	private MongoRepository repo;

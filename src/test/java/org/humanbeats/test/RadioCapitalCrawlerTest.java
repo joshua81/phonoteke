@@ -38,7 +38,9 @@ public class RadioCapitalCrawlerTest {
 	void testCrawlEpisode() {
 		try {
 			Document doc = Jsoup.connect(TEST_EPISODE_URL).ignoreContentType(true).get();
-			HBDocument result = new RadioCapitalCrawler(null).crawlDocument(TEST_EPISODE_URL, doc);
+			RadioCapitalCrawler crawler = new RadioCapitalCrawler(null);
+			crawler.setSource("alexpaletta");
+			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure
 			assertNotNull(result, "Playlist data should not be null");

@@ -33,6 +33,7 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -44,6 +45,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected String url;
 	protected String id;
 	protected String artist;
+	@Setter
 	protected String source;
 	protected List<String> authors;
 	protected Integer page;

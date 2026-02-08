@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
@@ -24,9 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 public class RadioRaheemCrawler extends AbstractCrawler
 {
 	private static final String RADIO_RAHEEM = "radioraheem";
-
 	private static final String URL = "https://www.radioraheem.it/wp-json/wp/v2/episodes/?types=show:$ID&per_page=24&offset=0&orderby=date&lang=default";
 
+	public RadioRaheemCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -35,10 +38,10 @@ public class RadioRaheemCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			RadioRaheemCrawler.id = show.getString("id");
-			RadioRaheemCrawler.artist = show.getString("title");
-			RadioRaheemCrawler.source = show.getString("source");
-			RadioRaheemCrawler.authors = show.get("authors", List.class);
+			this.id = show.getString("id");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(url);
@@ -50,7 +53,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 	{
 		try
 		{
-			HttpURLConnection con = (HttpURLConnection)new URL(URL.replace("$ID", RadioRaheemCrawler.id)).openConnection();
+			HttpURLConnection con = (HttpURLConnection)new URL(URL.replace("$ID", id)).openConnection();
 			JsonArray results = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonArray.class);
 			results.forEach(item -> {
 				JsonObject doc = (JsonObject)item;

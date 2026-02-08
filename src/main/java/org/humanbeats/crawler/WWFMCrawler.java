@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -32,6 +33,8 @@ import com.mongodb.client.model.Filters;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -47,6 +50,48 @@ public class WWFMCrawler extends AbstractCrawler
 
 	private WebDriver driver;
 	private WebDriverWait wait;
+	private PlaylistData playlistData;
+
+	/**
+	 * Playlist data structure to hold extracted track information
+	 */
+	@Data
+	@Builder
+	private static class PlaylistData {
+		private String id;
+		private TYPE type;
+		private String source;
+		private String artist;
+		private String title;
+		private String description;
+		private String url;
+		private Date date;
+		private String cover;
+		private String label;
+		private String review;
+		private Float vote;
+		private String audio;
+		private Integer year;
+		private List<TrackInfo> tracks;
+		private List<String> authors;
+		private List<String> genres;
+		private List<String> links;
+	}
+
+	/**
+	 * Track information structure
+	 */
+	@Data
+	@Builder
+	private static class TrackInfo {
+		private String artist;
+		private String title;
+		private String fullTitle;
+	}
+
+	public WWFMCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	/**
 	 * Initialize WebDriver with proper configuration
@@ -332,28 +377,26 @@ public class WWFMCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			WWFMCrawler.url = show.getString("url");
-			WWFMCrawler.artist = show.getString("title");
-			WWFMCrawler.source = show.getString("source");
-			WWFMCrawler.authors = show.get("authors", List.class);
-			WWFMCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 
 			log.info("Crawling " + artist + " (" + page + " page)");
-			crawl(WWFMCrawler.url);
+			crawl(url);
 		}
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {
-		return url.getURL().contains("worldwidefm.net/episode");
+		return url.getURL().contains("worldwidefm.net/episode") && (url.getURL().contains(COCO_MARIA) || url.getURL().contains(GILLES_PETERSON));
 	}
 
 	@Override
 	public void visit(Page page) {
-		String url = page.getWebURL().getURL();
-		if(url.contains("worldwidefm.net/episode") && (url.contains(COCO_MARIA) || url.contains(GILLES_PETERSON))) {
-			super.visit(page);
-		}
+		super.visit(page);
+		playlistData = null;
 	}
 
 	@Override

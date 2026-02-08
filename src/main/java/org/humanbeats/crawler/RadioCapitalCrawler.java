@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +29,9 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	private static final String CAPITAL = "capital";
 	private static final String URL = "https://www.capital.it/programmi/";
 
+	public RadioCapitalCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -36,10 +40,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			RadioCapitalCrawler.url = show.getString("url");
-			RadioCapitalCrawler.artist = show.getString("title");
-			RadioCapitalCrawler.source = show.getString("source");
-			RadioCapitalCrawler.authors = show.get("authors", List.class);
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(url);
@@ -55,9 +59,9 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	@Override
 	public void visit(Page page) 
 	{
-		if(page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/b-side-del") ||
-				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/extra-del") ||
-				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/puntata-del")) {
+		if(page.getWebURL().getURL().startsWith(url + "puntate/b-side-del") ||
+				page.getWebURL().getURL().startsWith(url + "puntate/extra-del") ||
+				page.getWebURL().getURL().startsWith(url + "puntate/puntata-del")) {
 			super.visit(page);
 		}
 	}
@@ -146,7 +150,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		Date date = getDate(url, doc);
 		try {
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
-			doc = Jsoup.connect(RadioCapitalCrawler.url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
+			doc = Jsoup.connect(url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();

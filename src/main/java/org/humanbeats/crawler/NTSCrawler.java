@@ -11,6 +11,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,9 @@ public class NTSCrawler extends AbstractCrawler
 	private static final String URL_EPISODES = "api/v2/shows/$ARTIST/episodes?offset=$OFFSET&limit=$LIMIT";
 	private static final String URL_EPISODE = "api/v2/shows/$ARTIST/episodes/$EPISODE";
 
+	public NTSCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -41,11 +45,11 @@ public class NTSCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			NTSCrawler.id = show.getString("id");
-			NTSCrawler.artist = show.getString("title");
-			NTSCrawler.source = show.getString("source");
-			NTSCrawler.authors = show.get("authors", List.class);
-			NTSCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			this.id = show.getString("id");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
@@ -59,7 +63,7 @@ public class NTSCrawler extends AbstractCrawler
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			Integer offset = (page-1)*PAGE_SIZE;
-			String episodesUrl = url + URL_EPISODES.replace("$ARTIST", NTSCrawler.id)
+			String episodesUrl = url + URL_EPISODES.replace("$ARTIST", id)
 			.replace("$OFFSET", offset.toString())
 			.replace("$LIMIT", PAGE_SIZE.toString());
 			HttpGet httpGet = new HttpGet(episodesUrl);
@@ -73,7 +77,7 @@ public class NTSCrawler extends AbstractCrawler
 				{
 					JsonObject doc = (JsonObject)item;
 					CloseableHttpClient client2 = HttpClients.createDefault();
-					String episodeUrl = url + URL_EPISODE.replace("$ARTIST", NTSCrawler.id)
+					String episodeUrl = url + URL_EPISODE.replace("$ARTIST", this.id)
 					.replace("$EPISODE", doc.get("episode_alias").getAsString());
 					HttpGet httpGet2 = new HttpGet(episodeUrl);
 

@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.springframework.beans.factory.annotation.Autowired;

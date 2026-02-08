@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.humanbeats.loader.MongoRepository;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
@@ -38,60 +38,23 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractCrawler extends WebCrawler
 {
-	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
+	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
-	public static MongoRepository repo;
-	public static String url;
-	public static String id;
-	public static String artist;
-	public static String source;
-	public static List<String> authors;
-	public static Integer page;
+	protected MongoRepository repo;
+	protected String url;
+	protected String id;
+	protected String artist;
+	protected String source;
+	protected List<String> authors;
+	protected Integer page;
 
-	protected PlaylistData playlistData;
-
-	/**
-	 * Playlist data structure to hold extracted track information
-	 */
-	@Data
-	@Builder
-	public static class PlaylistData {
-		private String id;
-		private TYPE type;
-		private String source;
-		private String artist;
-		private String title;
-		private String description;
-		private String url;
-		private Date date;
-		private String cover;
-		private String label;
-		private String review;
-		private Float vote;
-		private String audio;
-		private Integer year;
-		private List<TrackInfo> tracks;
-		private List<String> authors;
-		private List<String> genres;
-		private List<String> links;
-	}
-
-	/**
-	 * Track information structure
-	 */
-	@Data
-	@Builder
-	public static class TrackInfo {
-		private String artist;
-		private String title;
-		private String fullTitle;
+	public AbstractCrawler(MongoRepository repo) {
+		this.repo = repo;
 	}
 
 	protected void crawl(String url)
@@ -172,14 +135,7 @@ public abstract class AbstractCrawler extends WebCrawler
 			catch (Throwable t) {
 				throw new RuntimeException("ERROR parsing page " + url, t);
 			}
-			finally {
-				cleanup();
-			}
 		}
-	}
-
-	protected void cleanup() {
-		playlistData = null;
 	}
 
 	protected String getId(String url) 
@@ -411,9 +367,9 @@ public abstract class AbstractCrawler extends WebCrawler
 				{
 					WebURL webURL = new WebURL();
 					webURL.setURL(link);
-					//					webURL.setTag(urlAnchorPair.getTag());
-					//					webURL.setAnchor(urlAnchorPair.getAnchor());
-					//					webURL.setAttributes(urlAnchorPair.getAttributes());
+					//webURL.setTag(urlAnchorPair.getTag());
+					//webURL.setAnchor(urlAnchorPair.getAnchor());
+					//webURL.setAttributes(urlAnchorPair.getAttributes());
 					urls.add(webURL);
 				}
 			}

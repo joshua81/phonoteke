@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,6 +27,9 @@ public class BBCRadioCrawler extends AbstractCrawler
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
+	public BBCRadioCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -34,11 +38,11 @@ public class BBCRadioCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			BBCRadioCrawler.url = show.getString("url");
-			BBCRadioCrawler.artist = show.getString("title");
-			BBCRadioCrawler.source = show.getString("source");
-			BBCRadioCrawler.authors = show.get("authors", List.class);
-			BBCRadioCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(url + "?page=" + page);

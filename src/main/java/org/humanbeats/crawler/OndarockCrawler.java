@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,6 +28,9 @@ public class OndarockCrawler extends AbstractCrawler
 	private static final String SOURCE = "ondarock";
 	private static final String URL = "https://www.ondarock.it/";
 
+	public OndarockCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{

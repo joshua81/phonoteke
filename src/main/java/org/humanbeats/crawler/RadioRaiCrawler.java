@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
@@ -31,8 +32,12 @@ public class RadioRaiCrawler extends AbstractCrawler
 	private static final String URL = "https://www.raiplaysound.it/";
 	private static final String URL2 = "https://www.raiplaysound.it";
 	private static final String RAI = "rai";
-
 	private static final String MUSICALBOX = "musicalbox";
+
+
+	public RadioRaiCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -41,10 +46,10 @@ public class RadioRaiCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			RadioRaiCrawler.url = show.getString("url");
-			RadioRaiCrawler.artist = show.getString("title");
-			RadioRaiCrawler.source = show.getString("source");
-			RadioRaiCrawler.authors = show.get("authors", List.class);
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(url);
@@ -148,7 +153,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 	protected List<org.bson.Document> getTracks(String content) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
-		if(MUSICALBOX.equals(RadioRaiCrawler.source)) {
+		if(MUSICALBOX.equals(source)) {
 			return tracks;
 		}
 

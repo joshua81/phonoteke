@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
@@ -26,6 +27,9 @@ public class SpreakerCrawler extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
 
+	public SpreakerCrawler(MongoRepository repo) {
+		super(repo);
+	}
 
 	public void load(String... args) 
 	{
@@ -34,10 +38,10 @@ public class SpreakerCrawler extends AbstractCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			RadioRaiCrawler.url = show.getString("url");
-			RadioRaiCrawler.artist = show.getString("title");
-			RadioRaiCrawler.source = show.getString("source");
-			RadioRaiCrawler.authors = show.get("authors", List.class);
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
 
 			log.info("Crawling " + artist);
 			crawl(url);

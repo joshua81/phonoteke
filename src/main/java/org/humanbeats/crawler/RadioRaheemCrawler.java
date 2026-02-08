@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,33 +26,21 @@ import lombok.extern.slf4j.Slf4j;
 public class RadioRaheemCrawler extends AbstractCrawler
 {
 	private static final String RADIO_RAHEEM = "radioraheem";
-	private static final String URL = "https://www.radioraheem.it/wp-json/wp/v2/episodes/?types=show:$ID&per_page=24&offset=0&orderby=date&lang=default";
+	private static final String URL = "https://www.radioraheem.it/";
+	private static final String URL_EPISODE = "https://www.radioraheem.it/wp-json/wp/v2/episodes/?types=show:$ID&per_page=24&offset=0&orderby=date&lang=default";
 
 	public RadioRaheemCrawler(MongoRepository repo) {
 		super(repo);
 	}
 
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", RADIO_RAHEEM))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", RADIO_RAHEEM), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.id = show.getString("id");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-
-			log.info("Crawling " + artist);
-			crawl(url);
-		}
+	@Override
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	@Override
-	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
-		// TODO Auto-generated method stub
-		return null;
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	@Override
@@ -61,7 +48,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 	{
 		try
 		{
-			HttpURLConnection con = (HttpURLConnection)new URL(URL.replace("$ID", id)).openConnection();
+			HttpURLConnection con = (HttpURLConnection)new URL(URL_EPISODE.replace("$ID", id)).openConnection();
 			JsonArray results = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonArray.class);
 			results.forEach(item -> {
 				JsonObject doc = (JsonObject)item;
@@ -110,8 +97,13 @@ public class RadioRaheemCrawler extends AbstractCrawler
 	}
 
 	@Override
+	protected String getType() {
+		return RADIO_RAHEEM;
+	}
+
+	@Override
 	protected String getBaseUrl() {
-		return "https://www.radioraheem.it/";
+		return URL;
 	}
 
 	private Date getDate(String date) {

@@ -16,8 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.google.gson.JsonObject;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -31,24 +30,6 @@ public class BBCRadioCrawler extends AbstractCrawler
 
 	public BBCRadioCrawler(MongoRepository repo) {
 		super(repo);
-	}
-
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", BBC))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", BBC), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-
-			log.info("Crawling " + artist + " (" + page + " page)");
-			crawl(url + "?page=" + page);
-		}
 	}
 
 	@Override
@@ -70,14 +51,23 @@ public class BBCRadioCrawler extends AbstractCrawler
 	}
 
 	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
+
+	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
 		return page.getWebURL().getURL().startsWith(this.url);
 	}
 
 	@Override
-	protected String getBaseUrl()
-	{
+	protected String getType() {
+		return BBC;
+	}
+
+	@Override
+	protected String getBaseUrl() {
 		return URL;
 	}
 

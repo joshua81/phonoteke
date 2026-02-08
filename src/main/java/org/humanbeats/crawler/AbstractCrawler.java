@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -53,6 +54,23 @@ public abstract class AbstractCrawler extends WebCrawler
 	public AbstractCrawler(MongoRepository repo) 
 	{
 		this.repo = repo;
+	}
+
+	public void load(String... args) 
+	{
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", getType()))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", getType()), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
+		{
+			org.bson.Document show = i.next();
+			this.url = show.getString("url");
+			this.artist = show.getString("title");
+			this.source = show.getString("source");
+			this.authors = show.get("authors", List.class);
+			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			log.info("Crawling " + artist + " (" + page + " page)");
+			crawl(url);
+		}
 	}
 
 	protected void crawl(String url)
@@ -145,10 +163,6 @@ public abstract class AbstractCrawler extends WebCrawler
 		}
 	}
 
-	protected abstract String getBaseUrl();
-
-	public abstract HBDocument crawlDocument(String url, Document doc);
-
 	private class HumanBeatsParser extends Parser {
 		public HumanBeatsParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {
 			super(config, new HumanBeatsHtmlParser(config));
@@ -197,4 +211,9 @@ public abstract class AbstractCrawler extends WebCrawler
 			return urls;
 		}
 	}
+
+	protected abstract String getBaseUrl();
+	protected abstract String getType();
+	public abstract HBDocument crawlDocument(String url, Document doc);
+	public abstract HBDocument crawlDocument(String url, JsonObject doc);
 }

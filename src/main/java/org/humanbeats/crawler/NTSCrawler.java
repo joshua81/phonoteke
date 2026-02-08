@@ -15,13 +15,13 @@ import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
+import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,24 +38,6 @@ public class NTSCrawler extends AbstractCrawler
 
 	public NTSCrawler(MongoRepository repo) {
 		super(repo);
-	}
-
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", NTS))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", NTS), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.id = show.getString("id");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-
-			log.info("Crawling " + artist + " (" + page + " page)");
-			crawl(URL);
-		}
 	}
 
 	@Override
@@ -130,14 +112,23 @@ public class NTSCrawler extends AbstractCrawler
 	}
 
 	@Override
+	protected String getType() {
+		return NTS;
+	}
+	
+	@Override
 	protected String getBaseUrl() {
 		return URL;
 	}
 
 	@Override
-	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
-		// nothing to do
-		return null;
+	public HBDocument crawlDocument(String url, Document doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
+	
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	private String getTitle(JsonObject doc) {

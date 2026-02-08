@@ -14,12 +14,12 @@ import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
+import org.jsoup.nodes.Document;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,32 +28,20 @@ import lombok.extern.slf4j.Slf4j;
 public class SpreakerCrawler extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
+	private static final String URL = "https://www.spreaker.com/";
 
 	public SpreakerCrawler(MongoRepository repo) {
 		super(repo);
 	}
 
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-
-			log.info("Crawling " + artist);
-			crawl(url);
-		}
-	}
-
 	@Override
-	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
-		// TODO Auto-generated method stub
-		return null;
+	public HBDocument crawlDocument(String url, Document doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
+	
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	@Override
@@ -117,8 +105,13 @@ public class SpreakerCrawler extends AbstractCrawler
 	}
 
 	@Override
+	protected String getType() {
+		return SPREAKER;
+	}
+
+	@Override
 	protected String getBaseUrl() {
-		return "https://www.spreaker.com/";
+		return URL;
 	}
 
 	private Date getDate(String date) {

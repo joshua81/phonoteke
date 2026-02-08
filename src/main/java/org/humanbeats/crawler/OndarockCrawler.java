@@ -20,6 +20,7 @@ import org.jsoup.select.Elements;
 
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonObject;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -61,6 +62,11 @@ public class OndarockCrawler extends AbstractCrawler
 				.tracks(getTracks(doc)).build();
 		return album;
 	}
+	
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
@@ -75,8 +81,12 @@ public class OndarockCrawler extends AbstractCrawler
 	}
 
 	@Override
-	protected String getBaseUrl()
-	{
+	protected String getType() {
+		return null;
+	}
+
+	@Override
+	protected String getBaseUrl() {
 		return URL;
 	}
 

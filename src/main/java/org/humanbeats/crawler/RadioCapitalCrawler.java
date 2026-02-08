@@ -18,8 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.google.gson.JsonObject;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -33,23 +32,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 
 	public RadioCapitalCrawler(MongoRepository repo) {
 		super(repo);
-	}
-
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-
-			log.info("Crawling " + artist);
-			crawl(url);
-		}
 	}
 
 	@Override
@@ -70,6 +52,11 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				.tracks(getTracks(doc)).build();
 		return episode;
 	}
+	
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
@@ -88,8 +75,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	}
 
 	@Override
-	protected String getBaseUrl()
-	{
+	protected String getType() {
+		return CAPITAL;
+	}
+
+	@Override
+	protected String getBaseUrl() {
 		return URL;
 	}
 

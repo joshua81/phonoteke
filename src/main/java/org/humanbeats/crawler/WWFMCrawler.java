@@ -17,6 +17,7 @@ import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
+import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,8 +30,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.google.gson.JsonObject;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -111,7 +111,7 @@ public class WWFMCrawler extends AbstractCrawler
 	 * Crawl a specific Worldwide FM episode URL and extract playlist
 	 */
 	@Override
-	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+	public HBDocument crawlDocument(String url, Document doc) {
 		try {
 			HBDocument episode = HBDocument.builder()
 					.id(getId(url))
@@ -152,6 +152,11 @@ public class WWFMCrawler extends AbstractCrawler
 		} finally {
 			cleanupWebDriver();
 		}
+	}
+	
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	/**
@@ -335,24 +340,6 @@ public class WWFMCrawler extends AbstractCrawler
 		return HBTrack.builder().titleOrig(artist + " - " + track).build();
 	}
 
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", WWFM))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", WWFM), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
-
-			log.info("Crawling " + artist + " (" + page + " page)");
-			crawl(url);
-		}
-	}
-
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) {
 		return url.getURL().contains("worldwidefm.net/episode") && (url.getURL().contains(COCO_MARIA) || url.getURL().contains(GILLES_PETERSON));
@@ -361,5 +348,10 @@ public class WWFMCrawler extends AbstractCrawler
 	@Override
 	protected String getBaseUrl() {
 		return URL;
+	}
+
+	@Override
+	protected String getType() {
+		return WWFM;
 	}
 }

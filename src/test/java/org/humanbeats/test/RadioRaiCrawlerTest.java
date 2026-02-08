@@ -4,24 +4,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.apache.commons.collections4.CollectionUtils;
-import org.humanbeats.crawler.WWFMCrawler;
+import org.humanbeats.crawler.RadioRaiCrawler;
 import org.humanbeats.model.HBDocument;
-import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Test class for WWFMCrawler
- * Tests the core functionality of crawling Worldwide FM episodes and extracting playlists
+ * Test class for RadioRaiCrawler
+ * Tests the core functionality of crawling Radio Rai episodes and extracting playlists
  */
 @Slf4j
-public class WWFMCrawlerTest {
+public class RadioRaiCrawlerTest {
 
-	private static final String TEST_EPISODE_URL = "https://www.worldwidefm.net/episode/breakfast-club-coco-06012026";
+	private static final String TEST_EPISODE_URL = "https://www.raiplaysound.it/audio/2026/02/Battiti-del-08022026-96e98701-f8da-4546-9ada-3506fae55b7f.json";
 
 	@BeforeEach
 	void setUp() {
@@ -36,7 +42,11 @@ public class WWFMCrawlerTest {
 	@Test
 	void testCrawlEpisode() {
 		try {
-			HBDocument result = new WWFMCrawler(null).crawlDocument(TEST_EPISODE_URL, (Document)null);
+			HttpURLConnection con = (HttpURLConnection)new URL(TEST_EPISODE_URL).openConnection();
+			JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+			RadioRaiCrawler crawler = new RadioRaiCrawler(null);
+			crawler.setSource("battiti");
+			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure
 			assertNotNull(result, "Playlist data should not be null");

@@ -49,6 +49,7 @@ public class WWFMCrawlerTest {
 			assertNotNull(result.getCover(), "Episode cover should not be null");
 			assertNotNull(result.getAudio(), "Episode audio should not be null");
 			assertNotNull(result.getYear(), "Episode year should not be null");
+			assertTrue(CollectionUtils.isNotEmpty(result.getTracks()), "Episode tracks should not be empty");
 
 			log.info("Episode Title: " + result.getTitle());
 			log.info("Episode Description: " + result.getDescription());
@@ -60,8 +61,6 @@ public class WWFMCrawlerTest {
 
 		} catch (Exception e) {
 			log.error("Test failed with exception: " + e.getMessage(), e);
-			// In a real test environment, you might want to fail here
-			// For now, we'll just log the exception
 		}
 	}
 }

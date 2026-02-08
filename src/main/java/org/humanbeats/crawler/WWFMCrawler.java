@@ -13,8 +13,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.humanbeats.model.Document;
-import org.humanbeats.model.Track;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.openqa.selenium.By;
@@ -50,7 +50,6 @@ public class WWFMCrawler extends AbstractCrawler
 
 	private WebDriver driver;
 	private WebDriverWait wait;
-	private Document playlistData;
 
 
 	public WWFMCrawler(MongoRepository repo) {
@@ -111,15 +110,17 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Crawl a specific Worldwide FM episode URL and extract playlist
 	 */
-	public Document crawlEpisode(String url) {
-		if(playlistData != null) {
-			return playlistData;
-		}
-
+	@Override
+	public org.bson.Document crawlDocument(String url, org.jsoup.nodes.Document doc) {
 		try {
-			playlistData = Document.builder()
-					.tracks(Lists.newArrayList())
-					.url(url).build();
+			HBDocument playlistData = HBDocument.builder()
+					.id(id)
+					.url(url)
+					.source(source)
+					.type(TYPE.podcast)
+					.artist(artist)
+					.authors(authors)
+					.tracks(Lists.newArrayList()).build();
 			initializeWebDriver();
 
 			// Navigate to the episode page
@@ -144,7 +145,7 @@ public class WWFMCrawler extends AbstractCrawler
 			// Wait for tracklist content to load and extract tracks
 			extractAudio(playlistData);
 
-			return playlistData;
+			return playlistData.toJson();
 		} catch (Exception e) {
 			log.error("Error crawling episode " + url + ": " + e.getMessage());
 			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage(), e);
@@ -156,7 +157,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract episode metadata (title, date, etc.)
 	 */
-	private void extractEpisodeMetadata(Document playlistData) {
+	private void extractEpisodeMetadata(HBDocument playlistData) {
 		try {
 			// Title
 			WebElement titleElement = wait.until(ExpectedConditions.presenceOfElementLocated(
@@ -248,7 +249,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract playlist tracks from the loaded content
 	 */
-	private void extractPlaylistTracks(Document playlistData) {
+	private void extractPlaylistTracks(HBDocument playlistData) {
 		try {
 			log.debug("Extracting playlist tracks...");
 
@@ -266,7 +267,7 @@ public class WWFMCrawler extends AbstractCrawler
 				WebElement trackElement = trackElements.get(artistElements.indexOf(artistElement));
 				String artistText = artistElement.getText().trim();
 				String trackText = trackElement.getText().trim();
-				Track track = parseTrackText(artistText, trackText);
+				HBTrack track = parseTrackText(artistText, trackText);
 				playlistData.getTracks().add(track);
 				log.debug("Extracted track: " + track.getTitleOrig());
 			}
@@ -282,7 +283,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract audio from the loaded content
 	 */
-	private void extractAudio(Document playlistData) {
+	private void extractAudio(HBDocument playlistData) {
 		try {
 			log.debug("Extracting audio...");
 
@@ -327,11 +328,11 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Parse track text in "Artist - Title" format
 	 */
-	private Track parseTrackText(String artist, String track) {
+	private HBTrack parseTrackText(String artist, String track) {
 		Preconditions.checkArgument(StringUtils.isNotBlank(artist), "Empty artist!");
 		Preconditions.checkArgument(StringUtils.isNotBlank(track), "Empty track!");
 
-		return Track.builder().titleOrig(artist + " - " + track).build();
+		return HBTrack.builder().titleOrig(artist + " - " + track).build();
 	}
 
 	public void load(String... args) 
@@ -358,79 +359,62 @@ public class WWFMCrawler extends AbstractCrawler
 	}
 
 	@Override
-	public void visit(Page page) {
-		super.visit(page);
-		playlistData = null;
-	}
-
-	@Override
 	protected String getBaseUrl() {
 		return URL;
 	}
 
-	@Override
-	protected String getSource() {
+	private String getSource() {
 		return source;
 	}
 
-	@Override
-	protected TYPE getType(String url) {
+	private TYPE getType(String url) {
 		return TYPE.podcast;
 	}
 
-	@Override
-	protected String getArtist(String url, org.jsoup.nodes.Document doc) {
+	private String getArtist(String url, org.jsoup.nodes.Document doc) {
 		return artist;
 	}
 
-	@Override
-	protected List<String> getAuthors(String url, org.jsoup.nodes.Document doc) {
+	private List<String> getAuthors(String url, org.jsoup.nodes.Document doc) {
 		return authors;
 	}
 
-	@Override
-	protected Date getDate(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getDate();
-	}
-
-	@Override
-	protected Integer getYear(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getYear();
-	}
-
-	@Override
-	protected String getDescription(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getDescription();
-	}
-
-	@Override
-	protected String getTitle(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getTitle();
-	}
-
-	@Override
-	protected List<org.bson.Document> getTracks(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		playlist.getTracks().forEach(t -> {
-			tracks.add(newTrack(t.getTitleOrig(), null));
-		});
-		return tracks;
-	}
-
-	@Override
-	protected String getCover(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getCover();
-	}
-
-	@Override
-	protected String getAudio(String url, org.jsoup.nodes.Document doc) {
-		Document playlist = crawlEpisode(url);
-		return playlist.getAudio();
-	}
+	//	private Date getDate(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getDate();
+	//	}
+	//
+	//	private Integer getYear(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getYear();
+	//	}
+	//
+	//	private String getDescription(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getDescription();
+	//	}
+	//
+	//	private String getTitle(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getTitle();
+	//	}
+	//
+	//	private List<org.bson.Document> getTracks(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		List<org.bson.Document> tracks = Lists.newArrayList();
+	//		playlist.getTracks().forEach(t -> {
+	//			tracks.add(newTrack(t.getTitleOrig(), null));
+	//		});
+	//		return tracks;
+	//	}
+	//
+	//	private String getCover(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getCover();
+	//	}
+	//
+	//	private String getAudio(String url, org.jsoup.nodes.Document doc) {
+	//		Document playlist = crawlEpisode(url);
+	//		return playlist.getAudio();
+	//	}
 }

@@ -115,25 +115,22 @@ public class RadioRaiCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	@Override
-	protected String getSource() 
+	private String getSource() 
 	{
 		return source;
 	}
 
-	@Override
-	protected String getArtist(String url, Document doc) 
+	private String getArtist(String url, Document doc) 
 	{
 		return artist;
 	}
 
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
+	private List<String> getAuthors(String url, Document doc) 
 	{
 		return authors;
 	}
 
-	protected Date getDate(String date) 
+	private Date getDate(String date) 
 	{
 		try {
 			return new SimpleDateFormat("dd MMM yyyy", Locale.ITALY).parse(date);
@@ -143,14 +140,14 @@ public class RadioRaiCrawler extends AbstractCrawler
 		}
 	}
 
-	protected Integer getYear(String date)
+	private Integer getYear(String date)
 	{
 		Calendar year = Calendar.getInstance();
 		year.setTime(getDate(date));
 		return year.get(Calendar.YEAR);
 	}
 
-	protected List<org.bson.Document> getTracks(String content) 
+	private List<org.bson.Document> getTracks(String content) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		if(MUSICALBOX.equals(source)) {
@@ -170,7 +167,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 		return checkTracks(tracks);
 	}
 
-	protected String getAudio(String url) 
+	private String getAudio(String url) 
 	{
 		try {
 			Document doc = Jsoup.connect(url).ignoreContentType(true).get();

@@ -3,6 +3,7 @@ package org.humanbeats.model;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.Document;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
 import lombok.Builder;
@@ -13,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class Document {
+public class HBDocument {
 
 	private String id;
 	private TYPE type;
@@ -32,10 +33,10 @@ public class Document {
 	private List<String> authors;
 	private List<String> genres;
 	private List<String> links;
-	private List<Track> tracks;
+	private List<HBTrack> tracks;
 
-	public org.bson.Document toJson() {
-		return new org.bson.Document("id", id).
+	public Document toJson() {
+		return new Document("id", id).
 				append("url", url).
 				append("type", type.name()).
 				append("artist", artist).

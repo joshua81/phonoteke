@@ -72,26 +72,22 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	@Override
-	protected String getSource() 
+	private String getSource() 
 	{
 		return source;
 	}
 
-	@Override
-	protected String getArtist(String url, Document doc) 
+	private String getArtist(String url, Document doc) 
 	{
 		return artist;
 	}
 
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
+	private List<String> getAuthors(String url, Document doc) 
 	{
 		return authors;
 	}
 
-	@Override
-	protected Date getDate(String url, Document doc) 
+	private Date getDate(String url, Document doc) 
 	{
 		Date date = null;
 		try 
@@ -110,8 +106,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return date;
 	}
 
-	@Override
-	protected Integer getYear(String url, Document doc) 
+	private Integer getYear(String url, Document doc) 
 	{
 		Integer year = null;
 		Date date = getDate(url, doc);
@@ -124,14 +119,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return year;
 	}
 
-	@Override
-	protected String getDescription(String url, Document doc) 
+	private String getDescription(String url, Document doc) 
 	{
 		return getTitle(url, doc);
 	}
 
-	@Override
-	protected String getTitle(String url, Document doc) 
+	private String getTitle(String url, Document doc) 
 	{
 		String title = null;
 		Element content = doc.select("meta[property=og:title]").first();
@@ -143,8 +136,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return title;
 	}
 
-	@Override
-	protected List<org.bson.Document> getTracks(String url, Document doc) 
+	private List<org.bson.Document> getTracks(String url, Document doc) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		Date date = getDate(url, doc);
@@ -175,8 +167,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return checkTracks(tracks);
 	}
 
-	@Override
-	protected String getCover(String url, Document doc) 
+	private String getCover(String url, Document doc) 
 	{
 		String cover = null;
 		Element content = doc.select("meta[property=og:image]").first();
@@ -188,14 +179,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return cover;
 	}
 
-	@Override
-	protected TYPE getType(String url) 
+	private TYPE getType(String url) 
 	{
 		return TYPE.podcast;
 	}
 
-	@Override
-	protected String getAudio(String url, Document doc) 
+	private String getAudio(String url, Document doc) 
 	{
 		Date date = getDate(url, doc);
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);

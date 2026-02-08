@@ -1,4 +1,4 @@
-package org.humanbeats.test.crawler;
+package org.humanbeats.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.humanbeats.crawler.WWFMCrawler;
-import org.humanbeats.crawler.AbstractCrawler.PlaylistData;
+import org.humanbeats.model.HBDocument;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class WWFMCrawlerTest {
 
 	@BeforeEach
 	void setUp() {
-		crawler = new WWFMCrawler();
+		crawler = new WWFMCrawler(null);
 	}
 
 	@AfterEach
@@ -36,7 +36,7 @@ public class WWFMCrawlerTest {
 	@Test
 	void testCrawlEpisode() {
 		try {
-			Document result = crawler.crawlEpisode(TEST_EPISODE_URL);
+			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, null);
 
 			// Verify basic structure
 			assertNotNull(result, "Playlist data should not be null");

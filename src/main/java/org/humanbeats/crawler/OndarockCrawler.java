@@ -57,14 +57,12 @@ public class OndarockCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	@Override
-	protected String getSource() 
+	private String getSource() 
 	{
 		return SOURCE;
 	}
 
-	@Override
-	protected String getReview(String url, Document doc) 
+	private String getReview(String url, Document doc) 
 	{
 		switch (getType(url)) {
 		default:
@@ -89,8 +87,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected List<String> getLinks(String url, Document doc) 
+	private List<String> getLinks(String url, Document doc) 
 	{
 		Set<String> links = Sets.newHashSet();
 		Element node = doc.select("div[class=main_text]").first();
@@ -179,8 +176,7 @@ public class OndarockCrawler extends AbstractCrawler
 		return date.getTime();
 	}
 
-	@Override
-	protected String getArtist(String url, Document doc) 
+	private String getArtist(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
 		Element bandElement = null;
@@ -206,8 +202,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected String getTitle(String url, Document doc) 
+	private String getTitle(String url, Document doc) 
 	{
 		Element intestazioneElement = null;
 		Element titleElement = null;
@@ -233,8 +228,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected String getDescription(String url, Document doc) 
+	private String getDescription(String url, Document doc) 
 	{
 		Element descriptionElement = null;
 		String description = null;
@@ -248,8 +242,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected Date getDate(String url, Document doc) 
+	private Date getDate(String url, Document doc) 
 	{
 		try
 		{
@@ -278,8 +271,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected String getCover(String url, Document doc) 
+	private String getCover(String url, Document doc) 
 	{
 		try
 		{
@@ -302,8 +294,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
+	private List<String> getAuthors(String url, Document doc) 
 	{
 		Element authorElement = null;
 		switch (getType(url)) {
@@ -322,8 +313,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected List<String> getGenres(String url, Document doc) 
+	private List<String> getGenres(String url, Document doc) 
 	{
 		switch (getType(url)) {
 		case album:
@@ -335,8 +325,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected Integer getYear(String url, Document doc) 
+	private Integer getYear(String url, Document doc) 
 	{
 		switch (getType(url)) {
 		case album:
@@ -352,8 +341,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected String getLabel(String url, Document doc) 
+	private String getLabel(String url, Document doc) 
 	{
 		switch (getType(url)) {
 		case album:
@@ -368,8 +356,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected List<org.bson.Document> getTracks(String url, Document doc) 
+	private List<org.bson.Document> getTracks(String url, Document doc) 
 	{
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		switch (getType(url)) {
@@ -382,8 +369,7 @@ public class OndarockCrawler extends AbstractCrawler
 		return tracks;
 	}
 
-	@Override
-	protected Float getVote(String url, Document doc) 
+	private Float getVote(String url, Document doc) 
 	{
 		try
 		{
@@ -419,8 +405,7 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	@Override
-	protected TYPE getType(String url) 
+	private TYPE getType(String url) 
 	{
 		return TYPE.album;
 	}

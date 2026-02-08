@@ -92,15 +92,15 @@ public abstract class AbstractCrawler extends WebCrawler
 		{
 			try
 			{
-				String url = page.getWebURL().getURL();
-				String id = getId(url);
+				this.url = page.getWebURL().getURL();
+				this.id = getId(url);
 				log.debug("Parsing page " + url);
 
 				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("id", id))).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
-					json = parseDocument(doc);
+					json = crawlDocument(url, doc);
 					insertDoc(json);
 				}
 			}
@@ -222,7 +222,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected abstract String getBaseUrl();
 
-	protected abstract org.bson.Document parseDocument(Document doc);
+	public abstract org.bson.Document crawlDocument(String url, Document doc);
 
 	protected String cleanHTML(String html) {
 		return Jsoup.parse(html).wholeText();

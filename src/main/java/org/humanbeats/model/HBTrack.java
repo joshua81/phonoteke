@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class Track {
+public class HBTrack {
 
 	private String titleOrig;
 	private String youtube;

@@ -33,4 +33,25 @@ public class Document {
 	private List<String> genres;
 	private List<String> links;
 	private List<Track> tracks;
+
+	public org.bson.Document toJson() {
+		return new org.bson.Document("id", id).
+				append("url", url).
+				append("type", type.name()).
+				append("artist", artist).
+				append("title", title).
+				append("authors", authors).
+				append("cover", cover).
+				append("date", date).
+				append("description", description).
+				append("genres", genres).
+				append("label", label).
+				append("links", links).
+				append("review", review).
+				append("source", source).
+				append("vote", vote).
+				append("year", year).
+				append("tracks", tracks).
+				append("audio", audio);
+	}
 }

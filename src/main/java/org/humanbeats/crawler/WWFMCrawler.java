@@ -268,7 +268,7 @@ public class WWFMCrawler extends AbstractCrawler
 				String trackText = trackElement.getText().trim();
 				Track track = parseTrackText(artistText, trackText);
 				playlistData.getTracks().add(track);
-				log.debug("Extracted track: " + track.getFullTitle());
+				log.debug("Extracted track: " + track.getTitleOrig());
 			}
 			log.debug("Extracted " + playlistData.getTracks().size() + " tracks from playlist");
 		} 
@@ -331,10 +331,7 @@ public class WWFMCrawler extends AbstractCrawler
 		Preconditions.checkArgument(StringUtils.isNotBlank(artist), "Empty artist!");
 		Preconditions.checkArgument(StringUtils.isNotBlank(track), "Empty track!");
 
-		return Track.builder()
-				.artist(artist)
-				.title(track)
-				.fullTitle(artist + " - " + track).build();
+		return Track.builder().titleOrig(artist + " - " + track).build();
 	}
 
 	public void load(String... args) 
@@ -420,7 +417,7 @@ public class WWFMCrawler extends AbstractCrawler
 		Document playlist = crawlEpisode(url);
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		playlist.getTracks().forEach(t -> {
-			tracks.add(newTrack(t.getFullTitle(), null));
+			tracks.add(newTrack(t.getTitleOrig(), null));
 		});
 		return tracks;
 	}

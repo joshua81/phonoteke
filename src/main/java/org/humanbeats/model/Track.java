@@ -10,7 +10,6 @@ import lombok.Data;
 @Builder
 public class Track {
 
-	private String artist;
-	private String title;
-	private String fullTitle;
+	private String titleOrig;
+	private String youtube;
 }

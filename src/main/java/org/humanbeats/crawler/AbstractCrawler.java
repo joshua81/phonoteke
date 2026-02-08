@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +45,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
 	protected MongoRepository repo;
+
 	protected String url;
 	protected String id;
 	protected String artist;
@@ -90,46 +90,18 @@ public abstract class AbstractCrawler extends WebCrawler
 	{
 		if(page.getParseData() instanceof HtmlParseData) 
 		{
-			String url = page.getWebURL().getURL();
-			log.debug("Parsing page " + url);
-
-			String id = getId(url);
-			String source = getSource();
-			TYPE type = getType(url);
-
 			try
 			{
+				String url = page.getWebURL().getURL();
+				String id = getId(url);
+				log.debug("Parsing page " + url);
+
 				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
 						Filters.eq("id", id))).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
-					switch(type)
-					{
-					case album:
-					case podcast:
-						json = new org.bson.Document("id", id).
-						append("url", getUrl(url)).
-						append("type", type.name()).
-						append("artist", getArtist(url, doc)).
-						append("title", getTitle(url, doc)).
-						append("authors", getAuthors(url, doc)).
-						append("cover", getCover(url, doc)).
-						append("date", getDate(url, doc)).
-						append("description", getDescription(url, doc)).
-						append("genres", getGenres(url, doc)).
-						append("label", getLabel(url, doc)).
-						append("links", getLinks(url, doc)).
-						append("review", getReview(url, doc)).
-						append("source", getSource()).
-						append("vote", getVote(url, doc)).
-						append("year", getYear(url, doc)).
-						append("tracks", getTracks(url, doc)).
-						append("audio", getAudio(url, doc));
-						insertDoc(json);
-						break;
-					default:
-						break;
-					}
+					json = parseDocument(doc);
+					insertDoc(json);
 				}
 			}
 			catch (Throwable t) {
@@ -248,85 +220,13 @@ public abstract class AbstractCrawler extends WebCrawler
 		}
 	}
 
-	//---------------------------------
-	// Methods to be overridden
-	//---------------------------------
-	protected String getBaseUrl()
-	{
-		return null;
-	}
+	protected abstract String getBaseUrl();
 
-	protected String getSource() 
-	{
-		return null;
-	}
-
-	protected TYPE getType(String url) 
-	{
-		return null;
-	}
-
-	protected String getArtist(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getAuthors(String url, Document doc) {
-		return null;
-	}
-
-	protected String getCover(String url, Document doc) {
-		return null;
-	}
-
-	protected Date getDate(String url, Document doc) {
-		return null;
-	}
-
-	protected String getDescription(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getGenres(String url, Document doc) {
-		return null;
-	}
-
-	protected String getLabel(String url, Document doc) {
-		return null;
-	}
-
-	protected String getReview(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getLinks(String url, Document doc) {
-		return null;
-	}
-
-	protected String getTitle(String url, Document doc) {
-		return null;
-	}
-
-	protected List<org.bson.Document> getTracks(String url, Document doc) {
-		return null;
-	}
-
-	protected Float getVote(String url, Document doc) {
-		return null;
-	}
-
-	protected Integer getYear(String url, Document doc) {
-		return null;
-	}
-
-	protected String getAudio(String url, Document doc) {
-		return null;
-	}
+	protected abstract org.bson.Document parseDocument(Document doc);
 
 	protected String cleanHTML(String html) {
 		return Jsoup.parse(html).wholeText();
 	}
-
-	//-------------------------------------------
 
 	private class HumanBeatsParser extends Parser {
 		public HumanBeatsParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {

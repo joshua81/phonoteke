@@ -36,7 +36,7 @@ public class WWFMCrawlerTest {
 	@Test
 	void testCrawlEpisode() {
 		try {
-			PlaylistData result = crawler.crawlEpisode(TEST_EPISODE_URL);
+			Document result = crawler.crawlEpisode(TEST_EPISODE_URL);
 
 			// Verify basic structure
 			assertNotNull(result, "Playlist data should not be null");

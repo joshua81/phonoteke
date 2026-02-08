@@ -66,15 +66,15 @@ public class SpotifyIndexer
 
 	private ClientCredentials credentials;
 	private SpotifyApi spotify;
-	
+
 	public static void main(String[] args) {
 		String track = "Eiko Ishibashi e Jim O' Rourke - Pareidolia";
 		Set<String> tracks = HumanBeatsUtils.parseTitle(track);
-		tracks.forEach(t -> System.out.println(t));
-		
+		tracks.forEach(t -> log.debug(t));
+
 		track = "Eiko Ishibashi e Jim O' Rourke Pareidolia";
 		tracks = HumanBeatsUtils.parseTitle(track);
-		tracks.forEach(t -> System.out.println(t));
+		tracks.forEach(t -> log.debug(t));
 	}
 
 	@PostConstruct

@@ -13,6 +13,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.model.Document;
+import org.humanbeats.model.Track;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.openqa.selenium.By;
@@ -33,8 +35,6 @@ import com.mongodb.client.model.Filters;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -50,44 +50,8 @@ public class WWFMCrawler extends AbstractCrawler
 
 	private WebDriver driver;
 	private WebDriverWait wait;
-	private PlaylistData playlistData;
+	private Document playlistData;
 
-	/**
-	 * Playlist data structure to hold extracted track information
-	 */
-	@Data
-	@Builder
-	private static class PlaylistData {
-		private String id;
-		private TYPE type;
-		private String source;
-		private String artist;
-		private String title;
-		private String description;
-		private String url;
-		private Date date;
-		private String cover;
-		private String label;
-		private String review;
-		private Float vote;
-		private String audio;
-		private Integer year;
-		private List<TrackInfo> tracks;
-		private List<String> authors;
-		private List<String> genres;
-		private List<String> links;
-	}
-
-	/**
-	 * Track information structure
-	 */
-	@Data
-	@Builder
-	private static class TrackInfo {
-		private String artist;
-		private String title;
-		private String fullTitle;
-	}
 
 	public WWFMCrawler(MongoRepository repo) {
 		super(repo);
@@ -147,13 +111,13 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Crawl a specific Worldwide FM episode URL and extract playlist
 	 */
-	public PlaylistData crawlEpisode(String url) {
+	public Document crawlEpisode(String url) {
 		if(playlistData != null) {
 			return playlistData;
 		}
 
 		try {
-			playlistData = PlaylistData.builder()
+			playlistData = Document.builder()
 					.tracks(Lists.newArrayList())
 					.url(url).build();
 			initializeWebDriver();
@@ -192,7 +156,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract episode metadata (title, date, etc.)
 	 */
-	private void extractEpisodeMetadata(PlaylistData playlistData) {
+	private void extractEpisodeMetadata(Document playlistData) {
 		try {
 			// Title
 			WebElement titleElement = wait.until(ExpectedConditions.presenceOfElementLocated(
@@ -284,7 +248,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract playlist tracks from the loaded content
 	 */
-	private void extractPlaylistTracks(PlaylistData playlistData) {
+	private void extractPlaylistTracks(Document playlistData) {
 		try {
 			log.debug("Extracting playlist tracks...");
 
@@ -302,7 +266,7 @@ public class WWFMCrawler extends AbstractCrawler
 				WebElement trackElement = trackElements.get(artistElements.indexOf(artistElement));
 				String artistText = artistElement.getText().trim();
 				String trackText = trackElement.getText().trim();
-				TrackInfo track = parseTrackText(artistText, trackText);
+				Track track = parseTrackText(artistText, trackText);
 				playlistData.getTracks().add(track);
 				log.debug("Extracted track: " + track.getFullTitle());
 			}
@@ -318,7 +282,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract audio from the loaded content
 	 */
-	private void extractAudio(PlaylistData playlistData) {
+	private void extractAudio(Document playlistData) {
 		try {
 			log.debug("Extracting audio...");
 
@@ -363,11 +327,14 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Parse track text in "Artist - Title" format
 	 */
-	private TrackInfo parseTrackText(String artist, String track) {
+	private Track parseTrackText(String artist, String track) {
 		Preconditions.checkArgument(StringUtils.isNotBlank(artist), "Empty artist!");
 		Preconditions.checkArgument(StringUtils.isNotBlank(track), "Empty track!");
 
-		return new TrackInfo(artist, track, artist + " - " + track.trim());
+		return Track.builder()
+				.artist(artist)
+				.title(track)
+				.fullTitle(artist + " - " + track).build();
 	}
 
 	public void load(String... args) 
@@ -426,31 +393,31 @@ public class WWFMCrawler extends AbstractCrawler
 
 	@Override
 	protected Date getDate(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getDate();
 	}
 
 	@Override
 	protected Integer getYear(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getYear();
 	}
 
 	@Override
 	protected String getDescription(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getDescription();
 	}
 
 	@Override
 	protected String getTitle(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getTitle();
 	}
 
 	@Override
 	protected List<org.bson.Document> getTracks(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		List<org.bson.Document> tracks = Lists.newArrayList();
 		playlist.getTracks().forEach(t -> {
 			tracks.add(newTrack(t.getFullTitle(), null));
@@ -460,13 +427,13 @@ public class WWFMCrawler extends AbstractCrawler
 
 	@Override
 	protected String getCover(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getCover();
 	}
 
 	@Override
 	protected String getAudio(String url, org.jsoup.nodes.Document doc) {
-		PlaylistData playlist = crawlEpisode(url);
+		Document playlist = crawlEpisode(url);
 		return playlist.getAudio();
 	}
 }

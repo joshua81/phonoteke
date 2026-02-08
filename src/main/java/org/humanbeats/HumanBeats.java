@@ -2,11 +2,19 @@ package org.humanbeats;
 
 import java.util.Arrays;
 
-import org.humanbeats.crawler.HumanBeatsCrawler;
+import org.humanbeats.crawler.BBCRadioCrawler;
+import org.humanbeats.crawler.NTSCrawler;
+import org.humanbeats.crawler.OndarockCrawler;
+import org.humanbeats.crawler.RadioCapitalCrawler;
+import org.humanbeats.crawler.RadioRaheemCrawler;
+import org.humanbeats.crawler.RadioRaiCrawler;
+import org.humanbeats.crawler.SpreakerCrawler;
+import org.humanbeats.crawler.WWFMCrawler;
 import org.humanbeats.indexer.DiscogsIndexer;
 import org.humanbeats.indexer.MusicbrainzIndexer;
 import org.humanbeats.indexer.SpotifyIndexer;
 import org.humanbeats.indexer.YoutubeIndexer;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.service.PatchService;
 import org.humanbeats.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HumanBeats implements CommandLineRunner {
 
 	@Autowired
-	private HumanBeatsCrawler crawler;
+	private MongoRepository repo;
 
 	@Autowired
 	private YoutubeIndexer youtubeLoader;
@@ -65,6 +73,7 @@ public class HumanBeats implements CommandLineRunner {
 		log.info(" ------------------------------------------------------------- ");
 		log.info("| HUMAN BEATS - music designed by humans, assembled by robots |");
 		log.info(" ------------------------------------------------------------- ");
+
 		if(args.length > 0) {
 			String task = args[0].split(":")[0];
 			String[] subtask = Arrays.copyOfRange(args[0].split(":"), 1, args[0].split(":").length);
@@ -85,11 +94,11 @@ public class HumanBeats implements CommandLineRunner {
 				return;
 			}
 			else if("doc".equals(task)) {
-				crawler.crawlReviews(subtask);
+				crawlReviews(subtask);
 				return;
 			}
 			else if("pod".equals(task)) {
-				crawler.crawlPodcasts(subtask);
+				crawlPodcasts(subtask);
 				return;
 			}
 			else if("stats".equals(task)) {
@@ -104,21 +113,35 @@ public class HumanBeats implements CommandLineRunner {
 		printHelp();
 	}
 
+	private void crawlPodcasts(String... args) {
+		new BBCRadioCrawler(repo).load(args);
+		new RadioRaiCrawler(repo).load(args);
+		new SpreakerCrawler(repo).load(args);
+		new WWFMCrawler(repo).load(args);
+		new RadioCapitalCrawler(repo).load(args);
+		new NTSCrawler(repo).load(args);
+		new RadioRaheemCrawler(repo).load(args);
+	}
+
+	private void crawlReviews(String... args) {
+		new OndarockCrawler(repo).load(args);
+	}
+
 	private static void printHelp() {
-		System.out.println("Usage:");
-		System.out.println("- compile (compiles sources)");
-		System.out.println("- deploy (deploys to GCloud)");
-		System.out.println("- test (deploys test)");
-		System.out.println("- mb (loads Music Brainz)");
-		System.out.println("- sp (loads Spotify)");
-		System.out.println("- sp:<token> (creates Spotify playlists)");
-		System.out.println("- yt (loads Youtube)");
-		System.out.println("- doc (loads documents)");
-		System.out.println("- pod (loads podcasts)");
-		System.out.println("- stats (loads stats)");
-		System.out.println("- patch:calculateScore (patches db)");
-		System.out.println("- patch:resetTracks:<year> (patches db)");
-		System.out.println("- patch:replaceSpecialChars (patches db)");
-		System.out.println("- patch:fixYoutube (patches db)");
+		log.info("Usage:");
+		log.info("- compile (compiles sources)");
+		log.info("- deploy (deploys to GCloud)");
+		log.info("- test (deploys test)");
+		log.info("- mb (loads Music Brainz)");
+		log.info("- sp (loads Spotify)");
+		log.info("- sp:<token> (creates Spotify playlists)");
+		log.info("- yt (loads Youtube)");
+		log.info("- doc (loads documents)");
+		log.info("- pod (loads podcasts)");
+		log.info("- stats (loads stats)");
+		log.info("- patch:calculateScore (patches db)");
+		log.info("- patch:resetTracks:<year> (patches db)");
+		log.info("- patch:replaceSpecialChars (patches db)");
+		log.info("- patch:fixYoutube (patches db)");
 	}
 }

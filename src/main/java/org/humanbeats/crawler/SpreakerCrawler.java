@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
@@ -46,6 +49,12 @@ public class SpreakerCrawler extends AbstractCrawler
 			log.info("Crawling " + artist);
 			crawl(url);
 		}
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -108,6 +117,11 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 	}
 
+	@Override
+	protected String getBaseUrl() {
+		return "https://www.spreaker.com/";
+	}
+
 	private Date getDate(String date) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -128,18 +142,16 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 	}
 
-	private List<org.bson.Document> getTracks(String content) {
-		List<org.bson.Document> tracks = Lists.newArrayList();
-
+	private List<HBTrack> getTracks(String content) {
+		List<HBTrack> tracks = Lists.newArrayList();
 		String[] chunks = content.split("\n");
 		for(int i = 0; i < chunks.length; i++) {
 			String title = chunks[i].trim();
 			if(StringUtils.isNotBlank(title)) {
-				String youtube = null;
-				tracks.add(newTrack(title, youtube));
-				log.debug("tracks: " + title + ", youtube: " + youtube);
+				tracks.add(HBTrack.builder().titleOrig(title).build());
+				log.debug("tracks: " + title);
 			}
 		}
-		return checkTracks(tracks);
+		return tracks;
 	}
 }

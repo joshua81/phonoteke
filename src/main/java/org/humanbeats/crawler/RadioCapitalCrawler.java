@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
@@ -51,6 +53,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	}
 
 	@Override
+	public HBDocument crawlDocument(String url, Document doc) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
 		return page.getWebURL().getURL().startsWith(this.url);
@@ -72,22 +80,22 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	private String getSource() 
-	{
-		return source;
-	}
+	//	private String getSource() 
+	//	{
+	//		return source;
+	//	}
+	//
+	//	private String getArtist(String url, Document doc) 
+	//	{
+	//		return artist;
+	//	}
+	//
+	//	private List<String> getAuthors(String url, Document doc) 
+	//	{
+	//		return authors;
+	//	}
 
-	private String getArtist(String url, Document doc) 
-	{
-		return artist;
-	}
-
-	private List<String> getAuthors(String url, Document doc) 
-	{
-		return authors;
-	}
-
-	private Date getDate(String url, Document doc) 
+	private Date getDate(Document doc) 
 	{
 		Date date = null;
 		try 
@@ -106,10 +114,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return date;
 	}
 
-	private Integer getYear(String url, Document doc) 
+	private Integer getYear(Document doc) 
 	{
 		Integer year = null;
-		Date date = getDate(url, doc);
+		Date date = getDate(doc);
 		if(date != null)
 		{
 			Calendar cal = Calendar.getInstance();
@@ -119,12 +127,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return year;
 	}
 
-	private String getDescription(String url, Document doc) 
+	private String getDescription(Document doc) 
 	{
-		return getTitle(url, doc);
+		return getTitle(doc);
 	}
 
-	private String getTitle(String url, Document doc) 
+	private String getTitle(Document doc) 
 	{
 		String title = null;
 		Element content = doc.select("meta[property=og:title]").first();
@@ -136,10 +144,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return title;
 	}
 
-	private List<org.bson.Document> getTracks(String url, Document doc) 
+	private List<HBTrack> getTracks(Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		Date date = getDate(url, doc);
+		List<HBTrack> tracks = Lists.newArrayList();
+		Date date = getDate(doc);
 		try {
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
 			doc = Jsoup.connect(url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
@@ -149,7 +157,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				while(i.hasNext()) {
 					Element track = i.next();
 					String title = track.select("span.author").text() + " - " + track.select("span.song").text();
-					tracks.add(newTrack(title, null));
+					tracks.add(HBTrack.builder().titleOrig(title).build());
 					log.debug("track: " + title);
 				}
 			}
@@ -164,10 +172,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		} catch (ParseException e) {
 			throw new RuntimeException(e.getMessage());
 		}
-		return checkTracks(tracks);
+		return tracks;
 	}
 
-	private String getCover(String url, Document doc) 
+	private String getCover(Document doc) 
 	{
 		String cover = null;
 		Element content = doc.select("meta[property=og:image]").first();
@@ -184,9 +192,9 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return TYPE.podcast;
 	}
 
-	private String getAudio(String url, Document doc) 
+	private String getAudio(Document doc) 
 	{
-		Date date = getDate(url, doc);
+		Date date = getDate(doc);
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
 		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;

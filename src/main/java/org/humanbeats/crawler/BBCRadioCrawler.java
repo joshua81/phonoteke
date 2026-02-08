@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
@@ -51,7 +52,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 	}
 
 	@Override
-	public org.bson.Document crawlDocument(String url, Document doc) {
+	public HBDocument crawlDocument(String url, Document doc) {
 		HBDocument playlistData = HBDocument.builder()
 				.id(id)
 				.url(url)
@@ -65,7 +66,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 				.title(getTitle(doc))
 				.cover(getCover(doc))
 				.tracks(getTracks(doc)).build();
-		return playlistData.toJson();
+		return playlistData;
 	}
 
 	@Override
@@ -136,9 +137,9 @@ public class BBCRadioCrawler extends AbstractCrawler
 		return title;
 	}
 
-	private List<org.bson.Document> getTracks(Document doc) 
+	private List<HBTrack> getTracks(Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
+		List<HBTrack> tracks = Lists.newArrayList();
 		Elements content = doc.select("div.segment__track");
 		if(content != null && content.size() > 0) {
 			Iterator<Element> i = content.iterator();
@@ -146,11 +147,11 @@ public class BBCRadioCrawler extends AbstractCrawler
 				Element track = i.next();
 				String title = track.select("h3").first() != null ? track.select("h3").first().text() : track.select("h4").first().text();
 				title += " - " + track.select("p").first().text();
-				tracks.add(newTrack(title, null));
+				tracks.add(HBTrack.builder().titleOrig(title).build());
 				log.debug("track: " + title);
 			}
 		}
-		return checkTracks(tracks);
+		return tracks;
 	}
 
 	private String getCover(Document doc) 

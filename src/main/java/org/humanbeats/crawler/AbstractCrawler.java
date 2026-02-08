@@ -8,8 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
@@ -18,7 +19,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
@@ -100,7 +100,7 @@ public abstract class AbstractCrawler extends WebCrawler
 						Filters.eq("id", id))).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
-					json = crawlDocument(url, doc);
+					json = crawlDocument(url, doc).toJson();
 					insertDoc(json);
 				}
 			}
@@ -133,9 +133,9 @@ public abstract class AbstractCrawler extends WebCrawler
 		} 
 	}
 
-	protected List<org.bson.Document> getVideos(Elements elements) 
+	protected List<HBTrack> getVideos(Elements elements) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
+		List<HBTrack> tracks = Lists.newArrayList();
 		for(int i = 0; i < elements.size(); i++)
 		{
 			String src = elements.get(i).attr("src");
@@ -146,14 +146,14 @@ public abstract class AbstractCrawler extends WebCrawler
 				{
 					int ix = "https://www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
-					tracks.add(newTrack(null, youtube));
+					tracks.add(HBTrack.builder().youtube(youtube).build());
 					log.debug("tracks: youtube: " + youtube);
 				}
 				else if(src.startsWith("//www.youtube.com/embed/"))
 				{
 					int ix = "//www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
-					tracks.add(newTrack(null, youtube));
+					tracks.add(HBTrack.builder().youtube(youtube).build());
 					log.debug("tracks: youtube: " + youtube);
 				}
 			}
@@ -161,9 +161,9 @@ public abstract class AbstractCrawler extends WebCrawler
 		return tracks;
 	}
 
-	protected List<org.bson.Document> getTracks(Element content, String source) 
+	protected List<HBTrack> getTracks(Element content, String source) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
+		List<HBTrack> tracks = Lists.newArrayList();
 		if(content != null) {
 			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
 			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
@@ -177,32 +177,11 @@ public abstract class AbstractCrawler extends WebCrawler
 			for(int i = 0; i < chunks.length; i++) {
 				String title = chunks[i].trim();
 				if(StringUtils.isNotBlank(title)) {
-					tracks.add(newTrack(title, null));
+					tracks.add(HBTrack.newInstance(title));
 					log.debug("tracks: " + title);
 				}
 			}
 		}
-		return checkTracks(tracks);
-	}
-
-	protected static org.bson.Document newTrack(String title, String youtube)
-	{
-		if(StringUtils.isNoneEmpty(title)) {
-			title = title.replaceAll("&nbsp;", " ");
-			title = title.replaceAll("\"", "");
-			title = title.trim();
-		}
-		return new org.bson.Document("titleOrig", title).
-				append("title", title).
-				append("youtube", youtube);
-	}
-
-	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
-	{
-		Preconditions.checkArgument(
-				CollectionUtils.isNotEmpty(tracks) && 
-				tracks.size() >= HumanBeatsUtils.TRACKS_SIZE, 
-				"Number of tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
 		return tracks;
 	}
 
@@ -222,7 +201,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected abstract String getBaseUrl();
 
-	public abstract org.bson.Document crawlDocument(String url, Document doc);
+	public abstract HBDocument crawlDocument(String url, Document doc);
 
 	protected String cleanHTML(String html) {
 		return Jsoup.parse(html).wholeText();

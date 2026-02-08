@@ -111,7 +111,7 @@ public class WWFMCrawler extends AbstractCrawler
 	 * Crawl a specific Worldwide FM episode URL and extract playlist
 	 */
 	@Override
-	public org.bson.Document crawlDocument(String url, org.jsoup.nodes.Document doc) {
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
 		try {
 			HBDocument playlistData = HBDocument.builder()
 					.id(id)
@@ -145,7 +145,7 @@ public class WWFMCrawler extends AbstractCrawler
 			// Wait for tracklist content to load and extract tracks
 			extractAudio(playlistData);
 
-			return playlistData.toJson();
+			return playlistData;
 		} catch (Exception e) {
 			log.error("Error crawling episode " + url + ": " + e.getMessage());
 			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage(), e);

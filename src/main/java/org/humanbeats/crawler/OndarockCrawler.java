@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
@@ -32,20 +34,40 @@ public class OndarockCrawler extends AbstractCrawler
 		super(repo);
 	}
 
-	public void load(String... args) 
-	{
+	public void load(String... args) {
 		crawl(URL);
 	}
 
 	@Override
-	public boolean shouldVisit(Page referringPage, WebURL url) 
-	{
+	public HBDocument crawlDocument(String url, Document doc) {
+		HBDocument playlistData = HBDocument.builder()
+				.id(id)
+				.url(url)
+				.source(SOURCE)
+				.type(TYPE.album)
+				.artist(getArtist(doc))
+				.authors(getAuthors(doc))
+				.review(getReview(doc))
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.description(getDescription(doc))
+				.title(getTitle(doc))
+				.cover(getCover(doc))
+				.links(getLinks(doc))
+				.genres(getGenres(doc))
+				.vote(getVote(doc))
+				.label(getLabel(doc))
+				.tracks(getTracks(doc)).build();
+		return playlistData;
+	}
+
+	@Override
+	public boolean shouldVisit(Page referringPage, WebURL url) {
 		return url.getURL().toLowerCase().startsWith(URL);
 	}
 
 	@Override
-	public void visit(Page page) 
-	{
+	public void visit(Page page) {
 		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
 			super.visit(page);
 		}
@@ -57,37 +79,29 @@ public class OndarockCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	private String getSource() 
+	private String getReview(Document doc) 
 	{
-		return SOURCE;
-	}
-
-	private String getReview(String url, Document doc) 
-	{
-		switch (getType(url)) {
-		default:
-			Element content = doc.select("div[class=main_text]").first();
-			if(content == null)
-			{
-				content = doc.select("div[class=main_text2]").first();
-			}
-			removeComments(content);
-			removeImages(content);
-			removeScripts(content);
-			removeDivs(content);
-			removeLinks(content);
-			removeIFrames(content);
-
-			String review = content.html();
-			if(StringUtils.isBlank(review) || review.trim().length() < 100)
-			{
-				throw new IllegalArgumentException("Empty review!");
-			}
-			return review;
+		Element content = doc.select("div[class=main_text]").first();
+		if(content == null)
+		{
+			content = doc.select("div[class=main_text2]").first();
 		}
+		removeComments(content);
+		removeImages(content);
+		removeScripts(content);
+		removeDivs(content);
+		removeLinks(content);
+		removeIFrames(content);
+
+		String review = content.html();
+		if(StringUtils.isBlank(review) || review.trim().length() < 100)
+		{
+			throw new IllegalArgumentException("Empty review!");
+		}
+		return review;
 	}
 
-	private List<String> getLinks(String url, Document doc) 
+	private List<String> getLinks(Document doc) 
 	{
 		Set<String> links = Sets.newHashSet();
 		Element node = doc.select("div[class=main_text]").first();
@@ -176,93 +190,74 @@ public class OndarockCrawler extends AbstractCrawler
 		return date.getTime();
 	}
 
-	private String getArtist(String url, Document doc) 
+	private String getArtist(Document doc) 
 	{
 		Element intestazioneElement = null;
 		Element bandElement = null;
 		String band = null;
-		switch (getType(url)) {
-		case album:
-			intestazioneElement = doc.select("div[class=titolo]").first();
-			//<h1>artist</h1><h2>title</h2>
-			if(intestazioneElement.select("h2").first() != null && 
-					!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
-				bandElement = intestazioneElement.select("h1").first();
-				band = bandElement.html().trim();
-				return band;
-			}
-			//<h1>artist - title</h1>
-			else {
-				bandElement = intestazioneElement.select("h1").first();
-				band = bandElement.html().trim();
-				return band.split("-")[0].trim();
-			}
-		default:
-			return null;
+		intestazioneElement = doc.select("div[class=titolo]").first();
+		//<h1>artist</h1><h2>title</h2>
+		if(intestazioneElement.select("h2").first() != null && 
+				!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
+			bandElement = intestazioneElement.select("h1").first();
+			band = bandElement.html().trim();
+			return band;
+		}
+		//<h1>artist - title</h1>
+		else {
+			bandElement = intestazioneElement.select("h1").first();
+			band = bandElement.html().trim();
+			return band.split("-")[0].trim();
 		}
 	}
 
-	private String getTitle(String url, Document doc) 
+	private String getTitle(Document doc) 
 	{
 		Element intestazioneElement = null;
 		Element titleElement = null;
 		String title = null;
-		switch (getType(url)) {
-		case album:
-			intestazioneElement = doc.select("div[class=titolo]").first();
-			// <h1>artist</h1><h2>title</h2>
-			if(intestazioneElement.select("h2").first() != null &&
-					!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
-				titleElement = intestazioneElement.select("h2").first();
-				title = titleElement.html().trim();
-				return title;
-			}
-			//<h1>artist - title</h1>
-			else {
-				titleElement = intestazioneElement.select("h1").first();
-				title = titleElement.html().trim();
-				return title.substring(title.indexOf("-")+1).trim();
-			}
-		default:
-			return null;
+
+		intestazioneElement = doc.select("div[class=titolo]").first();
+		// <h1>artist</h1><h2>title</h2>
+		if(intestazioneElement.select("h2").first() != null &&
+				!intestazioneElement.select("h2").first().html().trim().startsWith(":")) {
+			titleElement = intestazioneElement.select("h2").first();
+			title = titleElement.html().trim();
+			return title;
+		}
+		//<h1>artist - title</h1>
+		else {
+			titleElement = intestazioneElement.select("h1").first();
+			title = titleElement.html().trim();
+			return title.substring(title.indexOf("-")+1).trim();
 		}
 	}
 
-	private String getDescription(String url, Document doc) 
+	private String getDescription(Document doc) 
 	{
 		Element descriptionElement = null;
 		String description = null;
-		switch (getType(url)) {
-		case album:
-			descriptionElement = doc.select("meta[property=og:description]").first();
-			description = descriptionElement.attr("content").trim();
-			return description;
-		default:
-			return null;
-		}
+		descriptionElement = doc.select("meta[property=og:description]").first();
+		description = descriptionElement.attr("content").trim();
+		return description;
 	}
 
-	private Date getDate(String url, Document doc) 
+	private Date getDate(Document doc) 
 	{
 		try
 		{
 			Date reviewDate = null;
-			switch (getType(url)) {
-			case album:
-				Element reviewElement = doc.select("div[class=main_text]").first();
-				Element reviewDateElement = reviewElement.select("p[class=data_recensione]").last();
-				if(reviewDateElement != null)
-				{
-					reviewDate = getDate(reviewDateElement.text());
-				}
-				if(reviewDate == null && getYear(url, doc) != null)
-				{
-					reviewDate = getDate("01/01/" + getYear(url, doc));
-				}
-				return reviewDate;
-			default:
-				return null;
+			Element reviewElement = doc.select("div[class=main_text]").first();
+			Element reviewDateElement = reviewElement.select("p[class=data_recensione]").last();
+			if(reviewDateElement != null)
+			{
+				reviewDate = getDate(reviewDateElement.text());
 			}
+			if(reviewDate == null && getYear(doc) != null)
+			{
+				reviewDate = getDate("01/01/" + getYear(doc));
+			}
+			return reviewDate;
 		}
 		catch(Throwable t)
 		{
@@ -271,21 +266,16 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	private String getCover(String url, Document doc) 
+	private String getCover(Document doc) 
 	{
 		try
 		{
 			Element coverElement = null;
 			String cover = null;
-			switch (getType(url)) {
-			case album:
-				coverElement = doc.select("div[class=copertina]").first();
-				coverElement = coverElement.select("img[src]").first();
-				cover = coverElement.attr("src");
-				return getUrl(cover);
-			default:
-				return null;
-			}
+			coverElement = doc.select("div[class=copertina]").first();
+			coverElement = coverElement.select("img[src]").first();
+			cover = coverElement.attr("src");
+			return getUrl(cover);
 		}
 		catch(Throwable t)
 		{
@@ -294,119 +284,84 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 	}
 
-	private List<String> getAuthors(String url, Document doc) 
+	private List<String> getAuthors(Document doc) 
 	{
 		Element authorElement = null;
-		switch (getType(url)) {
-		case album:
-			authorElement = doc.select("span[class=nome_recensore]").first();
+		authorElement = doc.select("span[class=nome_recensore]").first();
+		if(authorElement != null)
+		{
+			authorElement = authorElement.select("a[href]").first();
 			if(authorElement != null)
 			{
-				authorElement = authorElement.select("a[href]").first();
-				if(authorElement != null)
-				{
-					return Lists.newArrayList(authorElement.html().trim().split(","));
-				}
+				return Lists.newArrayList(authorElement.html().trim().split(","));
 			}
-		default:
-			return null;
 		}
+		return null;
 	}
 
-	private List<String> getGenres(String url, Document doc) 
+	private List<String> getGenres(Document doc) 
 	{
-		switch (getType(url)) {
-		case album:
-			Element datiElement = doc.select("div[class=genere cell small-6]").first();
-			String dati = datiElement.text();
-			return Lists.newArrayList(dati.trim().split(","));
-		default:
-			return null;
-		}
+		Element datiElement = doc.select("div[class=genere cell small-6]").first();
+		String dati = datiElement.text();
+		return Lists.newArrayList(dati.trim().split(","));
 	}
 
-	private Integer getYear(String url, Document doc) 
+	private Integer getYear(Document doc) 
 	{
-		switch (getType(url)) {
-		case album:
-			Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
-			if(datiElement != null)
-			{
-				String yearStr = datiElement.text().split(" ")[0].trim();
-				Integer year = Integer.parseInt(yearStr);
-				return year;
-			}
-		default:
-			return 0;
+		Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
+		if(datiElement != null)
+		{
+			String yearStr = datiElement.text().split(" ")[0].trim();
+			Integer year = Integer.parseInt(yearStr);
+			return year;
 		}
+		return 0;
 	}
 
-	private String getLabel(String url, Document doc) 
+	private String getLabel(Document doc) 
 	{
-		switch (getType(url)) {
-		case album:
-			Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
-			String dati = datiElement.text();
-			dati = datiElement.text();
-			dati = dati.split("\\(")[1].trim();
-			String label = dati.split("\\)")[0].trim();
-			return label;
-		default:
-			return null;
-		}
+		Element datiElement = doc.select("div[class=anno_etichetta cell small-6]").first();
+		String dati = datiElement.text();
+		dati = datiElement.text();
+		dati = dati.split("\\(")[1].trim();
+		String label = dati.split("\\)")[0].trim();
+		return label;
 	}
 
-	private List<org.bson.Document> getTracks(String url, Document doc) 
+	private List<HBTrack> getTracks(Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		switch (getType(url)) {
-		case album:
-			Elements elements = doc.select("iframe");
-			return getVideos(elements);
-		default:
-			break;
-		}
-		return tracks;
+		Elements elements = doc.select("iframe");
+		return getVideos(elements);
 	}
 
-	private Float getVote(String url, Document doc) 
+	private Float getVote(Document doc) 
 	{
 		try
 		{
-			switch (getType(url)) {
-			case album:
-				if(url.contains("pietremiliari")) {
-					return 10F;
-				}
-
-				DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-				symbols.setDecimalSeparator('.');
-				DecimalFormat format = new DecimalFormat("##.#");
-				format.setDecimalFormatSymbols(symbols);
-
-				Float vote = 0F;
-				Element voteElement = doc.select("span[class=voto]").first();
-				if(voteElement == null) {
-					voteElement = doc.select("span[class=voto red]").first();
-				}
-				if(voteElement != null) {
-					String voteStr = voteElement.text();
-					vote = format.parse(voteStr).floatValue();
-				}
-				return vote;
-			default:
-				return 0F;
+			if(url.contains("pietremiliari")) {
+				return 10F;
 			}
+
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+			symbols.setDecimalSeparator('.');
+			DecimalFormat format = new DecimalFormat("##.#");
+			format.setDecimalFormatSymbols(symbols);
+
+			Float vote = 0F;
+			Element voteElement = doc.select("span[class=voto]").first();
+			if(voteElement == null) {
+				voteElement = doc.select("span[class=voto red]").first();
+			}
+			if(voteElement != null) {
+				String voteStr = voteElement.text();
+				vote = format.parse(voteStr).floatValue();
+			}
+			return vote;
 		}
 		catch(Throwable t)
 		{
 			log.error("ERROR getVote() "+ url + ": " + t.getMessage());
 			return 0F;
 		}
-	}
-
-	private TYPE getType(String url) 
-	{
-		return TYPE.album;
 	}
 }

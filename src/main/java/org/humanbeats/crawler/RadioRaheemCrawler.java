@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
@@ -46,6 +48,12 @@ public class RadioRaheemCrawler extends AbstractCrawler
 			log.info("Crawling " + artist);
 			crawl(url);
 		}
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -101,6 +109,11 @@ public class RadioRaheemCrawler extends AbstractCrawler
 		}
 	}
 
+	@Override
+	protected String getBaseUrl() {
+		return "https://www.radioraheem.it/";
+	}
+
 	private Date getDate(String date) {
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -126,16 +139,14 @@ public class RadioRaheemCrawler extends AbstractCrawler
 		return "https://www.mixcloud.com" + feed;
 	}
 
-	private List<org.bson.Document> getTracks(JsonArray content) {
-		List<org.bson.Document> tracks = Lists.newArrayList();
-
+	private List<HBTrack> getTracks(JsonArray content) {
+		List<HBTrack> tracks = Lists.newArrayList();
 		content.forEach(item -> {
 			JsonObject doc = (JsonObject)item;
-			String youtube = null;
 			String title = doc.get("titolo").getAsString() + " - " + doc.get("sottotitolo").getAsString();
-			tracks.add(newTrack(title, youtube));
-			log.debug("tracks: " + title + ", youtube: " + youtube);
+			tracks.add(HBTrack.builder().titleOrig(title).build());
+			log.debug("tracks: " + title);
 		});
-		return checkTracks(tracks);
+		return tracks;
 	}
 }

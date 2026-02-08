@@ -11,6 +11,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.springframework.stereotype.Component;
@@ -54,6 +56,17 @@ public class NTSCrawler extends AbstractCrawler
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(URL);
 		}
+	}
+
+	@Override
+	protected String getBaseUrl() {
+		return URL;
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -155,13 +168,13 @@ public class NTSCrawler extends AbstractCrawler
 		return doc.getAsJsonArray("audio_sources").get(0).getAsJsonObject().get("url").getAsString();
 	}
 
-	private List<org.bson.Document> getTracks(JsonArray content) {
-		List<org.bson.Document> tracks = Lists.newArrayList();
+	private List<HBTrack> getTracks(JsonArray content) {
+		List<HBTrack> tracks = Lists.newArrayList();
 		content.forEach(c -> {
 			String title = c.getAsJsonObject().get("artist") + " - " + c.getAsJsonObject().get("title");
-			tracks.add(newTrack(title, null));
+			tracks.add(HBTrack.builder().titleOrig(title).build());
 			log.debug("tracks: " + title);
 		});
-		return checkTracks(tracks);
+		return tracks;
 	}
 }

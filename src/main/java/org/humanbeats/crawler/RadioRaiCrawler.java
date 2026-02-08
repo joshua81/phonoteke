@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
@@ -54,6 +56,12 @@ public class RadioRaiCrawler extends AbstractCrawler
 			log.info("Crawling " + artist);
 			crawl(url);
 		}
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, Document doc) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -115,20 +123,20 @@ public class RadioRaiCrawler extends AbstractCrawler
 		return URL;
 	}
 
-	private String getSource() 
-	{
-		return source;
-	}
-
-	private String getArtist(String url, Document doc) 
-	{
-		return artist;
-	}
-
-	private List<String> getAuthors(String url, Document doc) 
-	{
-		return authors;
-	}
+	//	private String getSource() 
+	//	{
+	//		return source;
+	//	}
+	//
+	//	private String getArtist(String url, Document doc) 
+	//	{
+	//		return artist;
+	//	}
+	//
+	//	private List<String> getAuthors(String url, Document doc) 
+	//	{
+	//		return authors;
+	//	}
 
 	private Date getDate(String date) 
 	{
@@ -147,9 +155,9 @@ public class RadioRaiCrawler extends AbstractCrawler
 		return year.get(Calendar.YEAR);
 	}
 
-	private List<org.bson.Document> getTracks(String content) 
+	private List<HBTrack> getTracks(String content) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
+		List<HBTrack> tracks = Lists.newArrayList();
 		if(MUSICALBOX.equals(source)) {
 			return tracks;
 		}
@@ -159,12 +167,12 @@ public class RadioRaiCrawler extends AbstractCrawler
 			for(int i = 0; i < chunks.length; i++) {
 				String title = chunks[i].trim();
 				if(StringUtils.isNotBlank(title)) {
-					tracks.add(newTrack(title, null));
+					tracks.add(HBTrack.builder().titleOrig(title).build());
 					log.debug("tracks: " + title);
 				}
 			}
 		}
-		return checkTracks(tracks);
+		return tracks;
 	}
 
 	private String getAudio(String url) 

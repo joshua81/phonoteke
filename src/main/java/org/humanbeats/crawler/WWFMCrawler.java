@@ -113,8 +113,8 @@ public class WWFMCrawler extends AbstractCrawler
 	@Override
 	public HBDocument crawlDocument(String url, org.jsoup.nodes.Document doc) {
 		try {
-			HBDocument playlistData = HBDocument.builder()
-					.id(id)
+			HBDocument episode = HBDocument.builder()
+					.id(getId(url))
 					.url(url)
 					.source(source)
 					.type(TYPE.podcast)
@@ -131,21 +131,21 @@ public class WWFMCrawler extends AbstractCrawler
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("body")));
 
 			// Extract episode metadata
-			extractEpisodeMetadata(playlistData);
+			extractEpisodeMetadata(episode);
 
 			// Find and click the TRACKLIST button
 			clickTracklistButton();
 
 			// Wait for tracklist content to load and extract tracks
-			extractPlaylistTracks(playlistData);
+			extractPlaylistTracks(episode);
 
 			// Find and click the LISTEN BACK button
 			clickListenBackButton();
 
 			// Wait for tracklist content to load and extract tracks
-			extractAudio(playlistData);
+			extractAudio(episode);
 
-			return playlistData;
+			return episode;
 		} catch (Exception e) {
 			log.error("Error crawling episode " + url + ": " + e.getMessage());
 			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage(), e);
@@ -157,21 +157,21 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract episode metadata (title, date, etc.)
 	 */
-	private void extractEpisodeMetadata(HBDocument playlistData) {
+	private void extractEpisodeMetadata(HBDocument episode) {
 		try {
 			// Title
 			WebElement titleElement = wait.until(ExpectedConditions.presenceOfElementLocated(
 					By.cssSelector("[class*='text-h7']")));
 			if (titleElement != null) {
-				playlistData.setTitle(titleElement.getText().trim());
-				log.debug("Episode title: " + playlistData.getTitle());
+				episode.setTitle(titleElement.getText().trim());
+				log.debug("Episode title: " + episode.getTitle());
 			}
-			Preconditions.checkArgument(StringUtils.isNotBlank(playlistData.getTitle()), "Empty title!");
+			Preconditions.checkArgument(StringUtils.isNotBlank(episode.getTitle()), "Empty title!");
 
 			// Description (same as title)
-			playlistData.setDescription(playlistData.getTitle());
-			log.debug("Episode description: " + playlistData.getDescription());
-			Preconditions.checkArgument(StringUtils.isNotBlank(playlistData.getDescription()), "Empty description!");
+			episode.setDescription(episode.getTitle());
+			log.debug("Episode description: " + episode.getDescription());
+			Preconditions.checkArgument(StringUtils.isNotBlank(episode.getDescription()), "Empty description!");
 
 			// Date
 			WebElement dateElement = driver.findElement(By.cssSelector("[class*='text-h8']"));
@@ -179,24 +179,24 @@ public class WWFMCrawler extends AbstractCrawler
 				// DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("EEE dd.MM.yy", Locale.ENGLISH);
 				DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yy");
 				LocalDate date = LocalDate.parse(dateElement.getText().substring(3).trim(), inputFormatter);
-				playlistData.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-				log.debug("Episode date: " + playlistData.getDate());
+				episode.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+				log.debug("Episode date: " + episode.getDate());
 			}
-			Preconditions.checkNotNull(playlistData.getDate(), "Empty date!");
+			Preconditions.checkNotNull(episode.getDate(), "Empty date!");
 
 			// Cover
 			WebElement coverElement = wait.until(ExpectedConditions.presenceOfElementLocated(
 					By.tagName("img")));
 			if (coverElement != null) {
-				playlistData.setCover(coverElement.getAttribute("src").trim());
-				log.debug("Episode cover: " + playlistData.getCover());
+				episode.setCover(coverElement.getAttribute("src").trim());
+				log.debug("Episode cover: " + episode.getCover());
 			}
-			Preconditions.checkArgument(StringUtils.isNotBlank(playlistData.getCover()), "Empty cover!");
+			Preconditions.checkArgument(StringUtils.isNotBlank(episode.getCover()), "Empty cover!");
 
 			// Year
-			int year = playlistData.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
-			playlistData.setYear(year);
-			Preconditions.checkNotNull(playlistData.getYear(), "Empty year!");
+			int year = episode.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getYear();
+			episode.setYear(year);
+			Preconditions.checkNotNull(episode.getYear(), "Empty year!");
 		}
 		catch (Exception e) {
 			log.error("Could not extract all episode metadata: " + e.getMessage());
@@ -249,7 +249,7 @@ public class WWFMCrawler extends AbstractCrawler
 	/**
 	 * Extract playlist tracks from the loaded content
 	 */
-	private void extractPlaylistTracks(HBDocument playlistData) {
+	private void extractPlaylistTracks(HBDocument episode) {
 		try {
 			log.debug("Extracting playlist tracks...");
 
@@ -268,22 +268,22 @@ public class WWFMCrawler extends AbstractCrawler
 				String artistText = artistElement.getText().trim();
 				String trackText = trackElement.getText().trim();
 				HBTrack track = parseTrackText(artistText, trackText);
-				playlistData.getTracks().add(track);
+				episode.getTracks().add(track);
 				log.debug("Extracted track: " + track.getTitleOrig());
 			}
-			log.debug("Extracted " + playlistData.getTracks().size() + " tracks from playlist");
+			log.debug("Extracted " + episode.getTracks().size() + " tracks from playlist");
 		} 
 		catch (Exception e) {
 			log.error("Error extracting playlist tracks: " + e.getMessage());
 		}
 
-		Preconditions.checkArgument(CollectionUtils.isNotEmpty(playlistData.getTracks()), "Empty playlist!");
+		Preconditions.checkArgument(CollectionUtils.isNotEmpty(episode.getTracks()), "Empty playlist!");
 	}
 
 	/**
 	 * Extract audio from the loaded content
 	 */
-	private void extractAudio(HBDocument playlistData) {
+	private void extractAudio(HBDocument episode) {
 		try {
 			log.debug("Extracting audio...");
 
@@ -297,14 +297,14 @@ public class WWFMCrawler extends AbstractCrawler
 			WebElement audioElement = audioElements.get(0);
 
 			String audio = getUrlParameters(audioElement.getAttribute("src")).get("feed");
-			playlistData.setAudio(audio);
-			log.debug("Extracted audio: " + playlistData.getAudio());
+			episode.setAudio(audio);
+			log.debug("Extracted audio: " + episode.getAudio());
 		} 
 		catch (Exception e) {
 			log.error("Error extracting audio: " + e.getMessage());
 		}
 
-		Preconditions.checkNotNull(playlistData.getAudio(), "Audio not found!");
+		Preconditions.checkNotNull(episode.getAudio(), "Audio not found!");
 	}
 
 	private Map<String, String> getUrlParameters(String url) {

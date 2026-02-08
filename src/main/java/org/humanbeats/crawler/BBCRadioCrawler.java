@@ -53,7 +53,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
-		HBDocument playlistData = HBDocument.builder()
+		HBDocument episode = HBDocument.builder()
 				.id(id)
 				.url(url)
 				.source(source)
@@ -66,7 +66,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 				.title(getTitle(doc))
 				.cover(getCover(doc))
 				.tracks(getTracks(doc)).build();
-		return playlistData;
+		return episode;
 	}
 
 	@Override

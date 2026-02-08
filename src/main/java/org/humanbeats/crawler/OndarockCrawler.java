@@ -41,7 +41,7 @@ public class OndarockCrawler extends AbstractCrawler
 
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
-		HBDocument playlistData = HBDocument.builder()
+		HBDocument album = HBDocument.builder()
 				.id(id)
 				.url(url)
 				.source(SOURCE)
@@ -59,7 +59,7 @@ public class OndarockCrawler extends AbstractCrawler
 				.vote(getVote(doc))
 				.label(getLabel(doc))
 				.tracks(getTracks(doc)).build();
-		return playlistData;
+		return album;
 	}
 
 	@Override

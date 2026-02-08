@@ -364,4 +364,32 @@ public class OndarockCrawler extends AbstractCrawler
 			return 0F;
 		}
 	}
+	
+	protected List<HBTrack> getVideos(Elements elements) 
+	{
+		List<HBTrack> tracks = Lists.newArrayList();
+		for(int i = 0; i < elements.size(); i++)
+		{
+			String src = elements.get(i).attr("src");
+			if(src != null && src.contains("youtube.com")) 
+			{
+				String youtube = null;
+				if(src.startsWith("https://www.youtube.com/embed/"))
+				{
+					int ix = "https://www.youtube.com/embed/".length();
+					youtube = src.substring(ix);
+					tracks.add(HBTrack.builder().youtube(youtube).build());
+					log.debug("tracks: youtube: " + youtube);
+				}
+				else if(src.startsWith("//www.youtube.com/embed/"))
+				{
+					int ix = "//www.youtube.com/embed/".length();
+					youtube = src.substring(ix);
+					tracks.add(HBTrack.builder().youtube(youtube).build());
+					log.debug("tracks: youtube: " + youtube);
+				}
+			}
+		}
+		return tracks;
+	}
 }

@@ -8,18 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
-import org.humanbeats.model.HBTrack;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.mongodb.client.MongoCursor;
@@ -53,7 +49,8 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected List<String> authors;
 	protected Integer page;
 
-	public AbstractCrawler(MongoRepository repo) {
+	public AbstractCrawler(MongoRepository repo) 
+	{
 		this.repo = repo;
 	}
 
@@ -133,57 +130,57 @@ public abstract class AbstractCrawler extends WebCrawler
 		} 
 	}
 
-	protected List<HBTrack> getVideos(Elements elements) 
-	{
-		List<HBTrack> tracks = Lists.newArrayList();
-		for(int i = 0; i < elements.size(); i++)
-		{
-			String src = elements.get(i).attr("src");
-			if(src != null && src.contains("youtube.com")) 
-			{
-				String youtube = null;
-				if(src.startsWith("https://www.youtube.com/embed/"))
-				{
-					int ix = "https://www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(HBTrack.builder().youtube(youtube).build());
-					log.debug("tracks: youtube: " + youtube);
-				}
-				else if(src.startsWith("//www.youtube.com/embed/"))
-				{
-					int ix = "//www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(HBTrack.builder().youtube(youtube).build());
-					log.debug("tracks: youtube: " + youtube);
-				}
-			}
-		}
-		return tracks;
-	}
+//	protected List<HBTrack> getVideos(Elements elements) 
+//	{
+//		List<HBTrack> tracks = Lists.newArrayList();
+//		for(int i = 0; i < elements.size(); i++)
+//		{
+//			String src = elements.get(i).attr("src");
+//			if(src != null && src.contains("youtube.com")) 
+//			{
+//				String youtube = null;
+//				if(src.startsWith("https://www.youtube.com/embed/"))
+//				{
+//					int ix = "https://www.youtube.com/embed/".length();
+//					youtube = src.substring(ix);
+//					tracks.add(HBTrack.builder().youtube(youtube).build());
+//					log.debug("tracks: youtube: " + youtube);
+//				}
+//				else if(src.startsWith("//www.youtube.com/embed/"))
+//				{
+//					int ix = "//www.youtube.com/embed/".length();
+//					youtube = src.substring(ix);
+//					tracks.add(HBTrack.builder().youtube(youtube).build());
+//					log.debug("tracks: youtube: " + youtube);
+//				}
+//			}
+//		}
+//		return tracks;
+//	}
 
-	protected List<HBTrack> getTracks(Element content, String source) 
-	{
-		List<HBTrack> tracks = Lists.newArrayList();
-		if(content != null) {
-			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("li").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h1").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h2").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h3").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("div").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-
-			String[] chunks = content.text().replace("||", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
-			for(int i = 0; i < chunks.length; i++) {
-				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title)) {
-					tracks.add(HBTrack.newInstance(title));
-					log.debug("tracks: " + title);
-				}
-			}
-		}
-		return tracks;
-	}
+	//	protected List<HBTrack> getTracks(Element content, String source) 
+	//	{
+	//		List<HBTrack> tracks = Lists.newArrayList();
+	//		if(content != null) {
+	//			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("li").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("h1").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("h2").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("h3").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			content.select("div").after(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//
+	//			String[] chunks = content.text().replace("||", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
+	//			for(int i = 0; i < chunks.length; i++) {
+	//				String title = chunks[i].trim();
+	//				if(StringUtils.isNotBlank(title)) {
+	//					tracks.add(HBTrack.newInstance(title));
+	//					log.debug("tracks: " + title);
+	//				}
+	//			}
+	//		}
+	//		return tracks;
+	//	}
 
 	protected void insertDoc(org.bson.Document json) {
 		repo.getDocs().insertOne(json);

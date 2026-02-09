@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,14 +27,14 @@ public class BBCRadioCrawler extends AbstractCrawler
 	private static final String URL = "https://www.bbc.co.uk/";
 	private static final String BBC = "bbc";
 
-	public BBCRadioCrawler(MongoRepository repo) {
-		super(repo);
+	public BBCRadioCrawler() {
+		this.type = BBC;
 	}
 
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
 		HBDocument episode = HBDocument.builder()
-				.id(id)
+				.id(getId(url))
 				.url(url)
 				.source(source)
 				.type(TYPE.podcast)
@@ -59,11 +58,6 @@ public class BBCRadioCrawler extends AbstractCrawler
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
 		return page.getWebURL().getURL().startsWith(this.url);
-	}
-
-	@Override
-	protected String getType() {
-		return BBC;
 	}
 
 	@Override

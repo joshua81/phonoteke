@@ -14,7 +14,6 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
@@ -36,8 +35,8 @@ public class RadioRaiCrawler extends AbstractCrawler
 	private static final String MUSICALBOX = "musicalbox";
 
 
-	public RadioRaiCrawler(MongoRepository repo) {
-		super(repo);
+	public RadioRaiCrawler() {
+		this.type = RAI;
 	}
 
 	@Override
@@ -92,15 +91,10 @@ public class RadioRaiCrawler extends AbstractCrawler
 				.tracks(getTracks(doc)).build();
 		return episode;
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
 		throw new RuntimeException("Not implemented!!");
-	}
-
-	@Override
-	protected String getType() {
-		return RAI;
 	}
 
 	@Override

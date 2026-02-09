@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
 import com.google.common.collect.Lists;
@@ -29,8 +28,8 @@ public class RadioRaheemCrawler extends AbstractCrawler
 	private static final String URL = "https://www.radioraheem.it/";
 	private static final String URL_EPISODE = "https://www.radioraheem.it/wp-json/wp/v2/episodes/?types=show:$ID&per_page=24&offset=0&orderby=date&lang=default";
 
-	public RadioRaheemCrawler(MongoRepository repo) {
-		super(repo);
+	public RadioRaheemCrawler() {
+		this.type = RADIO_RAHEEM;
 	}
 
 	@Override
@@ -94,11 +93,6 @@ public class RadioRaheemCrawler extends AbstractCrawler
 		{
 			log.debug("ERROR parsing page " + url + ": " + t.getMessage());
 		}
-	}
-
-	@Override
-	protected String getType() {
-		return RADIO_RAHEEM;
 	}
 
 	@Override

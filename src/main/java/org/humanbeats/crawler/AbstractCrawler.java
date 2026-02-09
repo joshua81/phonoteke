@@ -11,7 +11,6 @@ import java.util.Set;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
-import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -42,25 +41,28 @@ public abstract class AbstractCrawler extends WebCrawler
 {
 	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
-	protected MongoRepository repo;
+	public static MongoRepository repo;
+	
+	@Setter
+	protected String type;
+	@Setter
 	protected String url;
 	@Setter
 	protected String id;
+	@Setter
 	protected String artist;
 	@Setter
 	protected String source;
+	@Setter
 	protected List<String> authors;
+	@Setter
 	protected Integer page;
-
-	public AbstractCrawler(MongoRepository repo) 
-	{
-		this.repo = repo;
-	}
+	
 
 	public void load(String... args) 
 	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", getType()))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", getType()), Filters.eq("source", args[0]))).iterator();
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", type))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", type), Filters.eq("source", args[0]))).iterator();
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
@@ -110,8 +112,8 @@ public abstract class AbstractCrawler extends WebCrawler
 		{
 			try
 			{
-				this.url = page.getWebURL().getURL();
-				this.id = getId(url);
+				String url = page.getWebURL().getURL();
+				String id = getId(url);
 				log.debug("Parsing page " + url);
 
 				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
@@ -152,17 +154,17 @@ public abstract class AbstractCrawler extends WebCrawler
 	}
 
 	protected void insertDoc(org.bson.Document json) {
-		repo.getDocs().insertOne(json);
-		log.info(json.getString("type") + " " + json.getString("url") + " added");
-
-		// update last episode date
-		if(TYPE.podcast.name().equals(json.getString("type"))) {
-			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
-			org.bson.Document doc = i.next();
-			doc.append("lastEpisodeDate", json.getDate("date"));
-			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-			log.info("lastEpisodeDate " + source + " updated");
-		}
+//		repo.getDocs().insertOne(json);
+//		log.info(json.getString("type") + " " + json.getString("url") + " added");
+//
+//		// update last episode date
+//		if(TYPE.podcast.name().equals(json.getString("type"))) {
+//			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+//			org.bson.Document doc = i.next();
+//			doc.append("lastEpisodeDate", json.getDate("date"));
+//			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+//			log.info("lastEpisodeDate " + source + " updated");
+//		}
 	}
 
 	private class HumanBeatsParser extends Parser {
@@ -215,7 +217,6 @@ public abstract class AbstractCrawler extends WebCrawler
 	}
 
 	protected abstract String getBaseUrl();
-	protected abstract String getType();
 	public abstract HBDocument crawlDocument(String url, Document doc);
 	public abstract HBDocument crawlDocument(String url, JsonObject doc);
 }

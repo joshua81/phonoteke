@@ -12,7 +12,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 
@@ -30,15 +29,15 @@ public class SpreakerCrawler extends AbstractCrawler
 	private static final String SPREAKER = "spreaker";
 	private static final String URL = "https://www.spreaker.com/";
 
-	public SpreakerCrawler(MongoRepository repo) {
-		super(repo);
+	public SpreakerCrawler() {
+		this.type = SPREAKER;
 	}
 
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
 		throw new RuntimeException("Not implemented!!");
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, JsonObject doc) {
 		throw new RuntimeException("Not implemented!!");
@@ -102,11 +101,6 @@ public class SpreakerCrawler extends AbstractCrawler
 		{
 			log.debug("ERROR parsing page " + url + ": " + t.getMessage());
 		}
-	}
-
-	@Override
-	protected String getType() {
-		return SPREAKER;
 	}
 
 	@Override

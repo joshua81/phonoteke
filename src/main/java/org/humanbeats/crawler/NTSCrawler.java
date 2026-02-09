@@ -13,7 +13,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -36,8 +35,8 @@ public class NTSCrawler extends AbstractCrawler
 	private static final String URL_EPISODES = "api/v2/shows/$ARTIST/episodes?offset=$OFFSET&limit=$LIMIT";
 	private static final String URL_EPISODE = "api/v2/shows/$ARTIST/episodes/$EPISODE";
 
-	public NTSCrawler(MongoRepository repo) {
-		super(repo);
+	public NTSCrawler() {
+		this.type = NTS;
 	}
 
 	@Override
@@ -47,7 +46,7 @@ public class NTSCrawler extends AbstractCrawler
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			Integer offset = (page-1)*PAGE_SIZE;
-			String episodesUrl = url + URL_EPISODES.replace("$ARTIST", this.id)
+			String episodesUrl = URL + URL_EPISODES.replace("$ARTIST", this.id)
 			.replace("$OFFSET", offset.toString())
 			.replace("$LIMIT", PAGE_SIZE.toString());
 			HttpGet httpGet = new HttpGet(episodesUrl);
@@ -61,7 +60,7 @@ public class NTSCrawler extends AbstractCrawler
 				{
 					JsonObject doc = (JsonObject)item;
 					CloseableHttpClient client2 = HttpClients.createDefault();
-					String episodeUrl = url + URL_EPISODE.replace("$ARTIST", this.id)
+					String episodeUrl = URL + URL_EPISODE.replace("$ARTIST", this.id)
 					.replace("$EPISODE", doc.get("episode_alias").getAsString());
 					HttpGet httpGet2 = new HttpGet(episodeUrl);
 
@@ -92,11 +91,6 @@ public class NTSCrawler extends AbstractCrawler
 		{
 			log.debug("ERROR parsing page " + id + ": " + t.getMessage());
 		}
-	}
-
-	@Override
-	protected String getType() {
-		return NTS;
 	}
 
 	@Override

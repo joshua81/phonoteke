@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,8 +29,8 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	private static final String CAPITAL = "capital";
 	private static final String URL = "https://www.capital.it/programmi/";
 
-	public RadioCapitalCrawler(MongoRepository repo) {
-		super(repo);
+	public RadioCapitalCrawler() {
+		this.type = CAPITAL;
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				.tracks(getTracks(doc)).build();
 		return episode;
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, JsonObject doc) {
 		throw new RuntimeException("Not implemented!!");
@@ -72,11 +71,6 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				page.getWebURL().getURL().startsWith(url + "puntate/puntata-del")) {
 			super.visit(page);
 		}
-	}
-
-	@Override
-	protected String getType() {
-		return CAPITAL;
 	}
 
 	@Override

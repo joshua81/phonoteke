@@ -15,7 +15,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
@@ -52,8 +51,8 @@ public class WWFMCrawler extends AbstractCrawler
 	private WebDriverWait wait;
 
 
-	public WWFMCrawler(MongoRepository repo) {
-		super(repo);
+	public WWFMCrawler() {
+		this.type = WWFM;
 	}
 
 	/**
@@ -153,7 +152,7 @@ public class WWFMCrawler extends AbstractCrawler
 			cleanupWebDriver();
 		}
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, JsonObject doc) {
 		throw new RuntimeException("Not implemented!!");
@@ -348,10 +347,5 @@ public class WWFMCrawler extends AbstractCrawler
 	@Override
 	protected String getBaseUrl() {
 		return URL;
-	}
-
-	@Override
-	protected String getType() {
-		return WWFM;
 	}
 }

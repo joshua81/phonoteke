@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
-import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,10 +31,6 @@ public class OndarockCrawler extends AbstractCrawler
 	private static final String SOURCE = "ondarock";
 	private static final String URL = "https://www.ondarock.it/";
 
-	public OndarockCrawler(MongoRepository repo) {
-		super(repo);
-	}
-
 	public void load(String... args) {
 		crawl(URL);
 	}
@@ -43,7 +38,7 @@ public class OndarockCrawler extends AbstractCrawler
 	@Override
 	public HBDocument crawlDocument(String url, Document doc) {
 		HBDocument album = HBDocument.builder()
-				.id(id)
+				.id(getId(url))
 				.url(url)
 				.source(SOURCE)
 				.type(TYPE.album)
@@ -62,7 +57,7 @@ public class OndarockCrawler extends AbstractCrawler
 				.tracks(getTracks(doc)).build();
 		return album;
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, JsonObject doc) {
 		throw new RuntimeException("Not implemented!!");
@@ -78,11 +73,6 @@ public class OndarockCrawler extends AbstractCrawler
 		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
 			super.visit(page);
 		}
-	}
-
-	@Override
-	protected String getType() {
-		return null;
 	}
 
 	@Override

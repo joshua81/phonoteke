@@ -114,17 +114,19 @@ public class HumanBeats implements CommandLineRunner {
 	}
 
 	private void crawlPodcasts(String... args) {
-		new BBCRadioCrawler(repo).load(args);
-		new RadioRaiCrawler(repo).load(args);
-		new SpreakerCrawler(repo).load(args);
-		new WWFMCrawler(repo).load(args);
-		new RadioCapitalCrawler(repo).load(args);
-		new NTSCrawler(repo).load(args);
-		new RadioRaheemCrawler(repo).load(args);
+		BBCRadioCrawler.repo = repo;
+//		new BBCRadioCrawler().load(args);
+//		new RadioRaiCrawler().load(args);
+//		new SpreakerCrawler().load(args);
+//		new WWFMCrawler().load(args);
+//		new RadioCapitalCrawler().load(args);
+		new NTSCrawler().load(args);
+//		new RadioRaheemCrawler().load(args);
 	}
 
 	private void crawlReviews(String... args) {
-		new OndarockCrawler(repo).load(args);
+		OndarockCrawler.repo = repo;
+		new OndarockCrawler().load(args);
 	}
 
 	private static void printHelp() {

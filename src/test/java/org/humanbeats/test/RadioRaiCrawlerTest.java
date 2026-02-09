@@ -44,16 +44,19 @@ public class RadioRaiCrawlerTest {
 		try {
 			HttpURLConnection con = (HttpURLConnection)new URL(TEST_EPISODE_URL).openConnection();
 			JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
-			RadioRaiCrawler crawler = new RadioRaiCrawler(null);
+			RadioRaiCrawler crawler = new RadioRaiCrawler();
 			crawler.setSource("battiti");
 			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure
-			assertNotNull(result, "Playlist data should not be null");
+			assertNotNull(result, "Episode data should not be null");
+			assertNotNull(result.getId(), "Episode id should not be null");
 			assertTrue(CollectionUtils.isNotEmpty(result.getTracks()), "Tracks list should not be null");
 			assertEquals(TEST_EPISODE_URL, result.getUrl(), "Episode URL should match");
 
 			// Verify episode metadata
+			assertNotNull(result.getId(), "Episode id should not be null");
+			assertNotNull(result.getUrl(), "Episode url should not be null");
 			assertNotNull(result.getTitle(), "Episode title should not be null");
 			assertNotNull(result.getDescription(), "Episode description should not be null");
 			assertNotNull(result.getDate(), "Episode date should not be null");
@@ -62,6 +65,8 @@ public class RadioRaiCrawlerTest {
 			assertNotNull(result.getYear(), "Episode year should not be null");
 			assertTrue(CollectionUtils.isNotEmpty(result.getTracks()), "Episode tracks should not be empty");
 
+			log.info("Episode Id: " + result.getId());
+			log.info("Episode Url: " + result.getUrl());
 			log.info("Episode Title: " + result.getTitle());
 			log.info("Episode Description: " + result.getDescription());
 			log.info("Episode Date: " + result.getDate());

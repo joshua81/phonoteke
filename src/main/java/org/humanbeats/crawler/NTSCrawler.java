@@ -47,7 +47,7 @@ public class NTSCrawler extends AbstractCrawler
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			Integer offset = (page-1)*PAGE_SIZE;
-			String episodesUrl = url + URL_EPISODES.replace("$ARTIST", id)
+			String episodesUrl = url + URL_EPISODES.replace("$ARTIST", this.id)
 			.replace("$OFFSET", offset.toString())
 			.replace("$LIMIT", PAGE_SIZE.toString());
 			HttpGet httpGet = new HttpGet(episodesUrl);
@@ -77,25 +77,8 @@ public class NTSCrawler extends AbstractCrawler
 							Filters.eq("id", id))).iterator().tryNext();
 					if(json == null)
 					{
-						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", TYPE.podcast.name()).
-									append("artist", artist).
-									append("title", getTitle(doc)).
-									append("authors", authors).
-									append("cover", getCover(doc)).
-									append("date", getDate(doc)).
-									append("description", getDescription(doc)).
-									append("source", source).
-									append("year", getYear(doc)).
-									append("tracks", getTracks(doc)).
-									append("audio", getAudio(doc));
-							insertDoc(json);
-						}
-						catch(Exception e) {
-							log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-						}
+						HBDocument episode = crawlDocument(pageUrl, doc);
+						insertDoc(episode.toJson());
 					}
 				}
 				catch (Throwable t) 
@@ -115,7 +98,7 @@ public class NTSCrawler extends AbstractCrawler
 	protected String getType() {
 		return NTS;
 	}
-	
+
 	@Override
 	protected String getBaseUrl() {
 		return URL;
@@ -125,10 +108,24 @@ public class NTSCrawler extends AbstractCrawler
 	public HBDocument crawlDocument(String url, Document doc) {
 		throw new RuntimeException("Not implemented!!");
 	}
-	
+
 	@Override
 	public HBDocument crawlDocument(String url, JsonObject doc) {
-		throw new RuntimeException("Not implemented!!");
+		HBDocument episode = HBDocument.builder()
+				.id(getId(url))
+				.url(url)
+				.source(source)
+				.type(TYPE.podcast)
+				.artist(artist)
+				.authors(authors)
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.description(getDescription(doc))
+				.title(getTitle(doc))
+				.cover(getCover(doc))
+				.audio(getAudio(doc))
+				.tracks(getTracks(doc)).build();
+		return episode;
 	}
 
 	private String getTitle(JsonObject doc) {

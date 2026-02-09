@@ -44,6 +44,7 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	protected MongoRepository repo;
 	protected String url;
+	@Setter
 	protected String id;
 	protected String artist;
 	@Setter
@@ -63,6 +64,7 @@ public abstract class AbstractCrawler extends WebCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
+			this.id = show.getString("id");
 			this.url = show.getString("url");
 			this.artist = show.getString("title");
 			this.source = show.getString("source");

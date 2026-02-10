@@ -59,7 +59,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 						HttpURLConnection con2 = (HttpURLConnection)new URL(pageUrl.replace(".html", ".json")).openConnection();
 						JsonObject doc = new Gson().fromJson(new InputStreamReader(con2.getInputStream()), JsonObject.class);
 						HBDocument episode = crawlDocument(pageUrl, doc);
-						insertDoc(episode.toJson());
+						insertDoc(episode);
 					}
 				}
 				catch(Exception e) {

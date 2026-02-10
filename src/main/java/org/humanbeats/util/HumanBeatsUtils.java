@@ -30,7 +30,7 @@ public class HumanBeatsUtils
 
 	public static final int THRESHOLD = 90;
 	public static final int SCORE = 85;
-//	public static final int TRACKS_SIZE = 5;
+	public static final int TRACKS_SIZE = 5;
 
 	public enum TYPE {
 		album,

@@ -34,16 +34,6 @@ public class SpreakerCrawler extends AbstractCrawler
 	}
 
 	@Override
-	public HBDocument crawlDocument(String url, Document doc) {
-		throw new RuntimeException("Not implemented!!");
-	}
-
-	@Override
-	public HBDocument crawlDocument(String url, JsonObject doc) {
-		throw new RuntimeException("Not implemented!!");
-	}
-
-	@Override
 	protected void crawl(String url)
 	{
 		try
@@ -59,40 +49,15 @@ public class SpreakerCrawler extends AbstractCrawler
 				results.forEach(item -> {
 					JsonObject doc = (JsonObject)item;
 					String pageUrl = doc.get("site_url").getAsString();
-					TYPE type = TYPE.podcast;
-
-					log.debug("Parsing page " + pageUrl);
 					String id = getId(pageUrl);
-					String title = doc.get("title").getAsString();
+					log.debug("Parsing page " + pageUrl);
 
 					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
+							Filters.eq("id", id))).iterator().tryNext();
 					if(json == null)
 					{
-						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", authors).
-									append("cover", doc.get("image_original_url").getAsString()).
-									append("date", getDate(doc.get("published_at").getAsString())).
-									append("description", title).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
-									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("published_at").getAsString())).
-									append("tracks", getTracks(doc.get("description").getAsString())).
-									append("audio", doc.get("download_url").getAsString());
-							insertDoc(json);
-						}
-						catch(Exception e) {
-							log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-						}
+						HBDocument episode = crawlDocument(pageUrl, doc);
+						insertDoc(episode);
 					}
 				});
 			}
@@ -104,12 +69,46 @@ public class SpreakerCrawler extends AbstractCrawler
 	}
 
 	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		HBDocument episode = HBDocument.builder()
+				.id(getId(url))
+				.url(url)
+				.source(source)
+				.type(TYPE.podcast)
+				.artist(artist)
+				.authors(authors)
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.title(getTitle(doc))
+				// same as title
+				.description(getTitle(doc))
+				.cover(getCover(doc))
+				.audio(getAudio(doc))
+				.tracks(getTracks(doc)).build();
+		return episode;
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, Document doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
+
+	@Override
 	protected String getBaseUrl() {
 		return URL;
 	}
 
-	private Date getDate(String date) {
+	private String getCover(JsonObject doc) {
+		return doc.get("image_original_url").getAsString();
+	}
+
+	private String getTitle(JsonObject doc) {
+		return doc.get("title").getAsString();
+	}
+
+	private Date getDate(JsonObject doc) {
 		try {
+			String date = doc.get("published_at").getAsString();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			return sdf.parse(date);
 		} catch (ParseException e) {
@@ -117,19 +116,17 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 	}
 
-	private Integer getYear(String date) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(sdf.parse(date));
-			return cal.get(Calendar.YEAR);
-		} catch (ParseException e) {
-			return null;
-		}
+	private Integer getYear(JsonObject doc) {
+		Date date = getDate(doc);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.YEAR);
 	}
 
-	private List<HBTrack> getTracks(String content) {
+	private List<HBTrack> getTracks(JsonObject doc) {
 		List<HBTrack> tracks = Lists.newArrayList();
+
+		String content = doc.get("description").getAsString();
 		String[] chunks = content.split("\n");
 		for(int i = 0; i < chunks.length; i++) {
 			String title = chunks[i].trim();
@@ -139,5 +136,9 @@ public class SpreakerCrawler extends AbstractCrawler
 			}
 		}
 		return tracks;
+	}
+
+	private String getAudio(JsonObject doc) {
+		return doc.get("download_url").getAsString();
 	}
 }

@@ -8,13 +8,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
+import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.gson.JsonObject;
@@ -42,7 +46,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
 	public static MongoRepository repo;
-	
+
 	@Setter
 	protected String type;
 	@Setter
@@ -57,7 +61,7 @@ public abstract class AbstractCrawler extends WebCrawler
 	protected List<String> authors;
 	@Setter
 	protected Integer page;
-	
+
 
 	public void load(String... args) 
 	{
@@ -120,8 +124,8 @@ public abstract class AbstractCrawler extends WebCrawler
 						Filters.eq("id", id))).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
-					json = crawlDocument(url, doc).toJson();
-					insertDoc(json);
+					HBDocument hbdoc = crawlDocument(url, doc);
+					insertDoc(hbdoc);
 				}
 			}
 			catch (Throwable t) {
@@ -153,18 +157,65 @@ public abstract class AbstractCrawler extends WebCrawler
 		} 
 	}
 
-	protected void insertDoc(org.bson.Document json) {
-//		repo.getDocs().insertOne(json);
-//		log.info(json.getString("type") + " " + json.getString("url") + " added");
-//
-//		// update last episode date
-//		if(TYPE.podcast.name().equals(json.getString("type"))) {
-//			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
-//			org.bson.Document doc = i.next();
-//			doc.append("lastEpisodeDate", json.getDate("date"));
-//			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-//			log.info("lastEpisodeDate " + source + " updated");
-//		}
+	protected void insertDoc(HBDocument doc) {
+		validateDocument(doc);
+
+		org.bson.Document json = doc.toJson();
+		repo.getDocs().insertOne(json);
+		log.info(json.getString("type") + " " + json.getString("url") + " added");
+
+		// update last episode date
+		if(TYPE.podcast.name().equals(json.getString("type"))) {
+			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+			json = i.next();
+			json.append("lastEpisodeDate", json.getDate("date"));
+			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+			log.info("lastEpisodeDate " + source + " updated");
+		}
+	}
+
+	private void validateDocument(HBDocument doc) {
+		// podcast
+		if(TYPE.podcast.equals(doc.getType())) {
+			Preconditions.checkNotNull(doc, "Episode cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getId()), "Episode id cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getUrl()), "Episode url cannot be null");
+			Preconditions.checkNotNull(doc.getType(), "Episode type cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getSource()), "Episode source cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getArtist()), "Episode artist cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getTitle()), "Episode title cannot be null");
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getAuthors()), "Episode authors cannot be empty");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getDescription()), "Episode description cannot be null");
+			Preconditions.checkNotNull(doc.getDate(), "Episode date cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getCover()), "Episode cover cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getAudio()), "Episode audio cannot be null");
+			Preconditions.checkNotNull(doc.getYear(), "Episode year cannot be null");
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getTracks()) 
+					&& doc.getTracks().size() >= HumanBeatsUtils.TRACKS_SIZE, "Episode tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
+		}
+		// album
+		else {
+			Preconditions.checkNotNull(doc, "Album cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getId()), "Album id cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getUrl()), "Album url cannot be null");
+			Preconditions.checkNotNull(doc.getType(), "Album type cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getSource()), "Album source cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getArtist()), "Album artist cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getTitle()), "Album title cannot be null");
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getAuthors()), "Album authors cannot be empty");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getDescription()), "Album description cannot be null");
+			Preconditions.checkNotNull(doc.getDate(), "Album date cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getCover()), "Album cover cannot be null");
+			//Preconditions.checkArgument(StringUtils.isNotBlank(doc.getAudio()), "Album audio cannot be null");
+			Preconditions.checkNotNull(doc.getYear(), "Album year cannot be null");
+			//Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getTracks()) 
+			//&& doc.getTracks().size() >= HumanBeatsUtils.TRACKS_SIZE, "Album tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
+
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getGenres()), "Album geners cannot be empty");
+			Preconditions.checkNotNull(StringUtils.isNotBlank(doc.getLabel()), "Album label cannot be null");
+			Preconditions.checkNotNull(StringUtils.isNotBlank(doc.getReview()), "Album review cannot be null");
+			Preconditions.checkNotNull(doc.getVote(), "Album vote cannot be null");
+		}
 	}
 
 	private class HumanBeatsParser extends Parser {

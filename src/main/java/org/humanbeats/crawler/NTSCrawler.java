@@ -77,7 +77,7 @@ public class NTSCrawler extends AbstractCrawler
 					if(json == null)
 					{
 						HBDocument episode = crawlDocument(pageUrl, doc);
-						insertDoc(episode.toJson());
+						insertDoc(episode);
 					}
 				}
 				catch (Throwable t) 

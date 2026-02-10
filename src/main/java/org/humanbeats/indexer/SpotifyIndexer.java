@@ -384,7 +384,7 @@ public class SpotifyIndexer
 			}
 			catch (Exception e) 
 			{
-				log.error("ERROR loading " + title + ": " + e.getMessage(), e);
+				log.error("ERROR loading " + title + ": " + e.getMessage());
 				relogin();
 			}
 		});
@@ -522,7 +522,7 @@ public class SpotifyIndexer
 					}
 					catch (Exception e) 
 					{
-						log.error("ERROR loading " + title + ": " + e.getMessage(), e);
+						log.error("ERROR loading " + title + ": " + e.getMessage());
 						relogin();
 					}
 				}

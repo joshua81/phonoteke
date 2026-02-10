@@ -52,8 +52,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 					log.debug("Parsing page " + pageUrl);
 					String id = getId(pageUrl);
 
-					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("id", id))).iterator().tryNext();
+					org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 					if(json == null)
 					{
 						HttpURLConnection con2 = (HttpURLConnection)new URL(pageUrl.replace(".html", ".json")).openConnection();

@@ -52,7 +52,7 @@ public class OndarockCrawler extends AbstractCrawler
 				.cover(getCover(doc))
 				.links(getLinks(doc))
 				.genres(getGenres(doc))
-				.vote(getVote(doc))
+				.vote(getVote(doc, url))
 				.label(getLabel(doc))
 				.tracks(getTracks(doc)).build();
 		return album;
@@ -335,7 +335,7 @@ public class OndarockCrawler extends AbstractCrawler
 		return getVideos(elements);
 	}
 
-	private Float getVote(Document doc) 
+	private Float getVote(Document doc, String url) 
 	{
 		try
 		{

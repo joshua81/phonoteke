@@ -52,8 +52,7 @@ public class SpreakerCrawler extends AbstractCrawler
 					String id = getId(pageUrl);
 					log.debug("Parsing page " + pageUrl);
 
-					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("id", id))).iterator().tryNext();
+					org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 					if(json == null)
 					{
 						HBDocument episode = crawlDocument(pageUrl, doc);

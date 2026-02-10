@@ -120,8 +120,7 @@ public abstract class AbstractCrawler extends WebCrawler
 				String id = getId(url);
 				log.debug("Parsing page " + url);
 
-				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("id", id))).iterator().tryNext();
+				org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
 					HBDocument hbdoc = crawlDocument(url, doc);

@@ -379,6 +379,7 @@ public class OndarockCrawler extends AbstractCrawler
 				{
 					int ix = "https://www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
+					youtube = youtube.split("\\?")[0];
 					tracks.add(HBTrack.builder().youtube(youtube).build());
 					log.debug("tracks: youtube: " + youtube);
 				}
@@ -386,6 +387,7 @@ public class OndarockCrawler extends AbstractCrawler
 				{
 					int ix = "//www.youtube.com/embed/".length();
 					youtube = src.substring(ix);
+					youtube = youtube.split("\\?")[0];
 					tracks.add(HBTrack.builder().youtube(youtube).build());
 					log.debug("tracks: youtube: " + youtube);
 				}

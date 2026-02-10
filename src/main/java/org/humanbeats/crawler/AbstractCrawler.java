@@ -114,12 +114,12 @@ public abstract class AbstractCrawler extends WebCrawler
 	{
 		if(page.getParseData() instanceof HtmlParseData) 
 		{
+			String url = page.getWebURL().getURL();
+			String id = getId(url);
+			log.debug("Parsing page " + url);
+			
 			try
 			{
-				String url = page.getWebURL().getURL();
-				String id = getId(url);
-				log.debug("Parsing page " + url);
-
 				org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
@@ -128,6 +128,7 @@ public abstract class AbstractCrawler extends WebCrawler
 				}
 			}
 			catch (Throwable t) {
+				log.error("ERROR parsing page " + url, t);
 				throw new RuntimeException("ERROR parsing page " + url, t);
 			}
 		}

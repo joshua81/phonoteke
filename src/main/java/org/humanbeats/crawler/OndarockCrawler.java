@@ -65,15 +65,16 @@ public class OndarockCrawler extends AbstractCrawler
 
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
-		return url.getURL().toLowerCase().startsWith(URL);
+		return url.getURL().toLowerCase().startsWith(URL) && 
+				(url.getURL().endsWith(".htm") || url.getURL().endsWith(".html"));
 	}
 
-	@Override
-	public void visit(Page page) {
-		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
-			super.visit(page);
-		}
-	}
+//	@Override
+//	public void visit(Page page) {
+//		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
+//			super.visit(page);
+//		}
+//	}
 
 	@Override
 	protected String getBaseUrl() {

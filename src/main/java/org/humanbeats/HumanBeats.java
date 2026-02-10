@@ -2,6 +2,7 @@ package org.humanbeats;
 
 import java.util.Arrays;
 
+import org.humanbeats.crawler.AbstractCrawler;
 import org.humanbeats.crawler.BBCRadioCrawler;
 import org.humanbeats.crawler.NTSCrawler;
 import org.humanbeats.crawler.OndarockCrawler;
@@ -114,18 +115,18 @@ public class HumanBeats implements CommandLineRunner {
 	}
 
 	private void crawlPodcasts(String... args) {
-		BBCRadioCrawler.repo = repo;
-//		new BBCRadioCrawler().load(args);
-//		new RadioRaiCrawler().load(args);
-//		new SpreakerCrawler().load(args);
-//		new WWFMCrawler().load(args);
-//		new RadioCapitalCrawler().load(args);
+		AbstractCrawler.repo = repo;
+		new BBCRadioCrawler().load(args);
+		new RadioRaiCrawler().load(args);
+		new SpreakerCrawler().load(args);
+		new WWFMCrawler().load(args);
+		new RadioCapitalCrawler().load(args);
 		new NTSCrawler().load(args);
-//		new RadioRaheemCrawler().load(args);
+		new RadioRaheemCrawler().load(args);
 	}
 
 	private void crawlReviews(String... args) {
-		OndarockCrawler.repo = repo;
+		AbstractCrawler.repo = repo;
 		new OndarockCrawler().load(args);
 	}
 

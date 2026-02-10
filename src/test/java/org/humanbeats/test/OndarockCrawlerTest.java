@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OndarockCrawlerTest {
 
-	private static final String TEST_ALBUM_URL = "https://www.ondarock.it/recensioni/2025-natalialafourcade-cancionera.htm";
+	private static final String TEST_ALBUM_URL = "https://www.ondarock.it/recensioni/2026-sincopatici-lacorazzatapotemkin.htm";
 
 	@BeforeEach
 	void setUp() {

@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.humanbeats.model.HBDocument;
 import org.humanbeats.model.HBTrack;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -66,15 +65,11 @@ public class OndarockCrawler extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		return url.getURL().toLowerCase().startsWith(URL) && 
-				(url.getURL().endsWith(".htm") || url.getURL().endsWith(".html"));
+				(url.getURL().endsWith(".htm") || url.getURL().endsWith(".html")) &&
+				(url.getURL().contains("pietremiliari") || 
+						url.getURL().contains("recensioni") ||
+						url.getURL().contains("jazz/recensioni"));
 	}
-
-//	@Override
-//	public void visit(Page page) {
-//		if(page.getWebURL().getURL().endsWith(".htm") || page.getWebURL().getURL().endsWith(".html")) {
-//			super.visit(page);
-//		}
-//	}
 
 	@Override
 	protected String getBaseUrl() {
@@ -138,7 +133,7 @@ public class OndarockCrawler extends AbstractCrawler
 		Elements elements = node.select("a");
 		for(int i = 0; i < elements.size(); i++)
 		{
-			elements.get(i).remove();
+			elements.get(i).unwrap();
 		}
 	}
 
@@ -396,8 +391,8 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 		return tracks;
 	}
-
-	private String cleanHTML(String html) {
-		return Jsoup.parse(html).wholeText();
-	}
+//
+//	private String cleanHTML(String html) {
+//		return Jsoup.parse(html).wholeText();
+//	}
 }

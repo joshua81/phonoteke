@@ -65,10 +65,18 @@ public class OndarockCrawler extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		return url.getURL().toLowerCase().startsWith(URL) && 
-				(url.getURL().endsWith(".htm") || url.getURL().endsWith(".html")) &&
-				(url.getURL().contains("pietremiliari") || 
-						url.getURL().contains("recensioni") ||
-						url.getURL().contains("jazz/recensioni"));
+				(url.getURL().endsWith(".htm") || url.getURL().endsWith(".html"));
+	}
+
+	@Override
+	public void visit(Page page) 
+	{
+		if(page.getWebURL().getURL().contains("pietremiliari") || 
+				page.getWebURL().getURL().contains("recensioni") ||
+				page.getWebURL().getURL().contains("jazz/recensioni"))
+		{
+			super.visit(page);
+		}
 	}
 
 	@Override
@@ -391,8 +399,8 @@ public class OndarockCrawler extends AbstractCrawler
 		}
 		return tracks;
 	}
-//
-//	private String cleanHTML(String html) {
-//		return Jsoup.parse(html).wholeText();
-//	}
+	//
+	//	private String cleanHTML(String html) {
+	//		return Jsoup.parse(html).wholeText();
+	//	}
 }

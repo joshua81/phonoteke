@@ -86,7 +86,7 @@ public class WWFMCrawler extends AbstractCrawler
 			log.debug("WebDriver initialized successfully");
 		} catch (Exception e) {
 			log.error("Failed to initialize WebDriver: " + e.getMessage());
-			throw new RuntimeException("WebDriver initialization failed", e);
+			throw new RuntimeException("WebDriver initialization failed");
 		}
 	}
 
@@ -146,8 +146,8 @@ public class WWFMCrawler extends AbstractCrawler
 
 			return episode;
 		} catch (Exception e) {
-			log.error("Error crawling episode " + url + ": " + e.getMessage());
-			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage(), e);
+			//log.error("Error crawling episode " + url + ": " + e.getMessage());
+			throw new RuntimeException("Error crawling episode " + url + ": " + e.getMessage());
 		} finally {
 			cleanupWebDriver();
 		}
@@ -203,8 +203,8 @@ public class WWFMCrawler extends AbstractCrawler
 			Preconditions.checkNotNull(episode.getYear(), "Empty year!");
 		}
 		catch (Exception e) {
-			log.error("Could not extract all episode metadata: " + e.getMessage());
-			throw new RuntimeException("Could not extract all episode metadata: " + e.getMessage(), e);
+			//log.error("Could not extract all episode metadata: " + e.getMessage());
+			throw new RuntimeException("Could not extract all episode metadata: " + e.getMessage());
 		}
 	}
 

@@ -68,7 +68,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 		}
 		catch (Throwable t) {
 			log.error("ERROR parsing page " + url + ": " + t.getMessage());
-			throw new RuntimeException(t);
+			throw new RuntimeException("ERROR parsing page " + url + ": " + t.getMessage());
 		}
 	}
 

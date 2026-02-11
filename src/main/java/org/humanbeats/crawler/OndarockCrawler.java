@@ -71,9 +71,9 @@ public class OndarockCrawler extends AbstractCrawler
 	@Override
 	public void visit(Page page) 
 	{
-		if(page.getWebURL().getURL().contains("pietremiliari") || 
-				page.getWebURL().getURL().contains("recensioni") ||
-				page.getWebURL().getURL().contains("jazz/recensioni"))
+		if(page.getWebURL().getURL().contains("/pietremiliari/") || 
+				page.getWebURL().getURL().contains("/recensioni/") ||
+				page.getWebURL().getURL().contains("/jazz/recensioni/"))
 		{
 			super.visit(page);
 		}

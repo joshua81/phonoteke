@@ -9,7 +9,6 @@ import org.humanbeats.crawler.OndarockCrawler;
 import org.humanbeats.crawler.RadioCapitalCrawler;
 import org.humanbeats.crawler.RadioRaheemCrawler;
 import org.humanbeats.crawler.RadioRaiCrawler;
-import org.humanbeats.crawler.SpreakerCrawler;
 import org.humanbeats.crawler.WWFMCrawler;
 import org.humanbeats.indexer.DiscogsIndexer;
 import org.humanbeats.indexer.MusicbrainzIndexer;
@@ -118,7 +117,7 @@ public class HumanBeats implements CommandLineRunner {
 		AbstractCrawler.repo = repo;
 		new BBCRadioCrawler().load(args);
 		new RadioRaiCrawler().load(args);
-		new SpreakerCrawler().load(args);
+		//new SpreakerCrawler().load(args);
 		new WWFMCrawler().load(args);
 		new RadioCapitalCrawler().load(args);
 		new NTSCrawler().load(args);

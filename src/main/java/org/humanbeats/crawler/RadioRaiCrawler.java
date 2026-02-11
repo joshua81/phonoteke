@@ -62,12 +62,12 @@ public class RadioRaiCrawler extends AbstractCrawler
 					}
 				}
 				catch(Exception e) {
-					log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
+					log.error("ERROR parsing page " + pageUrl + ": " + e.getMessage());
 				}
 			});
 		}
 		catch (Throwable t) {
-			log.debug("ERROR parsing page " + url + ": " + t.getMessage());
+			log.error("ERROR parsing page " + url + ": " + t.getMessage());
 			throw new RuntimeException(t);
 		}
 	}

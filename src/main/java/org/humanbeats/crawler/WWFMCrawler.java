@@ -52,7 +52,7 @@ public class WWFMCrawler extends AbstractCrawler
 
 
 	public WWFMCrawler() {
-		this.type = WWFM;
+		WWFMCrawler.type = WWFM;
 	}
 
 	/**

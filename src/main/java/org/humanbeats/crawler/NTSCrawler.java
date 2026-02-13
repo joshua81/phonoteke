@@ -36,7 +36,7 @@ public class NTSCrawler extends AbstractCrawler
 	private static final String URL_EPISODE = "api/v2/shows/$ARTIST/episodes/$EPISODE";
 
 	public NTSCrawler() {
-		this.type = NTS;
+		NTSCrawler.type = NTS;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class NTSCrawler extends AbstractCrawler
 		{
 			CloseableHttpClient client = HttpClients.createDefault();
 			Integer offset = (page-1)*PAGE_SIZE;
-			String episodesUrl = URL + URL_EPISODES.replace("$ARTIST", this.id)
+			String episodesUrl = URL + URL_EPISODES.replace("$ARTIST", NTSCrawler.id)
 			.replace("$OFFSET", offset.toString())
 			.replace("$LIMIT", PAGE_SIZE.toString());
 			HttpGet httpGet = new HttpGet(episodesUrl);
@@ -60,7 +60,7 @@ public class NTSCrawler extends AbstractCrawler
 				{
 					JsonObject doc = (JsonObject)item;
 					CloseableHttpClient client2 = HttpClients.createDefault();
-					String episodeUrl = URL + URL_EPISODE.replace("$ARTIST", this.id)
+					String episodeUrl = URL + URL_EPISODE.replace("$ARTIST", NTSCrawler.id)
 					.replace("$EPISODE", doc.get("episode_alias").getAsString());
 					HttpGet httpGet2 = new HttpGet(episodeUrl);
 

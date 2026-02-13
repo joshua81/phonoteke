@@ -28,7 +28,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 	private static final String BBC = "bbc";
 
 	public BBCRadioCrawler() {
-		this.type = BBC;
+		BBCRadioCrawler.type = BBC;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class BBCRadioCrawler extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(BBCRadioCrawler.url);
 	}
 
 	@Override

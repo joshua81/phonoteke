@@ -30,7 +30,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	private static final String URL = "https://www.capital.it/programmi/";
 
 	public RadioCapitalCrawler() {
-		this.type = CAPITAL;
+		RadioCapitalCrawler.type = CAPITAL;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url);
 	}
 
 	@Override

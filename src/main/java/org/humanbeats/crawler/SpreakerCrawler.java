@@ -30,7 +30,7 @@ public class SpreakerCrawler extends AbstractCrawler
 	private static final String URL = "https://www.spreaker.com/";
 
 	public SpreakerCrawler() {
-		this.type = SPREAKER;
+		SpreakerCrawler.type = SPREAKER;
 	}
 
 	@Override

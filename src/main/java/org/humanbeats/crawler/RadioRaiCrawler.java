@@ -36,7 +36,7 @@ public class RadioRaiCrawler extends AbstractCrawler
 
 
 	public RadioRaiCrawler() {
-		this.type = RAI;
+		RadioRaiCrawler.type = RAI;
 	}
 
 	@Override

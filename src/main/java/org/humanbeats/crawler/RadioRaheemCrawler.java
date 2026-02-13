@@ -30,7 +30,7 @@ public class RadioRaheemCrawler extends AbstractCrawler
 	private static final String URL_EPISODE = "https://www.radioraheem.it/wp-json/wp/v2/episodes/?types=show:$ID&per_page=24&offset=0&orderby=date&lang=default";
 
 	public RadioRaheemCrawler() {
-		this.type = RADIO_RAHEEM;
+		RadioRaheemCrawler.type = RADIO_RAHEEM;
 	}
 
 	@Override

@@ -48,19 +48,19 @@ public abstract class AbstractCrawler extends WebCrawler
 	public static MongoRepository repo;
 
 	@Setter
-	protected String type;
+	protected static String type;
 	@Setter
-	protected String url;
+	protected static String url;
 	@Setter
-	protected String id;
+	protected static String id;
 	@Setter
-	protected String artist;
+	protected static String artist;
 	@Setter
-	protected String source;
+	protected static String source;
 	@Setter
-	protected List<String> authors;
+	protected static List<String> authors;
 	@Setter
-	protected Integer page;
+	protected static Integer page;
 
 
 	public void load(String... args) 
@@ -70,12 +70,12 @@ public abstract class AbstractCrawler extends WebCrawler
 		while(i.hasNext()) 
 		{
 			org.bson.Document show = i.next();
-			this.id = show.getString("id");
-			this.url = show.getString("url");
-			this.artist = show.getString("title");
-			this.source = show.getString("source");
-			this.authors = show.get("authors", List.class);
-			this.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			AbstractCrawler.id = show.getString("id");
+			AbstractCrawler.url = show.getString("url");
+			AbstractCrawler.artist = show.getString("title");
+			AbstractCrawler.source = show.getString("source");
+			AbstractCrawler.authors = show.get("authors", List.class);
+			AbstractCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
 			log.info("Crawling " + artist + " (" + page + " page)");
 			crawl(url);
 		}

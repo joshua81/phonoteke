@@ -137,7 +137,7 @@ public class RadioCapitalCrawler extends AbstractCrawler
 				show = "extra";
 			}
 			else if("casabertallot".equals(source)){
-				show = "bertallot";
+				show = "b-side";
 			}
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
 			doc = Jsoup.connect(URL + show + "/playlist/dettaglio/" + dateStr).ignoreContentType(true).get();

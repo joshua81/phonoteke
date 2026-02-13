@@ -39,7 +39,7 @@ public class RadioCapitalCrawlerTest {
 		try {
 			Document doc = Jsoup.connect(TEST_EPISODE_URL).ignoreContentType(true).get();
 			RadioCapitalCrawler crawler = new RadioCapitalCrawler();
-			crawler.setSource("alexpaletta");
+			RadioCapitalCrawler.source = "alexpaletta";
 			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure

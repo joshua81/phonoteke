@@ -45,7 +45,7 @@ public class RadioRaiCrawlerTest {
 			HttpURLConnection con = (HttpURLConnection)new URL(TEST_EPISODE_URL).openConnection();
 			JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
 			RadioRaiCrawler crawler = new RadioRaiCrawler();
-			crawler.setSource("battiti");
+			RadioRaiCrawler.source = "battiti";
 			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure

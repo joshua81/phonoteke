@@ -37,7 +37,6 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,20 +46,13 @@ public abstract class AbstractCrawler extends WebCrawler
 
 	public static MongoRepository repo;
 
-	@Setter
-	protected static String type;
-	@Setter
-	protected static String url;
-	@Setter
-	protected static String id;
-	@Setter
-	protected static String artist;
-	@Setter
-	protected static String source;
-	@Setter
-	protected static List<String> authors;
-	@Setter
-	protected static Integer page;
+	public static String type;
+	public static String url;
+	public static String id;
+	public static String artist;
+	public static String source;
+	public static List<String> authors;
+	public static Integer page;
 
 
 	public void load(String... args) 

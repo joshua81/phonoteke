@@ -4,25 +4,24 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.humanbeats.loader.MongoRepository;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
@@ -38,16 +37,16 @@ import edu.uci.ics.crawler4j.parser.TikaHtmlParser;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import edu.uci.ics.crawler4j.url.WebURL;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractCrawler extends WebCrawler
 {
-	private static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
+	protected static final String USER_AGENT = "HumanBeats" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
 	public static MongoRepository repo;
+
+	public static String type;
 	public static String url;
 	public static String id;
 	public static String artist;
@@ -55,43 +54,23 @@ public abstract class AbstractCrawler extends WebCrawler
 	public static List<String> authors;
 	public static Integer page;
 
-	protected PlaylistData playlistData;
 
-	/**
-	 * Playlist data structure to hold extracted track information
-	 */
-	@Data
-	@Builder
-	public static class PlaylistData {
-		private String id;
-		private TYPE type;
-		private String source;
-		private String artist;
-		private String title;
-		private String description;
-		private String url;
-		private Date date;
-		private String cover;
-		private String label;
-		private String review;
-		private Float vote;
-		private String audio;
-		private Integer year;
-		private List<TrackInfo> tracks;
-		private List<String> authors;
-		private List<String> genres;
-		private List<String> links;
-	}
-
-	/**
-	 * Track information structure
-	 */
-	@Data
-	@Builder
-	public static class TrackInfo {
-		private String artist;
-		private String title;
-		private String fullTitle;
+	public void load(String... args) 
+	{
+		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", type))).iterator() : 
+			repo.getShows().find(Filters.and(Filters.eq("type", type), Filters.eq("source", args[0]))).iterator();
+		while(i.hasNext()) 
+		{
+			org.bson.Document show = i.next();
+			AbstractCrawler.id = show.getString("id");
+			AbstractCrawler.url = show.getString("url");
+			AbstractCrawler.artist = show.getString("title");
+			AbstractCrawler.source = show.getString("source");
+			AbstractCrawler.authors = show.get("authors", List.class);
+			AbstractCrawler.page = args.length == 2 ? Integer.parseInt(args[1]) : 1;
+			log.info("Crawling " + artist + " (" + page + " page)");
+			crawl(url);
+		}
 	}
 
 	protected void crawl(String url)
@@ -128,58 +107,23 @@ public abstract class AbstractCrawler extends WebCrawler
 		if(page.getParseData() instanceof HtmlParseData) 
 		{
 			String url = page.getWebURL().getURL();
-			log.debug("Parsing page " + url);
-
 			String id = getId(url);
-			String source = getSource();
-			TYPE type = getType(url);
+			log.debug("Parsing page " + url);
 
 			try
 			{
-				org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-						Filters.eq("id", id))).iterator().tryNext();
+				org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 				if(json == null) {
 					Document doc = Jsoup.parse(((HtmlParseData)page.getParseData()).getHtml());
-					switch(type)
-					{
-					case album:
-					case podcast:
-						json = new org.bson.Document("id", id).
-						append("url", getUrl(url)).
-						append("type", type.name()).
-						append("artist", getArtist(url, doc)).
-						append("title", getTitle(url, doc)).
-						append("authors", getAuthors(url, doc)).
-						append("cover", getCover(url, doc)).
-						append("date", getDate(url, doc)).
-						append("description", getDescription(url, doc)).
-						append("genres", getGenres(url, doc)).
-						append("label", getLabel(url, doc)).
-						append("links", getLinks(url, doc)).
-						append("review", getReview(url, doc)).
-						append("source", getSource()).
-						append("vote", getVote(url, doc)).
-						append("year", getYear(url, doc)).
-						append("tracks", getTracks(url, doc)).
-						append("audio", getAudio(url, doc));
-						insertDoc(json);
-						break;
-					default:
-						break;
-					}
+					HBDocument hbdoc = crawlDocument(url, doc);
+					insertDoc(hbdoc);
 				}
 			}
 			catch (Throwable t) {
-				throw new RuntimeException("ERROR parsing page " + url, t);
-			}
-			finally {
-				cleanup();
+				log.error("ERROR parsing page " + url + ": " + t.getMessage());
+				throw new RuntimeException("ERROR parsing page " + url + ": " + t.getMessage());
 			}
 		}
-	}
-
-	protected void cleanup() {
-		playlistData = null;
 	}
 
 	protected String getId(String url) 
@@ -205,172 +149,66 @@ public abstract class AbstractCrawler extends WebCrawler
 		} 
 	}
 
-	protected List<org.bson.Document> getVideos(Elements elements) 
-	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		for(int i = 0; i < elements.size(); i++)
-		{
-			String src = elements.get(i).attr("src");
-			if(src != null && src.contains("youtube.com")) 
-			{
-				String youtube = null;
-				if(src.startsWith("https://www.youtube.com/embed/"))
-				{
-					int ix = "https://www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(newTrack(null, youtube));
-					log.debug("tracks: youtube: " + youtube);
-				}
-				else if(src.startsWith("//www.youtube.com/embed/"))
-				{
-					int ix = "//www.youtube.com/embed/".length();
-					youtube = src.substring(ix);
-					tracks.add(newTrack(null, youtube));
-					log.debug("tracks: youtube: " + youtube);
-				}
-			}
-		}
-		return tracks;
-	}
+	protected void insertDoc(HBDocument doc) {
+		validateDocument(doc);
 
-	protected List<org.bson.Document> getTracks(Element content, String source) 
-	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		if(content != null) {
-			content.select("br").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("p").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("li").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h1").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h2").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("h3").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-			content.select("div").after(HumanBeatsUtils.TRACKS_NEW_LINE);
-
-			String[] chunks = content.text().replace("||", HumanBeatsUtils.TRACKS_NEW_LINE).split(HumanBeatsUtils.TRACKS_NEW_LINE);
-			for(int i = 0; i < chunks.length; i++) {
-				String title = chunks[i].trim();
-				if(StringUtils.isNotBlank(title)) {
-					tracks.add(newTrack(title, null));
-					log.debug("tracks: " + title);
-				}
-			}
-		}
-		return checkTracks(tracks);
-	}
-
-	protected static org.bson.Document newTrack(String title, String youtube)
-	{
-		if(StringUtils.isNoneEmpty(title)) {
-			title = title.replaceAll("&nbsp;", " ");
-			title = title.replaceAll("\"", "");
-			title = title.trim();
-		}
-		return new org.bson.Document("titleOrig", title).
-				append("title", title).
-				append("youtube", youtube);
-	}
-
-	protected List<org.bson.Document> checkTracks(List<org.bson.Document> tracks)
-	{
-		Preconditions.checkArgument(
-				CollectionUtils.isNotEmpty(tracks) && 
-				tracks.size() >= HumanBeatsUtils.TRACKS_SIZE, 
-				"Number of tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
-		return tracks;
-	}
-
-	protected void insertDoc(org.bson.Document json) {
+		org.bson.Document json = doc.toJson();
 		repo.getDocs().insertOne(json);
 		log.info(json.getString("type") + " " + json.getString("url") + " added");
 
 		// update last episode date
 		if(TYPE.podcast.name().equals(json.getString("type"))) {
 			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
-			org.bson.Document doc = i.next();
-			doc.append("lastEpisodeDate", json.getDate("date"));
+			json = i.next();
+			json.append("lastEpisodeDate", json.getDate("date"));
 			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 			log.info("lastEpisodeDate " + source + " updated");
 		}
 	}
 
-	//---------------------------------
-	// Methods to be overridden
-	//---------------------------------
-	protected String getBaseUrl()
-	{
-		return null;
-	}
+	private void validateDocument(HBDocument doc) {
+		// podcast
+		if(TYPE.podcast.equals(doc.getType())) {
+			Preconditions.checkNotNull(doc, "Episode cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getId()), "Episode id cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getUrl()), "Episode url cannot be null");
+			Preconditions.checkNotNull(doc.getType(), "Episode type cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getSource()), "Episode source cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getArtist()), "Episode artist cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getTitle()), "Episode title cannot be null");
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getAuthors()), "Episode authors cannot be empty");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getDescription()), "Episode description cannot be null");
+			Preconditions.checkNotNull(doc.getDate(), "Episode date cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getCover()), "Episode cover cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getAudio()), "Episode audio cannot be null");
+			Preconditions.checkNotNull(doc.getYear(), "Episode year cannot be null");
+			Preconditions.checkArgument("alexpaletta".equals(doc.getSource()) || "musicalbox".equals(doc.getSource()) || 
+					(CollectionUtils.isNotEmpty(doc.getTracks()) && doc.getTracks().size() >= HumanBeatsUtils.TRACKS_SIZE), "Episode tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
+		}
+		// album
+		else {
+			Preconditions.checkNotNull(doc, "Album cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getId()), "Album id cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getUrl()), "Album url cannot be null");
+			Preconditions.checkNotNull(doc.getType(), "Album type cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getSource()), "Album source cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getArtist()), "Album artist cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getTitle()), "Album title cannot be null");
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getAuthors()), "Album authors cannot be empty");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getDescription()), "Album description cannot be null");
+			Preconditions.checkNotNull(doc.getDate(), "Album date cannot be null");
+			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getCover()), "Album cover cannot be null");
+			//Preconditions.checkArgument(StringUtils.isNotBlank(doc.getAudio()), "Album audio cannot be null");
+			Preconditions.checkNotNull(doc.getYear(), "Album year cannot be null");
+			//Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getTracks()) 
+			//&& doc.getTracks().size() >= HumanBeatsUtils.TRACKS_SIZE, "Album tracks less than " + HumanBeatsUtils.TRACKS_SIZE);
 
-	protected String getSource() 
-	{
-		return null;
+			Preconditions.checkArgument(CollectionUtils.isNotEmpty(doc.getGenres()), "Album geners cannot be empty");
+			Preconditions.checkNotNull(StringUtils.isNotBlank(doc.getLabel()), "Album label cannot be null");
+			Preconditions.checkNotNull(StringUtils.isNotBlank(doc.getReview()), "Album review cannot be null");
+			Preconditions.checkNotNull(doc.getVote(), "Album vote cannot be null");
+		}
 	}
-
-	protected TYPE getType(String url) 
-	{
-		return null;
-	}
-
-	protected String getArtist(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getAuthors(String url, Document doc) {
-		return null;
-	}
-
-	protected String getCover(String url, Document doc) {
-		return null;
-	}
-
-	protected Date getDate(String url, Document doc) {
-		return null;
-	}
-
-	protected String getDescription(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getGenres(String url, Document doc) {
-		return null;
-	}
-
-	protected String getLabel(String url, Document doc) {
-		return null;
-	}
-
-	protected String getReview(String url, Document doc) {
-		return null;
-	}
-
-	protected List<String> getLinks(String url, Document doc) {
-		return null;
-	}
-
-	protected String getTitle(String url, Document doc) {
-		return null;
-	}
-
-	protected List<org.bson.Document> getTracks(String url, Document doc) {
-		return null;
-	}
-
-	protected Float getVote(String url, Document doc) {
-		return null;
-	}
-
-	protected Integer getYear(String url, Document doc) {
-		return null;
-	}
-
-	protected String getAudio(String url, Document doc) {
-		return null;
-	}
-
-	protected String cleanHTML(String html) {
-		return Jsoup.parse(html).wholeText();
-	}
-
-	//-------------------------------------------
 
 	private class HumanBeatsParser extends Parser {
 		public HumanBeatsParser(CrawlConfig config) throws IllegalAccessException, InstantiationException {
@@ -411,13 +249,17 @@ public abstract class AbstractCrawler extends WebCrawler
 				{
 					WebURL webURL = new WebURL();
 					webURL.setURL(link);
-					//					webURL.setTag(urlAnchorPair.getTag());
-					//					webURL.setAnchor(urlAnchorPair.getAnchor());
-					//					webURL.setAttributes(urlAnchorPair.getAttributes());
+					//webURL.setTag(urlAnchorPair.getTag());
+					//webURL.setAnchor(urlAnchorPair.getAnchor());
+					//webURL.setAttributes(urlAnchorPair.getAttributes());
 					urls.add(webURL);
 				}
 			}
 			return urls;
 		}
 	}
+
+	protected abstract String getBaseUrl();
+	public abstract HBDocument crawlDocument(String url, Document doc);
+	public abstract HBDocument crawlDocument(String url, JsonObject doc);
 }

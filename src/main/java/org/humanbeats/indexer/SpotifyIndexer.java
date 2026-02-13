@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class SpotifyLoader
+public class SpotifyIndexer
 {
 	@Value("${spotify.user}")
 	private String spotifyUser;
@@ -65,15 +66,15 @@ public class SpotifyLoader
 
 	private ClientCredentials credentials;
 	private SpotifyApi spotify;
-	
+
 	public static void main(String[] args) {
 		String track = "Eiko Ishibashi e Jim O' Rourke - Pareidolia";
 		Set<String> tracks = HumanBeatsUtils.parseTitle(track);
-		tracks.forEach(t -> System.out.println(t));
-		
+		tracks.forEach(t -> log.debug(t));
+
 		track = "Eiko Ishibashi e Jim O' Rourke Pareidolia";
 		tracks = HumanBeatsUtils.parseTitle(track);
-		tracks.forEach(t -> System.out.println(t));
+		tracks.forEach(t -> log.debug(t));
 	}
 
 	@PostConstruct
@@ -383,7 +384,7 @@ public class SpotifyLoader
 			}
 			catch (Exception e) 
 			{
-				log.error("ERROR loading " + title + ": " + e.getMessage(), e);
+				log.error("ERROR loading " + title + ": " + e.getMessage());
 				relogin();
 			}
 		});
@@ -521,7 +522,7 @@ public class SpotifyLoader
 					}
 					catch (Exception e) 
 					{
-						log.error("ERROR loading " + title + ": " + e.getMessage(), e);
+						log.error("ERROR loading " + title + ": " + e.getMessage());
 						relogin();
 					}
 				}

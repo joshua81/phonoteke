@@ -1,31 +1,37 @@
-package org.humanbeats.test.crawler;
+package org.humanbeats.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.apache.commons.collections4.CollectionUtils;
-import org.humanbeats.crawler.WWFMCrawler;
-import org.humanbeats.crawler.AbstractCrawler.PlaylistData;
+import org.humanbeats.crawler.RadioRaiCrawler;
+import org.humanbeats.model.HBDocument;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Test class for WWFMCrawler
- * Tests the core functionality of crawling Worldwide FM episodes and extracting playlists
+ * Test class for RadioRaiCrawler
+ * Tests the core functionality of crawling Radio Rai episodes and extracting playlists
  */
 @Slf4j
-public class WWFMCrawlerTest {
+public class RadioRaiCrawlerTest {
 
-	private WWFMCrawler crawler;
-	private static final String TEST_EPISODE_URL = "https://www.worldwidefm.net/episode/breakfast-club-coco-06012026";
+	private static final String TEST_EPISODE_URL = "https://www.raiplaysound.it/audio/2026/02/Battiti-del-08022026-96e98701-f8da-4546-9ada-3506fae55b7f.json";
 
 	@BeforeEach
 	void setUp() {
-		crawler = new WWFMCrawler();
+		// nothing to do
 	}
 
 	@AfterEach
@@ -36,21 +42,31 @@ public class WWFMCrawlerTest {
 	@Test
 	void testCrawlEpisode() {
 		try {
-			PlaylistData result = crawler.crawlEpisode(TEST_EPISODE_URL);
+			HttpURLConnection con = (HttpURLConnection)new URL(TEST_EPISODE_URL).openConnection();
+			JsonObject doc = new Gson().fromJson(new InputStreamReader(con.getInputStream()), JsonObject.class);
+			RadioRaiCrawler crawler = new RadioRaiCrawler();
+			RadioRaiCrawler.source = "battiti";
+			HBDocument result = crawler.crawlDocument(TEST_EPISODE_URL, doc);
 
 			// Verify basic structure
-			assertNotNull(result, "Playlist data should not be null");
+			assertNotNull(result, "Episode data should not be null");
+			assertNotNull(result.getId(), "Episode id should not be null");
 			assertTrue(CollectionUtils.isNotEmpty(result.getTracks()), "Tracks list should not be null");
 			assertEquals(TEST_EPISODE_URL, result.getUrl(), "Episode URL should match");
 
 			// Verify episode metadata
+			assertNotNull(result.getId(), "Episode id should not be null");
+			assertNotNull(result.getUrl(), "Episode url should not be null");
 			assertNotNull(result.getTitle(), "Episode title should not be null");
 			assertNotNull(result.getDescription(), "Episode description should not be null");
 			assertNotNull(result.getDate(), "Episode date should not be null");
 			assertNotNull(result.getCover(), "Episode cover should not be null");
 			assertNotNull(result.getAudio(), "Episode audio should not be null");
 			assertNotNull(result.getYear(), "Episode year should not be null");
+			assertTrue(CollectionUtils.isNotEmpty(result.getTracks()), "Episode tracks should not be empty");
 
+			log.info("Episode Id: " + result.getId());
+			log.info("Episode Url: " + result.getUrl());
 			log.info("Episode Title: " + result.getTitle());
 			log.info("Episode Description: " + result.getDescription());
 			log.info("Episode Date: " + result.getDate());
@@ -61,8 +77,6 @@ public class WWFMCrawlerTest {
 
 		} catch (Exception e) {
 			log.error("Test failed with exception: " + e.getMessage(), e);
-			// In a real test environment, you might want to fail here
-			// For now, we'll just log the exception
 		}
 	}
 }

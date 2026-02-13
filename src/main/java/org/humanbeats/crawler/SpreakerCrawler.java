@@ -10,13 +10,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
+import org.jsoup.nodes.Document;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,23 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 public class SpreakerCrawler extends AbstractCrawler
 {
 	private static final String SPREAKER = "spreaker";
+	private static final String URL = "https://www.spreaker.com/";
 
-
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", SPREAKER), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			RadioRaiCrawler.url = show.getString("url");
-			RadioRaiCrawler.artist = show.getString("title");
-			RadioRaiCrawler.source = show.getString("source");
-			RadioRaiCrawler.authors = show.get("authors", List.class);
-
-			log.info("Crawling " + artist);
-			crawl(url);
-		}
+	public SpreakerCrawler() {
+		SpreakerCrawler.type = SPREAKER;
 	}
 
 	@Override
@@ -60,40 +49,14 @@ public class SpreakerCrawler extends AbstractCrawler
 				results.forEach(item -> {
 					JsonObject doc = (JsonObject)item;
 					String pageUrl = doc.get("site_url").getAsString();
-					TYPE type = TYPE.podcast;
-
-					log.debug("Parsing page " + pageUrl);
 					String id = getId(pageUrl);
-					String title = doc.get("title").getAsString();
+					log.debug("Parsing page " + pageUrl);
 
-					org.bson.Document json = repo.getDocs().find(Filters.and(Filters.eq("source", source), 
-							Filters.eq("url", pageUrl))).iterator().tryNext();
+					org.bson.Document json = repo.getDocs().find(Filters.eq("id", id)).iterator().tryNext();
 					if(json == null)
 					{
-						try {
-							json = new org.bson.Document("id", id).
-									append("url", getUrl(pageUrl)).
-									append("type", type.name()).
-									append("artist", artist).
-									append("title", title).
-									append("authors", authors).
-									append("cover", doc.get("image_original_url").getAsString()).
-									append("date", getDate(doc.get("published_at").getAsString())).
-									append("description", title).
-									append("genres", null).
-									append("label", null).
-									append("links", null).
-									append("review", null).
-									append("source", source).
-									append("vote", null).
-									append("year", getYear(doc.get("published_at").getAsString())).
-									append("tracks", getTracks(doc.get("description").getAsString())).
-									append("audio", doc.get("download_url").getAsString());
-							insertDoc(json);
-						}
-						catch(Exception e) {
-							log.debug("ERROR parsing page " + pageUrl + ": " + e.getMessage());
-						}
+						HBDocument episode = crawlDocument(pageUrl, doc);
+						insertDoc(episode);
 					}
 				});
 			}
@@ -104,8 +67,47 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 	}
 
-	private Date getDate(String date) {
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		HBDocument episode = HBDocument.builder()
+				.id(getId(url))
+				.url(url)
+				.source(source)
+				.type(TYPE.podcast)
+				.artist(artist)
+				.authors(authors)
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.title(getTitle(doc))
+				// same as title
+				.description(getTitle(doc))
+				.cover(getCover(doc))
+				.audio(getAudio(doc))
+				.tracks(getTracks(doc)).build();
+		return episode;
+	}
+
+	@Override
+	public HBDocument crawlDocument(String url, Document doc) {
+		throw new RuntimeException("Not implemented!!");
+	}
+
+	@Override
+	protected String getBaseUrl() {
+		return URL;
+	}
+
+	private String getCover(JsonObject doc) {
+		return doc.get("image_original_url").getAsString();
+	}
+
+	private String getTitle(JsonObject doc) {
+		return doc.get("title").getAsString();
+	}
+
+	private Date getDate(JsonObject doc) {
 		try {
+			String date = doc.get("published_at").getAsString();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			return sdf.parse(date);
 		} catch (ParseException e) {
@@ -113,29 +115,29 @@ public class SpreakerCrawler extends AbstractCrawler
 		}
 	}
 
-	private Integer getYear(String date) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(sdf.parse(date));
-			return cal.get(Calendar.YEAR);
-		} catch (ParseException e) {
-			return null;
-		}
+	private Integer getYear(JsonObject doc) {
+		Date date = getDate(doc);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.YEAR);
 	}
 
-	private List<org.bson.Document> getTracks(String content) {
-		List<org.bson.Document> tracks = Lists.newArrayList();
+	private List<HBTrack> getTracks(JsonObject doc) {
+		List<HBTrack> tracks = Lists.newArrayList();
 
+		String content = doc.get("description").getAsString();
 		String[] chunks = content.split("\n");
 		for(int i = 0; i < chunks.length; i++) {
 			String title = chunks[i].trim();
 			if(StringUtils.isNotBlank(title)) {
-				String youtube = null;
-				tracks.add(newTrack(title, youtube));
-				log.debug("tracks: " + title + ", youtube: " + youtube);
+				tracks.add(HBTrack.builder().titleOrig(title).build());
+				log.debug("tracks: " + title);
 			}
 		}
-		return checkTracks(tracks);
+		return tracks;
+	}
+
+	private String getAudio(JsonObject doc) {
+		return doc.get("download_url").getAsString();
 	}
 }

@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.repo;
 
 import javax.annotation.PostConstruct;
 

@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.humanbeats.model.HBDocument;
+import org.humanbeats.model.HBTrack;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,8 +17,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.common.collect.Lists;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.Filters;
+import com.google.gson.JsonObject;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.url.WebURL;
@@ -28,66 +29,56 @@ public class RadioCapitalCrawler extends AbstractCrawler
 	private static final String CAPITAL = "capital";
 	private static final String URL = "https://www.capital.it/programmi/";
 
+	public RadioCapitalCrawler() {
+		RadioCapitalCrawler.type = CAPITAL;
+	}
 
-	public void load(String... args) 
-	{
-		MongoCursor<org.bson.Document> i = args.length == 0 ? repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL))).iterator() : 
-			repo.getShows().find(Filters.and(Filters.eq("type", CAPITAL), Filters.eq("source", args[0]))).iterator();
-		while(i.hasNext()) 
-		{
-			org.bson.Document show = i.next();
-			RadioCapitalCrawler.url = show.getString("url");
-			RadioCapitalCrawler.artist = show.getString("title");
-			RadioCapitalCrawler.source = show.getString("source");
-			RadioCapitalCrawler.authors = show.get("authors", List.class);
+	@Override
+	public HBDocument crawlDocument(String url, Document doc) {
+		HBDocument episode = HBDocument.builder()
+				.id(getId(url))
+				.url(url)
+				.source(source)
+				.type(TYPE.podcast)
+				.artist(artist)
+				.authors(authors)
+				.date(getDate(doc))
+				.year(getYear(doc))
+				.description(getDescription(doc))
+				.title(getTitle(doc))
+				.cover(getCover(doc))
+				.audio(getAudio(doc))
+				.tracks(getTracks(doc)).build();
+		return episode;
+	}
 
-			log.info("Crawling " + artist);
-			crawl(url);
-		}
+	@Override
+	public HBDocument crawlDocument(String url, JsonObject doc) {
+		throw new RuntimeException("Not implemented!!");
 	}
 
 	@Override
 	public boolean shouldVisit(Page page, WebURL url) 
 	{
-		return page.getWebURL().getURL().startsWith(this.url);
+		return page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url);
 	}
 
 	@Override
 	public void visit(Page page) 
 	{
-		if(page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/b-side-del") ||
-				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/extra-del") ||
-				page.getWebURL().getURL().startsWith(RadioCapitalCrawler.url + "puntate/puntata-del")) {
+		if(page.getWebURL().getURL().startsWith(url + "puntate/b-side-del") ||
+				page.getWebURL().getURL().startsWith(url + "puntate/extra-del") ||
+				page.getWebURL().getURL().startsWith(url + "puntate/puntata-del")) {
 			super.visit(page);
 		}
 	}
 
 	@Override
-	protected String getBaseUrl()
-	{
+	protected String getBaseUrl() {
 		return URL;
 	}
 
-	@Override
-	protected String getSource() 
-	{
-		return source;
-	}
-
-	@Override
-	protected String getArtist(String url, Document doc) 
-	{
-		return artist;
-	}
-
-	@Override
-	protected List<String> getAuthors(String url, Document doc) 
-	{
-		return authors;
-	}
-
-	@Override
-	protected Date getDate(String url, Document doc) 
+	private Date getDate(Document doc) 
 	{
 		Date date = null;
 		try 
@@ -106,11 +97,10 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return date;
 	}
 
-	@Override
-	protected Integer getYear(String url, Document doc) 
+	private Integer getYear(Document doc) 
 	{
 		Integer year = null;
-		Date date = getDate(url, doc);
+		Date date = getDate(doc);
 		if(date != null)
 		{
 			Calendar cal = Calendar.getInstance();
@@ -120,14 +110,12 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return year;
 	}
 
-	@Override
-	protected String getDescription(String url, Document doc) 
+	private String getDescription(Document doc) 
 	{
-		return getTitle(url, doc);
+		return getTitle(doc);
 	}
 
-	@Override
-	protected String getTitle(String url, Document doc) 
+	private String getTitle(Document doc) 
 	{
 		String title = null;
 		Element content = doc.select("meta[property=og:title]").first();
@@ -139,40 +127,38 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return title;
 	}
 
-	@Override
-	protected List<org.bson.Document> getTracks(String url, Document doc) 
+	private List<HBTrack> getTracks(Document doc) 
 	{
-		List<org.bson.Document> tracks = Lists.newArrayList();
-		Date date = getDate(url, doc);
+		List<HBTrack> tracks = Lists.newArrayList();
+		Date date = getDate(doc);
 		try {
+			String show = null;
+			if("alexpaletta".equals(source)) {
+				show = "extra";
+			}
+			else if("casabertallot".equals(source)){
+				show = "b-side";
+			}
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
-			doc = Jsoup.connect(RadioCapitalCrawler.url + "playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
+			doc = Jsoup.connect(URL + show + "/playlist/dettaglio/" + dateStr).ignoreContentType(true).get();
+
 			Elements content = doc.select("section.playlist-list").select("li");
 			if(content != null && content.size() > 0) {
 				Iterator<Element> i = content.iterator();
 				while(i.hasNext()) {
 					Element track = i.next();
 					String title = track.select("span.author").text() + " - " + track.select("span.song").text();
-					tracks.add(newTrack(title, null));
+					tracks.add(HBTrack.builder().titleOrig(title).build());
 					log.debug("track: " + title);
 				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		}
-
-		try {
-			if(source.equals("alexpaletta") && date.after(new SimpleDateFormat("yyyy-MM-dd").parse("2024-11-30"))) {
-				return tracks;
-			}
-		} catch (ParseException e) {
-			throw new RuntimeException(e.getMessage());
-		}
-		return checkTracks(tracks);
+		return tracks;
 	}
 
-	@Override
-	protected String getCover(String url, Document doc) 
+	private String getCover(Document doc) 
 	{
 		String cover = null;
 		Element content = doc.select("meta[property=og:image]").first();
@@ -184,23 +170,16 @@ public class RadioCapitalCrawler extends AbstractCrawler
 		return cover;
 	}
 
-	@Override
-	protected TYPE getType(String url) 
+	private String getAudio(Document doc) 
 	{
-		return TYPE.podcast;
-	}
-
-	@Override
-	protected String getAudio(String url, Document doc) 
-	{
-		Date date = getDate(url, doc);
+		Date date = getDate(doc);
 		String d1 = new SimpleDateFormat("yyyy/MM/dd").format(date);
 		String d2 = new SimpleDateFormat("yyyyMMdd").format(date);
 		String audio = null;
-		if(source.equals("alexpaletta")) {
+		if("alexpaletta".equals(source)) {
 			audio = "https://media.capital.it/" + d1 + "/episodes/extra/extra_" + d2 + "_000000.mp3";
 		}
-		else if(source.equals("casabertallot")){
+		else if("casabertallot".equals(source)){
 			audio = "https://media.capital.it/" + d1 + "/episodes/bertallot/bertallot_" + d2 + "_220000.mp3";
 		}
 		log.debug("audio: " + audio);

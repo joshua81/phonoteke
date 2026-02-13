@@ -1,4 +1,4 @@
-package org.humanbeats.loader;
+package org.humanbeats.indexer;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
+import org.humanbeats.repo.MongoRepository;
 import org.humanbeats.util.HumanBeatsUtils;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 @Component
 @Slf4j
-public class YoutubeLoader
+public class YoutubeIndexer
 {
 	private static final String MATCH1 = "(?i)(.{1,100})[\\(\\[]Official(.{1,10})Video[\\)\\]]";
 	private static final String MATCH2 = "(?i)(.{1,100})[\\(\\[]Video(.{1,10})Ufficiale[\\)\\]]";

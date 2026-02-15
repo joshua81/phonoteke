@@ -154,13 +154,13 @@ public abstract class AbstractCrawler extends WebCrawler
 
 		org.bson.Document json = doc.toJson();
 		repo.getDocs().insertOne(json);
-		log.info(json.getString("type") + " " + json.getString("url") + " added");
+		log.info(doc.getType() + " " + doc.getUrl() + " added");
 
 		// update last episode date
-		if(TYPE.podcast.name().equals(json.getString("type"))) {
+		if(TYPE.podcast.equals(doc.getType())) {
 			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
 			json = i.next();
-			json.append("lastEpisodeDate", json.getDate("date"));
+			json.append("lastEpisodeDate", doc.getDate());
 			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
 			log.info("lastEpisodeDate " + source + " updated");
 		}

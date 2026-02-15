@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.humanbeats.util.HumanBeatsUtils.TYPE;
 
@@ -59,11 +58,12 @@ public class HBDocument {
 				append("audio", audio);
 	}
 
-	protected List<org.bson.Document> toJson(List<HBTrack> tracks) {
-		List<org.bson.Document> json = Lists.newArrayList();
+	protected List<Document> toJson(List<HBTrack> tracks) {
+		List<Document> json = Lists.newArrayList();
 		if(CollectionUtils.isNotEmpty(tracks)) {
 			tracks.forEach(t -> {
-				json.add(new org.bson.Document("titleOrig", t.getTitleOrig()).
+				json.add(new Document("titleOrig", t.getTitleOrig()).
+						append("title", t.getTitleOrig()).
 						append("youtube", t.getYoutube()));
 			});
 		}

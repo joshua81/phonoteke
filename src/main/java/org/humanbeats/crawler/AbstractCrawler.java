@@ -150,19 +150,24 @@ public abstract class AbstractCrawler extends WebCrawler
 	}
 
 	protected void insertDoc(HBDocument doc) {
-		validateDocument(doc);
+		try {
+			validateDocument(doc);
 
-		org.bson.Document json = doc.toJson();
-		repo.getDocs().insertOne(json);
-		log.info(doc.getType() + " " + doc.getUrl() + " added");
+			org.bson.Document json = doc.toJson();
+			repo.getDocs().insertOne(json);
+			log.info(doc.getType() + " " + doc.getUrl() + " added");
 
-		// update last episode date
-		if(TYPE.podcast.equals(doc.getType())) {
-			MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
-			json = i.next();
-			json.append("lastEpisodeDate", doc.getDate());
-			repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-			log.info("lastEpisodeDate " + source + " updated");
+			// update last episode date
+			if(TYPE.podcast.equals(doc.getType())) {
+				MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+				json = i.next();
+				json.append("lastEpisodeDate", doc.getDate());
+				repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
+				log.info("lastEpisodeDate " + source + " updated");
+			}
+		}
+		catch(Exception e) {
+			log.error("ERROR inserting document " + doc.getUrl() + ": " + e.getMessage(), e);
 		}
 	}
 

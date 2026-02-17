@@ -159,15 +159,20 @@ public abstract class AbstractCrawler extends WebCrawler
 
 			// update last episode date
 			if(TYPE.podcast.equals(doc.getType())) {
-				MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
-				json = i.next();
-				json.append("lastEpisodeDate", doc.getDate());
-				repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", doc));
-				log.info("lastEpisodeDate " + source + " updated");
+				try {
+					MongoCursor<org.bson.Document> i = repo.getAuthors().find(Filters.eq("source", source)).limit(1).iterator();
+					json = i.next();
+					json.append("lastEpisodeDate", doc.getDate());
+					repo.getAuthors().updateOne(Filters.eq("source", source), new org.bson.Document("$set", json));
+					log.info("lastEpisodeDate " + source + " updated");
+				}
+				catch(Exception e) {
+					log.error("ERROR updating lastEpisodeDate: " + e.getMessage(), e);
+				}
 			}
 		}
 		catch(Exception e) {
-			log.error("ERROR inserting document " + doc.getUrl() + ": " + e.getMessage(), e);
+			log.error("ERROR inserting document " + doc.getUrl() + ": " + e.getMessage());
 		}
 	}
 

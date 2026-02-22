@@ -190,7 +190,8 @@ public abstract class AbstractCrawler extends WebCrawler
 			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getDescription()), "Episode description cannot be null");
 			Preconditions.checkNotNull(doc.getDate(), "Episode date cannot be null");
 			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getCover()), "Episode cover cannot be null");
-			Preconditions.checkArgument(StringUtils.isNotBlank(doc.getAudio()), "Episode audio cannot be null");
+			Preconditions.checkArgument(AbstractCrawler.type.equals(BBCRadioCrawler.BBC) || 
+					StringUtils.isNotBlank(doc.getAudio()), "Episode audio cannot be null");
 			Preconditions.checkNotNull(doc.getYear(), "Episode year cannot be null");
 			Preconditions.checkArgument("alexpaletta".equals(doc.getSource()) || "musicalbox".equals(doc.getSource()) || 
 					(CollectionUtils.isNotEmpty(doc.getTracks()) && doc.getTracks().size() >= HumanBeatsUtils.TRACKS_SIZE), "Episode tracks less than " + HumanBeatsUtils.TRACKS_SIZE);

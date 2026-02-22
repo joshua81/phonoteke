@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BBCRadioCrawler extends AbstractCrawler
 {
+	public static final String BBC = "bbc";
 	private static final String URL = "https://www.bbc.co.uk/";
-	private static final String BBC = "bbc";
 
 	public BBCRadioCrawler() {
 		BBCRadioCrawler.type = BBC;

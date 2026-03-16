@@ -117,11 +117,11 @@ public class HumanBeats implements CommandLineRunner {
 		AbstractCrawler.repo = repo;
 		new BBCRadioCrawler().load(args);
 		new RadioRaiCrawler().load(args);
-		//new SpreakerCrawler().load(args);
 		new WWFMCrawler().load(args);
-		new RadioCapitalCrawler().load(args);
 		new NTSCrawler().load(args);
 		new RadioRaheemCrawler().load(args);
+		new RadioCapitalCrawler().load(args);
+		//new SpreakerCrawler().load(args);
 	}
 
 	private void crawlReviews(String... args) {
